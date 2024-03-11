@@ -10,11 +10,9 @@ import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import {
   PermissionType
 } from "../../../authentication/dto/applicationUser/PermissionType.ts";
-import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 
 export default function GroupDashboard() {
   const {loading, groupPermissions} = usePermissions();
-  const dialog = useDialog();
   const groupId = useParams()?.groupId;
   const [groupLoading, setGroupLoading] = useState(true);
   const [group, setGroup] = useState<GroupResponsePrivateDto | undefined>(undefined);
@@ -61,43 +59,6 @@ export default function GroupDashboard() {
     loadGroup().then();
   }, []);
 
-  async function deleteGroup() {
-    try {
-      setGroupLoading(true);
-      if (!idIsValid) {
-        setGroupError("The provided group ID is invalid");
-        setGroupLoading(false);
-        return
-      }
-      const response = await authJsonFetch({
-        path: `groups/${groupId}`, method: "DELETE"
-      });
-      if (!response?.status || response.status > 404 || !response?.message) {
-        setGroupError(response?.error ?? `Failed to remove group data`);
-        return handleErrorNotification(response?.error);
-      }
-      setGroup(undefined);
-      notification.openNotification({
-        type: "success", vertical: "top", horizontal: "center",
-        message: response.message ?? "All group data has been removed successfully"
-      })
-      navigate("/groups", {replace: true});
-    } catch (e) {
-      setGroup(undefined);
-      setGroupError(`Failed to remove group data`);
-      handleErrorNotification();
-    } finally {
-      setGroupLoading(false);
-    }
-  }
-
-  function handleDeleteClick() {
-    dialog.openDialog({
-      text: "Do you really wish to remove all group data, including all projects and tasks?",
-      confirmText: "Yes, delete this group", onConfirm: deleteGroup
-    });
-  }
-
   function handleJoinRequestClick() {
     navigate(`/groups/${groupId}/requests`);
   }
@@ -130,8 +91,6 @@ export default function GroupDashboard() {
       {(groupPermissions.includes(PermissionType.GROUP_ADMIN))
         && <div>
               <button onClick={handleJoinRequestClick}>View group join requests</button>
-              <br/>
-              <button onClick={handleDeleteClick}>Remove all group details</button>
           </div>
       }
     </div>

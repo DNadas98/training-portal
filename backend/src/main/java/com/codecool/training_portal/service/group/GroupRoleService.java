@@ -13,6 +13,7 @@ import com.codecool.training_portal.service.auth.CustomPermissionEvaluator;
 import com.codecool.training_portal.service.auth.UserProvider;
 import com.codecool.training_portal.service.converter.UserConverter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -132,7 +133,7 @@ public class GroupRoleService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_ADMIN')")
+  @Secured("ADMIN")
   public void removeAdmin(Long groupId, Long userId) {
       UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
               () -> new GroupNotFoundException(groupId));

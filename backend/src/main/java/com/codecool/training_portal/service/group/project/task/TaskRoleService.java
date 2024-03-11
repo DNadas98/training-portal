@@ -46,7 +46,7 @@ public class TaskRoleService {
   }
 
   @Transactional(readOnly = true)
-  @PreAuthorize("hasPermission(#taskId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
+  @PreAuthorize("hasPermission(#taskId, 'Task', 'TASK_ASSIGNED_MEMBER')")
   public List<UserResponsePublicDto> getAssignedMembers(
           Long groupId, Long projectId, Long taskId) {
       Task task = taskDao.findByGroupIdAndProjectIdAndTaskId(groupId, projectId, taskId)
@@ -55,7 +55,7 @@ public class TaskRoleService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  @PreAuthorize("hasPermission(#taskId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
   public void assignSelf(Long groupId, Long projectId, Long taskId) {
       Task task = taskDao.findByGroupIdAndProjectIdAndTaskId(groupId, projectId, taskId)
       .orElseThrow(() -> new TaskNotFoundException(taskId));
@@ -65,7 +65,7 @@ public class TaskRoleService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  @PreAuthorize("hasPermission(#taskId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
+  @PreAuthorize("hasPermission(#taskId, 'Task', 'TASK_ASSIGNED_MEMBER')")
   public void removeSelf(Long groupId, Long projectId, Long taskId) {
       Task task = taskDao.findByGroupIdAndProjectIdAndTaskId(groupId, projectId, taskId)
       .orElseThrow(() -> new TaskNotFoundException(taskId));

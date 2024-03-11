@@ -36,24 +36,11 @@ export default function GroupBrowser(props: GroupBrowserProps) {
           <Card>
             <CardHeader title={"Your groups"} sx={{textAlign: "center"}}/>
             <CardContent>
-              <Stack direction={"row"} spacing={1} alignItems={"baseline"}>
-                <IconButton onClick={() => {
-                  navigate("/groups/create")
-                }}>
-                  <Avatar variant={"rounded"}
-                          sx={{
-                            bgcolor: "secondary.main",
-                            color: "background.paper"
-                          }}>
-                    <AddOutlined color={"inherit"}/>
-                  </Avatar>
-                </IconButton>
                 <TextField variant={"standard"} type={"search"}
                            label={"Search"}
                            fullWidth
                            onInput={props.handleGroupsWithUserSearch}
                 />
-              </Stack>
             </CardContent>
           </Card>
           <GroupList loading={props.groupsWithUserLoading}
@@ -70,7 +57,6 @@ export default function GroupBrowser(props: GroupBrowserProps) {
             <CardHeader title={"Groups to join"} sx={{textAlign: "center"}}/>
             <CardContent>
               <TextField variant={"standard"} type={"search"} fullWidth
-                         sx={{marginBottom: 1}}
                          label={"Search"}
                          onInput={props.handleGroupsWithoutUserSearch}
               />

@@ -38,6 +38,7 @@ public class ProjectRequestService {
   }
 
   @Transactional(rollbackFor = Exception.class)
+  @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_MEMBER')")
   public ProjectJoinRequestResponseDto createJoinRequest(Long groupId, Long projectId) {
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
       Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
@@ -65,7 +66,7 @@ public class ProjectRequestService {
   }
 
   @Transactional
-  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ADMIN')")
   public List<ProjectJoinRequestResponseDto> getJoinRequestsOfProject(
           Long groupId, Long projectId) {
       Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
@@ -77,7 +78,7 @@ public class ProjectRequestService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ADMIN')")
   public void handleJoinRequest(
           Long groupId, Long projectId, Long requestId, ProjectJoinRequestUpdateDto updateDto) {
       ProjectJoinRequest request = requestDao.findByGroupIdAndProjectIdAndRequestId(

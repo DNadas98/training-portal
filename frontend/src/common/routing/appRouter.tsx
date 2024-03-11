@@ -24,7 +24,6 @@ import Tasks from "../../tasks/pages/tasks/Tasks.tsx";
 import AddTask from "../../tasks/pages/add/AddTask.tsx";
 import TaskDashboard from "../../tasks/pages/dashboard/TaskDashboard.tsx";
 import UpdateTask from "../../tasks/pages/update/UpdateTask.tsx";
-import Expenses from "../../expenses/pages/expenses/Expenses.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -120,10 +119,6 @@ const appRouter = createBrowserRouter([
           {
             path: ":groupId/projects/:projectId/tasks/:taskId/update",
             element: <UpdateTask/>
-          },
-          {
-            path: ":groupId/projects/:projectId/tasks/:taskId/expenses",
-            element: <Expenses/>
           },
           {
             path: "*", element: <NotFound/>

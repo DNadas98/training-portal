@@ -101,7 +101,7 @@ export default function TaskDashboard() {
 
   function handleDeleteClick() {
     dialog.openDialog({
-      text: "Do you really wish to remove all task data, including all expenses?",
+      text: "Do you really wish to remove all task data?",
       confirmText: "Yes, delete this task", onConfirm: deleteTask
     });
   }
@@ -129,10 +129,6 @@ export default function TaskDashboard() {
     });
   }
 
-  function handleExpensesClick() {
-    navigate(`/groups/${groupId}/projects/${projectId}/tasks/${taskId}/expenses`);
-  }
-
   if (permissionsLoading || taskLoading) {
     return <LoadingSpinner/>;
   } else if (!projectPermissions?.length || !task) {
@@ -150,7 +146,6 @@ export default function TaskDashboard() {
       <p>Start date: {task.startDate.toString()}</p>
       <p>Deadline: {task.deadline.toString()}</p>
       <p>Task Permissions: {taskPermissions.join(", ")}</p>
-      <button onClick={handleExpensesClick}>View expenses</button>
       <br/>
       {(taskPermissions.includes(PermissionType.TASK_ASSIGNED_MEMBER))
         && <div>

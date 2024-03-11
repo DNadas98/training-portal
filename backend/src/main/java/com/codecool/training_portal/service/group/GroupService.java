@@ -15,6 +15,7 @@ import com.codecool.training_portal.service.converter.GroupConverter;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ public class GroupService {
     private final GroupConverter groupConverter;
     private final UserProvider userProvider;
 
+    @Secured("ADMIN")
     public List<GroupResponsePublicDTO> getAllGroups() throws UnauthorizedException {
         List<UserGroup> userGroup = userGroupDao.findAll();
         return groupConverter.getGroupResponsePublicDtos(userGroup);
@@ -59,6 +61,7 @@ public class GroupService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    @Secured("ADMIN")
     public GroupResponsePrivateDTO createGroup(
             GroupCreateRequestDto createRequestDto) throws ConstraintViolationException {
         ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
@@ -82,7 +85,7 @@ public class GroupService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_ADMIN')")
+    @Secured("ADMIN")
     public void deleteGroup(Long groupId) {
         UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(() ->
                 new GroupNotFoundException(groupId));

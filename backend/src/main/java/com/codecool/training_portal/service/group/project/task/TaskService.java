@@ -34,7 +34,7 @@ public class TaskService {
   private final DateTimeService dateTimeService;
 
   @Transactional(readOnly = true)
-  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
   public List<TaskResponsePublicDto> getAllTasks(Long groupId, Long projectId)
     throws ProjectNotFoundException, UnauthorizedException {
       Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
@@ -45,7 +45,7 @@ public class TaskService {
   }
 
   @Transactional(readOnly = true)
-  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
   public List<TaskResponsePublicDto> getAllTasks(Long groupId, Long projectId, Boolean withUser)
     throws ProjectNotFoundException, UnauthorizedException {
       Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
@@ -61,7 +61,7 @@ public class TaskService {
   }
 
   @Transactional(readOnly = true)
-  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
   public List<TaskResponsePublicDto> getAllTasks(
           Long groupId, Long projectId, Boolean withUser, TaskStatus taskStatus)
     throws ProjectNotFoundException, UnauthorizedException {
@@ -79,7 +79,7 @@ public class TaskService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
   public TaskResponsePublicDto createTask(
           TaskCreateRequestDto createRequestDto, Long groupId, Long projectId)
     throws ConstraintViolationException {

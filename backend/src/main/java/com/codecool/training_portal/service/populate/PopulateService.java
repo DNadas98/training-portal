@@ -10,8 +10,6 @@ import com.codecool.training_portal.model.group.project.task.Importance;
 import com.codecool.training_portal.model.group.project.task.Task;
 import com.codecool.training_portal.model.group.project.task.TaskDao;
 import com.codecool.training_portal.model.group.project.task.TaskStatus;
-import com.codecool.training_portal.model.group.project.task.expense.Expense;
-import com.codecool.training_portal.model.group.project.task.expense.ExpenseDao;
 import com.codecool.training_portal.model.request.ProjectJoinRequest;
 import com.codecool.training_portal.model.request.ProjectJoinRequestDao;
 import com.codecool.training_portal.model.request.UserGroupJoinRequest;
@@ -41,11 +39,6 @@ public class PopulateService {
   private final ProjectDao projectDao;
   private final ProjectJoinRequestDao projectJoinRequestDao;
   private final TaskDao taskDao;
-  private final ExpenseDao expenseDao;
-
-  @Value("${BACKEND_DEFAULT_ADMIN_USERNAME}")
-  private String DEFAULT_ADMIN_USERNAME;
-
 
   @PostConstruct
   @Transactional(rollbackFor = Exception.class)
@@ -61,6 +54,7 @@ public class PopulateService {
 
     Project project = new Project("Test project 1", "Test project 1 description", Instant.now(),
             Instant.now().plusSeconds(60 * 60), testUsers.get(0), userGroup);
+      project.assignMember(testUsers.get(1));
     project.addEditor(testUsers.get(1));
       project.assignMember(testUsers.get(2));
     projectDao.save(project);
@@ -72,9 +66,6 @@ public class PopulateService {
       task.assignMember(testUsers.get(1));
       task.assignMember(testUsers.get(2));
     taskDao.save(task);
-
-    expenseDao.save(new Expense("Test expense 1", 11.1111, false, task));
-    expenseDao.save(new Expense("Test expense 2", 25.2525, false, task));
 
     log.info("Database has been populated with example data successfully");
   }

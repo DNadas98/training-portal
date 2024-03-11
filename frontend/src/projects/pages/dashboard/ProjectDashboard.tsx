@@ -100,7 +100,7 @@ export default function ProjectDashboard() {
 
   function handleDeleteClick() {
     dialog.openDialog({
-      text: "Do you really wish to remove all project data, including all tasks and expenses?",
+      text: "Do you really wish to remove all project data, including all tasks?",
       confirmText: "Yes, delete this project", onConfirm: deleteProject
     });
   }
@@ -127,19 +127,20 @@ export default function ProjectDashboard() {
       <p>Start date: {project.startDate.toString()}</p>
       <p>Deadline: {project.deadline.toString()}</p>
       <p>Project permissions: {projectPermissions.join(", ")}</p>
-      <button onClick={handleTasksClick}>View tasks</button>
-      <br/>
-      <button onClick={handleJoinRequestClick}>View project join requests</button>
-      {(projectPermissions.includes(PermissionType.PROJECT_EDITOR))
+        {(projectPermissions.includes(PermissionType.PROJECT_EDITOR))
         && <div>
-              <button onClick={() => {
-                navigate(`/groups/${groupId}/projects/${projectId}/update`);
-              }}>Update project details
-              </button>
+              <button onClick={handleTasksClick}>View tasks</button>
           </div>
       }
       {(projectPermissions.includes(PermissionType.PROJECT_ADMIN))
         && <div>
+              <button onClick={handleJoinRequestClick}>View project join requests</button>
+              <br/>
+              <button onClick={() => {
+                  navigate(`/groups/${groupId}/projects/${projectId}/update`);
+              }}>Update project details
+              </button>
+              <br/>
               <button onClick={handleDeleteClick}>Remove project</button>
           </div>
       }

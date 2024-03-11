@@ -133,7 +133,7 @@ public class ProjectRoleService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ADMIN')")
+  @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_ADMIN')")
   public void removeAdmin(Long groupId, Long projectId, Long userId) {
       Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));

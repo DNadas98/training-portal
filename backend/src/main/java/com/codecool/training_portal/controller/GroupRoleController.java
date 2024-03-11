@@ -76,12 +76,4 @@ public class GroupRoleController {
     return ResponseEntity.status(HttpStatus.OK).body(
       Map.of("message", "Admin added successfully"));
   }
-
-  @DeleteMapping("admins/{userId}")
-  public ResponseEntity<?> removeAdmin(
-          @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long userId) {
-      groupRoleService.removeAdmin(groupId, userId);
-    return ResponseEntity.status(HttpStatus.OK).body(
-      Map.of("message", "Admin removed successfully"));
-  }
 }

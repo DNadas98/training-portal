@@ -118,7 +118,7 @@ export default function UpdateProject() {
   if (permissionsLoading || projectLoading) {
     return <LoadingSpinner/>;
   } else if (!projectPermissions?.length
-    || !projectPermissions.includes(PermissionType.PROJECT_EDITOR)
+    || !projectPermissions.includes(PermissionType.PROJECT_ADMIN)
     || !project) {
     handleError(projectErrorStatus ?? "Access Denied: Insufficient permissions");
     navigate(`/groups/${groupId}/projects/${projectId}`, {replace: true});

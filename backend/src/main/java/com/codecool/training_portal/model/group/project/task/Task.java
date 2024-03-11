@@ -2,7 +2,6 @@ package com.codecool.training_portal.model.group.project.task;
 
 import com.codecool.training_portal.model.auth.ApplicationUser;
 import com.codecool.training_portal.model.group.project.Project;
-import com.codecool.training_portal.model.group.project.task.expense.Expense;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,11 +34,6 @@ public class Task {
   @ToString.Exclude
   private Project project;
 
-  @OneToMany(mappedBy = "task", orphanRemoval = true, cascade = CascadeType.REMOVE)
-  @EqualsAndHashCode.Exclude
-  @ToString.Exclude
-  private Set<Expense> expenses;
-
   @ManyToMany
   @JoinTable(name = "task_assigned_members", joinColumns = @JoinColumn(name = "task_id"),
     inverseJoinColumns = @JoinColumn(name = "user_id"))
@@ -62,19 +56,6 @@ public class Task {
     this.project = project;
       this.assignedMembers = new HashSet<>();
       this.assignedMembers.add(taskCreator);
-    this.expenses = new HashSet<>();
-  }
-
-  public Set<Expense> getExpenses() {
-    return Set.copyOf(expenses);
-  }
-
-  public void addExpense(Expense expense) {
-    this.expenses.add(expense);
-  }
-
-  public void removeExpense(Expense expense) {
-    this.expenses.remove(expense);
   }
 
     public Set<ApplicationUser> getAssignedMembers() {
