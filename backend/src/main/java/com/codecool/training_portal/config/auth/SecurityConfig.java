@@ -2,9 +2,9 @@ package com.codecool.training_portal.config.auth;
 
 import com.codecool.training_portal.exception.auth.UnauthorizedException;
 import com.codecool.training_portal.model.auth.ApplicationUserDao;
-import com.codecool.training_portal.model.company.CompanyDao;
-import com.codecool.training_portal.model.company.project.ProjectDao;
-import com.codecool.training_portal.model.company.project.task.TaskDao;
+import com.codecool.training_portal.model.group.UserGroupDao;
+import com.codecool.training_portal.model.group.project.ProjectDao;
+import com.codecool.training_portal.model.group.project.task.TaskDao;
 import com.codecool.training_portal.service.auth.CustomPermissionEvaluator;
 import lombok.NoArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -65,17 +65,17 @@ public class SecurityConfig {
    * <a href="https://docs.spring.io/spring-security/reference/5.8/migration/servlet/authorization.html#servlet-replace-permissionevaluator-bean-with-methodsecurityexpression-handler">
    * Spring Security Docs</a> <br>
    *
-   * @param companyDao {@link CompanyDao}
+   * @param userGroupDao {@link UserGroupDao}
    * @param projectDao {@link ProjectDao}
    * @return
    */
   @Bean
   public MethodSecurityExpressionHandler expressionHandler(
-    ApplicationUserDao applicationUserDao, CompanyDao companyDao, ProjectDao projectDao,
+    ApplicationUserDao applicationUserDao, UserGroupDao userGroupDao, ProjectDao projectDao,
     TaskDao taskDao) {
     var expressionHandler = new DefaultMethodSecurityExpressionHandler();
     expressionHandler.setPermissionEvaluator(
-      new CustomPermissionEvaluator(applicationUserDao, companyDao, projectDao, taskDao));
+      new CustomPermissionEvaluator(applicationUserDao, userGroupDao, projectDao, taskDao));
     return expressionHandler;
   }
 }

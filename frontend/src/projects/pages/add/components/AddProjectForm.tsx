@@ -6,11 +6,11 @@ import ProjectDescriptionInput from "../../../components/ProjectDescriptionInput
 import StartDateInput from "../../../../common/utils/components/StartDateInput.tsx";
 import DeadlineInput from "../../../../common/utils/components/DeadlineInput.tsx";
 
-interface AddCompanyFormProps {
+interface AddGroupFormProps {
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>
 }
 
-export default function AddProjectForm(props: AddCompanyFormProps) {
+export default function AddProjectForm(props: AddGroupFormProps) {
   return (
     <Grid container justifyContent={"center"}>
       <Grid item xs={10} sm={8} md={7} lg={6}>

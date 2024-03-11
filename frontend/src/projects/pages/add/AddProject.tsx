@@ -11,15 +11,15 @@ import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx"
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 
 export default function AddProject() {
-  const {loading: permissionsLoading, companyPermissions} = usePermissions();
-  const companyId = useParams()?.companyId;
+  const {loading: permissionsLoading, groupPermissions} = usePermissions();
+  const groupId = useParams()?.groupId;
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
   const addProject = async (requestDto: ProjectCreateRequestDto) => {
     return await authJsonFetch({
-      path: `companies/${companyId}/projects`, method: "POST", body: requestDto
+      path: `groups/${groupId}/projects`, method: "POST", body: requestDto
     });
   };
 
@@ -51,7 +51,7 @@ export default function AddProject() {
       }
       const addedProject = response.data as ProjectResponsePrivateDto;
 
-      navigate(`/companies/${companyId}/projects/${addedProject.projectId}`);
+      navigate(`/groups/${groupId}/projects/${addedProject.projectId}`);
     } catch (e) {
       handleError("An unknown error has occurred, please try again later!");
     } finally {
@@ -61,12 +61,12 @@ export default function AddProject() {
 
   if (permissionsLoading) {
     return <LoadingSpinner/>;
-  } else if (!companyPermissions?.length) {
+  } else if (!groupPermissions?.length) {
     notification.openNotification({
       type: "error", vertical: "top", horizontal: "center",
       message: "Access Denied: Insufficient permissions"
     });
-    navigate(`/companies`, {replace: true});
+    navigate(`/groups`, {replace: true});
     return <></>;
   }
 

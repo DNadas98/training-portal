@@ -21,7 +21,7 @@ export default function UpdateTask() {
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
   const navigate = useNavigate();
-  const companyId = useParams()?.companyId;
+  const groupId = useParams()?.groupId;
   const projectId = useParams()?.projectId;
   const taskId = useParams()?.taskId;
   const [taskLoading, setTaskLoading] = useState(true);
@@ -47,21 +47,21 @@ export default function UpdateTask() {
   async function loadTask() {
     try {
       setTaskLoading(true);
-      if (!idIsValid(companyId) || !idIsValid(projectId) || !idIsValid(taskId)) {
-        setTaskError("The provided company or task ID is invalid");
+      if (!idIsValid(groupId) || !idIsValid(projectId) || !idIsValid(taskId)) {
+        setTaskError("The provided group or task ID is invalid");
         setTaskLoading(false);
         return
       }
       const response = await authJsonFetch({
-        path: `companies/${companyId}/projects/${projectId}/tasks/${taskId}`
+        path: `groups/${groupId}/projects/${projectId}/tasks/${taskId}`
       });
       if (!response?.status || response.status > 404 || !response?.data) {
         return handleError(response?.error);
       }
       const taskData = {
         ...response.data,
-        startDate: new Date(response.data?.startDate),
-        deadline: new Date(response.data?.deadline)
+        startDate: new Date(response.data.startDate as string),
+        deadline: new Date(response.data.deadline as string)
       }
       setTask(taskData as TaskResponseDto);
     } catch (e) {
@@ -79,7 +79,7 @@ export default function UpdateTask() {
 
   const updateTask = async (requestDto: TaskCreateRequestDto) => {
     return await authJsonFetch({
-      path: `companies/${companyId}/projects/${projectId}/tasks/${taskId}`,
+      path: `groups/${groupId}/projects/${projectId}/tasks/${taskId}`,
       method: "PUT",
       body: requestDto
     });
@@ -117,7 +117,7 @@ export default function UpdateTask() {
         type: "success", vertical: "top", horizontal: "center",
         message: response.message ?? "Task details updated successfully"
       });
-      navigate(`/companies/${companyId}/projects/${projectId}/tasks/${taskId}`);
+      navigate(`/groups/${groupId}/projects/${projectId}/tasks/${taskId}`);
     } catch (e) {
       handleError();
     } finally {
@@ -127,10 +127,10 @@ export default function UpdateTask() {
   if (permissionsLoading || taskLoading) {
     return <LoadingSpinner/>;
   } else if (!taskPermissions?.length
-    || !taskPermissions.includes(PermissionType.TASK_ASSIGNED_EMPLOYEE)
+    || !taskPermissions.includes(PermissionType.TASK_ASSIGNED_MEMBER)
     || !task) {
     handleError(taskError ?? "Access Denied: Insufficient permissions");
-    navigate(`/companies/${companyId}/projects/${projectId}/tasks`, {replace: true});
+    navigate(`/groups/${groupId}/projects/${projectId}/tasks`, {replace: true});
     return <></>;
   }
   return <UpdateTaskForm onSubmit={handleSubmit}

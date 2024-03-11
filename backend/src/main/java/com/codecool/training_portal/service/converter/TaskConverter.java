@@ -1,7 +1,7 @@
 package com.codecool.training_portal.service.converter;
 
-import com.codecool.training_portal.dto.company.project.task.TaskResponsePublicDto;
-import com.codecool.training_portal.model.company.project.task.Task;
+import com.codecool.training_portal.dto.group.project.task.TaskResponsePublicDto;
+import com.codecool.training_portal.model.group.project.task.Task;
 import com.codecool.training_portal.service.datetime.DateTimeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

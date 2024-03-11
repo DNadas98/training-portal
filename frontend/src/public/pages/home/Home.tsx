@@ -74,7 +74,7 @@ const Home = () => {
                         <DomainAddOutlined color={"secondary"}/>
                       </ListItemIcon>
                       <ListItemText>
-                        Add your company or request to join an existing one.
+                        Add your group or request to join an existing one.
                       </ListItemText>
                     </ListItem>
                     <ListItem>
@@ -82,7 +82,7 @@ const Home = () => {
                         <AddchartOutlined color={"secondary"}/>
                       </ListItemIcon>
                       <ListItemText>
-                        Create and manage projects and tasks in a company
+                        Create and manage projects and tasks in a group
                       </ListItemText>
                     </ListItem>
                   </List>

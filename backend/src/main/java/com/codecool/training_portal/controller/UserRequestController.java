@@ -1,9 +1,9 @@
 package com.codecool.training_portal.controller;
 
-import com.codecool.training_portal.dto.requests.CompanyJoinRequestResponseDto;
+import com.codecool.training_portal.dto.requests.GroupJoinRequestResponseDto;
 import com.codecool.training_portal.dto.requests.ProjectJoinRequestResponseDto;
-import com.codecool.training_portal.service.company.CompanyRequestService;
-import com.codecool.training_portal.service.company.project.ProjectRequestService;
+import com.codecool.training_portal.service.group.GroupRequestService;
+import com.codecool.training_portal.service.group.project.ProjectRequestService;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,18 +21,18 @@ import java.util.Map;
 @RequestMapping("/api/v1/user/")
 @RequiredArgsConstructor
 public class UserRequestController {
-  private final CompanyRequestService companyRequestService;
+    private final GroupRequestService groupRequestService;
   private final ProjectRequestService projectRequestService;
 
-  @GetMapping("/company-requests")
+    @GetMapping("/group-requests")
   public ResponseEntity<?> getJoinRequestsOfUser() {
-    List<CompanyJoinRequestResponseDto> joinRequests = companyRequestService.getOwnJoinRequests();
+        List<GroupJoinRequestResponseDto> joinRequests = groupRequestService.getOwnJoinRequests();
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", joinRequests));
   }
 
-  @DeleteMapping("/company-requests/{requestId}")
+    @DeleteMapping("/group-requests/{requestId}")
   public ResponseEntity<?> deleteOwnJoinRequest(@PathVariable @Min(1) Long requestId) {
-    companyRequestService.deleteOwnJoinRequestById(requestId);
+        groupRequestService.deleteOwnJoinRequestById(requestId);
     return ResponseEntity.status(HttpStatus.CREATED).body(
       Map.of("message", "Request deleted successfully"));
   }

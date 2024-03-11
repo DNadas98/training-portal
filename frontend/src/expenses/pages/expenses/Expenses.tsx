@@ -14,7 +14,7 @@ import {ExpenseAddUpdateRequestDto} from "../../dto/ExpenseAddUpdateRequestDto.t
 
 export default function Expenses() {
   const {loading: permissionsLoading, projectPermissions, taskPermissions} = usePermissions();
-  const companyId = useParams()?.companyId;
+  const groupId = useParams()?.groupId;
   const projectId = useParams()?.projectId;
   const taskId = useParams()?.taskId;
   const [expensesLoading, setExpensesLoading] = useState<boolean>(true);
@@ -39,7 +39,7 @@ export default function Expenses() {
     try {
       setExpensesLoading(true);
       const response = await authJsonFetch({
-        path: `companies/${companyId}/projects/${projectId}/tasks/${taskId}/expenses`
+        path: `groups/${groupId}/projects/${projectId}/tasks/${taskId}/expenses`
       });
       if (!response?.status || response.status > 399 || !response?.data) {
         setExpenses([]);
@@ -55,8 +55,8 @@ export default function Expenses() {
   }
 
   useEffect(() => {
-    if (!idIsValid(companyId) || !idIsValid(projectId) || !idIsValid(taskId)) {
-      handleErrorNotification("The provided company, project or task ID is invalid");
+    if (!idIsValid(groupId) || !idIsValid(projectId) || !idIsValid(taskId)) {
+      handleErrorNotification("The provided group, project or task ID is invalid");
       setExpenses([]);
       setExpensesLoading(false);
       return;
@@ -71,7 +71,7 @@ export default function Expenses() {
       setExpensesLoading(true);
       const updateDto = getRequestDto(event.currentTarget);
       const response = await authJsonFetch({
-        path: `companies/${companyId}/projects/${projectId}/tasks/${taskId}/expenses/${expenseId}`,
+        path: `groups/${groupId}/projects/${projectId}/tasks/${taskId}/expenses/${expenseId}`,
         method: "PUT",
         body: updateDto
       });
@@ -97,7 +97,7 @@ export default function Expenses() {
 
     return {
       name: formData.get('name') as string,
-      price: formData.get('price') as number,
+      price: formData.get('price') as unknown as number,
       paid: formData.has("paid") as boolean
     }
   }
@@ -108,7 +108,7 @@ export default function Expenses() {
       setAddDisabled(true);
       const addDto = getRequestDto(event.currentTarget);
       const response = await authJsonFetch({
-        path: `companies/${companyId}/projects/${projectId}/tasks/${taskId}/expenses`,
+        path: `groups/${groupId}/projects/${projectId}/tasks/${taskId}/expenses`,
         method: "POST",
         body: addDto
       });
@@ -132,7 +132,7 @@ export default function Expenses() {
     try {
       setExpensesLoading(true);
       const response = await authJsonFetch({
-        path: `companies/${companyId}/projects/${projectId}/tasks/${taskId}/expenses/${expenseId}`,
+        path: `groups/${groupId}/projects/${projectId}/tasks/${taskId}/expenses/${expenseId}`,
         method: "DELETE"
       });
       if (!response || response.error || response?.status > 399 || !response.message) {
@@ -155,7 +155,7 @@ export default function Expenses() {
     return <LoadingSpinner/>;
   } else if (!projectPermissions?.length) {
     handleErrorNotification("Access Denied: Insufficient permissions");
-    navigate(`/companies/${companyId}/projects`, {replace: true});
+    navigate(`/groups/${groupId}/projects`, {replace: true});
     return <></>;
   }
 
@@ -163,7 +163,7 @@ export default function Expenses() {
     <div>
       <h3>Expenses</h3>
       <p>Task permissions: {taskPermissions.join(", ")}</p>
-      {taskPermissions.includes(PermissionType.TASK_ASSIGNED_EMPLOYEE) &&
+      {taskPermissions.includes(PermissionType.TASK_ASSIGNED_MEMBER) &&
           <form onSubmit={(event) => {
             handleAdd(event).then();
           }}>
@@ -178,7 +178,7 @@ export default function Expenses() {
         ? <ul>
           {expenses.map(expense => {
             return (<li key={expense.expenseId}>
-              {taskPermissions.includes(PermissionType.TASK_ASSIGNED_EMPLOYEE)
+              {taskPermissions.includes(PermissionType.TASK_ASSIGNED_MEMBER)
                 ?<div><form onSubmit={(event) => {
                   handleUpdate(event, expense.expenseId).then();
                 }}>
@@ -205,7 +205,7 @@ export default function Expenses() {
         </ul>
         : <p>There aren't any expenses added to this task yet.</p>}
       <button onClick={()=>{
-        navigate(`/companies/${companyId}/projects/${projectId}/tasks/${taskId}`)
+        navigate(`/groups/${groupId}/projects/${projectId}/tasks/${taskId}`)
       }}>Back</button>
     </div>
   )

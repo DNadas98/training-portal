@@ -42,15 +42,15 @@ React and Material UI.
 
 - [x] {`GlobalRole.USER`} view list of companies they are member of
 - [x] {`GlobalRole.USER`} view list of companies they can request to join
-- [x] {`GlobalRole.USER`} add new company
-- [x] {`GlobalRole.USER`} request to join company
+- [x] {`GlobalRole.USER`} add new userGroup
+- [x] {`GlobalRole.USER`} request to join userGroup
 
 #### /companies/`:companyId`
 
-- [ ] {`GlobalRole.USER && PermissionType.COMPANY_EMPLOYEE`} view company details
-- [ ] {`GlobalRole.USER && PermissionType.COMPANY_ADMIN`} update company details
-  - should maybe be company editor (company name and description update)
-- [ ] {`GlobalRole.USER && PermissionType.COMPANY_ADMIN`} remove company
+- [ ] {`GlobalRole.USER && PermissionType.COMPANY_EMPLOYEE`} view userGroup details
+- [ ] {`GlobalRole.USER && PermissionType.COMPANY_ADMIN`} update userGroup details
+  - should maybe be userGroup editor (userGroup name and description update)
+- [ ] {`GlobalRole.USER && PermissionType.COMPANY_ADMIN`} remove userGroup
 
 #### /companies/`:companyId`/employees
 
@@ -60,22 +60,22 @@ React and Material UI.
 
 #### /companies/`:companyId`/editors
 
-- [ ] {`GlobalRole.USER && PermissionType.COMPANY_ADMIN`} view list of company editors
-- [ ] {`GlobalRole.USER && PermissionType.COMPANY_ADMIN`} add company editor
-- [ ] {`GlobalRole.USER && PermissionType.COMPANY_ADMIN`} remove company editor
+- [ ] {`GlobalRole.USER && PermissionType.COMPANY_ADMIN`} view list of userGroup editors
+- [ ] {`GlobalRole.USER && PermissionType.COMPANY_ADMIN`} add userGroup editor
+- [ ] {`GlobalRole.USER && PermissionType.COMPANY_ADMIN`} remove userGroup editor
 
 #### /companies/`:companyId`/admins
 
-- [ ] {`GlobalRole.USER && PermissionType.COMPANY_ADMIN`} view list of company admins
-- [ ] {`GlobalRole.USER && PermissionType.COMPANY_ADMIN`} add company admin
-- [ ] {`GlobalRole.USER && PermissionType.COMPANY_ADMIN`} remove company admin
+- [ ] {`GlobalRole.USER && PermissionType.COMPANY_ADMIN`} view list of userGroup admins
+- [ ] {`GlobalRole.USER && PermissionType.COMPANY_ADMIN`} add userGroup admin
+- [ ] {`GlobalRole.USER && PermissionType.COMPANY_ADMIN`} remove userGroup admin
 
 #### /companies/`:companyId`/requests
 
 - [ ] {`GlobalRole.USER && PermissionType.COMPANY_ADMIN`} view list of join requests for
-  company
+  userGroup
 - [ ] {`GlobalRole.USER && PermissionType.COMPANY_ADMIN`} accept or decline join request for
-  company
+  userGroup
 
 #### /companies/`:companyId`/projects
 
@@ -164,4 +164,4 @@ React and Material UI.
 #### /admin/companies
 
 - [x] {`GlobalRole.ADMIN`} view list of all companies
-- [ ] {`GlobalRole.ADMIN`} remove a company
+- [ ] {`GlobalRole.ADMIN`} remove a userGroup

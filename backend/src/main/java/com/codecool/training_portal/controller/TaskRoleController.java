@@ -1,7 +1,7 @@
 package com.codecool.training_portal.controller;
 
 import com.codecool.training_portal.dto.user.UserResponsePublicDto;
-import com.codecool.training_portal.service.company.project.task.TaskRoleService;
+import com.codecool.training_portal.service.group.project.task.TaskRoleService;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,38 +14,38 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/companies/{companyId}/projects/{projectId}/tasks/{taskId}")
+@RequestMapping("/api/v1/groups/{groupId}/projects/{projectId}/tasks/{taskId}")
 public class TaskRoleController {
 
 
   private final TaskRoleService taskRoleService;
 
-  @GetMapping("employees")
-  public ResponseEntity<?> getEmployees(
-    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId,
+    @GetMapping("members")
+    public ResponseEntity<?> getMembers(
+            @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId,
     @PathVariable @Min(1) Long taskId) {
-    List<UserResponsePublicDto> employees = taskRoleService.getAssignedEmployees(
-      companyId,
+        List<UserResponsePublicDto> members = taskRoleService.getAssignedMembers(
+                groupId,
       projectId,
       taskId);
-    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", employees));
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", members));
   }
 
-  @PostMapping("employees")
+    @PostMapping("members")
   public ResponseEntity<?> addSelf(
-    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId,
+            @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId,
     @PathVariable @Min(1) Long taskId) {
-    taskRoleService.assignSelf(companyId, projectId, taskId);
+        taskRoleService.assignSelf(groupId, projectId, taskId);
     return ResponseEntity.status(HttpStatus.OK).body(
-      Map.of("message", "Employee added successfully"));
+            Map.of("message", "Member added successfully"));
   }
 
-  @DeleteMapping("employees")
+    @DeleteMapping("members")
   public ResponseEntity<?> removeSelf(
-    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId,
+            @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId,
     @PathVariable @Min(1) Long taskId) {
-    taskRoleService.removeSelf(companyId, projectId, taskId);
+        taskRoleService.removeSelf(groupId, projectId, taskId);
     return ResponseEntity.status(HttpStatus.OK).body(
-      Map.of("message", "Employee removed successfully"));
+            Map.of("message", "Member removed successfully"));
   }
 }

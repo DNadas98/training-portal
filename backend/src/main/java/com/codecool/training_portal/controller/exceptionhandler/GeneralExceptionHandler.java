@@ -4,16 +4,16 @@ import com.codecool.training_portal.exception.auth.InvalidCredentialsException;
 import com.codecool.training_portal.exception.auth.UnauthorizedException;
 import com.codecool.training_portal.exception.auth.UserAlreadyExistsException;
 import com.codecool.training_portal.exception.auth.UserNotFoundException;
-import com.codecool.training_portal.exception.company.CompanyJoinRequestNotFoundException;
-import com.codecool.training_portal.exception.company.CompanyNotFoundException;
-import com.codecool.training_portal.exception.company.DuplicateCompanyJoinRequestException;
-import com.codecool.training_portal.exception.company.UserAlreadyInCompanyException;
-import com.codecool.training_portal.exception.company.project.DuplicateProjectJoinRequestException;
-import com.codecool.training_portal.exception.company.project.ProjectJoinRequestNotFoundException;
-import com.codecool.training_portal.exception.company.project.ProjectNotFoundException;
-import com.codecool.training_portal.exception.company.project.UserAlreadyInProjectException;
-import com.codecool.training_portal.exception.company.project.task.TaskNotFoundException;
-import com.codecool.training_portal.exception.company.project.task.expense.ExpenseNotFoundException;
+import com.codecool.training_portal.exception.group.DuplicateGroupJoinRequestException;
+import com.codecool.training_portal.exception.group.GroupJoinRequestNotFoundException;
+import com.codecool.training_portal.exception.group.GroupNotFoundException;
+import com.codecool.training_portal.exception.group.UserAlreadyInGroupException;
+import com.codecool.training_portal.exception.group.project.DuplicateProjectJoinRequestException;
+import com.codecool.training_portal.exception.group.project.ProjectJoinRequestNotFoundException;
+import com.codecool.training_portal.exception.group.project.ProjectNotFoundException;
+import com.codecool.training_portal.exception.group.project.UserAlreadyInProjectException;
+import com.codecool.training_portal.exception.group.project.task.TaskNotFoundException;
+import com.codecool.training_portal.exception.group.project.task.expense.ExpenseNotFoundException;
 import com.codecool.training_portal.exception.verification.VerificationTokenAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +32,11 @@ public class GeneralExceptionHandler {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   // 400
 
-  @ExceptionHandler(UserAlreadyInCompanyException.class)
-  public ResponseEntity<?> handleUserAlreadyInCompany(UserAlreadyInCompanyException e) {
+    @ExceptionHandler(UserAlreadyInGroupException.class)
+    public ResponseEntity<?> handleUserAlreadyInGroup(UserAlreadyInGroupException e) {
     logger.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-      Map.of("error", "User is already employee of the requested company"));
+            Map.of("error", "User is already member of the requested group"));
   }
 
   @ExceptionHandler(UserAlreadyInProjectException.class)
@@ -93,18 +93,18 @@ public class GeneralExceptionHandler {
       Map.of("error", "Application user was not found"));
   }
 
-  @ExceptionHandler(CompanyNotFoundException.class)
-  public ResponseEntity<?> handleCompanyNotFound(CompanyNotFoundException e) {
+    @ExceptionHandler(GroupNotFoundException.class)
+    public ResponseEntity<?> handleGroupNotFound(GroupNotFoundException e) {
     logger.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-      Map.of("error", "The requested company was not found"));
+            Map.of("error", "The requested group was not found"));
   }
 
-  @ExceptionHandler(CompanyJoinRequestNotFoundException.class)
-  public ResponseEntity<?> handleCompanyJoinRequestNotFound(CompanyJoinRequestNotFoundException e) {
+    @ExceptionHandler(GroupJoinRequestNotFoundException.class)
+    public ResponseEntity<?> handleGroupJoinRequestNotFound(GroupJoinRequestNotFoundException e) {
     logger.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-      Map.of("error", "Company join request with the provided details was not found"));
+            Map.of("error", "UserGroup join request with the provided details was not found"));
   }
 
   @ExceptionHandler(ProjectNotFoundException.class)
@@ -138,12 +138,12 @@ public class GeneralExceptionHandler {
 
   // 409
 
-  @ExceptionHandler(DuplicateCompanyJoinRequestException.class)
-  public ResponseEntity<?> handleDuplicateCompanyJoinRequest(
-    DuplicateCompanyJoinRequestException e) {
+    @ExceptionHandler(DuplicateGroupJoinRequestException.class)
+    public ResponseEntity<?> handleDuplicateGroupJoinRequest(
+            DuplicateGroupJoinRequestException e) {
     logger.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.CONFLICT).body(
-      Map.of("error", "Company join request already exists with the provided details"));
+            Map.of("error", "UserGroup join request already exists with the provided details"));
   }
 
   @ExceptionHandler(DuplicateProjectJoinRequestException.class)

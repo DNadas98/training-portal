@@ -2,20 +2,20 @@ package com.codecool.training_portal.service.populate;
 
 import com.codecool.training_portal.model.auth.ApplicationUser;
 import com.codecool.training_portal.model.auth.ApplicationUserDao;
-import com.codecool.training_portal.model.company.Company;
-import com.codecool.training_portal.model.company.CompanyDao;
-import com.codecool.training_portal.model.company.project.Project;
-import com.codecool.training_portal.model.company.project.ProjectDao;
-import com.codecool.training_portal.model.company.project.task.Importance;
-import com.codecool.training_portal.model.company.project.task.Task;
-import com.codecool.training_portal.model.company.project.task.TaskDao;
-import com.codecool.training_portal.model.company.project.task.TaskStatus;
-import com.codecool.training_portal.model.company.project.task.expense.Expense;
-import com.codecool.training_portal.model.company.project.task.expense.ExpenseDao;
-import com.codecool.training_portal.model.request.CompanyJoinRequest;
-import com.codecool.training_portal.model.request.CompanyJoinRequestDao;
+import com.codecool.training_portal.model.group.UserGroup;
+import com.codecool.training_portal.model.group.UserGroupDao;
+import com.codecool.training_portal.model.group.project.Project;
+import com.codecool.training_portal.model.group.project.ProjectDao;
+import com.codecool.training_portal.model.group.project.task.Importance;
+import com.codecool.training_portal.model.group.project.task.Task;
+import com.codecool.training_portal.model.group.project.task.TaskDao;
+import com.codecool.training_portal.model.group.project.task.TaskStatus;
+import com.codecool.training_portal.model.group.project.task.expense.Expense;
+import com.codecool.training_portal.model.group.project.task.expense.ExpenseDao;
 import com.codecool.training_portal.model.request.ProjectJoinRequest;
 import com.codecool.training_portal.model.request.ProjectJoinRequestDao;
+import com.codecool.training_portal.model.request.UserGroupJoinRequest;
+import com.codecool.training_portal.model.request.UserGroupJoinRequestDao;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,8 +36,8 @@ import java.util.List;
 public class PopulateService {
   private final ApplicationUserDao applicationUserDao;
   private final PasswordEncoder passwordEncoder;
-  private final CompanyDao companyDao;
-  private final CompanyJoinRequestDao companyJoinRequestDao;
+    private final UserGroupDao userGroupDao;
+    private final UserGroupJoinRequestDao userGroupJoinRequestDao;
   private final ProjectDao projectDao;
   private final ProjectJoinRequestDao projectJoinRequestDao;
   private final TaskDao taskDao;
@@ -51,26 +51,26 @@ public class PopulateService {
   @Transactional(rollbackFor = Exception.class)
   public void populate() {
     List<ApplicationUser> testUsers = createApplicationUsers(5);
-    Company company = new Company("Test company 1", "Test company 1 description", testUsers.get(0));
-    company.addEmployee(testUsers.get(1));
-    company.addEditor(testUsers.get(1));
-    company.addEmployee(testUsers.get(2));
-    company.addEmployee(testUsers.get(3));
-    companyDao.save(company);
-    companyJoinRequestDao.save(new CompanyJoinRequest(company, testUsers.get(4)));
+      UserGroup userGroup = new UserGroup("Test group 1", "Test group 1 description", testUsers.get(0));
+      userGroup.addMember(testUsers.get(1));
+      userGroup.addEditor(testUsers.get(1));
+      userGroup.addMember(testUsers.get(2));
+      userGroup.addMember(testUsers.get(3));
+      userGroupDao.save(userGroup);
+      userGroupJoinRequestDao.save(new UserGroupJoinRequest(userGroup, testUsers.get(4)));
 
     Project project = new Project("Test project 1", "Test project 1 description", Instant.now(),
-      Instant.now().plusSeconds(60 * 60), testUsers.get(0), company);
+            Instant.now().plusSeconds(60 * 60), testUsers.get(0), userGroup);
     project.addEditor(testUsers.get(1));
-    project.assignEmployee(testUsers.get(2));
+      project.assignMember(testUsers.get(2));
     projectDao.save(project);
     projectJoinRequestDao.save(new ProjectJoinRequest(project, testUsers.get(3)));
 
     Task task = new Task("Test task 1", "Test task 1 description", Importance.NICE_TO_HAVE, 3,
       Instant.now(), Instant.now().plusSeconds(60 * 60), TaskStatus.IN_PROGRESS, project,
       testUsers.get(0));
-    task.assignEmployee(testUsers.get(1));
-    task.assignEmployee(testUsers.get(2));
+      task.assignMember(testUsers.get(1));
+      task.assignMember(testUsers.get(2));
     taskDao.save(task);
 
     expenseDao.save(new Expense("Test expense 1", 11.1111, false, task));

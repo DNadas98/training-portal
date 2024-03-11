@@ -1,7 +1,7 @@
 package com.codecool.training_portal.model.request;
 
 import com.codecool.training_portal.model.auth.ApplicationUser;
-import com.codecool.training_portal.model.company.project.Project;
+import com.codecool.training_portal.model.group.project.Project;
 import jakarta.persistence.*;
 import lombok.*;
 

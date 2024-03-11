@@ -1,10 +1,10 @@
 package com.codecool.training_portal.model.auth;
 
-import com.codecool.training_portal.model.company.Company;
-import com.codecool.training_portal.model.company.project.Project;
-import com.codecool.training_portal.model.company.project.task.Task;
-import com.codecool.training_portal.model.request.CompanyJoinRequest;
+import com.codecool.training_portal.model.group.UserGroup;
+import com.codecool.training_portal.model.group.project.Project;
+import com.codecool.training_portal.model.group.project.task.Task;
 import com.codecool.training_portal.model.request.ProjectJoinRequest;
+import com.codecool.training_portal.model.request.UserGroupJoinRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,13 +54,13 @@ public class ApplicationUser implements UserDetails {
   private Set<GlobalRole> globalRoles = new HashSet<>();
 
   @ManyToMany(mappedBy = "admins", fetch = FetchType.LAZY)
-  private Set<Company> adminCompanies = new HashSet<>();
+  private Set<UserGroup> adminUserGroups = new HashSet<>();
 
   @ManyToMany(mappedBy = "editors", fetch = FetchType.LAZY)
-  private Set<Company> editorCompanies = new HashSet<>();
+  private Set<UserGroup> editorUserGroups = new HashSet<>();
 
-  @ManyToMany(mappedBy = "employees", fetch = FetchType.LAZY)
-  private Set<Company> employeeCompanies = new HashSet<>();
+    @ManyToMany(mappedBy = "members", fetch = FetchType.LAZY)
+    private Set<UserGroup> memberUserGroups = new HashSet<>();
 
   @ManyToMany(mappedBy = "admins", fetch = FetchType.LAZY)
   private Set<Project> adminProjects = new HashSet<>();
@@ -68,14 +68,14 @@ public class ApplicationUser implements UserDetails {
   @ManyToMany(mappedBy = "editors", fetch = FetchType.LAZY)
   private Set<Project> editorProjects = new HashSet<>();
 
-  @ManyToMany(mappedBy = "assignedEmployees", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "assignedMembers", fetch = FetchType.LAZY)
   private Set<Project> assignedProjects = new HashSet<>();
 
-  @ManyToMany(mappedBy = "assignedEmployees", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "assignedMembers", fetch = FetchType.LAZY)
   private Set<Task> assignedTasks = new HashSet<>();
 
   @OneToMany(mappedBy = "applicationUser", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-  private Set<CompanyJoinRequest> joinRequests = new HashSet<>();
+  private Set<UserGroupJoinRequest> joinRequests = new HashSet<>();
 
   @OneToMany(mappedBy = "applicationUser", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
   private Set<ProjectJoinRequest> projectJoinRequests = new HashSet<>();
@@ -212,15 +212,15 @@ public class ApplicationUser implements UserDetails {
 
   @PreRemove
   private void preRemove() {
-    // Disassociate from Company entities
-    for (Company company : new HashSet<>(adminCompanies)) {
-      company.removeAdmin(this);
+      // Disassociate from UserGroup entities
+      for (UserGroup userGroup : new HashSet<>(adminUserGroups)) {
+          userGroup.removeAdmin(this);
     }
-    for (Company company : new HashSet<>(editorCompanies)) {
-      company.removeEditor(this);
+      for (UserGroup userGroup : new HashSet<>(editorUserGroups)) {
+          userGroup.removeEditor(this);
     }
-    for (Company company : new HashSet<>(employeeCompanies)) {
-      company.removeEmployee(this);
+      for (UserGroup userGroup : new HashSet<>(memberUserGroups)) {
+          userGroup.removeMember(this);
     }
 
     // Disassociate from Project entities
@@ -231,12 +231,12 @@ public class ApplicationUser implements UserDetails {
       project.removeEditor(this);
     }
     for (Project project : new HashSet<>(assignedProjects)) {
-      project.removeEmployee(this);
+        project.removeMember(this);
     }
 
     // Disassociate from Task entities
     for (Task task : new HashSet<>(assignedTasks)) {
-      task.removeEmployee(this);
+        task.removeMember(this);
     }
   }
 }

@@ -1,9 +1,9 @@
 package com.codecool.training_portal.controller;
 
 import com.codecool.training_portal.model.auth.PermissionType;
-import com.codecool.training_portal.service.company.CompanyRoleService;
-import com.codecool.training_portal.service.company.project.ProjectRoleService;
-import com.codecool.training_portal.service.company.project.task.TaskRoleService;
+import com.codecool.training_portal.service.group.GroupRoleService;
+import com.codecool.training_portal.service.group.project.ProjectRoleService;
+import com.codecool.training_portal.service.group.project.task.TaskRoleService;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,32 +20,32 @@ import java.util.Set;
 @RequestMapping("/api/v1/user/permissions")
 @RequiredArgsConstructor
 public class UserPermissionController {
-  private final CompanyRoleService companyRoleService;
+    private final GroupRoleService groupRoleService;
   private final ProjectRoleService projectRoleService;
   private final TaskRoleService taskRoleService;
 
-  @GetMapping("/companies/{companyId}")
-  public ResponseEntity<?> getOwnPermissionsForCompany(@PathVariable @Min(1) Long companyId) {
-    Set<PermissionType> permissions = companyRoleService.getUserPermissionsForCompany(companyId);
+    @GetMapping("/groups/{groupId}")
+    public ResponseEntity<?> getOwnPermissionsForGroup(@PathVariable @Min(1) Long groupId) {
+        Set<PermissionType> permissions = groupRoleService.getUserPermissionsForGroup(groupId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", permissions));
   }
 
-  @GetMapping("/companies/{companyId}/projects/{projectId}")
+    @GetMapping("/groups/{groupId}/projects/{projectId}")
   public ResponseEntity<?> getOwnPermissionsForProject(
-    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId
+            @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId
   ) {
     Set<PermissionType> permissions = projectRoleService.getUserPermissionsForProject(
-      companyId, projectId);
+            groupId, projectId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", permissions));
   }
 
-  @GetMapping("/companies/{companyId}/projects/{projectId}/tasks/{taskId}")
+    @GetMapping("/groups/{groupId}/projects/{projectId}/tasks/{taskId}")
   public ResponseEntity<?> getOwnPermissionsForTask(
-    @PathVariable @Min(1) Long companyId, @PathVariable @Min(1) Long projectId,
+            @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId,
     @PathVariable @Min(1) Long taskId
   ) {
     Set<PermissionType> permissions = taskRoleService.getUserPermissionsForTask(
-      companyId, projectId, taskId);
+            groupId, projectId, taskId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", permissions));
   }
 }

@@ -1,9 +1,9 @@
 package com.codecool.training_portal.service.converter;
 
-import com.codecool.training_portal.dto.company.project.ProjectResponsePrivateDTO;
-import com.codecool.training_portal.dto.company.project.ProjectResponsePublicDTO;
+import com.codecool.training_portal.dto.group.project.ProjectResponsePrivateDTO;
+import com.codecool.training_portal.dto.group.project.ProjectResponsePublicDTO;
 import com.codecool.training_portal.dto.requests.ProjectJoinRequestResponseDto;
-import com.codecool.training_portal.model.company.project.Project;
+import com.codecool.training_portal.model.group.project.Project;
 import com.codecool.training_portal.model.request.ProjectJoinRequest;
 import com.codecool.training_portal.service.datetime.DateTimeService;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +20,12 @@ public class ProjectConverter {
   private final DateTimeService dateTimeService;
 
   public ProjectResponsePublicDTO getProjectResponsePublicDto(Project project) {
-    return new ProjectResponsePublicDTO(project.getCompany().getId(), project.getId(),
+    return new ProjectResponsePublicDTO(project.getUserGroup().getId(), project.getId(),
       project.getName(), project.getDescription());
   }
 
   public ProjectResponsePrivateDTO getProjectResponsePrivateDto(Project project) {
-    return new ProjectResponsePrivateDTO(project.getCompany().getId(), project.getId(),
+    return new ProjectResponsePrivateDTO(project.getUserGroup().getId(), project.getId(),
       project.getName(), project.getDescription(),
       dateTimeService.toDisplayedDate(project.getStartDate()),
       dateTimeService.toDisplayedDate(project.getDeadline()),

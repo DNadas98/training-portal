@@ -26,8 +26,8 @@ public class SecurityFilterChainConfig {
       .securityMatcher("/api/v1/**")
       .authorizeHttpRequests(authorizeRequestsConfigurer -> authorizeRequestsConfigurer
         .requestMatchers("/api/v1/admin", "/api/v1/admin/**").hasAuthority(GlobalRole.ADMIN.name())
-        .requestMatchers("/api/v1/user", "/api/v1/user/**", "/api/v1/companies",
-          "/api/v1/companies/**").hasAuthority(GlobalRole.USER.name())
+        .requestMatchers("/api/v1/user", "/api/v1/user/**", "/api/v1/groups",
+          "/api/v1/groups/**").hasAuthority(GlobalRole.USER.name())
         .anyRequest().permitAll())
       .csrf(AbstractHttpConfigurer::disable)
       .formLogin(AbstractHttpConfigurer::disable)

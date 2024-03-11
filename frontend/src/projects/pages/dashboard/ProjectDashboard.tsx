@@ -15,7 +15,7 @@ import {ProjectResponsePrivateDto} from "../../dto/ProjectResponsePrivateDto.ts"
 export default function ProjectDashboard() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
   const dialog = useDialog();
-  const companyId = useParams()?.companyId;
+  const groupId = useParams()?.groupId;
   const projectId = useParams()?.projectId;
   const [projectLoading, setProjectLoading] = useState(true);
   const [project, setProject] = useState<ProjectResponsePrivateDto | undefined>(undefined);
@@ -38,22 +38,23 @@ export default function ProjectDashboard() {
   async function loadProject() {
     try {
       setProjectLoading(true);
-      if (!idIsValid(companyId) || !idIsValid(projectId)) {
-        setProjectError("The provided company or project ID is invalid");
+      if (!idIsValid(groupId) || !idIsValid(projectId)) {
+        setProjectError("The provided group or project ID is invalid");
         setProjectLoading(false);
         return
       }
       const response = await authJsonFetch({
-        path: `companies/${companyId}/projects/${projectId}`
+        path: `groups/${groupId}/projects/${projectId}`
       });
       if (!response?.status || response.status > 404 || !response?.data) {
         setProjectError(response?.error ?? `Failed to load project`);
         return handleErrorNotification(response?.error);
       }
-      const projectData = {
+      // @ts-ignore
+        const projectData = {
         ...response.data,
-        startDate: new Date(response.data?.startDate),
-        deadline: new Date(response.data?.deadline),
+        startDate: new Date(response.data.startDate as string),
+        deadline: new Date(response.data.deadline as string),
       }
       setProject(projectData as ProjectResponsePrivateDto);
     } catch (e) {
@@ -73,12 +74,12 @@ export default function ProjectDashboard() {
     try {
       setProjectLoading(true);
       if (!idIsValid) {
-        setProjectError("The provided company or project ID is invalid");
+        setProjectError("The provided group or project ID is invalid");
         setProjectLoading(false);
         return
       }
       const response = await authJsonFetch({
-        path: `companies/${companyId}/projects/${projectId}`, method: "DELETE"
+        path: `groups/${groupId}/projects/${projectId}`, method: "DELETE"
       });
       if (!response?.status || response.status > 404 || !response?.message) {
         return handleErrorNotification(response?.error ?? "Failed to remove project data");
@@ -89,7 +90,7 @@ export default function ProjectDashboard() {
         type: "success", vertical: "top", horizontal: "center",
         message: response.message ?? "All project data has been removed successfully"
       });
-      navigate(`/companies/${companyId}`, {replace: true});
+      navigate(`/groups/${groupId}`, {replace: true});
     } catch (e) {
       handleErrorNotification("Failed to remove project data");
     } finally {
@@ -105,18 +106,18 @@ export default function ProjectDashboard() {
   }
 
   function handleJoinRequestClick() {
-    navigate(`/companies/${companyId}/projects/${projectId}/requests`);
+    navigate(`/groups/${groupId}/projects/${projectId}/requests`);
   }
 
   function handleTasksClick() {
-    navigate(`/companies/${companyId}/projects/${projectId}/tasks`);
+    navigate(`/groups/${groupId}/projects/${projectId}/tasks`);
   }
 
   if (permissionsLoading || projectLoading) {
     return <LoadingSpinner/>;
   } else if ((!projectPermissions?.length) || !project) {
     handleErrorNotification(projectError ?? "Access Denied: Insufficient permissions");
-    navigate(`/companies/${companyId}/projects`, {replace: true});
+    navigate(`/groups/${groupId}/projects`, {replace: true});
     return <></>;
   }
   return (
@@ -132,7 +133,7 @@ export default function ProjectDashboard() {
       {(projectPermissions.includes(PermissionType.PROJECT_EDITOR))
         && <div>
               <button onClick={() => {
-                navigate(`/companies/${companyId}/projects/${projectId}/update`);
+                navigate(`/groups/${groupId}/projects/${projectId}/update`);
               }}>Update project details
               </button>
           </div>
@@ -142,7 +143,7 @@ export default function ProjectDashboard() {
               <button onClick={handleDeleteClick}>Remove project</button>
           </div>
       }
-      <button onClick={() => navigate(`/companies/${companyId}/projects`)}>Back</button>
+      <button onClick={() => navigate(`/groups/${groupId}/projects`)}>Back</button>
     </div>
   )
 }

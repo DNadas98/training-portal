@@ -19,7 +19,7 @@ export default function UpdateProject() {
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
   const navigate = useNavigate();
-  const companyId = useParams()?.companyId;
+  const groupId = useParams()?.groupId;
   const projectId = useParams()?.projectId;
   const [projectLoading, setProjectLoading] = useState(true);
   const [project, setProject] = useState<ProjectResponsePrivateDto | undefined>(undefined);
@@ -44,21 +44,21 @@ export default function UpdateProject() {
   async function loadProject() {
     try {
       setProjectLoading(true);
-      if (!idIsValid(companyId) || !idIsValid(projectId)) {
-        setProjectError("The provided company or project ID is invalid");
+      if (!idIsValid(groupId) || !idIsValid(projectId)) {
+        setProjectError("The provided group or project ID is invalid");
         setProjectLoading(false);
         return
       }
       const response = await authJsonFetch({
-        path: `companies/${companyId}/projects/${projectId}`
+        path: `groups/${groupId}/projects/${projectId}`
       });
       if (!response?.status || response.status > 404 || !response?.data) {
         return handleError(response?.error);
       }
       const projectData = {
         ...response.data,
-        startDate: new Date(response.data?.startDate),
-        deadline: new Date(response.data?.deadline)
+        startDate: new Date(response.data.startDate as string),
+        deadline: new Date(response.data.deadline as string)
       }
       setProject(projectData as ProjectResponsePrivateDto);
     } catch (e) {
@@ -76,7 +76,7 @@ export default function UpdateProject() {
 
   const updateProject = async (requestDto: ProjectCreateRequestDto) => {
     return await authJsonFetch({
-      path: `companies/${companyId}/projects/${projectId}`,
+      path: `groups/${groupId}/projects/${projectId}`,
       method: "PUT",
       body: requestDto
     });
@@ -108,7 +108,7 @@ export default function UpdateProject() {
         type: "success", vertical: "top", horizontal: "center",
         message: response.message ?? "Project details updated successfully"
       });
-      navigate(`/companies/${companyId}/projects/${projectId}`);
+      navigate(`/groups/${groupId}/projects/${projectId}`);
     } catch (e) {
       handleError();
     } finally {
@@ -121,7 +121,7 @@ export default function UpdateProject() {
     || !projectPermissions.includes(PermissionType.PROJECT_EDITOR)
     || !project) {
     handleError(projectErrorStatus ?? "Access Denied: Insufficient permissions");
-    navigate(`/companies/${companyId}/projects/${projectId}`, {replace: true});
+    navigate(`/groups/${groupId}/projects/${projectId}`, {replace: true});
     return <></>;
   }
   return <UpdateProjectForm onSubmit={handleSubmit}

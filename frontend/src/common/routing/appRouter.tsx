@@ -9,13 +9,13 @@ import UserLayout from "../../user/layout/UserLayout.tsx";
 import {userMenuProfileRoutes} from "../config/menu/userMenuProfileRoutes.tsx";
 import RegisterVerificationRedirect
   from "../../authentication/pages/redirect/RegisterVerificationRedirect.tsx";
-import CompanyDashboard from "../../companies/pages/dashboard/CompanyDashboard.tsx";
-import CompanyLayout from "../../companies/layout/CompanyLayout.tsx";
-import UpdateCompany from "../../companies/pages/update/UpdateCompany.tsx";
-import CompanyJoinRequests from "../../companies/pages/requests/CompanyJoinRequests.tsx";
+import GroupDashboard from "../../groups/pages/dashboard/GroupDashboard.tsx";
+import GroupLayout from "../../groups/layout/GroupLayout.tsx";
+import UpdateGroup from "../../groups/pages/update/UpdateGroup.tsx";
+import GroupJoinRequests from "../../groups/pages/requests/GroupJoinRequests.tsx";
 import Projects from "../../projects/pages/projects/Projects.tsx";
-import Companies from "../../companies/pages/companies/Companies.tsx";
-import AddCompany from "../../companies/pages/add/AddCompany.tsx";
+import Groups from "../../groups/pages/groups/Groups.tsx";
+import AddGroup from "../../groups/pages/add/AddGroup.tsx";
 import AddProject from "../../projects/pages/add/AddProject.tsx";
 import ProjectDashboard from "../../projects/pages/dashboard/ProjectDashboard.tsx";
 import UpdateProject from "../../projects/pages/update/UpdateProject.tsx";
@@ -67,62 +67,62 @@ const appRouter = createBrowserRouter([
       }
     ]
   },
-  /* companies */
+  /* groups */
   {
-    path: "/companies/",
+    path: "/groups/",
     element: <RequireAuthentication allowedRoles={[GlobalRole.USER]}/>,
     errorElement: <ErrorPage/>,
     children: [
       {
-        element: <CompanyLayout/>,
+        element: <GroupLayout/>,
         children: [
           {
-            path: "", element: <Companies/>
+            path: "", element: <Groups/>
           },
           {
-            path: "create", element: <AddCompany/>
+            path: "create", element: <AddGroup/>
           },
           {
-            path: ":companyId", element: <CompanyDashboard/>
+            path: ":groupId", element: <GroupDashboard/>
           },
           {
-            path: ":companyId/update", element: <UpdateCompany/>
+            path: ":groupId/update", element: <UpdateGroup/>
           },
           {
-            path: ":companyId/requests", element: <CompanyJoinRequests/>
+            path: ":groupId/requests", element: <GroupJoinRequests/>
           },
           {
-            path: ":companyId/projects", element: <Projects/>
+            path: ":groupId/projects", element: <Projects/>
           },
           {
-            path: ":companyId/projects/create", element: <AddProject/>
+            path: ":groupId/projects/create", element: <AddProject/>
           },
           {
-            path: ":companyId/projects/:projectId", element: <ProjectDashboard/>
+            path: ":groupId/projects/:projectId", element: <ProjectDashboard/>
           },
           {
-            path: ":companyId/projects/:projectId/update", element: <UpdateProject/>
+            path: ":groupId/projects/:projectId/update", element: <UpdateProject/>
           },
           {
-            path: ":companyId/projects/:projectId/requests",
+            path: ":groupId/projects/:projectId/requests",
             element: <ProjectJoinRequests/>
           },
           {
-            path: ":companyId/projects/:projectId/tasks", element: <Tasks/>
+            path: ":groupId/projects/:projectId/tasks", element: <Tasks/>
           },
           {
-            path: ":companyId/projects/:projectId/tasks/create", element: <AddTask/>
+            path: ":groupId/projects/:projectId/tasks/create", element: <AddTask/>
           },
           {
-            path: ":companyId/projects/:projectId/tasks/:taskId",
+            path: ":groupId/projects/:projectId/tasks/:taskId",
             element: <TaskDashboard/>
           },
           {
-            path: ":companyId/projects/:projectId/tasks/:taskId/update",
+            path: ":groupId/projects/:projectId/tasks/:taskId/update",
             element: <UpdateTask/>
           },
           {
-            path: ":companyId/projects/:projectId/tasks/:taskId/expenses",
+            path: ":groupId/projects/:projectId/tasks/:taskId/expenses",
             element: <Expenses/>
           },
           {

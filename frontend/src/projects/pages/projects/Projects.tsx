@@ -10,8 +10,8 @@ import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 
 export default function Projects() {
-  const {loading: permissionsLoading, companyPermissions} = usePermissions();
-  const companyId = useParams()?.companyId;
+  const {loading: permissionsLoading, groupPermissions} = usePermissions();
+  const groupId = useParams()?.groupId;
   const [projectsWithUserLoading, setProjectsWithUserLoading] = useState<boolean>(true);
   const [projectsWithUser, setProjectsWithUser] = useState<ProjectResponsePublicDto[]>([]);
   const [projectsWithoutUserLoading, setProjectsWithoutUserLoading] = useState<boolean>(true);
@@ -24,7 +24,7 @@ export default function Projects() {
   async function loadProjectsWithUser() {
     try {
       const response = await authJsonFetch({
-        path: `companies/${companyId}/projects?withUser=true`
+        path: `groups/${groupId}/projects?withUser=true`
       });
       if (!response?.status || response.status > 399 || !response?.data) {
         notification.openNotification({
@@ -44,7 +44,7 @@ export default function Projects() {
   async function loadProjectsWithoutUser() {
     try {
       const response = await authJsonFetch({
-        path: `companies/${companyId}/projects?withUser=false`
+        path: `groups/${groupId}/projects?withUser=false`
       });
       if (!response?.status || response.status > 399 || !response?.data) {
         notification.openNotification({
@@ -99,7 +99,7 @@ export default function Projects() {
     try {
       setActionButtonDisabled(true)
       const response = await authJsonFetch({
-        path: `companies/${companyId}/projects/${projectId}/requests`, method: "POST"
+        path: `groups/${groupId}/projects/${projectId}/requests`, method: "POST"
       });
       if (!response?.status || response.status > 399 || !response?.data) {
         notification.openNotification({
@@ -124,21 +124,21 @@ export default function Projects() {
   }
 
   const loadProjectDashboard = (projectId: number) => {
-    navigate(`/companies/${companyId}/projects/${projectId}`);
+    navigate(`/groups/${groupId}/projects/${projectId}`);
   }
 
   const handleAddButtonClick = () => {
-    navigate(`/companies/${companyId}/projects/create`);
+    navigate(`/groups/${groupId}/projects/create`);
   }
 
   if (permissionsLoading) {
     return <LoadingSpinner/>;
-  } else if (!companyPermissions?.length) {
+  } else if (!groupPermissions?.length) {
     notification.openNotification({
       type: "error", vertical: "top", horizontal: "center",
       message: "Access Denied: Insufficient permissions"
     });
-    navigate(`/companies/${companyId}`, {replace: true});
+    navigate(`/groups/${groupId}`, {replace: true});
     return <></>;
   }
   return (

@@ -15,7 +15,7 @@ import {TaskResponseDto} from "../../dto/TaskResponseDto.ts";
 export default function TaskDashboard() {
   const {loading: permissionsLoading,projectPermissions, taskPermissions} = usePermissions();
   const dialog = useDialog();
-  const companyId = useParams()?.companyId;
+  const groupId = useParams()?.groupId;
   const projectId = useParams()?.projectId;
   const taskId = useParams()?.taskId;
   const [taskLoading, setTaskLoading] = useState(true);
@@ -39,13 +39,13 @@ export default function TaskDashboard() {
   async function loadTask() {
     try {
       setTaskLoading(true);
-      if (!idIsValid(companyId) || !idIsValid(projectId) || !idIsValid(taskId)) {
-        setTaskError("The provided company, project or task ID is invalid");
+      if (!idIsValid(groupId) || !idIsValid(projectId) || !idIsValid(taskId)) {
+        setTaskError("The provided group, project or task ID is invalid");
         setTaskLoading(false);
         return
       }
       const response = await authJsonFetch({
-        path: `companies/${companyId}/projects/${projectId}/tasks/${taskId}`
+        path: `groups/${groupId}/projects/${projectId}/tasks/${taskId}`
       });
       if (!response?.status || response.status > 404 || !response?.data) {
         setTaskError(response?.error ?? `Failed to load task`);
@@ -53,8 +53,8 @@ export default function TaskDashboard() {
       }
       const taskData = {
         ...response.data,
-        startDate: new Date(response.data?.startDate),
-        deadline: new Date(response.data?.deadline),
+        startDate: new Date(response.data.startDate as string),
+        deadline: new Date(response.data.deadline as string),
       }
       setTask(taskData as TaskResponseDto);
     } catch (e) {
@@ -74,12 +74,12 @@ export default function TaskDashboard() {
     try {
       setTaskLoading(true);
       if (!idIsValid) {
-        setTaskError("The provided company or task ID is invalid");
+        setTaskError("The provided group or task ID is invalid");
         setTaskLoading(false);
         return
       }
       const response = await authJsonFetch({
-        path: `companies/${companyId}/projects/${projectId}/tasks/${taskId}`,
+        path: `groups/${groupId}/projects/${projectId}/tasks/${taskId}`,
         method: "DELETE"
       });
       if (!response?.status || response.status > 404 || !response?.message) {
@@ -91,7 +91,7 @@ export default function TaskDashboard() {
         type: "success", vertical: "top", horizontal: "center",
         message: response.message ?? "All task data has been removed successfully"
       });
-      navigate(`/companies/${companyId}/projects/${projectId}/tasks`, {replace: true});
+      navigate(`/groups/${groupId}/projects/${projectId}/tasks`, {replace: true});
     } catch (e) {
       handleErrorNotification("Failed to remove task data");
     } finally {
@@ -108,7 +108,7 @@ export default function TaskDashboard() {
 
   async function removeSelfFromTask() {
     const response = await authJsonFetch({
-      path: `companies/${companyId}/projects/${projectId}/tasks/${taskId}/employees`,
+      path: `groups/${groupId}/projects/${projectId}/tasks/${taskId}/members`,
       method: "DELETE"
     });
     if (!response?.message || !response?.status || response?.status > 399) {
@@ -119,7 +119,7 @@ export default function TaskDashboard() {
       type: "success", vertical: "top", horizontal: "center",
       message: response.message
     });
-    navigate(`/companies/${companyId}/projects/${projectId}/tasks`);
+    navigate(`/groups/${groupId}/projects/${projectId}/tasks`);
   }
 
   function handleRemoveSelfClick() {
@@ -130,14 +130,14 @@ export default function TaskDashboard() {
   }
 
   function handleExpensesClick() {
-    navigate(`/companies/${companyId}/projects/${projectId}/tasks/${taskId}/expenses`);
+    navigate(`/groups/${groupId}/projects/${projectId}/tasks/${taskId}/expenses`);
   }
 
   if (permissionsLoading || taskLoading) {
     return <LoadingSpinner/>;
   } else if (!projectPermissions?.length || !task) {
     handleErrorNotification(taskError ?? "Access Denied: Insufficient permissions");
-    navigate(`/companies/${companyId}/projects`, {replace: true});
+    navigate(`/groups/${groupId}/projects`, {replace: true});
     return <></>;
   }
   return (
@@ -152,10 +152,10 @@ export default function TaskDashboard() {
       <p>Task Permissions: {taskPermissions.join(", ")}</p>
       <button onClick={handleExpensesClick}>View expenses</button>
       <br/>
-      {(taskPermissions.includes(PermissionType.TASK_ASSIGNED_EMPLOYEE))
+      {(taskPermissions.includes(PermissionType.TASK_ASSIGNED_MEMBER))
         && <div>
               <button onClick={() => {
-                navigate(`/companies/${companyId}/projects/${projectId}/tasks/${taskId}/update`);
+                navigate(`/groups/${groupId}/projects/${projectId}/tasks/${taskId}/update`);
               }}>Update task details
               </button>
               <br/>
@@ -165,7 +165,7 @@ export default function TaskDashboard() {
           </div>
       }
       <button
-        onClick={() => navigate(`/companies/${companyId}/projects/${projectId}/tasks`)}>Back
+        onClick={() => navigate(`/groups/${groupId}/projects/${projectId}/tasks`)}>Back
       </button>
     </div>
   )

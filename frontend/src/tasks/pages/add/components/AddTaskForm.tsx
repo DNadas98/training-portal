@@ -11,7 +11,7 @@ import TaskStatusSelector from "../../../components/TaskStatusSelector.tsx";
 import {TaskStatus} from "../../../dto/TaskStatus.ts";
 import DifficultySelector from "../../../components/DifficultySelector.tsx";
 
-interface AddCompanyFormProps {
+interface AddTaskFormProps {
   minDifficulty: number;
   maxDifficulty: number;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>,
@@ -19,7 +19,7 @@ interface AddCompanyFormProps {
   statuses: TaskStatus[];
 }
 
-export default function AddTaskForm(props: AddCompanyFormProps) {
+export default function AddTaskForm(props: AddTaskFormProps) {
   return (
     <Grid container justifyContent={"center"}>
       <Grid item xs={10} sm={8} md={7} lg={6}>

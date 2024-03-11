@@ -7,16 +7,16 @@ import {
 } from "../../../common/notification/context/NotificationProvider.tsx";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {
-  CompanyJoinRequestResponseDto
-} from "../../../companies/dto/requests/CompanyJoinRequestResponseDto.ts";
+  GroupJoinRequestResponseDto
+} from "../../../groups/dto/requests/GroupJoinRequestResponseDto.ts";
 import {
   ProjectJoinRequestResponseDto
-} from "../../../companies/dto/requests/ProjectJoinRequestResponseDto.ts";
+} from "../../../projects/dto/requests/ProjectJoinRequestResponseDto.ts";
 
 export default function UserJoinRequests() {
   const dialog = useDialog();
-  const [companyJoinRequestsLoading, setCompanyJoinRequestsLoading] = useState(true);
-  const [companyJoinRequests, setCompanyJoinRequests] = useState<CompanyJoinRequestResponseDto[]>([]);
+  const [groupJoinRequestsLoading, setGroupJoinRequestsLoading] = useState(true);
+  const [groupJoinRequests, setGroupJoinRequests] = useState<GroupJoinRequestResponseDto[]>([]);
   const [projectJoinRequestsLoading, setProjectJoinRequestsLoading] = useState(true);
   const [projectJoinRequests, setProjectJoinRequests] = useState<ProjectJoinRequestResponseDto[]>([]);
   const authJsonFetch = useAuthJsonFetch();
@@ -30,23 +30,23 @@ export default function UserJoinRequests() {
     });
   }
 
-  async function loadCompanyJoinRequests() {
-    const defaultError = `Failed to load company join requests`;
+  async function loadGroupJoinRequests() {
+    const defaultError = `Failed to load group join requests`;
     try {
-      setCompanyJoinRequestsLoading(true);
+      setGroupJoinRequestsLoading(true);
       const response = await authJsonFetch({
-        path: `user/company-requests`
+        path: `user/group-requests`
       });
       if (!response?.status || response.status > 404 || !response?.data) {
         handleErrorNotification(response?.error ?? defaultError);
         return;
       }
-      setCompanyJoinRequests(response.data as CompanyJoinRequestResponseDto[]);
+      setGroupJoinRequests(response.data as GroupJoinRequestResponseDto[]);
     } catch (e) {
-      setCompanyJoinRequests([]);
+      setGroupJoinRequests([]);
       handleErrorNotification(defaultError);
     } finally {
-      setCompanyJoinRequestsLoading(false);
+      setGroupJoinRequestsLoading(false);
     }
   }
 
@@ -71,16 +71,16 @@ export default function UserJoinRequests() {
   }
 
   useEffect(() => {
-    loadCompanyJoinRequests().then();
+    loadGroupJoinRequests().then();
     loadProjectJoinRequests().then();
   }, []);
 
-  async function deleteCompanyJoinRequest(requestId: number) {
-    const defaultError = "Failed to delete company join request";
+  async function deleteGroupJoinRequest(requestId: number) {
+    const defaultError = "Failed to delete group join request";
     try {
-      setCompanyJoinRequestsLoading(true);
+      setGroupJoinRequestsLoading(true);
       const response = await authJsonFetch({
-        path: `user/company-requests/${requestId}`, method: "DELETE"
+        path: `user/group-requests/${requestId}`, method: "DELETE"
       });
       if (!response?.status || response.status > 404 || !response?.message) {
         return handleErrorNotification(response?.error ?? defaultError);
@@ -89,11 +89,11 @@ export default function UserJoinRequests() {
         type: "success", vertical: "top", horizontal: "center",
         message: response.message
       });
-      await loadCompanyJoinRequests();
+      await loadGroupJoinRequests();
     } catch (e) {
       handleErrorNotification(defaultError);
     } finally {
-      setCompanyJoinRequestsLoading(false);
+      setGroupJoinRequestsLoading(false);
     }
   }
 
@@ -119,11 +119,11 @@ export default function UserJoinRequests() {
     }
   }
 
-  function handleCompanyJoinRequestDeleteClick(requestId: number) {
+  function handleGroupJoinRequestDeleteClick(requestId: number) {
     dialog.openDialog({
-      text: "Do you really wish to delete this company join request?",
+      text: "Do you really wish to delete this group join request?",
       onConfirm: async () => {
-        await deleteCompanyJoinRequest(requestId);
+        await deleteGroupJoinRequest(requestId);
       }
     });
   }
@@ -138,18 +138,18 @@ export default function UserJoinRequests() {
   }
 
   return (<div>
-    {companyJoinRequestsLoading ? <LoadingSpinner/> : !companyJoinRequests?.length
+    {groupJoinRequestsLoading ? <LoadingSpinner/> : !groupJoinRequests?.length
       ? <div>
-        <h3>No pending company join requests were found.</h3>
+        <h3>No pending group join requests were found.</h3>
       </div>
       : <div>
-        <h3>Company Join Requests</h3>
-        <ul>{companyJoinRequests.map(request => {
+        <h3>Group Join Requests</h3>
+        <ul>{groupJoinRequests.map(request => {
           return <li key={request.requestId}>
-            <h4>{request.company?.name}</h4>
+            <h4>{request.group?.name}</h4>
             <p>{request.status}</p>
             <button onClick={async () => {
-              handleCompanyJoinRequestDeleteClick(request.requestId);
+              handleGroupJoinRequestDeleteClick(request.requestId);
             }}>
               Delete
             </button>
@@ -166,7 +166,7 @@ export default function UserJoinRequests() {
         <h3>Project Join Requests</h3>
         <ul>{projectJoinRequests.map(request => {
           return <li key={request.requestId}>
-            <h4>{request.company?.name}</h4>
+            <h4>{request.project?.name}</h4>
             <p>{request.status}</p>
             <button onClick={async () => {
               handleProjectJoinRequestDeleteClick(request.requestId);

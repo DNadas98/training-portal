@@ -14,7 +14,7 @@ import {TaskCreateRequestDto} from "../../dto/TaskCreateRequestDto.ts";
 
 export default function AddTask() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
-  const companyId = useParams()?.companyId;
+  const groupId = useParams()?.groupId;
   const projectId = useParams()?.projectId;
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
@@ -22,7 +22,7 @@ export default function AddTask() {
   const [loading, setLoading] = useState<boolean>(false);
   const addTask = async (requestDto: TaskCreateRequestDto) => {
     return await authJsonFetch({
-      path: `companies/${companyId}/projects/${projectId}/tasks`,
+      path: `groups/${groupId}/projects/${projectId}/tasks`,
       method: "POST",
       body: requestDto
     });
@@ -63,7 +63,7 @@ export default function AddTask() {
       }
       const addedTask = response.data as TaskResponseDto;
 
-      navigate(`/companies/${companyId}/projects/${projectId}/tasks/${addedTask.taskId}`);
+      navigate(`/groups/${groupId}/projects/${projectId}/tasks/${addedTask.taskId}`);
     } catch (e) {
       handleError("An unknown error has occurred, please try again later!");
     } finally {
@@ -75,7 +75,7 @@ export default function AddTask() {
     return <LoadingSpinner/>;
   } else if (!projectPermissions?.length) {
     handleError("Access Denied: Insufficient permissions");
-    navigate(`/companies/${companyId}/projects`, {replace: true});
+    navigate(`/groups/${groupId}/projects`, {replace: true});
     return <></>;
   }
 

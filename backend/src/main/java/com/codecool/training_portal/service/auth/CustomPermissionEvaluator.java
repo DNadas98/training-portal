@@ -2,19 +2,19 @@ package com.codecool.training_portal.service.auth;
 
 import com.codecool.training_portal.config.auth.SecurityConfig;
 import com.codecool.training_portal.exception.auth.UserNotFoundException;
-import com.codecool.training_portal.exception.company.CompanyNotFoundException;
-import com.codecool.training_portal.exception.company.project.ProjectNotFoundException;
-import com.codecool.training_portal.exception.company.project.task.TaskNotFoundException;
+import com.codecool.training_portal.exception.group.GroupNotFoundException;
+import com.codecool.training_portal.exception.group.project.ProjectNotFoundException;
+import com.codecool.training_portal.exception.group.project.task.TaskNotFoundException;
 import com.codecool.training_portal.model.auth.ApplicationUser;
 import com.codecool.training_portal.model.auth.ApplicationUserDao;
 import com.codecool.training_portal.model.auth.GlobalRole;
 import com.codecool.training_portal.model.auth.PermissionType;
-import com.codecool.training_portal.model.company.Company;
-import com.codecool.training_portal.model.company.CompanyDao;
-import com.codecool.training_portal.model.company.project.Project;
-import com.codecool.training_portal.model.company.project.ProjectDao;
-import com.codecool.training_portal.model.company.project.task.Task;
-import com.codecool.training_portal.model.company.project.task.TaskDao;
+import com.codecool.training_portal.model.group.UserGroup;
+import com.codecool.training_portal.model.group.UserGroupDao;
+import com.codecool.training_portal.model.group.project.Project;
+import com.codecool.training_portal.model.group.project.ProjectDao;
+import com.codecool.training_portal.model.group.project.task.Task;
+import com.codecool.training_portal.model.group.project.task.TaskDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
@@ -32,7 +32,7 @@ import java.io.Serializable;
 @RequiredArgsConstructor
 public class CustomPermissionEvaluator implements PermissionEvaluator {
   private final ApplicationUserDao applicationUserDao;
-  private final CompanyDao companyDao;
+    private final UserGroupDao userGroupDao;
   private final ProjectDao projectDao;
   private final TaskDao taskDao;
 
@@ -56,9 +56,9 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     }
     Long userId = (Long) authentication.getPrincipal();
 
-    if (targetDomainObject instanceof Company) {
-      return handleCompanyPermissions(
-        userId, (Company) targetDomainObject, (PermissionType) permission);
+      if (targetDomainObject instanceof UserGroup) {
+          return handleGroupPermissions(
+                  userId, (UserGroup) targetDomainObject, (PermissionType) permission);
     } else if (targetDomainObject instanceof Project) {
       return handleProjectPermissions(
         userId, (Project) targetDomainObject, (PermissionType) permission);
@@ -97,10 +97,10 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     PermissionType permissionType = PermissionType.valueOf(permission.toString());
 
     switch (targetType) {
-      case "Company" -> {
-        Company company = companyDao.findById(id).orElseThrow(
-          () -> new CompanyNotFoundException(id));
-        return handleCompanyPermissions(userId, company, permissionType);
+        case "UserGroup" -> {
+            UserGroup userGroup = userGroupDao.findById(id).orElseThrow(
+                    () -> new GroupNotFoundException(id));
+            return handleGroupPermissions(userId, userGroup, permissionType);
       }
       case "Project" -> {
         Project project = projectDao.findById(id).orElseThrow(
@@ -118,15 +118,15 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
   }
 
   @Transactional(readOnly = true)
-  public boolean handleCompanyPermissions(
-    Long userId, Company company, PermissionType permissionType) {
+  public boolean handleGroupPermissions(
+          Long userId, UserGroup userGroup, PermissionType permissionType) {
     switch (permissionType) {
-      case COMPANY_ADMIN:
-        return hasCompanyAdminAccess(userId, company);
-      case COMPANY_EDITOR:
-        return hasCompanyEditorAccess(userId, company);
-      case COMPANY_EMPLOYEE:
-        return hasCompanyEmployeeAccess(userId, company);
+        case GROUP_ADMIN:
+            return hasGroupAdminAccess(userId, userGroup);
+        case GROUP_EDITOR:
+            return hasGroupEditorAccess(userId, userGroup);
+        case GROUP_MEMBER:
+            return hasGroupMemberAccess(userId, userGroup);
       default:
         return false;
     }
@@ -140,8 +140,8 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
         return hasProjectAdminAccess(userId, project);
       case PROJECT_EDITOR:
         return hasProjectEditorAccess(userId, project);
-      case PROJECT_ASSIGNED_EMPLOYEE:
-        return hasProjectAssignedEmployeeAccess(userId, project);
+        case PROJECT_ASSIGNED_MEMBER:
+            return hasProjectAssignedMemberAccess(userId, project);
       default:
         return false;
     }
@@ -151,35 +151,35 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
   public boolean handleTaskPermissions(
     Long userId, Task task, PermissionType permissionType) {
     switch (permissionType) {
-      case TASK_ASSIGNED_EMPLOYEE:
-        return hasTaskAssignedEmployeeAccess(userId, task);
+        case TASK_ASSIGNED_MEMBER:
+            return hasTaskAssignedMemberAccess(userId, task);
       default:
         return false;
     }
   }
 
   @Transactional(readOnly = true)
-  public boolean hasCompanyAdminAccess(Long userId, Company company) {
-    ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchAdminCompanies(userId)
+  public boolean hasGroupAdminAccess(Long userId, UserGroup userGroup) {
+      ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchAdminGroups(userId)
       .orElseThrow(() -> new UserNotFoundException());
     return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN) ||
-      applicationUser.getAdminCompanies().contains(company);
+            applicationUser.getAdminUserGroups().contains(userGroup);
   }
 
   @Transactional(readOnly = true)
-  public boolean hasCompanyEditorAccess(Long userId, Company company) {
-    ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchEditorCompanies(userId)
+  public boolean hasGroupEditorAccess(Long userId, UserGroup userGroup) {
+      ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchEditorGroups(userId)
       .orElseThrow(() -> new UserNotFoundException());
     return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN) ||
-      applicationUser.getEditorCompanies().contains(company);
+            applicationUser.getEditorUserGroups().contains(userGroup);
   }
 
   @Transactional(readOnly = true)
-  public boolean hasCompanyEmployeeAccess(Long userId, Company company) {
-    ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchEmployeeCompanies(userId)
+  public boolean hasGroupMemberAccess(Long userId, UserGroup userGroup) {
+      ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchMemberGroups(userId)
       .orElseThrow(() -> new UserNotFoundException());
     return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN) ||
-      applicationUser.getEmployeeCompanies().contains(company);
+            applicationUser.getMemberUserGroups().contains(userGroup);
   }
 
   @Transactional(readOnly = true)
@@ -187,9 +187,9 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchAdminProjects(userId)
       .orElseThrow(() -> new UserNotFoundException());
     return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN) ||
-      applicationUser.getAdminProjects().contains(project) || hasCompanyAdminAccess(
+            applicationUser.getAdminProjects().contains(project) || hasGroupAdminAccess(
       userId,
-      project.getCompany());
+            project.getUserGroup());
   }
 
   @Transactional(readOnly = true)
@@ -197,24 +197,24 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchEditorProjects(userId)
       .orElseThrow(() -> new UserNotFoundException());
     return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN) ||
-      applicationUser.getEditorProjects().contains(project) || hasCompanyEditorAccess(
+            applicationUser.getEditorProjects().contains(project) || hasGroupEditorAccess(
       userId,
-      project.getCompany());
+            project.getUserGroup());
   }
 
   @Transactional(readOnly = true)
-  public boolean hasProjectAssignedEmployeeAccess(
+  public boolean hasProjectAssignedMemberAccess(
     Long userId, Project project) {
     ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchAssignedProjects(userId)
       .orElseThrow(() -> new UserNotFoundException());
     return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN) ||
-      applicationUser.getAssignedProjects().contains(project) || hasCompanyEditorAccess(
+            applicationUser.getAssignedProjects().contains(project) || hasGroupEditorAccess(
       userId,
-      project.getCompany());
+            project.getUserGroup());
   }
 
   @Transactional(readOnly = true)
-  public boolean hasTaskAssignedEmployeeAccess(
+  public boolean hasTaskAssignedMemberAccess(
     Long userId, Task task) {
     ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchAssignedTasks(userId)
       .orElseThrow(() -> new UserNotFoundException());

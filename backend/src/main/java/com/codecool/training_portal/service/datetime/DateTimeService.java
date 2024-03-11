@@ -1,7 +1,7 @@
 package com.codecool.training_portal.service.datetime;
 
 import com.codecool.training_portal.exception.datetime.*;
-import com.codecool.training_portal.model.company.project.task.Task;
+import com.codecool.training_portal.model.group.project.task.Task;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
