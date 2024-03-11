@@ -1,15 +1,15 @@
 <p align="center">
-  <!-- <a href="https://github.com/DNadas98/spring-project-manager/actions/workflows/nodejs.yml">
-    <img src="https://img.shields.io/github/actions/workflow/status/DNadas98/spring-project-manager/nodejs.yml?style=for-the-badge" alt="Build">
+  <!-- <a href="https://github.com/DNadas98/training-portal/actions/workflows/nodejs.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/DNadas98/training-portal/nodejs.yml?style=for-the-badge" alt="Build">
   </a> -->
-  <a href="https://github.com/DNadas98/spring-project-manager/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors/DNadas98/spring-project-manager.svg?style=for-the-badge" alt="Contributors">
+  <a href="https://github.com/DNadas98/training-portal/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/DNadas98/training-portal.svg?style=for-the-badge" alt="Contributors">
   </a>
-  <a href="https://github.com/DNadas98/spring-project-manager/issues">
-    <img src="https://img.shields.io/github/issues/DNadas98/spring-project-manager.svg?style=for-the-badge" alt="Issues">
+  <a href="https://github.com/DNadas98/training-portal/issues">
+    <img src="https://img.shields.io/github/issues/DNadas98/training-portal.svg?style=for-the-badge" alt="Issues">
   </a>
-  <a href="https://github.com/DNadas98/spring-project-manager/blob/master/LICENSE.txt">
-    <img src="https://img.shields.io/github/license/DNadas98/spring-project-manager.svg?style=for-the-badge" alt="License">
+  <a href="https://github.com/DNadas98/training-portal/blob/master/LICENSE.txt">
+    <img src="https://img.shields.io/github/license/DNadas98/training-portal.svg?style=for-the-badge" alt="License">
   </a>
   <a href="https://linkedin.com/in/daniel-nadas">
     <img src="https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555" alt="LinkedIn">
@@ -18,22 +18,17 @@
 
 <br xmlns="http://www.w3.org/1999/html"/>
 <div align="center">
-  <a href="https://github.com/DNadas98/spring-project-manager">
+  <a href="https://github.com/DNadas98/training-portal">
     <img src="https://avatars.githubusercontent.com/u/125133206?v=4" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">Spring Project Manager</h3>
+<h3 align="center">Training Portal</h3>
   <p align="center">
     Created by <a href="https://github.com/DNadas98">DNadas98 (Dániel Nádas)</a>
     <br />
-    <a href="https://github.com/users/DNadas98/projects/4"><strong>View the Project Board »</strong></a>
-    <br />
-    <a href="https://www.postman.com/cc-tasx/workspace/dnadas98-public/documentation/30693601-1e1610fc-717c-41b5-a3f8-d830165f4325"><strong>Read the API Documentation »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/DNadas98/spring-project-manager/issues">Report Bug</a>
+    <a href="https://github.com/DNadas98/training-portal/issues">Report Bug</a>
     ·
-    <a href="https://github.com/DNadas98/spring-project-manager/issues">Request Feature</a>
+    <a href="https://github.com/DNadas98/training-portal/issues">Request Feature</a>
   </p>
 </div>
 
@@ -59,7 +54,6 @@
       <ul>
         <li><a href="#configuration-of-default-api-security-middlewares">Configuration of default API security middlewares</a></li>
         <li><a href="#authentication-authorization">Authentication, authorization</a></li>
-        <li><a href="#api-documentation">API Documentation</a></li>
       </ul>
     </li>
     <li><a href="#roadmap">Roadmap</a></li>
@@ -71,13 +65,7 @@
 
 ## About The Project
 
-The application allows users to create local accounts or sign in via Google, Facebook or GitHub
-accounts. (OAuth 2.0)<br>
-Authenticated users can join companies, create, and manage projects. Projects include tasks with
-start dates, deadlines,
-expenses, and varying levels of importance and difficulty. Employees request to be assigned to
-projects and receive rewards for completed tasks, incorporating a gamification aspect with a scoring
-system.
+The Training Portal project is a comprehensive learning and examination platform for organizational training. It supports dynamic content management, allowing administrators to manage educational materials including texts and videos, alongside customizable exam forms with variable question types and answer options. Authenticated users can request to join companies, or request to add a new company. The learning materials and tests are organized to projects inside the companies, allowing for simplified management of start and deadline dates, user access and various other properties. The system keeps track of user progress, allowing employees to keep track of their progress and also administrators to see the overall progress of a project.
 
 ## Tech Stack
 
@@ -91,7 +79,6 @@ system.
 [![Java](https://img.shields.io/badge/-Java-ED8B00?style=for-the-badge)](https://www.java.com/en/)
 [![Spring Boot](https://img.shields.io/badge/-Spring_Boot-589133?style=for-the-badge&logo=spring&logoColor=black)](https://spring.io/projects/spring-boot)  
 [![Spring Security](https://img.shields.io/badge/-Spring_Security-589133?style=for-the-badge&logo=spring&logoColor=black)](https://spring.io/projects/spring-security)
-[![Spring OAuth 2.0 Client](https://img.shields.io/badge/-Spring_OAuth_2.0_Client-589133?style=for-the-badge&logo=spring&logoColor=black)](https://docs.spring.io/spring-security/reference/reactive/oauth2/client/index.html)
 [![Java JWT](https://img.shields.io/badge/-Java_JWT-CCCCCC?style=for-the-badge&logo=jsonwebtoken&logoColor=black)](https://github.com/jwtk/jjwt)
 
 ### Database, ORM
@@ -125,17 +112,6 @@ The project uses Nginx as reverse-proxy and static file server.
 - Optional: [Node.js, NPM](https://nodejs.org/en/download)
   - The frontend is developed using the latest Node and NPM versions currently available
   - The frontend project is set up using [Vite JS](https://vitejs.dev/)
-- Optional: Obtain OAuth 2.0 client credentials for Google, Facebook and Github to test the OAuth
-  2.0 Sign-in features
-  - [Google Cloud Console OAuth 2.0 Credentials](https://developers.google.com/identity/protocols/oauth2)
-  - [Facebook OAuth 2.0 Credentials](https://developers.facebook.com/docs/development/create-an-app/facebook-login-use-case)
-  - [GitHub OAuth 2.0 Credentials](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps)
-  - <strong>The app can start without this and provides local registration and login option
-    too.</strong> If left out,
-    only the OAuth 2.0 Sing-In options will not work.
-  - To test the OAuth 2.0 Sign-in options, the app requires a valid client ID and client
-    secret. Use the linked guides to add the application as client, then copy the client ID and
-    secret. Paste these to their respective lines in the `.env` file
 
 ### Setup & Run
 
@@ -174,24 +150,11 @@ The project uses Nginx as reverse-proxy and static file server.
 
 ### Authentication, authorization
 
-- <strong>If no real OAuth2 and/or SMTP credentials are provided, sign-in is still possible using
-  the default admin e-mail and password found in the `.env` file</strong>
-
-The application supports OAuth2 for login, allowing users to sign in with external accounts like
-Google, GitHub, and Facebook. This method simplifies login procedures by using existing social media
-profiles, enhancing user convenience and security.
-
-For local sign-ups, the application requires email verification. Users must verify their email
+The application supports local sign-ups and sign-ins. The application requires email verification. Users must verify their email
 through a sent link to activate their accounts, ensuring authenticity and reducing unauthorized
 access.
 
-Additionally, the application employs a flexible user management system where a single
-ApplicationUser can have multiple UserAccounts, accommodating both local and OAuth2-linked accounts.
-This design allows users to link multiple external identities to their application profile,
-facilitating easy switching between different login methods while maintaining a unified profile.
-This model streamlines account management and strengthens security and user experience.
-
-The API uses JWTs (JSON Web Tokens) for authentication. After a successful login at the
+The backend API uses JWTs (JSON Web Tokens) for authentication. After a successful login at the
 Login endpoint, the user receives a Bearer Token in the response body, and a Refresh Token
 as a cookie named `jwt`. This cookie is HTTPOnly, SameSite = "strict", Secure)<br><br>
 Secured endpoints can be accessed by supplying the Bearer Token in the Authorization
@@ -220,17 +183,11 @@ This enhanced security model improves the API's flexibility and security, enabli
 complex access control policies to meet the application's varied requirements, forming a strong
 basis for authentication and authorization management.
 
-### API Documentation
-
-See
-the [API Documentation](https://www.postman.com/cc-tasx/workspace/dnadas98-public/documentation/30693601-1e1610fc-717c-41b5-a3f8-d830165f4325)
-for available endpoints and API usage guide
-
 ## Roadmap
 
 - See the [Project board](https://github.com/users/DNadas98/projects/4) to track the
   progress of this project
-- See the [open issues](https://github.com/DNadas98/spring-project-manager/issues) for a
+- See the [open issues](https://github.com/DNadas98/training-portal/issues) for a
   full list of proposed features (and known issues).
 
 ## License
@@ -242,31 +199,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 The frontend is still work in progress.
 The project uses Material UI.
 
-[View all images](https://github.com/DNadas98/spring-project-manager/tree/master/images)
-
-### Home page
-
-<img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/01-home.png" alt="Home page">
-
-### Sign-up form
-
-<img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/03-sign-up.png" alt="Sign-up form">
-
-### User profile page
-
-<img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/05-user.png" alt="Profile page">
-
-### Light versus dark mode
-
-<img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/08-light-dark-mode.png" alt="Light vs dark mode">
-
-### Add new task form
-
-<img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/07-task-form.png" alt="Add new task form">
-
-### Project list
-
-<img src="https://raw.githubusercontent.com/DNadas98/spring-project-manager/master/images/09-project-list.png" alt="Project list">
+[View all images](https://github.com/DNadas98/training-portal/tree/master/images)
 
 ## Contact
 
@@ -278,4 +211,4 @@ Dániel Nádas
 - LinkedIn: [Dániel Nádas](https://www.linkedin.com/in/daniel-nadas)
 
 Project
-Link: [https://github.com/DNadas98/spring-project-manager](https://github.com/DNadas98/spring-project-manager)
+Link: [https://github.com/DNadas98/training-portal](https://github.com/DNadas98/training-portal)
