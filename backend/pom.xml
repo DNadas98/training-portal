@@ -10,10 +10,10 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>com.codecool</groupId>
-  <artifactId>tasx</artifactId>
+  <artifactId>training_portal</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>tasx</name>
-  <description>Project manager web application</description>
+  <name>training_portal</name>
+  <description>Training Portal web application</description>
   <properties>
     <java.version>21</java.version>
   </properties>
@@ -67,10 +67,6 @@
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-test</artifactId>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-oauth2-client</artifactId>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -134,5 +130,4 @@
       </releases>
     </pluginRepository>
   </pluginRepositories>
-
 </project>

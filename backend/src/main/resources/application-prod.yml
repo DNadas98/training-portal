@@ -9,39 +9,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    open-in-view: true
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-  main:
-    web-application-type: servlet
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${BACKEND_OAUTH2_GOOGLE_CLIENT_ID}
-            client-secret: ${BACKEND_OAUTH2_GOOGLE_CLIENT_SECRET}
-            redirect-uri: "${BACKEND_OAUTH2_CALLBACK_URI}/{registrationId}"
-            scope:
-              - email
-              - profile
-          facebook:
-            client-id: ${BACKEND_OAUTH2_FACEBOOK_CLIENT_ID}
-            client-secret: ${BACKEND_OAUTH2_FACEBOOK_CLIENT_SECRET}
-            redirect-uri: "${BACKEND_OAUTH2_CALLBACK_URI}/{registrationId}"
-            scope:
-              - email
-              - public_profile
-          github:
-            client-id: ${BACKEND_OAUTH2_GITHUB_CLIENT_ID}
-            client-secret: ${BACKEND_OAUTH2_GITHUB_CLIENT_SECRET}
-            redirect-uri: "${BACKEND_OAUTH2_CALLBACK_URI}/{registrationId}"
-            scope:
-              - user:email
-              - read:user
-  servlet:
-    multipart:
-      max-file-size: 3MB
-      max-request-size: 3MB
   mail:
     host: ${BACKEND_SMTP_HOST}
     port: ${BACKEND_SMTP_PORT}
@@ -62,5 +29,3 @@ spring:
 logging:
   level:
     root: warn
-    org.hibernate: error
-    com.codecool.tasx: info

@@ -1,12 +1,12 @@
 import RegisterCard from "./components/RegisterCard.tsx";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {FormEvent} from "react";
 import {RegisterRequestDto} from "../../dto/RegisterRequestDto.ts";
 import {publicJsonFetch} from "../../../common/api/service/apiService.ts";
+import {useNavigate} from "react-router-dom";
 
 export default function Register() {
+  const navigate = useNavigate();
   const notification = useNotification();
   const validatePassword = (password: string, confirmPassword: string) => {
     if (password !== confirmPassword) {
@@ -38,6 +38,7 @@ export default function Register() {
     notification.openNotification({
       type: "success", vertical: "top", horizontal: "center", message: message
     });
+    navigate("/");
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -53,7 +54,6 @@ export default function Register() {
       if (!passwordIsValid) {
         return;
       }
-
       const registerRequestDto: RegisterRequestDto = {username, email, password};
       const response = await registerUser(registerRequestDto);
 

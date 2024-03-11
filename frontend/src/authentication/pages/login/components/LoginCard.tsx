@@ -1,15 +1,5 @@
-import {
-  Avatar,
-  Button,
-  Card,
-  CardContent,
-  Divider,
-  Grid,
-  Stack,
-  Typography
-} from "@mui/material";
+import {Avatar, Button, Card, CardContent, Divider, Grid, Stack, Typography} from "@mui/material";
 import {Lock} from "@mui/icons-material";
-import OAuth2Stack from "../../../components/oauth2/OAuth2Stack.tsx";
 import EmailInput from "../../../components/inputs/EmailInput.tsx";
 import PasswordInput from "../../../components/inputs/PasswordInput.tsx";
 import {FormEvent} from "react";
@@ -25,7 +15,7 @@ export default function LoginCard({onSubmit}: LoginCardProps) {
       <Grid item xs={10} sm={8} md={7} lg={6}>
         <Card sx={{
           paddingTop: 4, textAlign: "center",
-          maxWidth: 800, width: "100%",
+          maxWidth: 500, width: "100%",
           marginLeft: "auto", marginRight: "auto"
         }}>
           <Stack
@@ -47,7 +37,7 @@ export default function LoginCard({onSubmit}: LoginCardProps) {
               textAlign: "center",
               gap: "2rem"
             }}>
-              <Grid item xs={10} sm={9} md={7} lg={6}
+              <Grid item xs={12}
                     sx={{borderColor: "secondary.main"}}>
                 <form onSubmit={onSubmit}>
                   <Stack spacing={2}>
@@ -60,13 +50,7 @@ export default function LoginCard({onSubmit}: LoginCardProps) {
                   </Stack>
                 </form>
               </Grid>
-              <Grid item xs={10} sm={9} md={7} lg={6}>
-                <Divider sx={{
-                  marginBottom: 2
-                }}/>
-                <OAuth2Stack/>
-              </Grid>
-              <Grid item xs={10} sm={9} md={7} lg={6}>
+              <Grid item xs={12}>
                 <Divider sx={{
                   marginBottom: 2
                 }}/>

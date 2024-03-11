@@ -1,0 +1,7 @@
+package com.codecool.training_portal.model.auth;
+
+public enum PermissionType {
+  COMPANY_ADMIN, COMPANY_EDITOR, COMPANY_EMPLOYEE,
+  PROJECT_ADMIN, PROJECT_EDITOR, PROJECT_ASSIGNED_EMPLOYEE,
+  TASK_ASSIGNED_EMPLOYEE
+}

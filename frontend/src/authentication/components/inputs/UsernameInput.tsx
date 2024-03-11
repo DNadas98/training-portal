@@ -9,6 +9,7 @@ export default function UsernameInput() {
                name={"username"}
                type={"text"}
                autoFocus={true}
+               autoComplete={"name"}
                required
                inputProps={{
                  minLength: 1,

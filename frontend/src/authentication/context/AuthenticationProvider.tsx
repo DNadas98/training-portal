@@ -15,7 +15,6 @@ export const AuthenticationContext = createContext<IAuthenticationContext>({
   getUsername: () => undefined,
   getEmail: () => undefined,
   getRoles: () => undefined,
-  getAccountType: () => undefined,
   getAccessToken: () => undefined
 });
 
@@ -27,8 +26,7 @@ export function AuthenticationProvider({children}: AuthenticationProviderProps) 
       || !authentication.userInfo.email?.length
       || !authentication.userInfo.username?.length
       || !authentication.userInfo.roles?.length
-      || !authentication.userInfo?.roles?.includes(GlobalRole.USER)
-      || !authentication.userInfo?.accountType) {
+      || !authentication.userInfo?.roles?.includes(GlobalRole.USER)) {
       throw new Error("The received authentication is invalid");
     }
     setAuthentication(authentication);
@@ -54,13 +52,9 @@ export function AuthenticationProvider({children}: AuthenticationProviderProps) 
     return authentication.accessToken;
   };
 
-  const getAccountType = () => {
-    return authentication.userInfo?.accountType;
-  };
-
   return (
     <AuthenticationContext.Provider
-      value={{authenticate, logout, getUsername, getEmail, getRoles, getAccessToken, getAccountType}}>
+      value={{authenticate, logout, getUsername, getEmail, getRoles, getAccessToken}}>
       {children}
     </AuthenticationContext.Provider>
   );

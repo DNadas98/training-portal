@@ -1,6 +1,4 @@
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {FormEvent} from "react";
 import {publicJsonFetch} from "../../../common/api/service/apiService.ts";
 import LoginCard from "./components/LoginCard.tsx";
@@ -49,7 +47,7 @@ export default function Login() {
         return;
       }
 
-      handleSuccess(response.data);
+      handleSuccess(response.data as AuthenticationDto);
     } catch (e) {
       const errorMessage =
         "An error has occurred during the sign in process";

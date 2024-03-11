@@ -1,4 +1,4 @@
-import {Card, CardContent, CardHeader, Grid, Stack, Typography} from "@mui/material";
+import {Card, CardContent, CardHeader, Stack, Typography} from "@mui/material";
 import {AccountBoxRounded} from "@mui/icons-material";
 import {GlobalRole} from "../../../../authentication/dto/userInfo/GlobalRole.ts";
 
@@ -23,17 +23,12 @@ export default function ProfileMainCard(props: ProfileMainCardProps) {
           <Typography variant={"body2"}>
             {props.email}
           </Typography>
-          <Grid container>
-            {props.roles?.length > 1
-              ? props.roles.map((role) => (
-                <Grid item key={role}>
-                  <Typography variant={"body2"}>
-                    {role}
-                  </Typography>
-                </Grid>
-              ))
-              : <></>}
-          </Grid>
+          <Typography variant={"body1"}>
+            Roles:
+          </Typography>
+          <Typography variant={"body2"}>
+            {props.roles.join(", ")}
+          </Typography>
         </Stack>
       </CardContent>
     </Card>

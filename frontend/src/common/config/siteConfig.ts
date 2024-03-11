@@ -4,7 +4,7 @@ interface ISiteConfig {
 }
 
 const siteConfig: ISiteConfig = {
-  siteName: "Project Manager",
-  githubRepoUrl: "https://github.com/DNadas98/spring-project-manager"
+  siteName: "Training Portal",
+  githubRepoUrl: "https://github.com/DNadas98/training-portal"
 };
 export default siteConfig;

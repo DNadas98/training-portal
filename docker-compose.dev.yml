@@ -3,7 +3,7 @@ services:
     container_name: postgres-dev
     image: postgres
     environment:
-      POSTGRES_DB: projectmanagerdb
+      POSTGRES_DB: trainingportaldb
       POSTGRES_USER: devuser
       POSTGRES_PASSWORD: devpassword
       PGDATA: /data/postgres

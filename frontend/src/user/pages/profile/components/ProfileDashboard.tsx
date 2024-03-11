@@ -1,18 +1,11 @@
 import {Button, Card, CardContent, Grid, Stack, Typography} from "@mui/material";
 import {GlobalRole} from "../../../../authentication/dto/userInfo/GlobalRole.ts";
 import ProfileMainCard from "./ProfileMainCard.tsx";
-import ProfileAccountDelete from "./ProfileAccountDelete.tsx";
-import {
-  UserAccountResponseDto
-} from "../../../../authentication/dto/userAccount/UserAccountResponseDto.ts";
 
 interface ProfileDashboardProps {
   username: string,
   email: string,
   roles: GlobalRole[],
-  accounts: UserAccountResponseDto[],
-  onAccountDelete: (id: number) => unknown,
-  accountDeleteLoading: boolean,
   onApplicationUserDelete: () => unknown,
   applicationUserDeleteLoading: boolean,
   onRequestsClick: () => void
@@ -26,24 +19,6 @@ export default function ProfileDashboard(props: ProfileDashboardProps) {
           <ProfileMainCard username={props.username}
                            email={props.email}
                            roles={props.roles}/>
-          <Card>
-            <CardContent>
-              <Typography variant={"body1"} gutterBottom>
-                {`Available account${props.accounts.length > 1 ? "s" : ""}:`}
-              </Typography>
-              {props.accounts?.length > 1
-                ? props.accounts.map((account) => (
-                  <ProfileAccountDelete key={account.id}
-                                        account={account}
-                                        onAccountDelete={props.onAccountDelete}
-                                        accountDeleteLoading={props.accountDeleteLoading}/>
-                ))
-                : props.accounts?.length
-                  ? <Typography pt={2}>{props.accounts[0].accountType}</Typography>
-                  : <></>
-              }
-            </CardContent>
-          </Card>
           <Card>
             <CardContent>
               <Typography variant={"body1"} mb={2}>

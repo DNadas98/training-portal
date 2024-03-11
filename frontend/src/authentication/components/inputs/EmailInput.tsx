@@ -7,6 +7,7 @@ export default function EmailInput() {
                label={"E-mail address"}
                name={"email"}
                type={"email"}
+               autoComplete={"email"}
                required/>
   )
 }

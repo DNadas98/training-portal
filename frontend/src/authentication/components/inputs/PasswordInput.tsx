@@ -12,6 +12,7 @@ export default function PasswordInput({confirm}: PasswordInputProps) {
                name={confirm ? "confirmPassword" : "password"}
                type={"password"}
                required
+               autoComplete={confirm ? "" : "current-password"}
                inputProps={{
                  minLength: 8,
                  maxLength: 50
