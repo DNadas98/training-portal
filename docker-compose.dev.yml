@@ -1,0 +1,22 @@
+services:
+  psql:
+    container_name: postgres-dev
+    image: postgres
+    environment:
+      POSTGRES_DB: projectmanagerdb
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: devpassword
+      PGDATA: /data/postgres
+    volumes:
+      - db:/data/postgres
+    ports:
+      - "54321:5432"
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  db:

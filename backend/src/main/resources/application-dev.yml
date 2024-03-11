@@ -1,0 +1,83 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:54321/projectmanagerdb
+    username: devuser
+    password: devpassword
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 5
+      idle-timeout: 1000
+      max-lifetime: 600000
+      connection-timeout: 30000
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50
+#        format_sql: true
+#    show_sql: true
+    open-in-view: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  main:
+    web-application-type: servlet
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${BACKEND_OAUTH2_GOOGLE_CLIENT_ID}
+            client-secret: ${BACKEND_OAUTH2_GOOGLE_CLIENT_SECRET}
+            redirect-uri: "${BACKEND_OAUTH2_CALLBACK_URI}/{registrationId}"
+            scope:
+              - email
+              - profile
+          facebook:
+            client-id: ${BACKEND_OAUTH2_FACEBOOK_CLIENT_ID}
+            client-secret: ${BACKEND_OAUTH2_FACEBOOK_CLIENT_SECRET}
+            redirect-uri: "${BACKEND_OAUTH2_CALLBACK_URI}/{registrationId}"
+            scope:
+              - email
+              - public_profile
+          github:
+            client-id: ${BACKEND_OAUTH2_GITHUB_CLIENT_ID}
+            client-secret: ${BACKEND_OAUTH2_GITHUB_CLIENT_SECRET}
+            redirect-uri: "${BACKEND_OAUTH2_CALLBACK_URI}/{registrationId}"
+            scope:
+              - user:email
+              - read:user
+  servlet:
+    multipart:
+      max-file-size: 3MB
+      max-request-size: 3MB
+  mail:
+    host: ${BACKEND_SMTP_HOST}
+    port: ${BACKEND_SMTP_PORT}
+    username: ${BACKEND_SMTP_USERNAME}
+    password: ${BACKEND_SMTP_PASSWORD}
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          socketFactory:
+            port: ${BACKEND_SMTP_PORT}
+            class: javax.net.ssl.SSLSocketFactory
+          ssl:
+            enable: true
+            trust: ${BACKEND_SMTP_HOST}
+          auth: true
+
+logging:
+  level:
+    root: error
+#    org.springframework: info
+#    org.springframework.web: trace
+    org.hibernate: error
+#    org.hibernate.type.descriptor.sql: trace
+    org.springframework.transaction: error
+    org.springframework.security: error
+    org.springframework.mail: error
