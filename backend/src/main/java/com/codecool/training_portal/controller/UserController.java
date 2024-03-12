@@ -5,11 +5,13 @@ import com.codecool.training_portal.dto.user.UserUsernameUpdateDto;
 import com.codecool.training_portal.service.auth.ApplicationUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Locale;
 import java.util.Map;
 
 @Controller
@@ -17,6 +19,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserController {
   private final ApplicationUserService applicationUserService;
+  private final MessageSource messageSource;
 
   @GetMapping
   public ResponseEntity<?> getOwnApplicationUser() {
@@ -33,9 +36,9 @@ public class UserController {
   }
 
   @DeleteMapping
-  public ResponseEntity<?> deleteOwnApplicationUser() {
+  public ResponseEntity<?> deleteOwnApplicationUser(Locale locale) {
     applicationUserService.deleteOwnApplicationUser();
     return ResponseEntity.status(HttpStatus.OK).body(
-      Map.of("message", "Application user deleted successfully"));
+      Map.of("message", messageSource.getMessage("user.delete.success",null,locale)));
   }
 }

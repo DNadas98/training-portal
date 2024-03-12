@@ -7,11 +7,13 @@ import com.codecool.training_portal.service.group.GroupService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @RestController
@@ -19,6 +21,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class GroupController {
     private final GroupService groupService;
+    private final MessageSource messageSource;
 
     @GetMapping()
     public ResponseEntity<?> getAllGroups(
@@ -41,12 +44,13 @@ public class GroupController {
     @PutMapping("/{groupId}")
     public ResponseEntity<?> updateGroup(
             @PathVariable @Min(1) Long groupId,
-            @RequestBody @Valid GroupUpdateRequestDto updateRequestDto) {
+            @RequestBody @Valid GroupUpdateRequestDto updateRequestDto, Locale locale) {
         GroupResponsePrivateDTO groupResponseDetails = groupService.updateGroup(
                 updateRequestDto, groupId);
 
         return ResponseEntity.status(HttpStatus.OK).body(
-                Map.of("message", "UserGroup with ID " + groupId + " updated successfully", "data",
-                        groupResponseDetails));
+                Map.of("message",
+                        messageSource.getMessage("group.update.success",null,locale),
+                        "data", groupResponseDetails));
     }
 }

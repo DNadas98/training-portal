@@ -9,10 +9,12 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -20,56 +22,61 @@ import java.util.UUID;
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
-  private final AuthenticationService authenticationService;
-  private final CookieService cookieService;
+    private final AuthenticationService authenticationService;
+    private final CookieService cookieService;
+    private final MessageSource messageSource;
 
 
-  @PostMapping("/register")
-  public ResponseEntity<?> register(
-    @RequestBody @Valid RegisterRequestDto request) throws Exception {
-    authenticationService.sendRegistrationVerificationEmail(
-      request);
-    return ResponseEntity.status(HttpStatus.OK).body(Map.of(
-      "message",
-      "Registration process started successfully, e-mail verification is required to proceed"));
-  }
-
-  @PostMapping("/verify-registration")
-  public ResponseEntity<?> verifyRegistration(
-    @RequestParam(name = "code") UUID verificationCode,
-    @RequestParam(name = "id") @Min(1) Long verificationTokenId) {
-    authenticationService.register(
-      new @Valid VerificationTokenDto(verificationTokenId, verificationCode));
-    return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-      "message",
-      "User account registered successfully, sign in to proceed"));
-  }
-
-  @PostMapping("/login")
-  public ResponseEntity<?> login(
-    @RequestBody @Valid LoginRequestDto loginRequest, HttpServletResponse response) {
-    LoginResponseDto loginResponse = authenticationService.login(loginRequest);
-
-    String refreshToken = authenticationService.getNewRefreshToken(
-      new TokenPayloadDto(loginResponse.userInfo().email()));
-    cookieService.addRefreshCookie(refreshToken, response);
-    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", loginResponse));
-  }
-
-  @GetMapping("/refresh")
-  public ResponseEntity<?> refresh(@CookieValue @Length(min = 1) String jwt) {
-    RefreshResponseDto refreshResponse = authenticationService.refresh(new RefreshRequestDto(jwt));
-    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", refreshResponse));
-  }
-
-  @GetMapping("/logout")
-  public ResponseEntity<?> logout(
-    @CookieValue(required = false) String jwt, HttpServletResponse response) {
-    if (jwt == null) {
-      return ResponseEntity.noContent().build();
+    @PostMapping("/register")
+    public ResponseEntity<?> register(
+            @RequestBody @Valid RegisterRequestDto request, Locale locale) throws Exception {
+        authenticationService.sendRegistrationVerificationEmail(
+                request);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of(
+                "message",
+                messageSource.getMessage("auth.registration.started", null, locale)));
     }
-    cookieService.clearRefreshCookie(response);
-    return ResponseEntity.status(HttpStatus.OK).body(
-      Map.of("message", "User account logged out successfully"));
-  }
+    //...
+
+    @PostMapping("/verify-registration")
+    public ResponseEntity<?> verifyRegistration(
+            @RequestParam(name = "code") UUID verificationCode,
+            @RequestParam(name = "id") @Min(1) Long verificationTokenId,
+            Locale locale) {
+        authenticationService.register(
+                new @Valid VerificationTokenDto(verificationTokenId, verificationCode));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "message",
+                messageSource.getMessage("auth.registration.success", null, locale)));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(
+            @RequestBody @Valid LoginRequestDto loginRequest, HttpServletResponse response) {
+        LoginResponseDto loginResponse = authenticationService.login(loginRequest);
+
+        String refreshToken = authenticationService.getNewRefreshToken(
+                new TokenPayloadDto(loginResponse.userInfo().email()));
+        cookieService.addRefreshCookie(refreshToken, response);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", loginResponse));
+    }
+
+    @GetMapping("/refresh")
+    public ResponseEntity<?> refresh(@CookieValue @Length(min = 1) String jwt) {
+        RefreshResponseDto refreshResponse = authenticationService.refresh(new RefreshRequestDto(jwt));
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", refreshResponse));
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<?> logout(
+            @CookieValue(required = false) String jwt, HttpServletResponse response,
+            Locale locale) {
+        if (jwt == null) {
+            return ResponseEntity.noContent().build();
+        }
+        cookieService.clearRefreshCookie(response);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                Map.of("message",
+                        messageSource.getMessage("auth.logout.success", null, locale)));
+    }
 }

@@ -4,11 +4,13 @@ import com.codecool.training_portal.dto.user.UserResponsePublicDto;
 import com.codecool.training_portal.service.group.GroupRoleService;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -17,6 +19,7 @@ import java.util.Map;
 @RequestMapping("/api/v1/groups/{groupId}")
 public class GroupRoleController {
     private final GroupRoleService groupRoleService;
+    private final MessageSource messageSource;
 
     @GetMapping("members")
     public ResponseEntity<?> getMembers(@PathVariable @Min(1) Long groupId) {
@@ -27,18 +30,20 @@ public class GroupRoleController {
     @PostMapping("members")
     public ResponseEntity<?> addMember(
             @PathVariable @Min(1) Long groupId, @RequestParam(name = "userId") @Min(
-            1) Long userId) {
+            1) Long userId, Locale locale) {
         groupRoleService.addMember(groupId, userId);
     return ResponseEntity.status(HttpStatus.OK).body(
-            Map.of("message", "Member added successfully"));
+            Map.of("message",
+                    messageSource.getMessage("group.members.add.success",null,locale)));
   }
 
     @DeleteMapping("members/{userId}")
     public ResponseEntity<?> removeMember(
-            @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long userId) {
+            @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long userId,Locale locale) {
         groupRoleService.removeMember(groupId, userId);
     return ResponseEntity.status(HttpStatus.OK).body(
-            Map.of("message", "Member removed successfully"));
+            Map.of("message",
+                    messageSource.getMessage("group.members.remove.success",null,locale)));
   }
 
   @GetMapping("editors")
@@ -49,18 +54,20 @@ public class GroupRoleController {
 
   @PostMapping("editors")
   public ResponseEntity<?> addEditor(
-          @PathVariable @Min(1) Long groupId, @RequestParam(name = "userId") @Min(1) Long userId) {
+          @PathVariable @Min(1) Long groupId, @RequestParam(name = "userId") @Min(1) Long userId,Locale locale) {
       groupRoleService.addEditor(groupId, userId);
     return ResponseEntity.status(HttpStatus.OK).body(
-      Map.of("message", "Editor added successfully"));
+      Map.of("message",
+              messageSource.getMessage("group.editors.add.success",null,locale)));
   }
 
   @DeleteMapping("editors/{userId}")
   public ResponseEntity<?> removeEditor(
-          @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long userId) {
+          @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long userId,Locale locale) {
       groupRoleService.removeEditor(groupId, userId);
     return ResponseEntity.status(HttpStatus.OK).body(
-      Map.of("message", "Editor removed successfully"));
+      Map.of("message",
+              messageSource.getMessage("group.editors.remove.success",null,locale)));
   }
 
   @GetMapping("admins")
@@ -71,9 +78,10 @@ public class GroupRoleController {
 
   @PostMapping("admins")
   public ResponseEntity<?> addAdmin(
-          @PathVariable @Min(1) Long groupId, @RequestParam(name = "userId") @Min(1) Long userId) {
+          @PathVariable @Min(1) Long groupId, @RequestParam(name = "userId") @Min(1) Long userId, Locale locale) {
       groupRoleService.addAdmin(groupId, userId);
     return ResponseEntity.status(HttpStatus.OK).body(
-      Map.of("message", "Admin added successfully"));
+      Map.of("message",
+              messageSource.getMessage("group.admins.add.success",null,locale)));
   }
 }
