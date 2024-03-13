@@ -25,7 +25,7 @@ export default function ProjectDashboard() {
   const navigate = useNavigate();
 
   const idIsValid = (id: string | undefined) => {
-    return id && !isNaN(parseInt(id)) && parseInt(id) > 0
+    return id && !isNaN(parseInt(id)) && parseInt(id) > 0;
   };
 
   function handleErrorNotification(message?: string) {
@@ -41,7 +41,7 @@ export default function ProjectDashboard() {
       if (!idIsValid(groupId) || !idIsValid(projectId)) {
         setProjectError("The provided group or project ID is invalid");
         setProjectLoading(false);
-        return
+        return;
       }
       const response = await authJsonFetch({
         path: `groups/${groupId}/projects/${projectId}`
@@ -51,11 +51,11 @@ export default function ProjectDashboard() {
         return handleErrorNotification(response?.error);
       }
       // @ts-ignore
-        const projectData = {
+      const projectData = {
         ...response.data,
         startDate: new Date(response.data.startDate as string),
-        deadline: new Date(response.data.deadline as string),
-      }
+        deadline: new Date(response.data.deadline as string)
+      };
       setProject(projectData as ProjectResponsePrivateDto);
     } catch (e) {
       setProject(undefined);
@@ -76,7 +76,7 @@ export default function ProjectDashboard() {
       if (!idIsValid) {
         setProjectError("The provided group or project ID is invalid");
         setProjectLoading(false);
-        return
+        return;
       }
       const response = await authJsonFetch({
         path: `groups/${groupId}/projects/${projectId}`, method: "DELETE"
@@ -113,6 +113,10 @@ export default function ProjectDashboard() {
     navigate(`/groups/${groupId}/projects/${projectId}/tasks`);
   }
 
+  function handleQuestionnairesClick() {
+    navigate(`/groups/${groupId}/projects/${projectId}/questionnaires`);
+  }
+
   if (permissionsLoading || projectLoading) {
     return <LoadingSpinner/>;
   } else if ((!projectPermissions?.length) || !project) {
@@ -127,24 +131,28 @@ export default function ProjectDashboard() {
       <p>Start date: {project.startDate.toString()}</p>
       <p>Deadline: {project.deadline.toString()}</p>
       <p>Project permissions: {projectPermissions.join(", ")}</p>
-        {(projectPermissions.includes(PermissionType.PROJECT_EDITOR))
+      {(projectPermissions.includes(PermissionType.PROJECT_EDITOR))
         && <div>
-              <button onClick={handleTasksClick}>View tasks</button>
-          </div>
+          <button onClick={handleQuestionnairesClick}>View questionnaires</button>
+          <br/>
+          <button onClick={handleTasksClick}>View tasks</button>
+        </div>
       }
       {(projectPermissions.includes(PermissionType.PROJECT_ADMIN))
         && <div>
-              <button onClick={handleJoinRequestClick}>View project join requests</button>
-              <br/>
-              <button onClick={() => {
-                  navigate(`/groups/${groupId}/projects/${projectId}/update`);
-              }}>Update project details
-              </button>
-              <br/>
-              <button onClick={handleDeleteClick}>Remove project</button>
-          </div>
+          <br/>
+          <button onClick={handleJoinRequestClick}>View project join requests</button>
+          <br/>
+          <button onClick={() => {
+            navigate(`/groups/${groupId}/projects/${projectId}/update`);
+          }}>Update project details
+          </button>
+          <br/>
+          <button onClick={handleDeleteClick}>Remove project</button>
+        </div>
       }
+      <br/>
       <button onClick={() => navigate(`/groups/${groupId}/projects`)}>Back</button>
     </div>
-  )
+  );
 }

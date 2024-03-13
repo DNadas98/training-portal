@@ -24,6 +24,8 @@ import Tasks from "../../tasks/pages/tasks/Tasks.tsx";
 import AddTask from "../../tasks/pages/add/AddTask.tsx";
 import TaskDashboard from "../../tasks/pages/dashboard/TaskDashboard.tsx";
 import UpdateTask from "../../tasks/pages/update/UpdateTask.tsx";
+import Questionnaires from "../../questionnaires/pages/questionnaires/Questionnaires.tsx";
+import AddQuestionnaire from "../../questionnaires/pages/add/AddQuestionnaire.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -119,6 +121,12 @@ const appRouter = createBrowserRouter([
           {
             path: ":groupId/projects/:projectId/tasks/:taskId/update",
             element: <UpdateTask/>
+          },
+          {
+            path: ":groupId/projects/:projectId/questionnaires", element: <Questionnaires/>
+          },
+          {
+            path: ":groupId/projects/:projectId/questionnaires/create", element: <AddQuestionnaire/>,
           },
           {
             path: "*", element: <NotFound/>

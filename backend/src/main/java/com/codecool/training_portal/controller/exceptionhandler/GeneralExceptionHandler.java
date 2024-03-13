@@ -12,6 +12,7 @@ import com.codecool.training_portal.exception.group.project.DuplicateProjectJoin
 import com.codecool.training_portal.exception.group.project.ProjectJoinRequestNotFoundException;
 import com.codecool.training_portal.exception.group.project.ProjectNotFoundException;
 import com.codecool.training_portal.exception.group.project.UserAlreadyInProjectException;
+import com.codecool.training_portal.exception.group.project.questionnaire.QuestionnaireNotFoundException;
 import com.codecool.training_portal.exception.group.project.task.TaskNotFoundException;
 import com.codecool.training_portal.exception.verification.VerificationTokenAlreadyExistsException;
 import org.slf4j.Logger;
@@ -126,6 +127,13 @@ public class GeneralExceptionHandler {
     logger.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
       Map.of("error", "The requested task was not found"));
+  }
+
+  @ExceptionHandler(QuestionnaireNotFoundException.class)
+  public ResponseEntity<?> handleQuestionnaireNotFoundException(QuestionnaireNotFoundException e) {
+    logger.error(e.getMessage());
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+      Map.of("error", "The requested questionnaire was not found"));
   }
 
   // 409
