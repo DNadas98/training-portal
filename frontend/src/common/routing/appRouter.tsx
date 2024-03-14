@@ -123,13 +123,13 @@ const appRouter = createBrowserRouter([
             element: <UpdateTask/>
           },
           {
-            path: ":groupId/projects/:projectId/questionnaires", element: <Questionnaires/>
+            path: ":groupId/projects/:projectId/editor/questionnaires", element: <Questionnaires/>
           },
           {
-            path: ":groupId/projects/:projectId/questionnaires/create", element: <QuestionnaireEditor/>,
+            path: ":groupId/projects/:projectId/editor/questionnaires/create", element: <QuestionnaireEditor/>,
           },
           {
-            path: ":groupId/projects/:projectId/questionnaires/:questionnaireId/update", element: <QuestionnaireEditor/>,
+            path: ":groupId/projects/:projectId/editor/questionnaires/:questionnaireId/update", element: <QuestionnaireEditor/>,
           },
           {
             path: "*", element: <NotFound/>

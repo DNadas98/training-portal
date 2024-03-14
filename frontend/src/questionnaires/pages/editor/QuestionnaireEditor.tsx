@@ -17,6 +17,7 @@ import {QuestionType} from "../../dto/QuestionType.ts";
 import {QuestionCreateRequestDto} from "../../dto/QuestionCreateRequestDto.ts";
 import QuestionnaireEditorForm from "../../components/QuestionnaireEditorForm.tsx";
 import {ApiResponseDto} from "../../../common/api/dto/ApiResponseDto.ts";
+import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 
 export default function QuestionnaireEditor() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -25,26 +26,39 @@ export default function QuestionnaireEditor() {
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
   const navigate = useNavigate();
-
+  const dialog = useDialog();
 
   const idIsValid = (id: string | undefined) => {
     return (id?.length && !isNaN(parseInt(id)) && parseInt(id) > 0);
   };
+
+  const getEmptyQuestion = (): QuestionCreateRequestDto => {
+    return {
+      text: "",
+      type: QuestionType.RADIO,
+      order: 1,
+      points: 1,
+      answers: [{text: "", correct: false, order: 1}]
+    };
+  };
+
   const questionnaireId = useParams()?.questionnaireId;
   console.log(questionnaireId);
-  const isUpdatePage = idIsValid(questionnaireId) ? true : false;
+  const isUpdatePage = !!idIsValid(questionnaireId);
   const [loading, setLoading] = useState<boolean>(isUpdatePage);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(true);
   const [name, setName] = useState<string | undefined>(undefined);
   const [description, setDescription] = useState<string | undefined>(undefined);
+  const [questions, setQuestions] = useState<QuestionCreateRequestDto[]>([getEmptyQuestion()]);
 
   async function loadQuestionnaire() {
     try {
       const response = await authJsonFetch({
-        path: `groups/${groupId}/projects/${projectId}/questionnaires/1`
+        path: `groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}`
       });
       if (!response?.status || response.status > 399 || !response?.data) {
         handleError(response?.error ?? response?.message ?? "Failed to load questionnaire");
-        navigate(`/groups/${groupId}/projects/${projectId}/questionnaires`);
+        navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`);
         return;
       }
       const questionnaire = response.data as QuestionnaireResponseEditorDto;
@@ -53,9 +67,10 @@ export default function QuestionnaireEditor() {
       setQuestions(questionnaire.questions);
     } catch (e) {
       handleError("Failed to load questionnaire");
-      navigate(`/groups/${groupId}/projects/${projectId}/questionnaires`);
+      navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`);
     } finally {
       setLoading(false);
+      setHasUnsavedChanges(false);
     }
   }
 
@@ -68,18 +83,7 @@ export default function QuestionnaireEditor() {
     if (isUpdatePage) {
       loadQuestionnaire().then();
     }
-  }, []);
-  const getEmptyQuestion = (): QuestionCreateRequestDto => {
-    return {
-      text: "",
-      type: QuestionType.RADIO,
-      order: 1,
-      points: 1,
-      answers: [{text: "", correct: false, order: 1}]
-    };
-  };
-
-  const [questions, setQuestions] = useState<QuestionCreateRequestDto[]>([getEmptyQuestion()]);
+  }, [isUpdatePage, groupId, projectId, questionnaireId]);
 
   const handleQuestionChange = (index: number, field: string, value: any): void => {
     const newQuestions = [...questions];
@@ -150,8 +154,10 @@ export default function QuestionnaireEditor() {
       }
       if (type === "questions") {
         handleQuestionDragEnd(source, destination);
+        setHasUnsavedChanges(true);
       } else if (type === "answers") {
         handleAnswerDragEnd(source, destination);
+        setHasUnsavedChanges(true);
       }
       return;
     } catch (e) {
@@ -194,7 +200,7 @@ export default function QuestionnaireEditor() {
 
   const addQuestionnaire = async (requestDto: QuestionnaireCreateRequestDto) => {
     return await authJsonFetch({
-      path: `groups/${groupId}/projects/${projectId}/questionnaires`,
+      path: `groups/${groupId}/projects/${projectId}/editor/questionnaires`,
       method: "POST",
       body: requestDto
     });
@@ -202,7 +208,7 @@ export default function QuestionnaireEditor() {
 
   const updateQuestionnaire = async (requestDto: QuestionnaireCreateRequestDto) => {
     return await authJsonFetch({
-      path: `groups/${groupId}/projects/${projectId}/questionnaires/${questionnaireId}`,
+      path: `groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}`,
       method: "PUT",
       body: requestDto
     });
@@ -218,7 +224,7 @@ export default function QuestionnaireEditor() {
     try {
       event.preventDefault();
       setLoading(true);
-      if (!name||!description||!questions?.length) {
+      if (!name || !description || !questions?.length) {
         handleError("The received questionnaire is invalid.");
         return;
       }
@@ -239,9 +245,9 @@ export default function QuestionnaireEditor() {
       const questionnaireResponse = response.data as QuestionnaireResponseEditorDto;
       notification.openNotification({
         type: "success", vertical: "top", horizontal: "center",
-        message: `Questionnaire ${questionnaireResponse.name} has been ${!questionnaireId ? "added" : "updated"} successfully!`
+        message: `Questionnaire ${questionnaireResponse.name} has been saved successfully!`
       });
-      navigate(`/groups/${groupId}/projects/${projectId}/questionnaires`);
+      setHasUnsavedChanges(false);
     } catch (e) {
       handleError("An unknown error has occurred, please try again later!");
     } finally {
@@ -249,8 +255,19 @@ export default function QuestionnaireEditor() {
     }
   };
 
+  const navigateBack = () => navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`);
+
   const handleBackClick = () => {
-    navigate(`/groups/${groupId}/projects/${projectId}/questionnaires`);
+    if (hasUnsavedChanges) {
+      dialog.openDialog({
+        text: "Are you sure, you would like to leave the questionnaire editor without saving?",
+        confirmText: "Yes, go back",
+        cancelText: "No, stay here",
+        onConfirm: () => navigateBack()
+      });
+    } else {
+      navigateBack();
+    }
   };
 
   if (loading || permissionsLoading) {
@@ -279,6 +296,7 @@ export default function QuestionnaireEditor() {
                              removeAnswer={removeAnswer}
                              handleSubmit={handleSubmit}
                              handleBackClick={handleBackClick}
+                             setHasUnsavedChanges={setHasUnsavedChanges}
     />
   );
 }

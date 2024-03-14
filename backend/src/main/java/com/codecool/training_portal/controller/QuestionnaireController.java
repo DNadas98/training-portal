@@ -1,8 +1,10 @@
 package com.codecool.training_portal.controller;
 
 import com.codecool.training_portal.dto.group.project.questionnaire.QuestionnaireCreateUpdateRequestDto;
+import com.codecool.training_portal.dto.group.project.questionnaire.QuestionnaireResponseDto;
 import com.codecool.training_portal.dto.group.project.questionnaire.QuestionnaireResponseEditorDto;
 import com.codecool.training_portal.service.group.project.questionnaire.QuestionnaireService;
+import com.codecool.training_portal.service.group.project.questionnaire.QuestionnaireSubmissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -18,12 +20,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class QuestionnaireController {
   private final QuestionnaireService questionnaireService;
+  private final QuestionnaireSubmissionService questionnaireSubmissionService;
   private final MessageSource messageSource;
 
   @GetMapping
   public ResponseEntity<?> getQuestionnaires(
     @PathVariable Long groupId, @PathVariable Long projectId) {
-    List<QuestionnaireResponseEditorDto> questionnaires = questionnaireService.getQuestionnaires(
+    List<QuestionnaireResponseDto> questionnaires = questionnaireService.getQuestionnaires(
       groupId, projectId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", questionnaires));
   }
@@ -31,36 +34,8 @@ public class QuestionnaireController {
   @GetMapping("/{questionnaireId}")
   public ResponseEntity<?> getQuestionnaire(
     @PathVariable Long groupId, @PathVariable Long projectId, @PathVariable Long questionnaireId) {
-    QuestionnaireResponseEditorDto questionnaire = questionnaireService.getQuestionnaire(
+    QuestionnaireResponseDto questionnaire = questionnaireService.getQuestionnaire(
       groupId, projectId, questionnaireId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", questionnaire));
-  }
-
-  @PostMapping
-  public ResponseEntity<?> createQuestionnaire(
-    @PathVariable Long groupId, @PathVariable Long projectId,
-    @RequestBody QuestionnaireCreateUpdateRequestDto questionnaireCreateUpdateRequestDto) {
-    QuestionnaireResponseEditorDto questionnaire = questionnaireService.createQuestionnaire(
-      groupId, projectId, questionnaireCreateUpdateRequestDto);
-    return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("data", questionnaire));
-  }
-
-  @PutMapping("/{questionnaireId}")
-  public ResponseEntity<?> updateQuestionnaire(
-    @PathVariable Long groupId, @PathVariable Long projectId, @PathVariable Long questionnaireId,
-    @RequestBody QuestionnaireCreateUpdateRequestDto questionnaireCreateUpdateRequestDto) {
-    QuestionnaireResponseEditorDto questionnaire = questionnaireService.updateQuestionnaire(
-      groupId, projectId, questionnaireId, questionnaireCreateUpdateRequestDto);
-    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", questionnaire));
-  }
-
-  @DeleteMapping("/{questionnaireId}")
-  public ResponseEntity<?> deleteQuestionnaire(
-    @PathVariable Long groupId, @PathVariable Long projectId, @PathVariable Long questionnaireId,
-    Locale locale) {
-    questionnaireService.deleteQuestionnaire(groupId, projectId, questionnaireId);
-    return ResponseEntity.status(HttpStatus.OK).body(Map.of(
-      "message",
-      messageSource.getMessage("questionnaire.deleted.success", null, locale)));
   }
 }

@@ -7,28 +7,33 @@ import {QuestionCreateRequestDto} from "../dto/QuestionCreateRequestDto.ts";
 import {FormEventHandler, MouseEventHandler} from "react";
 
 interface QuestionnaireEditorFormProps {
-  name: string | undefined,
-  setName: (name: string) => void,
-  description: string | undefined,
-  setDescription: (name: string) => void,
-  onDragEnd: (result: any) => void,
-  questions: QuestionCreateRequestDto[],
-  addQuestion: MouseEventHandler<HTMLButtonElement> | undefined,
-  handleQuestionChange: (qIndex: number, field: string, value: any) => void,
-  removeQuestion: (index: number) => void,
-  addAnswer: (index: number) => void,
-  handleAnswerChange: (qIndex: number, aIndex: number, field: string, vale: any) => void,
-  removeAnswer: (qIndex: number, aIndex: number) => void,
-  handleSubmit: FormEventHandler<HTMLFormElement> | undefined,
-  handleBackClick: MouseEventHandler<HTMLButtonElement> | undefined,
-  isUpdatePage: boolean
+  name: string | undefined;
+  setName: (name: string) => void;
+  description: string | undefined;
+  setDescription: (name: string) => void;
+  onDragEnd: (result: any) => void;
+  questions: QuestionCreateRequestDto[];
+  addQuestion: MouseEventHandler<HTMLButtonElement> | undefined;
+  handleQuestionChange: (qIndex: number, field: string, value: any) => void;
+  removeQuestion: (index: number) => void;
+  addAnswer: (index: number) => void;
+  handleAnswerChange: (qIndex: number, aIndex: number, field: string, vale: any) => void;
+  removeAnswer: (qIndex: number, aIndex: number) => void;
+  handleSubmit: FormEventHandler<HTMLFormElement> | undefined;
+  handleBackClick: MouseEventHandler<HTMLButtonElement> | undefined;
+  isUpdatePage: boolean;
+  setHasUnsavedChanges: (value: (((prevState: boolean) => boolean) | boolean)) => void;
 }
 
 export default function QuestionnaireEditorForm(props: QuestionnaireEditorFormProps) {
   return (
     <Grid container spacing={2} justifyContent={"center"} alignItems={"top"}>
       <Grid item xs={10}>
-        <Box component="form" onSubmit={props.handleSubmit}>
+        <Box component="form"
+             onSubmit={props.handleSubmit}
+             onChange={() => {
+               props.setHasUnsavedChanges(true)
+             }}>
           <Stack spacing={1}>
             <Card variant={"outlined"} sx={{width: "100%"}}>
               <CardContent>

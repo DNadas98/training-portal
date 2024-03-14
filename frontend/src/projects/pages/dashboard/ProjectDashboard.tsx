@@ -114,7 +114,7 @@ export default function ProjectDashboard() {
   }
 
   function handleQuestionnairesClick() {
-    navigate(`/groups/${groupId}/projects/${projectId}/questionnaires`);
+    navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`);
   }
 
   if (permissionsLoading || projectLoading) {

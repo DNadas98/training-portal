@@ -25,7 +25,26 @@ public class QuestionnaireService {
   private final UserProvider userProvider;
 
   @Transactional(readOnly = true)
-  public List<QuestionnaireResponseEditorDto> getQuestionnaires(Long groupId, Long projectId) {
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
+  public List<QuestionnaireResponseDto> getQuestionnaires(Long groupId, Long projectId) {
+    List<Questionnaire> questionnaires = questionnaireDao.findAllByGroupIdAndProjectId(
+      groupId,
+      projectId);
+    return questionnaireConverter.toQuestionnaireResponseDtos(questionnaires);
+  }
+
+  @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
+  public QuestionnaireResponseDto getQuestionnaire(Long groupId, Long projectId, Long questionnaireId) {
+    Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndId(
+      groupId,
+      projectId,questionnaireId).orElseThrow(() -> new QuestionnaireNotFoundException());
+    return questionnaireConverter.toQuestionnaireResponseDto(questionnaire);
+  }
+
+  @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
+  public List<QuestionnaireResponseEditorDto> getEditorQuestionnaires(Long groupId, Long projectId) {
     List<Questionnaire> questionnaires = questionnaireDao.findAllByGroupIdAndProjectId(
       groupId,
       projectId);
@@ -33,7 +52,8 @@ public class QuestionnaireService {
   }
 
   @Transactional(readOnly = true)
-  public QuestionnaireResponseEditorDto getQuestionnaire(Long groupId, Long projectId, Long questionnaireId) {
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
+  public QuestionnaireResponseEditorDto getEditorQuestionnaire(Long groupId, Long projectId, Long questionnaireId) {
     Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndId(
       groupId,
       projectId,questionnaireId).orElseThrow(() -> new QuestionnaireNotFoundException());

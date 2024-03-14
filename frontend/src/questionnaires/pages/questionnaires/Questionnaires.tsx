@@ -38,7 +38,7 @@ export default function Questionnaires() {
         return;
       }
       const response = await authJsonFetch({
-        path: `groups/${groupId}/projects/${projectId}/questionnaires`
+        path: `groups/${groupId}/projects/${projectId}/editor/questionnaires`
       });
       if (!response?.status || response.status > 399 || !response?.data) {
         notification.openNotification({
@@ -57,14 +57,14 @@ export default function Questionnaires() {
 
   useEffect(() => {
     loadQuestionnaires().then();
-  }, []);
+  }, [groupId,projectId]);
 
   const handleAddQuestionnaire = () => {
-    navigate(`/groups/${groupId}/projects/${projectId}/questionnaires/create`);
+    navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires/create`);
   };
 
   const handleEditQuestionnaire = (questionnaireId: number) => {
-    navigate(`/groups/${groupId}/projects/${projectId}/questionnaires/${questionnaireId}/update`);
+    navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}/update`);
   };
 
   const [questionnairesFilterValue, setQuestionnairesFilterValue] = useState<string>("");
@@ -84,7 +84,7 @@ export default function Questionnaires() {
     try {
       setLoading(true);
       const response = await authJsonFetch({
-        path: `groups/${groupId}/projects/${projectId}/questionnaires/${questionnaireId}`,
+        path: `groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}`,
         method: "DELETE"
       });
       if (!response?.status || response.status > 399) {
