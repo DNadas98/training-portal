@@ -1,6 +1,5 @@
 import {TaskResponseDto} from "../../../dto/TaskResponseDto.ts";
 import {
-  Avatar,
   Card,
   CardContent,
   CardHeader,
@@ -10,8 +9,8 @@ import {
   TextField
 } from "@mui/material";
 import TaskList from "./TaskList.tsx";
-import {AddOutlined} from "@mui/icons-material";
 import {FormEvent} from "react";
+import AddIcon from "../../../../common/utils/components/AddIcon.tsx";
 
 interface TaskBrowserProps {
   tasksWithUserLoading: boolean,
@@ -36,13 +35,7 @@ export default function TaskBrowser(props: TaskBrowserProps) {
             <CardContent>
               <Stack direction={"row"} spacing={1} alignItems={"baseline"}>
                 <IconButton onClick={props.handleAddButtonClick}>
-                  <Avatar variant={"rounded"}
-                          sx={{
-                            bgcolor: "secondary.main",
-                            color: "background.paper"
-                          }}>
-                    <AddOutlined color={"inherit"}/>
-                  </Avatar>
+                  <AddIcon/>
                 </IconButton>
                 <TextField variant={"standard"} type={"search"}
                            label={"Search"}

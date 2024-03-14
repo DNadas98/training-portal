@@ -77,4 +77,6 @@ public class Questionnaire {
   public void removeQuestion(Question question) {
     this.questions.remove(question);
   }
+
+  public void removeAllQuestions() { this.questions.clear(); }
 }

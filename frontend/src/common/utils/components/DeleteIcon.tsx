@@ -2,12 +2,15 @@ import {Avatar} from "@mui/material";
 import {ClearOutlined} from "@mui/icons-material";
 
 
-export default function DeleteIcon() {
+interface DeleteIconProps {
+  disabled?: boolean
+}
+
+export default function DeleteIcon({disabled}: DeleteIconProps) {
   return (
     <Avatar variant={"rounded"} sx={{
-      backgroundColor: "error.main",
-      height: "1.25rem",
-      width: "1.25rem"
+      backgroundColor: disabled?"":"error.main",
+      color:"background.paper"
     }}>
       <ClearOutlined/>
     </Avatar>

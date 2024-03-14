@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {
   QuestionnaireResponseEditorDto
@@ -12,7 +12,8 @@ import {
 import {
   useNotification
 } from "../../../common/notification/context/NotificationProvider.tsx";
-import {QuestionType} from "../../dto/QuestionType.ts";
+import QuestionnaireBrowser from "./components/QuestionnaireBrowser.tsx";
+import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 
 export default function Questionnaires() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -21,6 +22,7 @@ export default function Questionnaires() {
   const authJsonFetch = useAuthJsonFetch();
   const navigate = useNavigate();
   const notification = useNotification();
+  const dialog = useDialog();
 
   const groupId = useParams()?.groupId;
   const projectId = useParams()?.projectId;
@@ -29,7 +31,7 @@ export default function Questionnaires() {
     return id && !isNaN(parseInt(id)) && parseInt(id) > 0;
   }
 
-  async function loadQuestionnaires() {
+  const loadQuestionnaires = async () => {
     try {
       if (!idIsValid(groupId) || !idIsValid(projectId)) {
         setQuestionnaires([]);
@@ -51,17 +53,34 @@ export default function Questionnaires() {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     loadQuestionnaires().then();
   }, []);
 
-  function handleAddQuestionnaireClick() {
+  const handleAddQuestionnaire = () => {
     navigate(`/groups/${groupId}/projects/${projectId}/questionnaires/create`);
-  }
+  };
 
-  async function handleDeleteClick(questionnaireId: number) {
+  const handleEditQuestionnaire = (questionnaireId: number) => {
+    navigate(`/groups/${groupId}/projects/${projectId}/questionnaires/${questionnaireId}/update`);
+  };
+
+  const [questionnairesFilterValue, setQuestionnairesFilterValue] = useState<string>("");
+
+  const questionnairesFiltered = useMemo(() => {
+    return questionnaires.filter(project => {
+        return project.name.toLowerCase().includes(questionnairesFilterValue);
+      }
+    );
+  }, [questionnaires, questionnairesFilterValue]);
+
+  const handleQuestionnairesSearch = (event: any) => {
+    setQuestionnairesFilterValue(event.target.value.toLowerCase().trim());
+  };
+
+  const deleteQuestionnaire = async (questionnaireId: number) => {
     try {
       setLoading(true);
       const response = await authJsonFetch({
@@ -84,7 +103,16 @@ export default function Questionnaires() {
     } finally {
       setLoading(false);
     }
-  }
+  };
+
+  const handleDeleteClick = (questionnaireId: number) => {
+    dialog.openDialog({
+      text: "Do you really wish to remove the selected questionnaire?",
+      confirmText: "Yes, delete this questionnaire", onConfirm: () => {
+        deleteQuestionnaire(questionnaireId);
+      }
+    });
+  };
 
   if (loading || permissionsLoading) {
     return <LoadingSpinner/>;
@@ -97,44 +125,13 @@ export default function Questionnaires() {
     return <></>;
   }
 
-  return loading ? <LoadingSpinner/> : (
-    <div>
-      <h1>Questionnaires</h1>
-      <button onClick={() => {
-        handleAddQuestionnaireClick();
-      }}>Add new questionnaire
-      </button>
-      <ul>{
-        questionnaires.map((questionnaire) => {
-          return <li key={questionnaire.id}>
-            <div>
-              <h2>{questionnaire.name}</h2>
-              <p>{questionnaire.description}</p>
-              {questionnaire.questions.map((question) => {
-                return <ul key={question.id}>
-                  <h3>{`${question.order}. ${question.text}`}</h3>
-                  <p>Max points: {question.points}</p>
-                  <ul>{
-                    question.answers.map((answer) => {
-                      return <li key={answer.id}>
-                        <span>{answer.order}. {answer.text}</span>
-                        <input
-                          type={question.type === QuestionType.RADIO ? "radio" : "checkbox"}
-                          name={question.id.toString()}
-                          checked={answer.correct}/>
-                      </li>;
-                    })
-                  }</ul>
-                </ul>;
-              })}
-              <button onClick={() => {
-                handleDeleteClick(questionnaire.id);
-              }}>Delete
-              </button>
-            </div>
-          </li>;
-        })
-      }</ul>
-    </div>
+  return (
+    <QuestionnaireBrowser questionnairesLoading={loading}
+                          questionnaires={questionnairesFiltered}
+                          handleQuestionnaireSearch={handleQuestionnairesSearch}
+                          onAddClick={handleAddQuestionnaire}
+                          onEditClick={handleEditQuestionnaire}
+                          onDeleteClick={handleDeleteClick}
+    />
   );
 }

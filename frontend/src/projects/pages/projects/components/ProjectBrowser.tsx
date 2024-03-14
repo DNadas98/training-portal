@@ -1,6 +1,5 @@
 import {ProjectResponsePublicDto} from "../../../dto/ProjectResponsePublicDto.ts";
 import {
-    Avatar,
     Card,
     CardContent,
     CardHeader,
@@ -10,9 +9,9 @@ import {
     TextField
 } from "@mui/material";
 import ProjectList from "./ProjectList.tsx";
-import {AddOutlined} from "@mui/icons-material";
 import {FormEvent} from "react";
 import {PermissionType} from "../../../../authentication/dto/applicationUser/PermissionType.ts";
+import AddIcon from "../../../../common/utils/components/AddIcon.tsx";
 
 interface ProjectBrowserProps {
     projectsWithUserLoading: boolean,
@@ -39,13 +38,7 @@ export default function ProjectBrowser(props: ProjectBrowserProps) {
                             <Stack direction={"row"} spacing={1} alignItems={"baseline"}>
                                 {props.groupPermissions.includes(PermissionType.GROUP_ADMIN) &&
                                     <IconButton onClick={props.handleAddButtonClick}>
-                                        <Avatar variant={"rounded"}
-                                                sx={{
-                                                    bgcolor: "secondary.main",
-                                                    color: "background.paper"
-                                                }}>
-                                            <AddOutlined color={"inherit"}/>
-                                        </Avatar>
+                                        <AddIcon/>
                                     </IconButton>
                                 }
                                 <TextField variant={"standard"} type={"search"}
