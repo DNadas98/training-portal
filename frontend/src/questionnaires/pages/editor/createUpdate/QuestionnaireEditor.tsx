@@ -1,23 +1,25 @@
-import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
+import {useAuthJsonFetch} from "../../../../common/api/service/apiService.ts";
 import {
   useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+} from "../../../../common/notification/context/NotificationProvider.tsx";
 import {FormEvent, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
-import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
-import usePermissions from "../../../authentication/hooks/usePermissions.ts";
+import LoadingSpinner from "../../../../common/utils/components/LoadingSpinner.tsx";
+import usePermissions from "../../../../authentication/hooks/usePermissions.ts";
 import {
   PermissionType
-} from "../../../authentication/dto/applicationUser/PermissionType.ts";
-import {QuestionnaireCreateRequestDto} from "../../dto/QuestionnaireCreateRequestDto.ts";
+} from "../../../../authentication/dto/PermissionType.ts";
+import {QuestionnaireCreateRequestDto} from "../../../dto/QuestionnaireCreateRequestDto.ts";
 import {
-  QuestionnaireResponseEditorDto
-} from "../../dto/QuestionnaireResponseEditorDto.ts";
-import {QuestionType} from "../../dto/QuestionType.ts";
-import {QuestionCreateRequestDto} from "../../dto/QuestionCreateRequestDto.ts";
-import QuestionnaireEditorForm from "../../components/QuestionnaireEditorForm.tsx";
-import {ApiResponseDto} from "../../../common/api/dto/ApiResponseDto.ts";
-import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
+  QuestionnaireResponseEditorDetailsDto
+} from "../../../dto/QuestionnaireResponseEditorDetailsDto.ts";
+import {QuestionType} from "../../../dto/QuestionType.ts";
+import {QuestionCreateRequestDto} from "../../../dto/QuestionCreateRequestDto.ts";
+import QuestionnaireEditorForm from "./components/QuestionnaireEditorForm.tsx";
+import {ApiResponseDto} from "../../../../common/api/dto/ApiResponseDto.ts";
+import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
+import {QuestionnaireStatus} from "../../../dto/QuestionnaireStatus.ts";
+import {QuestionnaireUpdateRequestDto} from "../../../dto/QuestionnaireUpdateRequestDto.ts";
 
 export default function QuestionnaireEditor() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -49,6 +51,7 @@ export default function QuestionnaireEditor() {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(true);
   const [name, setName] = useState<string | undefined>(undefined);
   const [description, setDescription] = useState<string | undefined>(undefined);
+  const [status, setStatus]=useState<QuestionnaireStatus|undefined>(undefined);
   const [questions, setQuestions] = useState<QuestionCreateRequestDto[]>([getEmptyQuestion()]);
 
   async function loadQuestionnaire() {
@@ -61,9 +64,10 @@ export default function QuestionnaireEditor() {
         navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`);
         return;
       }
-      const questionnaire = response.data as QuestionnaireResponseEditorDto;
+      const questionnaire = response.data as QuestionnaireResponseEditorDetailsDto;
       setName(questionnaire.name);
       setDescription(questionnaire.description);
+      setStatus(questionnaire.status);
       setQuestions(questionnaire.questions);
     } catch (e) {
       handleError("Failed to load questionnaire");
@@ -155,7 +159,7 @@ export default function QuestionnaireEditor() {
       if (type === "questions") {
         handleQuestionDragEnd(source, destination);
         setHasUnsavedChanges(true);
-      } else if (type === "answers") {
+      } else if (type.startsWith("answers")) {
         handleAnswerDragEnd(source, destination);
         setHasUnsavedChanges(true);
       }
@@ -224,12 +228,12 @@ export default function QuestionnaireEditor() {
     try {
       event.preventDefault();
       setLoading(true);
-      if (!name || !description || !questions?.length) {
+      if (!name || !description||!status || !questions?.length) {
         handleError("The received questionnaire is invalid.");
         return;
       }
-      const questionnaire: QuestionnaireCreateRequestDto = {
-        name, description, questions
+      const questionnaire: QuestionnaireUpdateRequestDto = {
+        name, description, status,questions
       };
       let response: ApiResponseDto | void;
       if (!isUpdatePage) {
@@ -242,7 +246,7 @@ export default function QuestionnaireEditor() {
           ?? "An unknown error has occurred, please try again later");
         return;
       }
-      const questionnaireResponse = response.data as QuestionnaireResponseEditorDto;
+      const questionnaireResponse = response.data as QuestionnaireResponseEditorDetailsDto;
       notification.openNotification({
         type: "success", vertical: "top", horizontal: "center",
         message: `Questionnaire ${questionnaireResponse.name} has been saved successfully!`
@@ -286,6 +290,8 @@ export default function QuestionnaireEditor() {
                              setName={setName}
                              description={description}
                              setDescription={setDescription}
+                             status={(status as QuestionnaireStatus)}
+                             setStatus={setStatus}
                              onDragEnd={onDragEnd}
                              questions={questions}
                              addQuestion={addQuestion}

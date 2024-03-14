@@ -11,7 +11,7 @@ import {GroupUpdateRequestDto} from "../../dto/GroupUpdateRequestDto.ts";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import {
   PermissionType
-} from "../../../authentication/dto/applicationUser/PermissionType.ts";
+} from "../../../authentication/dto/PermissionType.ts";
 import UpdateGroupForm from "./components/UpdateGroupForm.tsx";
 
 export default function UpdateGroup() {

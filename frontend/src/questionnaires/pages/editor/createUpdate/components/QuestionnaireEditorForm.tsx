@@ -1,28 +1,29 @@
-import {
-  Box, Button, Card, CardContent, Grid, Stack, TextField, Typography
-} from "@mui/material";
+import {Box, Button, Card, CardContent, Grid, MenuItem, Select, Stack, TextField, Typography} from "@mui/material";
 import DraggableQuestionsList from "./DraggableQuestionsList.tsx";
-import AddIcon from "../../common/utils/components/AddIcon.tsx";
-import {QuestionCreateRequestDto} from "../dto/QuestionCreateRequestDto.ts";
+import AddIcon from "../../../../../common/utils/components/AddIcon.tsx";
+import {QuestionCreateRequestDto} from "../../../../dto/QuestionCreateRequestDto.ts";
 import {FormEventHandler, MouseEventHandler} from "react";
+import {QuestionnaireStatus} from "../../../../dto/QuestionnaireStatus.ts";
 
 interface QuestionnaireEditorFormProps {
-  name: string | undefined;
-  setName: (name: string) => void;
-  description: string | undefined;
-  setDescription: (name: string) => void;
-  onDragEnd: (result: any) => void;
-  questions: QuestionCreateRequestDto[];
-  addQuestion: MouseEventHandler<HTMLButtonElement> | undefined;
-  handleQuestionChange: (qIndex: number, field: string, value: any) => void;
-  removeQuestion: (index: number) => void;
-  addAnswer: (index: number) => void;
-  handleAnswerChange: (qIndex: number, aIndex: number, field: string, vale: any) => void;
-  removeAnswer: (qIndex: number, aIndex: number) => void;
-  handleSubmit: FormEventHandler<HTMLFormElement> | undefined;
-  handleBackClick: MouseEventHandler<HTMLButtonElement> | undefined;
-  isUpdatePage: boolean;
-  setHasUnsavedChanges: (value: (((prevState: boolean) => boolean) | boolean)) => void;
+  name: string | undefined,
+  setName: (name: string) => void,
+  description: string | undefined,
+  setDescription: (name: string) => void,
+  onDragEnd: (result: any) => void,
+  questions: QuestionCreateRequestDto[],
+  addQuestion: MouseEventHandler<HTMLButtonElement> | undefined,
+  handleQuestionChange: (qIndex: number, field: string, value: any) => void,
+  removeQuestion: (index: number) => void,
+  addAnswer: (index: number) => void,
+  handleAnswerChange: (qIndex: number, aIndex: number, field: string, vale: any) => void,
+  removeAnswer: (qIndex: number, aIndex: number) => void,
+  handleSubmit: FormEventHandler<HTMLFormElement> | undefined,
+  handleBackClick: MouseEventHandler<HTMLButtonElement> | undefined,
+  isUpdatePage: boolean,
+  setHasUnsavedChanges: (value: (((prevState: boolean) => boolean) | boolean)) => void,
+  status: QuestionnaireStatus,
+  setStatus: (value: QuestionnaireStatus) => void
 }
 
 export default function QuestionnaireEditorForm(props: QuestionnaireEditorFormProps) {
@@ -59,6 +60,23 @@ export default function QuestionnaireEditorForm(props: QuestionnaireEditorFormPr
                     value={props.description}
                     onChange={(e) => props.setDescription(e.target.value)}
                   />
+                  <Grid container spacing={2} alignItems={"center"}>
+                    <Grid item>
+                      <Typography sx={{whiteSpace: "nowrap"}}>
+                        Status:</Typography>
+                    </Grid>
+                    <Grid item>
+                      <Select
+                        value={props.status??QuestionnaireStatus.INACTIVE}
+                        required
+                        onChange={(e) => props.setStatus(e.target.value as QuestionnaireStatus)}
+                      >
+                        <MenuItem value={QuestionnaireStatus.INACTIVE}>Inactive</MenuItem>
+                        <MenuItem value={QuestionnaireStatus.TEST}>Test</MenuItem>
+                        <MenuItem value={QuestionnaireStatus.ACTIVE}>Active</MenuItem>
+                      </Select>
+                    </Grid>
+                  </Grid>
                 </Stack>
               </CardContent>
             </Card>

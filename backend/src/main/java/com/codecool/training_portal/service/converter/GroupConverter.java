@@ -38,7 +38,7 @@ public class GroupConverter {
     UserGroupJoinRequest request) {
     return new GroupJoinRequestResponseDto(request.getId(),
       getGroupResponsePublicDto(request.getUserGroup()),
-      userConverter.getUserResponsePublicDto(request.getApplicationUser()), request.getStatus());
+      userConverter.toUserResponsePublicDto(request.getApplicationUser()), request.getStatus());
   }
 
   public List<GroupJoinRequestResponseDto> getGroupJoinRequestResponseDtos(

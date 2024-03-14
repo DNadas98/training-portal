@@ -1,19 +1,17 @@
 import {useEffect, useMemo, useState} from "react";
-import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
-import {
-  QuestionnaireResponseEditorDto
-} from "../../dto/QuestionnaireResponseEditorDto.ts";
-import usePermissions from "../../../authentication/hooks/usePermissions.ts";
-import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
+import LoadingSpinner from "../../../../common/utils/components/LoadingSpinner.tsx";
+import usePermissions from "../../../../authentication/hooks/usePermissions.ts";
+import {useAuthJsonFetch} from "../../../../common/api/service/apiService.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {
   PermissionType
-} from "../../../authentication/dto/applicationUser/PermissionType.ts";
+} from "../../../../authentication/dto/PermissionType.ts";
 import {
   useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+} from "../../../../common/notification/context/NotificationProvider.tsx";
 import QuestionnaireBrowser from "./components/QuestionnaireBrowser.tsx";
-import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
+import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
+import {QuestionnaireResponseEditorDto} from "../../../dto/QuestionnaireResponseEditorDto.ts";
 
 export default function Questionnaires() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -47,7 +45,14 @@ export default function Questionnaires() {
         });
         return;
       }
-      setQuestionnaires(response.data as QuestionnaireResponseEditorDto[]);
+      const questionnairesWithDates: QuestionnaireResponseEditorDto[] = response.data.map((questionnaire: any) => {
+        return {
+          ...questionnaire,
+          createdAt: new Date(questionnaire.createdAt),
+          updatedAt: new Date(questionnaire.updatedAt)
+        };
+      });
+      setQuestionnaires(questionnairesWithDates);
     } catch (e) {
       setQuestionnaires([]);
     } finally {
@@ -57,7 +62,7 @@ export default function Questionnaires() {
 
   useEffect(() => {
     loadQuestionnaires().then();
-  }, [groupId,projectId]);
+  }, [groupId, projectId]);
 
   const handleAddQuestionnaire = () => {
     navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires/create`);

@@ -7,7 +7,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {ProjectResponsePrivateDto} from "../../dto/ProjectResponsePrivateDto.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
-import {PermissionType} from "../../../authentication/dto/applicationUser/PermissionType.ts";
+import {PermissionType} from "../../../authentication/dto/PermissionType.ts";
 
 export default function AddProject() {
     const {loading: permissionsLoading, groupPermissions} = usePermissions();

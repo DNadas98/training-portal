@@ -1,12 +1,10 @@
 import {createBrowserRouter} from "react-router-dom";
 import Layout from "../../public/layout/Layout.tsx";
 import ErrorPage from "../../public/pages/errorPages/ErrorPage.tsx";
-import {publicMenuRoutes} from "../config/menu/publicMenuRoutes.tsx";
 import NotFound from "../../public/pages/errorPages/NotFound.tsx";
 import RequireAuthentication from "../../authentication/components/RequireAuthentication.tsx";
 import {GlobalRole} from "../../authentication/dto/userInfo/GlobalRole.ts";
 import UserLayout from "../../user/layout/UserLayout.tsx";
-import {userMenuProfileRoutes} from "../config/menu/userMenuProfileRoutes.tsx";
 import RegisterVerificationRedirect
   from "../../authentication/pages/redirect/RegisterVerificationRedirect.tsx";
 import GroupDashboard from "../../groups/pages/dashboard/GroupDashboard.tsx";
@@ -24,8 +22,14 @@ import Tasks from "../../tasks/pages/tasks/Tasks.tsx";
 import AddTask from "../../tasks/pages/add/AddTask.tsx";
 import TaskDashboard from "../../tasks/pages/dashboard/TaskDashboard.tsx";
 import UpdateTask from "../../tasks/pages/update/UpdateTask.tsx";
-import Questionnaires from "../../questionnaires/pages/questionnaires/Questionnaires.tsx";
-import QuestionnaireEditor from "../../questionnaires/pages/editor/QuestionnaireEditor.tsx";
+import Questionnaires from "../../questionnaires/pages/editor/questionnaires/Questionnaires.tsx";
+import QuestionnaireEditor from "../../questionnaires/pages/editor/createUpdate/QuestionnaireEditor.tsx";
+import Home from "../../public/pages/home/Home.tsx";
+import Login from "../../authentication/pages/login/Login.tsx";
+import Register from "../../authentication/pages/register/Register.tsx";
+import Profile from "../../user/pages/profile/Profile.tsx";
+import UserJoinRequests from "../../user/pages/requests/UserJoinRequests.tsx";
+import Logout from "../../authentication/pages/Logout.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -34,10 +38,10 @@ const appRouter = createBrowserRouter([
     element: <Layout/>,
     errorElement: <ErrorPage/>,
     children: [
-      ...publicMenuRoutes.elements,
-      {
-        path: "/*", element: <NotFound/>
-      }
+      {path: "", element: <Home/>},
+      {path: "login", element: <Login/>},
+      {path: "register", element: <Register/>},
+      {path: "/*", element: <NotFound/>}
     ]
   },
   /* redirect */
@@ -60,10 +64,10 @@ const appRouter = createBrowserRouter([
       {
         element: <UserLayout/>,
         children: [
-          ...userMenuProfileRoutes.elements,
-          {
-            path: "*", element: <NotFound/>
-          }
+          {path: "", element: <Profile/>},
+          {path: "requests", element: <UserJoinRequests/>},
+          {path: "logout", element: <Logout/>},
+          {path: "*", element: <NotFound/>}
         ]
       }
     ]
@@ -129,7 +133,8 @@ const appRouter = createBrowserRouter([
             path: ":groupId/projects/:projectId/editor/questionnaires/create", element: <QuestionnaireEditor/>,
           },
           {
-            path: ":groupId/projects/:projectId/editor/questionnaires/:questionnaireId/update", element: <QuestionnaireEditor/>,
+            path: ":groupId/projects/:projectId/editor/questionnaires/:questionnaireId/update",
+            element: <QuestionnaireEditor/>,
           },
           {
             path: "*", element: <NotFound/>

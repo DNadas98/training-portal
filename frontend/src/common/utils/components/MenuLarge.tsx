@@ -1,24 +1,23 @@
 import {Button, Stack} from "@mui/material";
 import {Link as RouterLink} from "react-router-dom";
-import {IMenuRoutes} from "../../routing/IMenuRoutes.ts";
-import getMenuRoutePath from "../../routing/getMenuRoutePath.ts";
+import {IMenuItem} from "../../menu/IMenuItem.ts";
 
 interface MenuLargeProps {
-  menu: IMenuRoutes;
+  items: IMenuItem[];
 }
 
-export default function MenuLarge({menu}: MenuLargeProps) {
-  if (!menu?.elements?.length) {
+export default function MenuLarge(props: MenuLargeProps) {
+  if (!props.items?.length) {
     return <></>;
   }
   return (<Stack direction={"row"}>
-    {menu.elements.map(el => {
+    {props.items.map(item => {
       return (
-        <Button key={el.path}
+        <Button key={item.path}
                 component={RouterLink}
-                to={getMenuRoutePath(menu, el.path)}
+                to={item.path}
                 color="inherit">
-          {el.name}
+          {item.title}
         </Button>
       );
     })}

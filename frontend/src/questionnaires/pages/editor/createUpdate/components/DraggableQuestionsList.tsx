@@ -8,11 +8,11 @@ import {
   Stack, TextField,
   Typography, useMediaQuery, useTheme
 } from "@mui/material";
-import {QuestionType} from "../dto/QuestionType.ts";
-import {QuestionCreateRequestDto} from "../dto/QuestionCreateRequestDto.ts";
+import {QuestionType} from "../../../../dto/QuestionType.ts";
+import {QuestionCreateRequestDto} from "../../../../dto/QuestionCreateRequestDto.ts";
 import DraggableQuestionAnswersList from "./DraggableQuestionAnswersList.tsx";
-import DeleteIcon from "../../common/utils/components/DeleteIcon.tsx";
-import AddIcon from "../../common/utils/components/AddIcon.tsx";
+import DeleteIcon from "../../../../../common/utils/components/DeleteIcon.tsx";
+import AddIcon from "../../../../../common/utils/components/AddIcon.tsx";
 
 interface DraggableQuestionsListProps {
   onDragEnd: (result: any) => void;

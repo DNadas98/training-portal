@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import ProjectList from "./ProjectList.tsx";
 import {FormEvent} from "react";
-import {PermissionType} from "../../../../authentication/dto/applicationUser/PermissionType.ts";
+import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
 import AddIcon from "../../../../common/utils/components/AddIcon.tsx";
 
 interface ProjectBrowserProps {

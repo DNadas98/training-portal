@@ -1,4 +1,4 @@
-import {PermissionType} from "../dto/applicationUser/PermissionType.ts";
+import {PermissionType} from "../dto/PermissionType.ts";
 
 export interface IPermissionState {
   loading: boolean;

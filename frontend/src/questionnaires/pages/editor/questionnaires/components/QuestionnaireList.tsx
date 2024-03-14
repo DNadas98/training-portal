@@ -5,14 +5,12 @@ import {
   AccordionSummary,
   Button,
   Card,
-  CardContent, Stack,
+  CardContent, Divider, Stack,
   Typography
 } from "@mui/material";
-import {
-  QuestionnaireResponseEditorDto
-} from "../../../dto/QuestionnaireResponseEditorDto.ts";
-import ExpandIcon from "../../../../common/utils/components/ExpandIcon.tsx";
-import LoadingSpinner from "../../../../common/utils/components/LoadingSpinner.tsx";
+import ExpandIcon from "../../../../../common/utils/components/ExpandIcon.tsx";
+import LoadingSpinner from "../../../../../common/utils/components/LoadingSpinner.tsx";
+import {QuestionnaireResponseEditorDto} from "../../../../dto/QuestionnaireResponseEditorDto.ts";
 
 interface QuestionnaireListProps {
   loading: boolean;
@@ -44,6 +42,18 @@ export default function QuestionnaireList(props: QuestionnaireListProps) {
               <Typography variant={"body2"}>
                 {questionnaire.description}
               </Typography>
+              <Divider sx={{marginTop: 2, marginBottom: 2}}/>
+              <Typography variant={"body2"}>
+                Created
+                at {questionnaire.createdAt.toLocaleString(navigator.language)} by {questionnaire.createdBy.username}
+              </Typography>
+              <Divider sx={{marginTop: 1, marginBottom: 1}}/>
+              <Typography variant={"body2"}>
+                Last updated
+                at {questionnaire.updatedAt.toLocaleString(navigator.language)} by {questionnaire.updatedBy.username}
+              </Typography>
+              <Divider sx={{marginTop: 1, marginBottom: 1}}/>
+              <Typography>Status: {questionnaire.status}</Typography>
             </AccordionDetails>
             <AccordionActions>
               <Stack spacing={2} direction={"row"} width={"100%"}>
@@ -55,7 +65,7 @@ export default function QuestionnaireList(props: QuestionnaireListProps) {
                         }}>
                   Edit
                 </Button>
-                <Button sx={{textTransform: "none",color:"white"}}
+                <Button sx={{textTransform: "none", color: "white"}}
                         fullWidth
                         variant={"contained"}
                         color={"error"}

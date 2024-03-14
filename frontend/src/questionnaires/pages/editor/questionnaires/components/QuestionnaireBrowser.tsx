@@ -8,11 +8,9 @@ import {
   TextField
 } from "@mui/material";
 import {FormEvent} from "react";
-import {
-  QuestionnaireResponseEditorDto
-} from "../../../dto/QuestionnaireResponseEditorDto.ts";
-import AddIcon from "../../../../common/utils/components/AddIcon.tsx";
+import AddIcon from "../../../../../common/utils/components/AddIcon.tsx";
 import QuestionnaireList from "./QuestionnaireList.tsx";
+import {QuestionnaireResponseEditorDto} from "../../../../dto/QuestionnaireResponseEditorDto.ts";
 
 interface QuestionnaireBrowserProps {
   questionnairesLoading: boolean;

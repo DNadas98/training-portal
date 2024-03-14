@@ -1,6 +1,6 @@
 import {
   UserResponsePublicDto
-} from "../../../authentication/dto/applicationUser/UserResponsePublicDto.ts";
+} from "../../../user/dto/UserResponsePublicDto.ts";
 import {RequestStatus} from "../RequestStatus.ts";
 import {ProjectResponsePublicDto} from "../ProjectResponsePublicDto.ts";
 

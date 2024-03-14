@@ -1,6 +1,5 @@
 package com.codecool.training_portal.service.group.project.questionnaire;
 
-import com.codecool.training_portal.dto.group.project.questionnaire.QuestionnaireResponseEditorDto;
 import com.codecool.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionResponseDto;
 import com.codecool.training_portal.exception.group.project.questionnaire.QuestionnaireSubmissionNotFoundException;
 import com.codecool.training_portal.model.auth.ApplicationUser;

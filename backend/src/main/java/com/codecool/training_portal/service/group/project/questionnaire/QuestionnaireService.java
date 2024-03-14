@@ -35,11 +35,11 @@ public class QuestionnaireService {
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
-  public QuestionnaireResponseDto getQuestionnaire(Long groupId, Long projectId, Long questionnaireId) {
+  public QuestionnaireResponseDetailsDto getQuestionnaire(Long groupId, Long projectId, Long questionnaireId) {
     Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndId(
       groupId,
       projectId,questionnaireId).orElseThrow(() -> new QuestionnaireNotFoundException());
-    return questionnaireConverter.toQuestionnaireResponseDto(questionnaire);
+    return questionnaireConverter.toQuestionnaireResponseDetailsDto(questionnaire);
   }
 
   @Transactional(readOnly = true)
@@ -53,36 +53,37 @@ public class QuestionnaireService {
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
-  public QuestionnaireResponseEditorDto getEditorQuestionnaire(Long groupId, Long projectId, Long questionnaireId) {
+  public QuestionnaireResponseEditorDetailsDto getEditorQuestionnaire(Long groupId, Long projectId, Long questionnaireId) {
     Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndId(
       groupId,
       projectId,questionnaireId).orElseThrow(() -> new QuestionnaireNotFoundException());
-    return questionnaireConverter.toQuestionnaireResponseEditorDto(questionnaire);
+    return questionnaireConverter.toQuestionnaireResponseEditorDetailsDto(questionnaire);
   }
 
   @Transactional(rollbackFor = Exception.class)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
-  public QuestionnaireResponseEditorDto createQuestionnaire(
-    Long groupId, Long projectId, QuestionnaireCreateUpdateRequestDto questionCreateRequestDto) {
+  public QuestionnaireResponseEditorDetailsDto createQuestionnaire(
+    Long groupId, Long projectId, QuestionnaireCreateRequestDto questionCreateRequestDto) {
     ApplicationUser user = userProvider.getAuthenticatedUser();
     Project project = getProject(groupId, projectId);
     Questionnaire questionnaire = createQuestionnaire(questionCreateRequestDto, project, user);
     questionnaireDao.save(questionnaire);
-    return questionnaireConverter.toQuestionnaireResponseEditorDto(questionnaire);
+    return questionnaireConverter.toQuestionnaireResponseEditorDetailsDto(questionnaire);
   }
 
   @Transactional(rollbackFor = Exception.class)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
-  public QuestionnaireResponseEditorDto updateQuestionnaire(
-    Long groupId, Long projectId, Long questionnaireId, QuestionnaireCreateUpdateRequestDto questionCreateRequestDto) {
+  public QuestionnaireResponseEditorDetailsDto updateQuestionnaire(
+    Long groupId, Long projectId, Long questionnaireId, QuestionnaireUpdateRequestDto questionnaireUpdateRequestDto) {
     Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndId(
       groupId, projectId, questionnaireId).orElseThrow(() -> new QuestionnaireNotFoundException());
-    questionnaire.setName(questionCreateRequestDto.name());
-    questionnaire.setDescription(questionCreateRequestDto.description());
+    questionnaire.setName(questionnaireUpdateRequestDto.name());
+    questionnaire.setDescription(questionnaireUpdateRequestDto.description());
+    questionnaire.setStatus(questionnaireUpdateRequestDto.status());
     questionnaire.removeAllQuestions();
-    questionCreateRequestDto.questions().forEach(questionDto -> createQuestion(questionDto, questionnaire));
+    questionnaireUpdateRequestDto.questions().forEach(questionDto -> createQuestion(questionDto, questionnaire));
     questionnaireDao.save(questionnaire);
-    return questionnaireConverter.toQuestionnaireResponseEditorDto(questionnaire);
+    return questionnaireConverter.toQuestionnaireResponseEditorDetailsDto(questionnaire);
   }
 
   public Project getProject(Long groupId, Long projectId) {
@@ -91,7 +92,7 @@ public class QuestionnaireService {
   }
 
   public Questionnaire createQuestionnaire(
-    QuestionnaireCreateUpdateRequestDto dto, Project project, ApplicationUser user) {
+    QuestionnaireCreateRequestDto dto, Project project, ApplicationUser user) {
     Questionnaire questionnaire = new Questionnaire(dto.name(), dto.description(), project, user);
     dto.questions().forEach(questionDto -> createQuestion(questionDto, questionnaire));
     return questionnaire;

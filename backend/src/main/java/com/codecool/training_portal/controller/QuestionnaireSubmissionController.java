@@ -1,7 +1,6 @@
 package com.codecool.training_portal.controller;
 
-import com.codecool.training_portal.dto.group.project.questionnaire.QuestionnaireResponseDto;
-import com.codecool.training_portal.service.group.project.questionnaire.QuestionnaireService;
+import com.codecool.training_portal.dto.group.project.questionnaire.QuestionnaireResponseDetailsDto;
 import com.codecool.training_portal.service.group.project.questionnaire.QuestionnaireSubmissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -27,7 +26,7 @@ public class QuestionnaireSubmissionController {
   @GetMapping
   public ResponseEntity<?> getQuestionnaireSubmissions(
     @PathVariable Long groupId, @PathVariable Long projectId, @PathVariable Long questionnaireId) {
-    List<QuestionnaireResponseDto> questionnaires = new ArrayList<>();
+    List<QuestionnaireResponseDetailsDto> questionnaires = new ArrayList<>();
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", questionnaires));
   }
 
@@ -35,7 +34,7 @@ public class QuestionnaireSubmissionController {
   public ResponseEntity<?> getQuestionnaireSubmission(
     @PathVariable Long groupId, @PathVariable Long projectId, @PathVariable Long questionnaireId,
     @PathVariable Long submissionId) {
-    QuestionnaireResponseDto questionnaire = null;
+    QuestionnaireResponseDetailsDto questionnaire = null;
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", questionnaire));
   }
 }

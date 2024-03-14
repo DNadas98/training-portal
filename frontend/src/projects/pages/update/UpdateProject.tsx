@@ -11,7 +11,7 @@ import {ProjectUpdateRequestDto} from "../../dto/ProjectUpdateRequestDto.ts";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import {
   PermissionType
-} from "../../../authentication/dto/applicationUser/PermissionType.ts";
+} from "../../../authentication/dto/PermissionType.ts";
 import UpdateProjectForm from "./components/UpdateProjectForm.tsx";
 
 export default function UpdateProject() {

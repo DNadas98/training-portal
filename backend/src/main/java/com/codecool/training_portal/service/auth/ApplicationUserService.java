@@ -23,19 +23,19 @@ public class ApplicationUserService {
 
   public UserResponsePrivateDto getOwnUserDetails() throws UnauthorizedException {
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
-    return userConverter.getUserResponsePrivateDto(applicationUser);
+    return userConverter.toUserResponsePrivateDto(applicationUser);
   }
 
   public List<UserResponsePublicDto> getAllApplicationUsers() {
     List<ApplicationUser> users = applicationUserDao.findAll();
-    return userConverter.getUserResponsePublicDtos(users);
+    return userConverter.toUserResponsePublicDtos(users);
   }
 
   public UserResponsePrivateDto getApplicationUserById(Long userId) throws UnauthorizedException {
     ApplicationUser user = applicationUserDao.findById(userId).orElseThrow(
       () -> new UserNotFoundException(userId)
     );
-    return userConverter.getUserResponsePrivateDto(user);
+    return userConverter.toUserResponsePrivateDto(user);
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -43,7 +43,7 @@ public class ApplicationUserService {
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
     applicationUser.setUsername(username);
     ApplicationUser updatedApplicationUser = applicationUserDao.save(applicationUser);
-    return userConverter.getUserResponsePrivateDto(updatedApplicationUser);
+    return userConverter.toUserResponsePrivateDto(updatedApplicationUser);
   }
 
   @Transactional(rollbackFor = Exception.class)

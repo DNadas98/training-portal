@@ -57,7 +57,7 @@ public class ProjectRoleService {
   public List<UserResponsePublicDto> getAssignedMembers(Long groupId, Long projectId) {
       Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    return userConverter.getUserResponsePublicDtos(
+    return userConverter.toUserResponsePublicDtos(
             project.getAssignedMembers().stream().toList());
   }
 
@@ -88,7 +88,7 @@ public class ProjectRoleService {
   public List<UserResponsePublicDto> getEditors(Long groupId, Long projectId) {
       Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    return userConverter.getUserResponsePublicDtos(project.getEditors().stream().toList());
+    return userConverter.toUserResponsePublicDtos(project.getEditors().stream().toList());
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -118,7 +118,7 @@ public class ProjectRoleService {
   public List<UserResponsePublicDto> getAdmins(Long groupId, Long projectId) {
       Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    return userConverter.getUserResponsePublicDtos(project.getAdmins().stream().toList());
+    return userConverter.toUserResponsePublicDtos(project.getAdmins().stream().toList());
   }
 
   @Transactional(rollbackFor = Exception.class)

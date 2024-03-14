@@ -10,9 +10,9 @@ import {
   Typography, useMediaQuery, useTheme
 } from "@mui/material";
 import {Draggable, Droppable} from "react-beautiful-dnd";
-import {QuestionType} from "../dto/QuestionType.ts";
-import {QuestionCreateRequestDto} from "../dto/QuestionCreateRequestDto.ts";
-import DeleteIcon from "../../common/utils/components/DeleteIcon.tsx";
+import {QuestionType} from "../../../../dto/QuestionType.ts";
+import {QuestionCreateRequestDto} from "../../../../dto/QuestionCreateRequestDto.ts";
+import DeleteIcon from "../../../../../common/utils/components/DeleteIcon.tsx";
 
 interface DraggableQuestionAnswersListProps {
   qIndex: number;

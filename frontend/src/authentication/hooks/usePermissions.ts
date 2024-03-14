@@ -1,4 +1,4 @@
-import {PermissionType} from "../dto/applicationUser/PermissionType.ts";
+import {PermissionType} from "../dto/PermissionType.ts";
 import {useParams} from "react-router-dom";
 import {useAuthJsonFetch} from "../../common/api/service/apiService.ts";
 import {useEffect, useState} from "react";

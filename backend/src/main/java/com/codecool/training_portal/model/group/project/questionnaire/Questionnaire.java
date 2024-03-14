@@ -30,6 +30,10 @@ public class Questionnaire {
   @Column(nullable = false)
   private String description;
 
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private QuestionnaireStatus status = QuestionnaireStatus.INACTIVE;
+
   @OneToMany(mappedBy = "questionnaire", orphanRemoval = true, cascade = CascadeType.ALL,
     fetch = FetchType.LAZY)
   @OrderBy("questionOrder")

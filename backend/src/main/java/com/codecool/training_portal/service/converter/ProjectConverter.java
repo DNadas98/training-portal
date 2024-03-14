@@ -41,7 +41,7 @@ public class ProjectConverter {
     ProjectJoinRequest request) {
     return new ProjectJoinRequestResponseDto(request.getId(),
       getProjectResponsePublicDto(request.getProject()),
-      userConverter.getUserResponsePublicDto(request.getApplicationUser()), request.getStatus());
+      userConverter.toUserResponsePublicDto(request.getApplicationUser()), request.getStatus());
   }
 
   public List<ProjectJoinRequestResponseDto> getProjectJoinRequestResponseDtos(

@@ -51,7 +51,7 @@ public class TaskRoleService {
           Long groupId, Long projectId, Long taskId) {
       Task task = taskDao.findByGroupIdAndProjectIdAndTaskId(groupId, projectId, taskId)
       .orElseThrow(() -> new TaskNotFoundException(taskId));
-      return userConverter.getUserResponsePublicDtos(task.getAssignedMembers().stream().toList());
+      return userConverter.toUserResponsePublicDtos(task.getAssignedMembers().stream().toList());
   }
 
   @Transactional(rollbackFor = Exception.class)

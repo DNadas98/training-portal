@@ -8,7 +8,7 @@ import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx"
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import {
   PermissionType
-} from "../../../authentication/dto/applicationUser/PermissionType.ts";
+} from "../../../authentication/dto/PermissionType.ts";
 import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {TaskResponseDto} from "../../dto/TaskResponseDto.ts";
 

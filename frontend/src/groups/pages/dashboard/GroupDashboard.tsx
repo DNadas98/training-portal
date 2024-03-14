@@ -9,7 +9,7 @@ import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx"
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import {
   PermissionType
-} from "../../../authentication/dto/applicationUser/PermissionType.ts";
+} from "../../../authentication/dto/PermissionType.ts";
 
 export default function GroupDashboard() {
   const {loading, groupPermissions} = usePermissions();

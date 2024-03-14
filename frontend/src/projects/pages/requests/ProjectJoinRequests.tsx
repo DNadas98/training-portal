@@ -7,7 +7,7 @@ import {useNotification} from "../../../common/notification/context/Notification
 import {ProjectJoinRequestResponseDto} from "../../dto/requests/ProjectJoinRequestResponseDto.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {RequestStatus} from "../../../groups/dto/RequestStatus.ts";
-import {PermissionType} from "../../../authentication/dto/applicationUser/PermissionType.ts";
+import {PermissionType} from "../../../authentication/dto/PermissionType.ts";
 
 export default function ProjectJoinRequests() {
     const {loading: permissionsLoading, projectPermissions} = usePermissions();

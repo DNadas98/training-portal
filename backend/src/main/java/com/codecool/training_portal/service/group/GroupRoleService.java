@@ -58,7 +58,7 @@ public class GroupRoleService {
   public List<UserResponsePublicDto> getMembers(Long groupId) {
       UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
               () -> new GroupNotFoundException(groupId));
-      return userConverter.getUserResponsePublicDtos(userGroup.getMembers().stream().toList());
+      return userConverter.toUserResponsePublicDtos(userGroup.getMembers().stream().toList());
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -88,7 +88,7 @@ public class GroupRoleService {
   public List<UserResponsePublicDto> getEditors(Long groupId) {
       UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
               () -> new GroupNotFoundException(groupId));
-      return userConverter.getUserResponsePublicDtos(userGroup.getEditors().stream().toList());
+      return userConverter.toUserResponsePublicDtos(userGroup.getEditors().stream().toList());
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -118,7 +118,7 @@ public class GroupRoleService {
   public List<UserResponsePublicDto> getAdmins(Long groupId) {
       UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
               () -> new GroupNotFoundException(groupId));
-      return userConverter.getUserResponsePublicDtos(userGroup.getAdmins().stream().toList());
+      return userConverter.toUserResponsePublicDtos(userGroup.getAdmins().stream().toList());
   }
 
   @Transactional(rollbackFor = Exception.class)

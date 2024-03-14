@@ -11,24 +11,24 @@ import java.util.stream.Collectors;
 @Service
 public class UserConverter {
 
-  public UserResponsePublicDto getUserResponsePublicDto(ApplicationUser applicationUser) {
+  public UserResponsePublicDto toUserResponsePublicDto(ApplicationUser applicationUser) {
     return new UserResponsePublicDto(
       applicationUser.getId(), applicationUser.getActualUsername());
   }
 
-  public List<UserResponsePublicDto> getUserResponsePublicDtos(
+  public List<UserResponsePublicDto> toUserResponsePublicDtos(
     List<ApplicationUser> applicationUsers) {
-    return applicationUsers.stream().map(user -> getUserResponsePublicDto(user)).collect(
+    return applicationUsers.stream().map(this::toUserResponsePublicDto).collect(
       Collectors.toList());
   }
 
-  public UserResponsePrivateDto getUserResponsePrivateDto(ApplicationUser applicationUser) {
+  public UserResponsePrivateDto toUserResponsePrivateDto(ApplicationUser applicationUser) {
     return new UserResponsePrivateDto(
       applicationUser.getId(), applicationUser.getActualUsername());
   }
 
-  public List<UserResponsePrivateDto> getUserResponsePrivateDtos(
+  public List<UserResponsePrivateDto> toUserResponsePrivateDtos(
     List<ApplicationUser> applicationUsers) {
-    return applicationUsers.stream().map(user -> getUserResponsePrivateDto(user)).toList();
+    return applicationUsers.stream().map(this::toUserResponsePrivateDto).toList();
   }
 }
