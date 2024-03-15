@@ -99,7 +99,7 @@ export default function QuestionnaireEditor() {
         }
       });
       newQuestions[index] = {...newQuestions[index], answers, type: value};
-    } else if (field === "answers") {
+    } else if (field.startsWith("answers")) {
       newQuestions[index].answers = value;
     } else {
       newQuestions[index][field] = value;
