@@ -10,6 +10,7 @@ import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import {
   PermissionType
 } from "../../../authentication/dto/PermissionType.ts";
+import {isValidId} from "../../../common/utils/isValidId.ts";
 
 export default function GroupDashboard() {
   const {loading, groupPermissions} = usePermissions();
@@ -21,8 +22,6 @@ export default function GroupDashboard() {
   const notification = useNotification();
   const navigate = useNavigate();
 
-  const idIsValid = groupId && !isNaN(parseInt(groupId)) && parseInt(groupId) > 0;
-
   function handleErrorNotification(message?: string) {
     notification.openNotification({
       type: "error", vertical: "top", horizontal: "center",
@@ -33,7 +32,7 @@ export default function GroupDashboard() {
   async function loadGroup() {
     try {
       setGroupLoading(true);
-      if (!idIsValid) {
+      if (!isValidId(groupId)) {
         setGroupError("The provided group ID is invalid");
         setGroupLoading(false);
         return

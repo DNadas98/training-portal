@@ -6,6 +6,7 @@ import {useAuthJsonFetch} from "../../common/api/service/apiService.ts";
 import GroupHeader from "./GroupHeader.tsx";
 import UserFooter from "../../user/layout/UserFooter.tsx";
 import {ProjectResponsePublicDto} from "../../projects/dto/ProjectResponsePublicDto.ts";
+import {isValidId} from "../../common/utils/isValidId.ts";
 
 export default function GroupLayout() {
   const groupId = useParams()?.groupId;
@@ -13,7 +14,6 @@ export default function GroupLayout() {
   const projectId = useParams()?.projectId;
   const [project, setProject] = useState<ProjectResponsePublicDto | undefined>(undefined);
   const authJsonFetch = useAuthJsonFetch();
-  const idIsValid =(id)=> !!(id && !isNaN(parseInt(id)) && parseInt(id) > 0);
 
   async function loadGroup() {
     try {
@@ -46,9 +46,9 @@ export default function GroupLayout() {
   }
 
   useEffect(() => {
-    if (idIsValid(groupId)) {
+    if (isValidId(groupId)) {
       loadGroup();
-      if (idIsValid(projectId)){
+      if (isValidId(projectId)){
         loadProject();
       }
     } else {

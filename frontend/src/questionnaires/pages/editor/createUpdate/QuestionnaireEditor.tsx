@@ -20,6 +20,7 @@ import {ApiResponseDto} from "../../../../common/api/dto/ApiResponseDto.ts";
 import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
 import {QuestionnaireStatus} from "../../../dto/QuestionnaireStatus.ts";
 import {QuestionnaireUpdateRequestDto} from "../../../dto/QuestionnaireUpdateRequestDto.ts";
+import {isValidId} from "../../../../common/utils/isValidId.ts";
 
 export default function QuestionnaireEditor() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -29,10 +30,6 @@ export default function QuestionnaireEditor() {
   const notification = useNotification();
   const navigate = useNavigate();
   const dialog = useDialog();
-
-  const idIsValid = (id: string | undefined) => {
-    return (id?.length && !isNaN(parseInt(id)) && parseInt(id) > 0);
-  };
 
   const getEmptyQuestion = (): QuestionCreateRequestDto => {
     return {
@@ -46,7 +43,7 @@ export default function QuestionnaireEditor() {
 
   const questionnaireId = useParams()?.questionnaireId;
   console.log(questionnaireId);
-  const isUpdatePage = !!idIsValid(questionnaireId);
+  const isUpdatePage = !!isValidId(questionnaireId);
   const [loading, setLoading] = useState<boolean>(isUpdatePage);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(true);
   const [name, setName] = useState<string | undefined>(undefined);
@@ -79,7 +76,7 @@ export default function QuestionnaireEditor() {
   }
 
   useEffect(() => {
-    if (!idIsValid(groupId) || !idIsValid(projectId)) {
+    if (!isValidId(groupId) || !isValidId(projectId)) {
       handleError("Invalid group or project identifier");
       navigate("/groups");
       return;

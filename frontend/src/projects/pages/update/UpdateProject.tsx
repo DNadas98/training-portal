@@ -13,6 +13,7 @@ import {
   PermissionType
 } from "../../../authentication/dto/PermissionType.ts";
 import UpdateProjectForm from "./components/UpdateProjectForm.tsx";
+import {isValidId} from "../../../common/utils/isValidId.ts";
 
 export default function UpdateProject() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -36,15 +37,10 @@ export default function UpdateProject() {
     });
   };
 
-  const idIsValid = (id: string | undefined) => {
-    return id && !isNaN(parseInt(id)) && parseInt(id) > 0
-  };
-
-
   async function loadProject() {
     try {
       setProjectLoading(true);
-      if (!idIsValid(groupId) || !idIsValid(projectId)) {
+      if (!isValidId(groupId) || !isValidId(projectId)) {
         setProjectError("The provided group or project ID is invalid");
         setProjectLoading(false);
         return

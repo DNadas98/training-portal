@@ -9,6 +9,7 @@ import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {TaskResponseDto} from "../../dto/TaskResponseDto.ts";
 import {ApiResponseDto} from "../../../common/api/dto/ApiResponseDto.ts";
+import {isValidId} from "../../../common/utils/isValidId.ts";
 
 export default function Tasks() {
     const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -22,10 +23,6 @@ export default function Tasks() {
     const authJsonFetch = useAuthJsonFetch();
     const notification = useNotification();
     const navigate = useNavigate();
-
-    const idIsValid = (id: string | undefined) => {
-        return id && !isNaN(parseInt(id)) && parseInt(id) > 0
-    };
 
     function handleErrorNotification(message?: string) {
         notification.openNotification({
@@ -84,7 +81,7 @@ export default function Tasks() {
     }
 
     useEffect(() => {
-        if (!idIsValid(groupId) || !idIsValid(projectId)) {
+        if (!isValidId(groupId) || !isValidId(projectId)) {
             handleErrorNotification("The provided group or project ID is invalid");
             setTasksWithUserLoading(false);
             setTasksWithoutUserLoading(false);

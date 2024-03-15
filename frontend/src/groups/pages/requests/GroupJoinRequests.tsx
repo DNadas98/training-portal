@@ -9,6 +9,7 @@ import {
 import {GroupJoinRequestResponseDto} from "../../dto/requests/GroupJoinRequestResponseDto.ts";
 import {RequestStatus} from "../../dto/RequestStatus.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
+import {isValidId} from "../../../common/utils/isValidId.ts";
 
 export default function GroupJoinRequests() {
   const {loading, groupPermissions} = usePermissions();
@@ -21,8 +22,6 @@ export default function GroupJoinRequests() {
   const notification = useNotification();
   const navigate = useNavigate();
 
-  const idIsValid = groupId && !isNaN(parseInt(groupId)) && parseInt(groupId) > 0;
-
   function handleErrorNotification(message: string) {
     notification.openNotification({
       type: "error", vertical: "top", horizontal: "center",
@@ -34,7 +33,7 @@ export default function GroupJoinRequests() {
     const defaultError = `Failed to load group join requests`;
     try {
       setGroupJoinRequestsLoading(true);
-      if (!idIsValid) {
+      if (!isValidId(groupId)) {
         setGroupJoinRequestError("The provided group ID is invalid");
         return;
       }

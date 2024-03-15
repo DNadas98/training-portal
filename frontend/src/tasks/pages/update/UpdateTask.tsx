@@ -15,6 +15,7 @@ import {Importance} from "../../dto/Importance.ts";
 import {TaskStatus} from "../../dto/TaskStatus.ts";
 import {TaskUpdateRequestDto} from "../../dto/TaskUpdateRequestDto.ts";
 import UpdateTaskForm from "./components/UpdateTaskForm.tsx";
+import {isValidId} from "../../../common/utils/isValidId.ts";
 
 export default function UpdateTask() {
   const {loading: permissionsLoading, taskPermissions} = usePermissions();
@@ -39,15 +40,10 @@ export default function UpdateTask() {
     });
   };
 
-  const idIsValid = (id: string | undefined) => {
-    return id && !isNaN(parseInt(id)) && parseInt(id) > 0
-  };
-
-
   async function loadTask() {
     try {
       setTaskLoading(true);
-      if (!idIsValid(groupId) || !idIsValid(projectId) || !idIsValid(taskId)) {
+      if (!isValidId(groupId) || !isValidId(projectId) || !isValidId(taskId)) {
         setTaskError("The provided group or task ID is invalid");
         setTaskLoading(false);
         return

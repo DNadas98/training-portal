@@ -8,6 +8,7 @@ import {ProjectJoinRequestResponseDto} from "../../dto/requests/ProjectJoinReque
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {RequestStatus} from "../../../groups/dto/RequestStatus.ts";
 import {PermissionType} from "../../../authentication/dto/PermissionType.ts";
+import {isValidId} from "../../../common/utils/isValidId.ts";
 
 export default function ProjectJoinRequests() {
     const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -21,10 +22,6 @@ export default function ProjectJoinRequests() {
     const notification = useNotification();
     const navigate = useNavigate();
 
-    const idIsValid = (id: string | undefined) => {
-        return id && !isNaN(parseInt(id)) && parseInt(id) > 0;
-    };
-
     function handleErrorNotification(message: string) {
         notification.openNotification({
             type: "error", vertical: "top", horizontal: "center",
@@ -36,7 +33,7 @@ export default function ProjectJoinRequests() {
         const defaultError = `Failed to load project join requests`;
         try {
             setProjectJoinRequestsLoading(true);
-            if (!idIsValid(groupId) || !idIsValid(projectId)) {
+            if (!isValidId(groupId) || !isValidId(projectId)) {
                 setProjectJoinRequestError("The provided project ID is invalid");
                 return;
             }

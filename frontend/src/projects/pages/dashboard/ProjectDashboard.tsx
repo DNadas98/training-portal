@@ -11,6 +11,7 @@ import {
 } from "../../../authentication/dto/PermissionType.ts";
 import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {ProjectResponsePrivateDto} from "../../dto/ProjectResponsePrivateDto.ts";
+import {isValidId} from "../../../common/utils/isValidId.ts";
 
 export default function ProjectDashboard() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -24,10 +25,6 @@ export default function ProjectDashboard() {
   const notification = useNotification();
   const navigate = useNavigate();
 
-  const idIsValid = (id: string | undefined) => {
-    return id && !isNaN(parseInt(id)) && parseInt(id) > 0;
-  };
-
   function handleErrorNotification(message?: string) {
     notification.openNotification({
       type: "error", vertical: "top", horizontal: "center",
@@ -38,7 +35,7 @@ export default function ProjectDashboard() {
   async function loadProject() {
     try {
       setProjectLoading(true);
-      if (!idIsValid(groupId) || !idIsValid(projectId)) {
+      if (!isValidId(groupId) || !isValidId(projectId)) {
         setProjectError("The provided group or project ID is invalid");
         setProjectLoading(false);
         return;
@@ -73,7 +70,7 @@ export default function ProjectDashboard() {
   async function deleteProject() {
     try {
       setProjectLoading(true);
-      if (!idIsValid) {
+      if (!isValidId(groupId)||!isValidId(projectId)) {
         setProjectError("The provided group or project ID is invalid");
         setProjectLoading(false);
         return;

@@ -13,6 +13,7 @@ import {
   PermissionType
 } from "../../../authentication/dto/PermissionType.ts";
 import UpdateGroupForm from "./components/UpdateGroupForm.tsx";
+import {isValidId} from "../../../common/utils/isValidId.ts";
 
 export default function UpdateGroup() {
   const {loading, groupPermissions} = usePermissions();
@@ -35,13 +36,10 @@ export default function UpdateGroup() {
     });
   };
 
-  const idIsValid = groupId && !isNaN(parseInt(groupId)) && parseInt(groupId) > 0;
-
-
   async function loadGroup() {
     try {
       setGroupLoading(true);
-      if (!idIsValid) {
+      if (!isValidId(groupId)) {
         setGroupError("The provided group ID is invalid");
         setGroupLoading(false);
         return

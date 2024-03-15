@@ -11,6 +11,7 @@ import {
 } from "../../../authentication/dto/PermissionType.ts";
 import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {TaskResponseDto} from "../../dto/TaskResponseDto.ts";
+import {isValidId} from "../../../common/utils/isValidId.ts";
 
 export default function TaskDashboard() {
   const {loading: permissionsLoading,projectPermissions, taskPermissions} = usePermissions();
@@ -25,10 +26,6 @@ export default function TaskDashboard() {
   const notification = useNotification();
   const navigate = useNavigate();
 
-  const idIsValid = (id: string | undefined) => {
-    return id && !isNaN(parseInt(id)) && parseInt(id) > 0
-  };
-
   function handleErrorNotification(message?: string) {
     notification.openNotification({
       type: "error", vertical: "top", horizontal: "center",
@@ -39,7 +36,7 @@ export default function TaskDashboard() {
   async function loadTask() {
     try {
       setTaskLoading(true);
-      if (!idIsValid(groupId) || !idIsValid(projectId) || !idIsValid(taskId)) {
+      if (!isValidId(groupId) || !isValidId(projectId) || !isValidId(taskId)) {
         setTaskError("The provided group, project or task ID is invalid");
         setTaskLoading(false);
         return
@@ -73,7 +70,7 @@ export default function TaskDashboard() {
   async function deleteTask() {
     try {
       setTaskLoading(true);
-      if (!idIsValid) {
+      if (!isValidId(taskId)) {
         setTaskError("The provided group or task ID is invalid");
         setTaskLoading(false);
         return

@@ -12,6 +12,7 @@ import {
 import QuestionnaireBrowser from "./components/QuestionnaireBrowser.tsx";
 import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
 import {QuestionnaireResponseEditorDto} from "../../../dto/QuestionnaireResponseEditorDto.ts";
+import {isValidId} from "../../../../common/utils/isValidId.ts";
 
 export default function Questionnaires() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -25,13 +26,9 @@ export default function Questionnaires() {
   const groupId = useParams()?.groupId;
   const projectId = useParams()?.projectId;
 
-  function idIsValid(id: string | undefined) {
-    return id && !isNaN(parseInt(id)) && parseInt(id) > 0;
-  }
-
   const loadQuestionnaires = async () => {
     try {
-      if (!idIsValid(groupId) || !idIsValid(projectId)) {
+      if (!isValidId(groupId) || !isValidId(projectId)) {
         setQuestionnaires([]);
         return;
       }
