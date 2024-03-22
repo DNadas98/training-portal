@@ -1,4 +1,15 @@
-import {Box, Button, Card, CardContent, Grid, MenuItem, Select, Stack, TextField, Typography} from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Grid,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Typography
+} from "@mui/material";
 import DraggableQuestionsList from "./DraggableQuestionsList.tsx";
 import AddIcon from "../../../../../common/utils/components/AddIcon.tsx";
 import {QuestionCreateRequestDto} from "../../../../dto/QuestionCreateRequestDto.ts";
@@ -67,7 +78,7 @@ export default function QuestionnaireEditorForm(props: QuestionnaireEditorFormPr
                     </Grid>
                     <Grid item>
                       <Select
-                        value={props.status??QuestionnaireStatus.INACTIVE}
+                        value={props.status}
                         required
                         onChange={(e) => props.setStatus(e.target.value as QuestionnaireStatus)}
                       >

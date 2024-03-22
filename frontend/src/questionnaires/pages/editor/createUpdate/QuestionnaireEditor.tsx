@@ -42,13 +42,12 @@ export default function QuestionnaireEditor() {
   };
 
   const questionnaireId = useParams()?.questionnaireId;
-  console.log(questionnaireId);
   const isUpdatePage = !!isValidId(questionnaireId);
   const [loading, setLoading] = useState<boolean>(isUpdatePage);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(true);
   const [name, setName] = useState<string | undefined>(undefined);
   const [description, setDescription] = useState<string | undefined>(undefined);
-  const [status, setStatus]=useState<QuestionnaireStatus|undefined>(undefined);
+  const [status, setStatus] = useState<QuestionnaireStatus>(QuestionnaireStatus.INACTIVE);
   const [questions, setQuestions] = useState<QuestionCreateRequestDto[]>([getEmptyQuestion()]);
 
   async function loadQuestionnaire() {
@@ -225,12 +224,12 @@ export default function QuestionnaireEditor() {
     try {
       event.preventDefault();
       setLoading(true);
-      if (!name || !description||!status || !questions?.length) {
+      if (!name || !description || !status || !questions?.length) {
         handleError("The received questionnaire is invalid.");
         return;
       }
       const questionnaire: QuestionnaireUpdateRequestDto = {
-        name, description, status,questions
+        name, description, status, questions
       };
       let response: ApiResponseDto | void;
       if (!isUpdatePage) {
@@ -249,6 +248,9 @@ export default function QuestionnaireEditor() {
         message: `Questionnaire ${questionnaireResponse.name} has been saved successfully!`
       });
       setHasUnsavedChanges(false);
+      if (!isUpdatePage) {
+        navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`);
+      }
     } catch (e) {
       handleError("An unknown error has occurred, please try again later!");
     } finally {
@@ -287,7 +289,7 @@ export default function QuestionnaireEditor() {
                              setName={setName}
                              description={description}
                              setDescription={setDescription}
-                             status={(status as QuestionnaireStatus)}
+                             status={(status)}
                              setStatus={setStatus}
                              onDragEnd={onDragEnd}
                              questions={questions}
