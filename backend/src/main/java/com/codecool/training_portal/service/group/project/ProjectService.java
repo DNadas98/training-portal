@@ -12,7 +12,6 @@ import com.codecool.training_portal.model.group.UserGroup;
 import com.codecool.training_portal.model.group.UserGroupDao;
 import com.codecool.training_portal.model.group.project.Project;
 import com.codecool.training_portal.model.group.project.ProjectDao;
-import com.codecool.training_portal.model.group.project.ProjectStatus;
 import com.codecool.training_portal.model.group.project.task.Task;
 import com.codecool.training_portal.model.request.RequestStatus;
 import com.codecool.training_portal.service.auth.UserProvider;
@@ -112,15 +111,6 @@ public class ProjectService {
         project.setDescription(updateRequestDto.description());
         project.setStartDate(projectStartDate);
         project.setDeadline(projectDeadline);
-
-        ProjectStatus currentStatus = project.getStatus();
-        if (!currentStatus.equals(updateRequestDto.projectStatus())
-                && (updateRequestDto.projectStatus().equals(ProjectStatus.TEST)
-                || currentStatus.equals(ProjectStatus.TEST))) {
-            clearProjectData(project);
-        }
-
-        project.setStatus(updateRequestDto.projectStatus());
         Project savedProject = projectDao.save(project);
         return projectConverter.getProjectResponsePrivateDto(savedProject);
     }

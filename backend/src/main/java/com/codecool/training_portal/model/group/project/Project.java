@@ -34,9 +34,6 @@ public class Project {
     @Column(nullable = false)
     private Instant deadline;
 
-    @Enumerated(EnumType.STRING)
-    private ProjectStatus status;
-
     @ManyToOne
     @JoinColumn(name = "group_id")
     private UserGroup userGroup;
