@@ -82,6 +82,8 @@ public class QuestionnaireService {
     questionnaire.setStatus(questionnaireUpdateRequestDto.status());
     questionnaire.removeAllQuestions();
     questionnaireUpdateRequestDto.questions().forEach(questionDto -> createQuestion(questionDto, questionnaire));
+    ApplicationUser user = userProvider.getAuthenticatedUser();
+    questionnaire.setUpdatedBy(user);
     questionnaireDao.save(questionnaire);
     return questionnaireConverter.toQuestionnaireResponseEditorDetailsDto(questionnaire);
   }
