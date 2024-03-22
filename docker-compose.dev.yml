@@ -1,6 +1,6 @@
 services:
   psql:
-    container_name: postgres-dev
+    container_name: postgres-trainingportal-dev
     image: postgres
     environment:
       POSTGRES_DB: trainingportaldb
@@ -10,7 +10,7 @@ services:
     volumes:
       - db:/data/postgres
     ports:
-      - "54321:5432"
+      - "56321:5432"
     restart: always
     logging:
       driver: "json-file"

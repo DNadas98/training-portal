@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:54321/trainingportaldb
+    url: jdbc:postgresql://localhost:56321/trainingportaldb
     username: devuser
     password: devpassword
   jpa:
