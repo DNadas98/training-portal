@@ -11,6 +11,7 @@ import {
   PermissionType
 } from "../../../authentication/dto/PermissionType.ts";
 import {isValidId} from "../../../common/utils/isValidId.ts";
+import {Button, Card, CardActions, CardContent, CardHeader, Grid, Typography} from "@mui/material";
 
 export default function GroupDashboard() {
   const {loading, groupPermissions} = usePermissions();
@@ -74,24 +75,36 @@ export default function GroupDashboard() {
     return <></>;
   }
   return (
-    <div>
-      <h1>{group.name}</h1>
-      <p>{group.description}</p>
-      <p>Permissions: {groupPermissions.join(", ")}</p>
-      <button onClick={handleProjectsClick}>View projects</button>
+    <Grid container justifyContent={"center"} alignItems={"center"} spacing={2}>
+      <Grid item xs={10}><Card>
+        <CardHeader title={group.name}/>
+        <CardContent>
+          <Typography>{group.description}</Typography>
+        </CardContent>
+        <CardActions>
+          <Button onClick={handleProjectsClick}>View projects</Button>
+        </CardActions>
+      </Card></Grid>
       {(groupPermissions.includes(PermissionType.GROUP_EDITOR))
-        && <div>
-              <button onClick={() => {
-                navigate(`/groups/${groupId}/update`)
-              }}>Update group details
-              </button>
-          </div>
+        && <Grid item xs={10}><Card>
+          <CardHeader title={"Company Editor Actions"} titleTypographyProps={{variant: "h6"}}/>
+          <CardActions>
+            <Button onClick={() => {
+              navigate(`/groups/${groupId}/update`)
+            }}>Update group details
+            </Button>
+          </CardActions>
+        </Card></Grid>
       }
       {(groupPermissions.includes(PermissionType.GROUP_ADMIN))
-        && <div>
-              <button onClick={handleJoinRequestClick}>View group join requests</button>
-          </div>
+        &&
+        <Grid item xs={10}><Card>
+          <CardHeader title={"Company Administrator Actions"} titleTypographyProps={{variant: "h6"}}/>
+          <CardActions>
+            <Button onClick={handleJoinRequestClick}>View group join requests</Button>
+          </CardActions>
+        </Card></Grid>
       }
-    </div>
+    </Grid>
   )
 }

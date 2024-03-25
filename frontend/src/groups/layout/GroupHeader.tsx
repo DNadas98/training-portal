@@ -1,4 +1,4 @@
-import {AppBar, Divider, Stack, Toolbar, Typography, useMediaQuery, useTheme} from "@mui/material";
+import {AppBar, Box, Divider, Stack, Toolbar, Typography, useMediaQuery, useTheme} from "@mui/material";
 import ThemePaletteModeSwitch
   from "../../common/theme/components/ThemePaletteModeSwitch.tsx";
 import SiteNameH6 from "../../common/utils/components/SiteNameH6.tsx";
@@ -24,6 +24,7 @@ export default function GroupHeader(props: GroupHeaderProps) {
     <AppBar position="static" sx={{marginBottom: 4}}>
       <Toolbar>
         <SiteNameH6/>
+        <Box flexGrow={1}></Box>
         {isSmallScreen
           ? <MenuSmall items={loggedInMenuItems} icon={<MenuOutlined/>}/>
           : <MenuLarge items={loggedInMenuItems}/>
@@ -55,16 +56,17 @@ export default function GroupHeader(props: GroupHeaderProps) {
                     <Typography variant={"body1"}>
                       /
                     </Typography>
-                    <MenuSmall  title={props.project.name}
-                                items={[
-                                  {
-                                    path: `/groups/${props.group.groupId}/projects/${props.project.projectId}`,
-                                    title: "Project Dashboard"
-                                  },
-                                  {
-                                    path: `/groups/${props.group.groupId}/projects/${props.project.projectId}/tasks`,
-                                    title: "Tasks"
-                                  }]}/>
+                    <MenuSmall title={props.project.name}
+                               items={[
+                                 {
+                                   path: `/groups/${props.group.groupId}/projects/${props.project.projectId}`,
+                                   title: "Project Dashboard"
+                                 },
+                                 {
+                                   path: `/groups/${props.group.groupId}/projects/${props.project.projectId}/questionnaires`,
+                                   title: "Questionnaires"
+                                 }
+                               ]}/>
                   </>
                   : <></>
                 }

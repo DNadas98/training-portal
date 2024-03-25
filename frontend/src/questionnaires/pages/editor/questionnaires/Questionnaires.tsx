@@ -72,8 +72,8 @@ export default function Questionnaires() {
   const [questionnairesFilterValue, setQuestionnairesFilterValue] = useState<string>("");
 
   const questionnairesFiltered = useMemo(() => {
-    return questionnaires.filter(project => {
-        return project.name.toLowerCase().includes(questionnairesFilterValue);
+    return questionnaires.filter(questionnaire => {
+        return questionnaire.name.toLowerCase().includes(questionnairesFilterValue);
       }
     );
   }, [questionnaires, questionnairesFilterValue]);

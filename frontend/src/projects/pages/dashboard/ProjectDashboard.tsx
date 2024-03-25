@@ -12,6 +12,7 @@ import {
 import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {ProjectResponsePrivateDto} from "../../dto/ProjectResponsePrivateDto.ts";
 import {isValidId} from "../../../common/utils/isValidId.ts";
+import {Button, Card, CardActions, CardContent, CardHeader, Grid, Stack, Typography} from "@mui/material";
 
 export default function ProjectDashboard() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -70,7 +71,7 @@ export default function ProjectDashboard() {
   async function deleteProject() {
     try {
       setProjectLoading(true);
-      if (!isValidId(groupId)||!isValidId(projectId)) {
+      if (!isValidId(groupId) || !isValidId(projectId)) {
         setProjectError("The provided group or project ID is invalid");
         setProjectLoading(false);
         return;
@@ -110,8 +111,12 @@ export default function ProjectDashboard() {
     navigate(`/groups/${groupId}/projects/${projectId}/tasks`);
   }
 
-  function handleQuestionnairesClick() {
+  function handleEditorQuestionnairesClick() {
     navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`);
+  }
+
+  function handleUserQuestionnairesClick() {
+    navigate(`/groups/${groupId}/projects/${projectId}/questionnaires`);
   }
 
   if (permissionsLoading || projectLoading) {
@@ -121,35 +126,62 @@ export default function ProjectDashboard() {
     navigate(`/groups/${groupId}/projects`, {replace: true});
     return <></>;
   }
+
   return (
-    <div>
-      <h1>{project.name}</h1>
-      <p>{project.description}</p>
-      <p>Start date: {project.startDate.toString()}</p>
-      <p>Deadline: {project.deadline.toString()}</p>
-      <p>Project permissions: {projectPermissions.join(", ")}</p>
+    <Grid container justifyContent={"center"} alignItems={"center"} spacing={2}>
+      <Grid item xs={10}><Card>
+        <CardHeader title={project.name}/>
+        <CardContent>
+          <Typography gutterBottom>
+            {project.description}
+          </Typography>
+          <Typography>
+            Start Date: {project.startDate.toLocaleString()}
+          </Typography>
+          <Typography>
+            Deadline: {project.startDate.toLocaleString()}
+          </Typography>
+        </CardContent>
+        <CardActions> <Stack spacing={0.5}>
+          <Button sx={{width: "fit-content"}} onClick={handleUserQuestionnairesClick}>
+            View active questionnaires
+          </Button>
+          <Button sx={{width: "fit-content"}} onClick={() => navigate(`/groups/${groupId}/projects`)}>
+            Back to company
+          </Button>
+        </Stack></CardActions>
+      </Card> </Grid>
       {(projectPermissions.includes(PermissionType.PROJECT_EDITOR))
-        && <div>
-          <button onClick={handleQuestionnairesClick}>View questionnaires</button>
-          <br/>
-          <button onClick={handleTasksClick}>View tasks</button>
-        </div>
+        && <Grid item xs={10}><Card>
+          <CardHeader title={"Project Editor Actions"} titleTypographyProps={{variant: "h6"}}/>
+          <CardActions> <Stack spacing={0.5}>
+            <Button sx={{width: "fit-content"}} onClick={handleEditorQuestionnairesClick}>
+              View all questionnaires
+            </Button>
+            <Button sx={{width: "fit-content"}} onClick={handleTasksClick}>
+              View tasks
+            </Button>
+          </Stack></CardActions>
+        </Card> </Grid>
       }
       {(projectPermissions.includes(PermissionType.PROJECT_ADMIN))
-        && <div>
-          <br/>
-          <button onClick={handleJoinRequestClick}>View project join requests</button>
-          <br/>
-          <button onClick={() => {
-            navigate(`/groups/${groupId}/projects/${projectId}/update`);
-          }}>Update project details
-          </button>
-          <br/>
-          <button onClick={handleDeleteClick}>Remove project</button>
-        </div>
+        && <Grid item xs={10}><Card>
+          <CardHeader title={"Project Administrator Actions"} titleTypographyProps={{variant: "h6"}}/>
+          <CardActions> <Stack spacing={0.5}>
+            <Button sx={{width: "fit-content"}} onClick={handleJoinRequestClick}>
+              View project join requests
+            </Button>
+            <Button sx={{width: "fit-content"}} onClick={() => {
+              navigate(`/groups/${groupId}/projects/${projectId}/update`);
+            }}>
+              Update project details
+            </Button>
+            <Button sx={{width: "fit-content"}} onClick={handleDeleteClick}>
+              Remove project
+            </Button>
+          </Stack></CardActions>
+        </Card> </Grid>
       }
-      <br/>
-      <button onClick={() => navigate(`/groups/${groupId}/projects`)}>Back</button>
-    </div>
+    </Grid>
   );
 }

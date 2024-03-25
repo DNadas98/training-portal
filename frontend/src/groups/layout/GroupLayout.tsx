@@ -50,6 +50,8 @@ export default function GroupLayout() {
       loadGroup();
       if (isValidId(projectId)){
         loadProject();
+      } else {
+        setProject(undefined);
       }
     } else {
       setGroup(undefined);

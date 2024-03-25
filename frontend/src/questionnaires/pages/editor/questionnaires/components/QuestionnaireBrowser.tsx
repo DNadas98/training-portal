@@ -43,7 +43,6 @@ export default function QuestionnaireBrowser(props: QuestionnaireBrowserProps) {
           </Card>
           <QuestionnaireList loading={props.questionnairesLoading}
                              questionnaires={props.questionnaires}
-                             notFoundText={"No questionnaires were found."}
                              onEditClick={props.onEditClick}
                              onDeleteClick={props.onDeleteClick}/>
         </Stack>

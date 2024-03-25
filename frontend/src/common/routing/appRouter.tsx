@@ -30,6 +30,7 @@ import Register from "../../authentication/pages/register/Register.tsx";
 import Profile from "../../user/pages/profile/Profile.tsx";
 import UserJoinRequests from "../../user/pages/requests/UserJoinRequests.tsx";
 import Logout from "../../authentication/pages/Logout.tsx";
+import UserQuestionnaires from "../../questionnaires/pages/user/questionnaires/UserQuestionnaires.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -125,6 +126,9 @@ const appRouter = createBrowserRouter([
           {
             path: ":groupId/projects/:projectId/tasks/:taskId/update",
             element: <UpdateTask/>
+          },
+          {
+            path: ":groupId/projects/:projectId/questionnaires", element: <UserQuestionnaires/>
           },
           {
             path: ":groupId/projects/:projectId/editor/questionnaires", element: <Questionnaires/>

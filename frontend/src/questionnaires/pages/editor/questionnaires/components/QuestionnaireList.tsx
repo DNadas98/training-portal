@@ -15,7 +15,6 @@ import {QuestionnaireResponseEditorDto} from "../../../../dto/QuestionnaireRespo
 interface QuestionnaireListProps {
   loading: boolean;
   questionnaires: QuestionnaireResponseEditorDto[];
-  notFoundText: string;
   onEditClick: (questionnaireId: number) => unknown;
   onDeleteClick: (questionnaireId: number) => void;
 }
@@ -82,7 +81,7 @@ export default function QuestionnaireList(props: QuestionnaireListProps) {
       : <Card>
         <CardContent>
           <Typography>
-            {props.notFoundText}
+            {"No questionnaires were found for this project."}
           </Typography>
         </CardContent>
       </Card>;
