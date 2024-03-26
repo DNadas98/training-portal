@@ -98,8 +98,12 @@ public class AuthenticationService {
   }
 
   public LoginResponseDto login(LoginRequestDto loginRequest) {
-    authenticationManager.authenticate(
-      new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
+    try {
+      authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
+    }catch (Exception e){
+      throw new InvalidCredentialsException();
+    }
     ApplicationUser user = applicationUserDao.findByEmail(loginRequest.email()).orElseThrow(
       () -> new InvalidCredentialsException());
     TokenPayloadDto payloadDto = new TokenPayloadDto(user.getEmail());
