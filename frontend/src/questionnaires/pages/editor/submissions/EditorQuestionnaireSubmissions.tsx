@@ -8,8 +8,8 @@ import {isValidId} from "../../../../common/utils/isValidId.ts";
 import {QuestionnaireSubmissionResponseDto} from "../../../dto/QuestionnaireSubmissionResponseDto.ts";
 import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
 import {Card, CardContent, CardHeader, Grid, Stack, TextField} from "@mui/material";
-import UserQuestionnaireSubmissionList from "../../user/submissions/components/UserQuestionnaireSubmissionList.tsx";
-import BackButton from "../../../../common/utils/components/BackButton.tsx";
+import EditorQuestionnaireSubmissionList from "./components/EditorQuestionnaireSubmissionList.tsx";
+import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
 
 export default function EditorQuestionnaireSubmissions() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -18,6 +18,7 @@ export default function EditorQuestionnaireSubmissions() {
   const authJsonFetch = useAuthJsonFetch();
   const navigate = useNavigate();
   const notification = useNotification();
+  const dialog = useDialog();
 
   const groupId = useParams()?.groupId;
   const projectId = useParams()?.projectId;
@@ -66,6 +67,43 @@ export default function EditorQuestionnaireSubmissions() {
     setQuestionnaireSubmissionsFilterValue(event.target.value.toLowerCase().trim());
   }
 
+  const deleteSubmission = async (submissionId: number) => {
+    try {
+      setQuestionnaireSubmissionsLoading(true);
+      const response = await authJsonFetch({
+        path:
+          `/groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}/submissions/${submissionId}`,
+        method: "DELETE"
+      });
+      if (!response?.status || response.status > 399 || !response?.message) {
+        notification.openNotification({
+          type: "error", vertical: "top", horizontal: "center",
+          message: `${response?.error ?? "Failed to delete questionnaire submission"}`
+        });
+        return;
+      }
+      notification.openNotification({
+        type: "success", vertical: "top", horizontal: "center", message: response.message
+      });
+      await loadQuestionnaireSubmissions();
+    } catch (e) {
+      notification.openNotification({
+        type: "error", vertical: "top", horizontal: "center",
+        message: "Failed to delete questionnaire submission"
+      });
+      return;
+    } finally {
+      setQuestionnaireSubmissionsLoading(false);
+    }
+  }
+
+  const handleDeleteClick = (submissionId: number) => {
+    dialog.openDialog({
+      text: "Are you sure, you would like to delete this questionnaire submission?",
+      onConfirm: () => deleteSubmission(submissionId)
+    });
+  }
+
   if (permissionsLoading || questionnaireSubmissionsLoading) {
     return <LoadingSpinner/>;
   } else if (!projectPermissions.includes(PermissionType.PROJECT_EDITOR)) {
@@ -79,29 +117,27 @@ export default function EditorQuestionnaireSubmissions() {
 
   return (
     <Grid container spacing={2} justifyContent={"center"} alignItems={"top"}>
-      <Grid item xs={10} sm={10} md={9} lg={8}>
+      <Grid item xs={10} sm={10} md={9} lg={8}><Stack spacing={2}><Card>
+        <CardHeader title={"Submitted Tests"} sx={{textAlign: "center"}}/>
+        <CardContent>
+          <TextField variant={"standard"} type={"search"}
+                     label={"Search"}
+                     fullWidth
+                     onInput={handleQuestionnaireSubmissionsSearch}
+          />
+        </CardContent>
+      </Card>
         {questionnaireSubmissionsFiltered?.length
-          ? <Stack spacing={2}><Card>
-            <CardHeader title={`${questionnaireSubmissionsFiltered[0].name}`} sx={{textAlign: "center"}}/>
-            <CardContent>
-              <TextField variant={"standard"} type={"search"}
-                         label={"Search"}
-                         fullWidth
-                         onInput={handleQuestionnaireSubmissionsSearch}
-              />
-            </CardContent>
-          </Card>
-            <UserQuestionnaireSubmissionList questionnaireSubmissions={questionnaireSubmissionsFiltered}
+          ?
+          <EditorQuestionnaireSubmissionList questionnaireSubmissions={questionnaireSubmissionsFiltered}
                                              maxPoints={false}
-            />
-          </Stack>
+                                             onDeleteClick={handleDeleteClick}
+          />
           : <Card>
             <CardHeader title={"No submissions were found for this questionnaire."}
                         sx={{textAlign: "center"}}/>
-            <CardContent sx={{justifyContent: "center"}}>
-              <BackButton text={"Back to questionnaires"}/>
-            </CardContent>
           </Card>}
+      </Stack>
       </Grid>
     </Grid>
   )

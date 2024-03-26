@@ -20,6 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EditorQuestionnaireSubmissionController {
   private final QuestionnaireSubmissionService questionnaireSubmissionService;
+  private final MessageSource messageSource;
 
   @GetMapping
   public ResponseEntity<?> getAllQuestionnaireSubmissions(
@@ -28,5 +29,16 @@ public class EditorQuestionnaireSubmissionController {
       .getOwnQuestionnaireSubmissionsAsEditor(
         groupId, projectId, questionnaireId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", submissions));
+  }
+
+  @DeleteMapping("/{submissionId}")
+  public ResponseEntity<?> deleteQuestionnaireSubmission(
+    @PathVariable Long groupId, @PathVariable Long projectId, @PathVariable Long questionnaireId,
+    @PathVariable Long submissionId, Locale locale) {
+    questionnaireSubmissionService
+      .deleteQuestionnaireSubmission(groupId, projectId, questionnaireId, submissionId);
+    return ResponseEntity.status(HttpStatus.OK).body(Map.of(
+      "message",
+      messageSource.getMessage("questionnaire.submission.deleted.success", null, locale)));
   }
 }

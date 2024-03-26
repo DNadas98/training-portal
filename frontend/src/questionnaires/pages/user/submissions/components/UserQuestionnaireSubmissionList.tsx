@@ -10,7 +10,7 @@ interface UserQuestionnaireSubmissionListProps {
 export default function UserQuestionnaireSubmissionList(props: UserQuestionnaireSubmissionListProps) {
   return props.questionnaireSubmissions?.length > 0
       ? props.questionnaireSubmissions.map((submission) => {
-        return <UserQuestionnaireSubmissionCard submission={submission}/>;
+        return <Card key={submission.id}><UserQuestionnaireSubmissionCard submission={submission}/></Card> ;
       })
       : <Card>
         <CardContent>

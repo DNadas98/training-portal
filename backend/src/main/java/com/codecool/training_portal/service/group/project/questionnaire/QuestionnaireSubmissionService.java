@@ -215,4 +215,17 @@ public class QuestionnaireSubmissionService {
           questionnaireSubmission, questionnaireSubmission.getQuestionnaire())).toList();
     return questionnaireSubmissionResponseDtos;
   }
+
+
+  @Transactional(rollbackFor = Exception.class)
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
+  public void deleteQuestionnaireSubmission(
+    Long groupId, Long projectId, Long questionnaireId, Long submissionId) {
+    ApplicationUser user = userProvider.getAuthenticatedUser();
+    QuestionnaireSubmission questionnaireSubmission =
+      questionnaireSubmissionDao.findByGroupIdAndProjectIdAndQuestionnaireIdAndIdAndUser(
+        groupId, projectId, questionnaireId, submissionId, user).orElseThrow(
+        QuestionnaireSubmissionNotFoundException::new);
+    questionnaireSubmissionDao.delete(questionnaireSubmission);
+  }
 }

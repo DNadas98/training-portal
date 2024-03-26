@@ -20,8 +20,7 @@ interface UserQuestionnaireSubmissionCardProps {
 export default function UserQuestionnaireSubmissionCard(props: UserQuestionnaireSubmissionCardProps) {
   const theme = useTheme();
 
-  return <Card key={props.submission.id}>
-    <Accordion defaultExpanded={false}
+  return <Accordion key={props.submission.id} defaultExpanded={false}
                variant={"elevation"}
                sx={{paddingTop: 0.5, paddingBottom: 0.5}}>
       <AccordionSummary expandIcon={<ExpandIcon/>}><Stack spacing={0.5}>
@@ -80,6 +79,5 @@ export default function UserQuestionnaireSubmissionCard(props: UserQuestionnaire
           </Card>)}
         </Stack>
       </AccordionDetails>
-    </Accordion>
-  </Card>;
+    </Accordion>;
 }
