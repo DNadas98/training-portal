@@ -10,7 +10,7 @@ import {
   PermissionType
 } from "../../../authentication/dto/PermissionType.ts";
 import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
-import {ProjectResponsePrivateDto} from "../../dto/ProjectResponsePrivateDto.ts";
+import {ProjectResponseDetailsDto} from "../../dto/ProjectResponseDetailsDto.ts";
 import {isValidId} from "../../../common/utils/isValidId.ts";
 import {Button, Card, CardActions, CardContent, CardHeader, Grid, Stack, Typography} from "@mui/material";
 
@@ -20,7 +20,7 @@ export default function ProjectDashboard() {
   const groupId = useParams()?.groupId;
   const projectId = useParams()?.projectId;
   const [projectLoading, setProjectLoading] = useState(true);
-  const [project, setProject] = useState<ProjectResponsePrivateDto | undefined>(undefined);
+  const [project, setProject] = useState<ProjectResponseDetailsDto | undefined>(undefined);
   const [projectError, setProjectError] = useState<string | undefined>(undefined);
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
@@ -54,7 +54,7 @@ export default function ProjectDashboard() {
         startDate: new Date(response.data.startDate as string),
         deadline: new Date(response.data.deadline as string)
       };
-      setProject(projectData as ProjectResponsePrivateDto);
+      setProject(projectData as ProjectResponseDetailsDto);
     } catch (e) {
       setProject(undefined);
       setProjectError("Failed to load project");

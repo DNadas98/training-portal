@@ -2,6 +2,7 @@ package com.codecool.training_portal.model.group.project;
 
 import com.codecool.training_portal.model.auth.ApplicationUser;
 import com.codecool.training_portal.model.group.UserGroup;
+import com.codecool.training_portal.model.group.project.questionnaire.Questionnaire;
 import com.codecool.training_portal.model.group.project.task.Task;
 import com.codecool.training_portal.model.request.ProjectJoinRequest;
 import jakarta.persistence.*;
@@ -43,6 +44,12 @@ public class Project {
   @ToString.Exclude
   @OrderBy("startDate ASC")
   private List<Task> tasks = new ArrayList<>();
+
+  @OneToMany(mappedBy = "project", orphanRemoval = true, cascade = CascadeType.REMOVE)
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
+  @OrderBy("createdAt DESC")
+  private List<Questionnaire> questionnaires = new ArrayList<>();
 
   @OneToMany(mappedBy = "project", orphanRemoval = true, cascade = CascadeType.REMOVE)
   @EqualsAndHashCode.Exclude
@@ -125,9 +132,5 @@ public class Project {
 
   public void removeMember(ApplicationUser applicationUser) {
     this.assignedMembers.remove(applicationUser);
-  }
-
-  public void removeAllMembers() {
-    this.assignedMembers.clear();
   }
 }

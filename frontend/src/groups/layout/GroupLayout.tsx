@@ -5,14 +5,14 @@ import {GroupResponsePublicDto} from "../dto/GroupResponsePublicDto.ts";
 import {useAuthJsonFetch} from "../../common/api/service/apiService.ts";
 import GroupHeader from "./GroupHeader.tsx";
 import UserFooter from "../../user/layout/UserFooter.tsx";
-import {ProjectResponsePublicDto} from "../../projects/dto/ProjectResponsePublicDto.ts";
 import {isValidId} from "../../common/utils/isValidId.ts";
+import {ProjectResponseDetailsDto} from "../../projects/dto/ProjectResponseDetailsDto.ts";
 
 export default function GroupLayout() {
   const groupId = useParams()?.groupId;
   const [group, setGroup] = useState<GroupResponsePublicDto | undefined>(undefined);
   const projectId = useParams()?.projectId;
-  const [project, setProject] = useState<ProjectResponsePublicDto | undefined>(undefined);
+  const [project, setProject] = useState<ProjectResponseDetailsDto | undefined>(undefined);
   const authJsonFetch = useAuthJsonFetch();
 
   async function loadGroup() {
@@ -30,7 +30,7 @@ export default function GroupLayout() {
     }
   }
 
-  async function loadProject(){
+  async function loadProject() {
     try {
       const response = await authJsonFetch({
         path: `groups/${groupId}/projects/${projectId}`
@@ -39,7 +39,12 @@ export default function GroupLayout() {
         setProject(undefined);
         return;
       }
-      setProject((response.data as ProjectResponsePublicDto));
+      const projectData = {
+        ...response.data,
+        startDate: new Date(response.data.startDate),
+        deadline: new Date(response.data.deadline)
+      };
+      setProject((projectData as ProjectResponseDetailsDto));
     } catch (e) {
       setProject(undefined);
     }
@@ -48,7 +53,7 @@ export default function GroupLayout() {
   useEffect(() => {
     if (isValidId(groupId)) {
       loadGroup();
-      if (isValidId(projectId)){
+      if (isValidId(projectId)) {
         loadProject();
       } else {
         setProject(undefined);
@@ -56,7 +61,7 @@ export default function GroupLayout() {
     } else {
       setGroup(undefined);
     }
-  }, [groupId,projectId]);
+  }, [groupId, projectId]);
 
   return (
     <Box sx={{display: "flex", flexDirection: "column", minHeight: "100vh"}}>

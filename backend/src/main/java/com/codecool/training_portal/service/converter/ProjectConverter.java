@@ -21,7 +21,9 @@ public class ProjectConverter {
 
   public ProjectResponsePublicDTO getProjectResponsePublicDto(Project project) {
     return new ProjectResponsePublicDTO(project.getUserGroup().getId(), project.getId(),
-      project.getName(), project.getDescription());
+      project.getName(), project.getDescription(),
+      dateTimeService.toDisplayedDate(project.getStartDate()),
+      dateTimeService.toDisplayedDate(project.getDeadline()));
   }
 
   public ProjectResponsePrivateDTO getProjectResponsePrivateDto(Project project) {
@@ -34,7 +36,7 @@ public class ProjectConverter {
 
   public List<ProjectResponsePublicDTO> getProjectResponsePublicDtos(List<Project> projects) {
     return projects.stream().map(
-      project -> getProjectResponsePublicDto(project)).collect(Collectors.toList());
+      this::getProjectResponsePublicDto).collect(Collectors.toList());
   }
 
   public ProjectJoinRequestResponseDto getProjectJoinRequestResponseDto(
@@ -46,7 +48,7 @@ public class ProjectConverter {
 
   public List<ProjectJoinRequestResponseDto> getProjectJoinRequestResponseDtos(
     List<ProjectJoinRequest> requests) {
-    return requests.stream().map(request -> getProjectJoinRequestResponseDto(request)).collect(
+    return requests.stream().map(this::getProjectJoinRequestResponseDto).collect(
       Collectors.toList());
   }
 }

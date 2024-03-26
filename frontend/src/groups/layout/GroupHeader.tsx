@@ -2,18 +2,18 @@ import {AppBar, Box, Divider, Stack, Toolbar, Typography, useMediaQuery, useThem
 import ThemePaletteModeSwitch
   from "../../common/theme/components/ThemePaletteModeSwitch.tsx";
 import SiteNameH6 from "../../common/utils/components/SiteNameH6.tsx";
-import {GroupResponsePublicDto} from "../dto/GroupResponsePublicDto.ts";
 import MenuSmall from "../../common/utils/components/MenuSmall.tsx";
 import MenuLarge from "../../common/utils/components/MenuLarge.tsx";
 import {loggedInMenuItems} from "../../common/menu/loggedInMenuItems.tsx";
-import {ProjectResponsePublicDto} from "../../projects/dto/ProjectResponsePublicDto.ts";
 import {useAuthentication} from "../../authentication/hooks/useAuthentication.ts";
 import {AccountBoxRounded, MenuOutlined} from "@mui/icons-material";
 import {accountMenuItems} from "../../common/menu/accountMenuItems.tsx";
+import {GroupResponsePublicDto} from "../dto/GroupResponsePublicDto.ts";
+import {ProjectResponseDetailsDto} from "../../projects/dto/ProjectResponseDetailsDto.ts";
 
 interface GroupHeaderProps {
   group: undefined | GroupResponsePublicDto,
-  project: ProjectResponsePublicDto | undefined
+  project: ProjectResponseDetailsDto | undefined
 }
 
 export default function GroupHeader(props: GroupHeaderProps) {
@@ -56,17 +56,21 @@ export default function GroupHeader(props: GroupHeaderProps) {
                     <Typography variant={"body1"}>
                       /
                     </Typography>
-                    <MenuSmall title={props.project.name}
-                               items={[
-                                 {
-                                   path: `/groups/${props.group.groupId}/projects/${props.project.projectId}`,
-                                   title: "Project Dashboard"
-                                 },
-                                 {
-                                   path: `/groups/${props.group.groupId}/projects/${props.project.projectId}/questionnaires`,
-                                   title: "Questionnaires"
-                                 }
-                               ]}/>
+                    <MenuSmall
+                      title={props.project.name}
+                      items={[
+                        {
+                          path: `/groups/${props.group.groupId}/projects/${props.project.projectId}`,
+                          title: "Project Dashboard"
+                        },
+                        {
+                          path: `/groups/${props.group.groupId}/projects/${props.project.projectId}/questionnaires`,
+                          title: "Questionnaires"
+                        }
+                      ]}/>
+                    <Typography variant={"body2"}>
+                      ( {props.project.startDate.toLocaleDateString()} - {props.project.deadline.toLocaleDateString()} )
+                    </Typography>
                   </>
                   : <></>
                 }

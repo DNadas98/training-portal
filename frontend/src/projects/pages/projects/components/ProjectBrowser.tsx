@@ -1,4 +1,3 @@
-import {ProjectResponsePublicDto} from "../../../dto/ProjectResponsePublicDto.ts";
 import {
     Card,
     CardContent,
@@ -12,12 +11,13 @@ import ProjectList from "./ProjectList.tsx";
 import {FormEvent} from "react";
 import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
 import AddIcon from "../../../../common/utils/components/AddIcon.tsx";
+import {ProjectResponseDetailsDto} from "../../../dto/ProjectResponseDetailsDto.ts";
 
 interface ProjectBrowserProps {
     projectsWithUserLoading: boolean,
-    projectsWithUser: ProjectResponsePublicDto[],
+    projectsWithUser: ProjectResponseDetailsDto[],
     projectsWithoutUserLoading: boolean,
-    projectsWithoutUser: ProjectResponsePublicDto[],
+    projectsWithoutUser: ProjectResponseDetailsDto[],
     handleProjectsWithUserSearch: (event: FormEvent<HTMLInputElement>) => void,
     handleProjectsWithoutUserSearch: (event: FormEvent<HTMLInputElement>) => void,
     handleViewDashboardClick: (projectId: number) => unknown,

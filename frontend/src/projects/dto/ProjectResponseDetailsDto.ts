@@ -1,4 +1,4 @@
-export interface ProjectResponsePrivateDto {
+export interface ProjectResponseDetailsDto {
   readonly groupId: number;
   readonly projectId: number;
   readonly name: string;

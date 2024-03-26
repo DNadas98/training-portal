@@ -25,7 +25,8 @@ public class ProjectController {
     private final MessageSource messageSource;
 
     @GetMapping()
-    public ResponseEntity<?> getProjectsWithUser(@PathVariable @Min(1) Long groupId, @RequestParam(
+    public ResponseEntity<?> getProjects(
+      @PathVariable @Min(1) Long groupId, @RequestParam(
             name = "withUser") Boolean withUser) {
         List<ProjectResponsePublicDTO> projects;
         if (withUser) {

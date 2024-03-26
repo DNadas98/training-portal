@@ -6,15 +6,15 @@ import {
   AccordionSummary,
   Button,
   Card,
-  CardContent,
+  CardContent, Stack,
   Typography
 } from "@mui/material";
-import {ProjectResponsePublicDto} from "../../../dto/ProjectResponsePublicDto.ts";
 import ExpandIcon from "../../../../common/utils/components/ExpandIcon.tsx";
+import {ProjectResponseDetailsDto} from "../../../dto/ProjectResponseDetailsDto.ts";
 
 interface ProjectListProps {
   loading: boolean,
-  projects: ProjectResponsePublicDto[],
+  projects: ProjectResponseDetailsDto[],
   notFoundText: string,
   onActionButtonClick: (projectId: number) => unknown;
   actionButtonDisabled: boolean;
@@ -32,12 +32,20 @@ export default function ProjectList(props: ProjectListProps) {
                      variant={"elevation"}
                      sx={{paddingTop: 0.5, paddingBottom: 0.5}}>
             <AccordionSummary expandIcon={<ExpandIcon/>}>
-              <Typography variant={"h6"} sx={{
-                wordBreak: "break-word",
-                paddingRight: 1
-              }}>
-                {project.name}
-              </Typography>
+              <Stack spacing={2}>
+                <Typography variant={"h6"} sx={{
+                  wordBreak: "break-word",
+                  paddingRight: 1
+                }}>
+                  {project.name}
+                </Typography>
+                <Typography variant={"body2"} sx={{
+                  wordBreak: "break-word",
+                  paddingRight: 1
+                }}>
+                  {project.startDate.toLocaleString()} - {project.deadline.toLocaleString()}
+                </Typography>
+              </Stack>
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant={"body2"}>

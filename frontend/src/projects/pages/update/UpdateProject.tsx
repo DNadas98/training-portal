@@ -5,7 +5,7 @@ import {
 import {FormEvent, useEffect, useState} from "react";
 import {ProjectCreateRequestDto} from "../../dto/ProjectCreateRequestDto.ts";
 import {useNavigate, useParams} from "react-router-dom";
-import {ProjectResponsePrivateDto} from "../../dto/ProjectResponsePrivateDto.ts";
+import {ProjectResponseDetailsDto} from "../../dto/ProjectResponseDetailsDto.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {ProjectUpdateRequestDto} from "../../dto/ProjectUpdateRequestDto.ts";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
@@ -23,7 +23,7 @@ export default function UpdateProject() {
   const groupId = useParams()?.groupId;
   const projectId = useParams()?.projectId;
   const [projectLoading, setProjectLoading] = useState(true);
-  const [project, setProject] = useState<ProjectResponsePrivateDto | undefined>(undefined);
+  const [project, setProject] = useState<ProjectResponseDetailsDto | undefined>(undefined);
   const [projectErrorStatus, setProjectError] = useState<string | undefined>(undefined);
 
   const handleError = (error?: string) => {
@@ -56,7 +56,7 @@ export default function UpdateProject() {
         startDate: new Date(response.data.startDate as string),
         deadline: new Date(response.data.deadline as string)
       }
-      setProject(projectData as ProjectResponsePrivateDto);
+      setProject(projectData as ProjectResponseDetailsDto);
     } catch (e) {
       setProject(undefined);
       setProjectError(`Failed to load project with ID ${projectId}`);

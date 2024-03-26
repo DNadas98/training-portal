@@ -4,7 +4,7 @@ import AddProjectForm from "./components/AddProjectForm.tsx";
 import {FormEvent, useState} from "react";
 import {ProjectCreateRequestDto} from "../../dto/ProjectCreateRequestDto.ts";
 import {useNavigate, useParams} from "react-router-dom";
-import {ProjectResponsePrivateDto} from "../../dto/ProjectResponsePrivateDto.ts";
+import {ProjectResponseDetailsDto} from "../../dto/ProjectResponseDetailsDto.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import {PermissionType} from "../../../authentication/dto/PermissionType.ts";
@@ -48,7 +48,7 @@ export default function AddProject() {
                 handleError(response?.error ?? "An unknown error has occurred, please try again later");
                 return;
             }
-            const addedProject = response.data as ProjectResponsePrivateDto;
+            const addedProject = response.data as ProjectResponseDetailsDto;
 
             navigate(`/groups/${groupId}/projects/${addedProject.projectId}`);
         } catch (e) {
