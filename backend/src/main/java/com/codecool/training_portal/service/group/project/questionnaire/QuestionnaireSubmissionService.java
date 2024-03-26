@@ -137,17 +137,22 @@ public class QuestionnaireSubmissionService {
       final int maxPoints = question.getPoints();
       int receivedPoints = 0;
       List<SubmittedAnswerRequestDto> checkedAnswerDtos = submittedQuestionDto.checkedAnswers();
+      if (question.getType().equals(QuestionType.RADIO) && checkedAnswerDtos.size() > 1) {
+        throw new QuestionnaireSubmissionFailedException();
+      }
+
       List<Answer> allAnswers = question.getAnswers();
       Set<Long> correctAnswerIds = allAnswers.stream()
         .filter(Answer::getCorrect)
         .map(Answer::getId)
         .collect(Collectors.toSet());
+      List<SubmittedAnswerRequestDto> checkedCorrectAnswerDtos = checkedAnswerDtos.stream()
+        .filter(dto -> correctAnswerIds
+          .contains(dto.answerId())).toList();
 
       // Since we have agreed on max or zero points for every question
-      if (checkedAnswerDtos.stream()
-        .filter(dto -> correctAnswerIds
-          .contains(dto.answerId()))
-        .count() == correctAnswerIds.size()) {
+      if (checkedCorrectAnswerDtos.size() == correctAnswerIds.size() &&
+        checkedAnswerDtos.size() == checkedCorrectAnswerDtos.size()) {
         receivedPoints += maxPoints;
       }
 
