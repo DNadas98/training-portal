@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "submitted_question")
@@ -47,7 +47,7 @@ public class SubmittedQuestion {
   @OrderBy("answerOrder")
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
-  private Set<SubmittedAnswer> submittedAnswers = new HashSet<>();
+  private List<SubmittedAnswer> submittedAnswers = new ArrayList<>();
 
   public SubmittedQuestion(
     String text, QuestionType type, Integer order, Integer maxPoints,Integer receivedPoints, QuestionnaireSubmission questionnaireSubmission) {
@@ -57,9 +57,5 @@ public class SubmittedQuestion {
     this.maxPoints = maxPoints;
     this.receivedPoints = receivedPoints;
     this.questionnaireSubmission = questionnaireSubmission;
-  }
-
-  public void addSubmittedAnswer(SubmittedAnswer submittedAnswer) {
-    submittedAnswers.add(submittedAnswer);
   }
 }

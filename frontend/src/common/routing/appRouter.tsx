@@ -31,6 +31,7 @@ import Profile from "../../user/pages/profile/Profile.tsx";
 import UserJoinRequests from "../../user/pages/requests/UserJoinRequests.tsx";
 import Logout from "../../authentication/pages/Logout.tsx";
 import UserQuestionnaires from "../../questionnaires/pages/user/questionnaires/UserQuestionnaires.tsx";
+import SubmitQuestionnaire from "../../questionnaires/pages/user/submissions/SubmitQuestionnaire.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -129,6 +130,10 @@ const appRouter = createBrowserRouter([
           },
           {
             path: ":groupId/projects/:projectId/questionnaires", element: <UserQuestionnaires/>
+          },
+          {
+            path: ":groupId/projects/:projectId/questionnaires/:questionnaireId",
+            element: <SubmitQuestionnaire/>,
           },
           {
             path: ":groupId/projects/:projectId/editor/questionnaires", element: <Questionnaires/>

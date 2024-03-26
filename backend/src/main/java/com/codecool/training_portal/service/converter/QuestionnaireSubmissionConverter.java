@@ -7,7 +7,6 @@ import com.codecool.training_portal.model.group.project.questionnaire.Questionna
 import com.codecool.training_portal.model.group.project.questionnaire.QuestionnaireSubmission;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,7 +19,8 @@ public class QuestionnaireSubmissionConverter {
       questionnaireSubmission.getSubmittedQuestions().stream().map(
         submittedQuestion -> new SubmittedQuestionResponseDto(submittedQuestion.getId(),
           submittedQuestion.getText(), submittedQuestion.getType(),
-          submittedQuestion.getMaxPoints(), submittedQuestion.getQuestionOrder(),
+          submittedQuestion.getReceivedPoints(), submittedQuestion.getMaxPoints(),
+          submittedQuestion.getQuestionOrder(),
           submittedQuestion.getSubmittedAnswers().stream().map(
             submittedAnswer -> new SubmittedAnswerResponseDto(submittedAnswer.getId(),
               submittedAnswer.getText(), submittedAnswer.getAnswerOrder(),

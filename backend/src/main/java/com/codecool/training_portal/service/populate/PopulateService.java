@@ -71,7 +71,7 @@ public class PopulateService {
 
     Questionnaire questionnaire =
       createQuestionnaire(project, testUsers);
-
+    questionnaire.setStatus(QuestionnaireStatus.ACTIVE);
     questionnaireDao.save(questionnaire);
 
     log.info("Database has been populated with example data successfully");

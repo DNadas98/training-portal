@@ -28,5 +28,5 @@ spring:
 
 logging:
   level:
-    root: warn
+    root: info
     org.springframework: info

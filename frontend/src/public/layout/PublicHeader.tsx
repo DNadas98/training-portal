@@ -15,7 +15,7 @@ export default function PublicHeader() {
     <AppBar position="static" sx={{marginBottom: 4}}>
       <Toolbar>
         <SiteNameH6/>
-        <Box flexGrow={1}></Box>
+        <Box flexGrow={1}/>
         {isSmallScreen
             ? <MenuSmall items={publicMenuItems} icon={<MenuOutlined/>}/>
             : <MenuLarge items={publicMenuItems}/>

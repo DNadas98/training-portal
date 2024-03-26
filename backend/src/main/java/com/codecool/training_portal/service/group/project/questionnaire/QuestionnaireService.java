@@ -6,7 +6,10 @@ import com.codecool.training_portal.exception.group.project.questionnaire.Questi
 import com.codecool.training_portal.model.auth.ApplicationUser;
 import com.codecool.training_portal.model.group.project.Project;
 import com.codecool.training_portal.model.group.project.ProjectDao;
-import com.codecool.training_portal.model.group.project.questionnaire.*;
+import com.codecool.training_portal.model.group.project.questionnaire.Answer;
+import com.codecool.training_portal.model.group.project.questionnaire.Question;
+import com.codecool.training_portal.model.group.project.questionnaire.Questionnaire;
+import com.codecool.training_portal.model.group.project.questionnaire.QuestionnaireDao;
 import com.codecool.training_portal.service.auth.UserProvider;
 import com.codecool.training_portal.service.converter.QuestionnaireConverter;
 import lombok.RequiredArgsConstructor;
@@ -26,37 +29,47 @@ public class QuestionnaireService {
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
-  public List<QuestionnaireResponseDto> getQuestionnaires(Long groupId, Long projectId) {
-    List<Questionnaire> questionnaires = questionnaireDao.findAllByGroupIdAndProjectId(
-      groupId,
-      projectId);
+  public List<QuestionnaireResponseDto> getActiveQuestionnaires(
+    Long groupId, Long projectId, Boolean withMaxPoints) {
+    ApplicationUser user = userProvider.getAuthenticatedUser();
+    List<Questionnaire> questionnaires;
+    if (withMaxPoints) {
+      questionnaires =
+        questionnaireDao.findAllByGroupIdAndProjectIdAndMaxPointSubmissionExists(
+          groupId, projectId, user);
+    } else {
+      questionnaires =
+        questionnaireDao.findAllByGroupIdAndProjectIdAndActiveStatusAndNoMaxPointSubmission(
+          groupId, projectId, user);
+    }
     return questionnaireConverter.toQuestionnaireResponseDtos(questionnaires);
   }
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
-  public QuestionnaireResponseDetailsDto getQuestionnaire(Long groupId, Long projectId, Long questionnaireId) {
-    Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndId(
-      groupId,
-      projectId,questionnaireId).orElseThrow(() -> new QuestionnaireNotFoundException());
+  public QuestionnaireResponseDetailsDto getQuestionnaire(
+    Long groupId, Long projectId, Long questionnaireId) {
+    Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndIdAndActiveStatus(
+      groupId, projectId, questionnaireId).orElseThrow(QuestionnaireNotFoundException::new);
     return questionnaireConverter.toQuestionnaireResponseDetailsDto(questionnaire);
   }
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
-  public List<QuestionnaireResponseEditorDto> getEditorQuestionnaires(Long groupId, Long projectId) {
+  public List<QuestionnaireResponseEditorDto> getEditorQuestionnaires(
+    Long groupId, Long projectId) {
     List<Questionnaire> questionnaires = questionnaireDao.findAllByGroupIdAndProjectId(
-      groupId,
-      projectId);
+      groupId, projectId);
     return questionnaireConverter.toQuestionnaireResponseEditorDtos(questionnaires);
   }
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
-  public QuestionnaireResponseEditorDetailsDto getEditorQuestionnaire(Long groupId, Long projectId, Long questionnaireId) {
+  public QuestionnaireResponseEditorDetailsDto getEditorQuestionnaire(
+    Long groupId, Long projectId, Long questionnaireId) {
     Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndId(
       groupId,
-      projectId,questionnaireId).orElseThrow(() -> new QuestionnaireNotFoundException());
+      projectId, questionnaireId).orElseThrow(QuestionnaireNotFoundException::new);
     return questionnaireConverter.toQuestionnaireResponseEditorDetailsDto(questionnaire);
   }
 
@@ -74,14 +87,16 @@ public class QuestionnaireService {
   @Transactional(rollbackFor = Exception.class)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
   public QuestionnaireResponseEditorDetailsDto updateQuestionnaire(
-    Long groupId, Long projectId, Long questionnaireId, QuestionnaireUpdateRequestDto questionnaireUpdateRequestDto) {
+    Long groupId, Long projectId, Long questionnaireId,
+    QuestionnaireUpdateRequestDto questionnaireUpdateRequestDto) {
     Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndId(
-      groupId, projectId, questionnaireId).orElseThrow(() -> new QuestionnaireNotFoundException());
+      groupId, projectId, questionnaireId).orElseThrow(QuestionnaireNotFoundException::new);
     questionnaire.setName(questionnaireUpdateRequestDto.name());
     questionnaire.setDescription(questionnaireUpdateRequestDto.description());
     questionnaire.setStatus(questionnaireUpdateRequestDto.status());
     questionnaire.removeAllQuestions();
-    questionnaireUpdateRequestDto.questions().forEach(questionDto -> createQuestion(questionDto, questionnaire));
+    questionnaireUpdateRequestDto.questions().forEach(
+      questionDto -> createQuestion(questionDto, questionnaire));
     ApplicationUser user = userProvider.getAuthenticatedUser();
     questionnaire.setUpdatedBy(user);
     questionnaireDao.save(questionnaire);
@@ -117,7 +132,7 @@ public class QuestionnaireService {
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
   public void deleteQuestionnaire(Long groupId, Long projectId, Long id) {
     Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndId(
-      groupId, projectId, id).orElseThrow(() -> new QuestionnaireNotFoundException());
+      groupId, projectId, id).orElseThrow(QuestionnaireNotFoundException::new);
     questionnaireDao.delete(questionnaire);
   }
 }

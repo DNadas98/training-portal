@@ -7,8 +7,8 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -23,11 +23,11 @@ public class QuestionnaireSubmission {
 
   @Column(nullable = false)
   @Min(1)
-  private Integer maxPoints;
+  private Integer maxPoints = 1;
 
   @Column(nullable = false)
   @Min(0)
-  private Integer receivedPoints;
+  private Integer receivedPoints = 0;
 
   @ManyToOne
   @JoinColumn(name = "questionnaire_id", nullable = false)
@@ -43,14 +43,14 @@ public class QuestionnaireSubmission {
   @OrderBy("questionOrder")
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
-  private Set<SubmittedQuestion> submittedQuestions = new HashSet<>();
+  private List<SubmittedQuestion> submittedQuestions = new ArrayList<>();
 
 
   @CreationTimestamp
   private Instant createdAt;
 
   public QuestionnaireSubmission(
-    Questionnaire questionnaire, ApplicationUser user, Long maxPoints, Long receivedPoints) {
+    Questionnaire questionnaire, ApplicationUser user) {
     this.questionnaire = questionnaire;
     this.user = user;
   }

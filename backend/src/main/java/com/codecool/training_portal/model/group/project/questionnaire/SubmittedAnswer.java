@@ -33,7 +33,8 @@ public class SubmittedAnswer {
   @JoinColumn(name = "submitted_question_id", nullable = false)
   private SubmittedQuestion submittedQuestion;
 
-  public SubmittedAnswer(String text, SubmittedAnswerStatus status, Integer order, SubmittedQuestion submittedQuestion) {
+  public SubmittedAnswer(
+    String text, Integer order, SubmittedAnswerStatus status, SubmittedQuestion submittedQuestion) {
     this.text = text;
     this.status = status;
     this.answerOrder = order;

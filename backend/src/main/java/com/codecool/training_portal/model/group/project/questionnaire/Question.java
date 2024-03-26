@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -43,7 +43,7 @@ public class Question {
   @OrderBy("answerOrder")
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
-  private Set<Answer> answers = new HashSet<>();
+  private List<Answer> answers = new ArrayList<>();
 
   public Question(
     String text, QuestionType type, Integer order, Integer points, Questionnaire questionnaire) {
@@ -54,11 +54,11 @@ public class Question {
     this.questionnaire = questionnaire;
   }
 
-  public void addAnswer(Answer answer) {
-    this.answers.add(answer);
+  public List<Answer> getAnswers() {
+    return List.copyOf(answers);
   }
 
-  public void removeAnswer(Answer answer) {
-    this.answers.remove(answer);
+  public void addAnswer(Answer answer) {
+    this.answers.add(answer);
   }
 }

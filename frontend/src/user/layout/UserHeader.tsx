@@ -1,4 +1,4 @@
-import {AppBar, Toolbar, useMediaQuery, useTheme} from "@mui/material";
+import {AppBar, Box, Toolbar, useMediaQuery, useTheme} from "@mui/material";
 import ThemePaletteModeSwitch
   from "../../common/theme/components/ThemePaletteModeSwitch.tsx";
 import MenuLarge from "../../common/utils/components/MenuLarge.tsx";
@@ -17,6 +17,7 @@ export default function UserHeader() {
     <AppBar position="static" sx={{marginBottom: 4}}>
       <Toolbar>
         <SiteNameH6/>
+        <Box flexGrow={1}/>
         {isSmallScreen
           ? <MenuSmall items={loggedInMenuItems} icon={<MenuOutlined/>}/>
           : <MenuLarge items={loggedInMenuItems}/>

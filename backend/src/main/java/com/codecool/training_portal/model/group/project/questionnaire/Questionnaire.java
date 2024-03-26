@@ -1,6 +1,5 @@
 package com.codecool.training_portal.model.group.project.questionnaire;
 
-import com.codecool.training_portal.dto.group.project.questionnaire.QuestionCreateRequestDto;
 import com.codecool.training_portal.model.auth.ApplicationUser;
 import com.codecool.training_portal.model.group.project.Project;
 import jakarta.persistence.*;
@@ -9,8 +8,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "questionnaire")
@@ -39,7 +38,7 @@ public class Questionnaire {
   @OrderBy("questionOrder")
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
-  private Set<Question> questions = new HashSet<>();
+  private List<Question> questions = new ArrayList<>();
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "project_id", nullable = false)
@@ -74,12 +73,12 @@ public class Questionnaire {
     this.updatedBy = createdBy;
   }
 
-  public void addQuestion(Question question) {
-    questions.add(question);
+  public List<Question> getQuestions() {
+    return List.copyOf(questions);
   }
 
-  public void removeQuestion(Question question) {
-    this.questions.remove(question);
+  public void addQuestion(Question question) {
+    questions.add(question);
   }
 
   public void removeAllQuestions() { this.questions.clear(); }

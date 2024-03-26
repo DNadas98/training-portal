@@ -56,7 +56,6 @@ export const DialogProvider = ({children}: DialogProviderProps) => {
 
   const handleClose = () => {
     setIsOpen(false);
-    setDialogState({...initialState});
   };
 
   const handleConfirm = () => {

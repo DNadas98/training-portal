@@ -12,8 +12,10 @@ import {isValidId} from "../../../../common/utils/isValidId.ts";
 
 export default function UserQuestionnaires() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [questionnairesLoading, setQuestionnairesLoading] = useState<boolean>(true);
+  const [maxPointQuestionnairesLoading, setMaxPointQuestionnairesLoading] = useState<boolean>(true);
   const [questionnaires, setQuestionnaires] = useState<QuestionnaireResponseDto[]>([]);
+  const [maxPointQuestionnaires, setMaxPointQuestionnaires] = useState<QuestionnaireResponseDto[]>([]);
   const authJsonFetch = useAuthJsonFetch();
   const navigate = useNavigate();
   const notification = useNotification();
@@ -27,26 +29,55 @@ export default function UserQuestionnaires() {
         setQuestionnaires([]);
         return;
       }
+      setQuestionnairesLoading(true);
       const response = await authJsonFetch({
-        path: `groups/${groupId}/projects/${projectId}/questionnaires`
+        path: `groups/${groupId}/projects/${projectId}/questionnaires?withMaxPoints=false`
       });
       if (!response?.status || response.status > 399 || !response?.data) {
         notification.openNotification({
           type: "error", vertical: "top", horizontal: "center",
           message: `${response?.error ?? "Failed to load questionnaires"}`
         });
+        setQuestionnaires([]);
         return;
       }
       setQuestionnaires(response.data as QuestionnaireResponseDto[]);
     } catch (e) {
       setQuestionnaires([]);
     } finally {
-      setLoading(false);
+      setQuestionnairesLoading(false);
+    }
+  };
+
+  const loadMaxPointQuestionnaires = async () => {
+    try {
+      if (!isValidId(groupId) || !isValidId(projectId)) {
+        setMaxPointQuestionnaires([]);
+        return;
+      }
+      setMaxPointQuestionnairesLoading(true);
+      const response = await authJsonFetch({
+        path: `groups/${groupId}/projects/${projectId}/questionnaires?withMaxPoints=true`
+      });
+      if (!response?.status || response.status > 399 || !response?.data) {
+        notification.openNotification({
+          type: "error", vertical: "top", horizontal: "center",
+          message: `${response?.error ?? "Failed to load questionnaires"}`
+        });
+        setMaxPointQuestionnaires([]);
+        return;
+      }
+      setMaxPointQuestionnaires(response.data as QuestionnaireResponseDto[]);
+    } catch (e) {
+      setMaxPointQuestionnaires([]);
+    } finally {
+      setMaxPointQuestionnairesLoading(false);
     }
   };
 
   useEffect(() => {
-    loadQuestionnaires().then();
+    loadQuestionnaires();
+    loadMaxPointQuestionnaires();
   }, [groupId, projectId]);
 
   const [questionnairesFilterValue, setQuestionnairesFilterValue] = useState<string>("");
@@ -60,23 +91,49 @@ export default function UserQuestionnaires() {
 
   const handleQuestionnairesSearch = (event: any) => {
     setQuestionnairesFilterValue(event.target.value.toLowerCase().trim());
-  };
+  }
 
-  if (loading || permissionsLoading) {
+  const [maxPointQuestionnairesFilterValue, setMaxPointQuestionnairesFilterValue] = useState<string>("");
+
+  const maxPointQuestionnairesFiltered = useMemo(() => {
+    return maxPointQuestionnaires.filter(questionnaire => {
+        return questionnaire.name.toLowerCase().includes(maxPointQuestionnairesFilterValue);
+      }
+    );
+  }, [maxPointQuestionnaires, maxPointQuestionnairesFilterValue]);
+
+  const handleMaxPointQuestionnaireSearch = (event: any) => {
+    setMaxPointQuestionnairesFilterValue(event.target.value.toLowerCase().trim());
+  }
+
+  const handleFillOutClick = (id: number) => {
+    navigate(`/groups/${groupId}/projects/${projectId}/questionnaires/${id}`);
+  }
+
+  const handlePastSubmissionsClick = (id: number) => {
+    navigate(`/groups/${groupId}/projects/${projectId}/questionnaires/${id}/submissions`);
+  }
+
+  if (questionnairesLoading || maxPointQuestionnairesLoading || permissionsLoading) {
     return <LoadingSpinner/>;
   } else if (!projectPermissions.length) {
     notification.openNotification({
       type: "error", vertical: "top", horizontal: "center",
       message: "Access Denied: Insufficient permissions"
     });
-    navigate(`/groups/${groupId}/projects/${projectId}`);
+    navigate(`/groups/${groupId}/projects`);
     return <></>;
   }
 
   return (
-    <UserQuestionnaireBrowser questionnairesLoading={loading}
+    <UserQuestionnaireBrowser questionnairesLoading={questionnairesLoading}
+                              maxPointQuestionnairesLoading={maxPointQuestionnairesLoading}
                               questionnaires={questionnairesFiltered}
+                              maxPointQuestionnaires={maxPointQuestionnairesFiltered}
                               handleQuestionnaireSearch={handleQuestionnairesSearch}
+                              handleMaxPointQuestionnaireSearch={handleMaxPointQuestionnaireSearch}
+                              handleFillOutClick={handleFillOutClick}
+                              handlePastSubmissionsClick={handlePastSubmissionsClick}
     />
   );
 }
