@@ -8,9 +8,11 @@ import com.codecool.training_portal.exception.group.project.questionnaire.Questi
 import com.codecool.training_portal.exception.group.project.questionnaire.QuestionnaireSubmissionFailedException;
 import com.codecool.training_portal.exception.group.project.questionnaire.QuestionnaireSubmissionNotFoundException;
 import com.codecool.training_portal.model.auth.ApplicationUser;
+import com.codecool.training_portal.model.auth.PermissionType;
 import com.codecool.training_portal.model.group.project.questionnaire.*;
 import com.codecool.training_portal.service.auth.UserProvider;
 import com.codecool.training_portal.service.converter.QuestionnaireSubmissionConverter;
+import com.codecool.training_portal.service.group.project.ProjectRoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ public class QuestionnaireSubmissionService {
   private final SubmittedAnswerDao submittedAnswerDao;
   private final QuestionnaireSubmissionConverter questionnaireSubmissionConverter;
   private final UserProvider userProvider;
+  private final ProjectRoleService projectRoleService;
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
@@ -84,11 +87,10 @@ public class QuestionnaireSubmissionService {
     Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndId(groupId,
       projectId, questionnaireId).orElseThrow(QuestionnaireNotFoundException::new);
 
-    Optional<QuestionnaireSubmission> maxPointSubmission =
-      questionnaireSubmissionDao.findByGroupIdAndProjectIdAndQuestionnaireIdAndUserAndMaxPoint(
-        groupId, projectId, questionnaireId, user);
-    if (maxPointSubmission.isPresent()) {
-      throw new QuestionnaireSubmissionFailedException();
+    // Non-editors can only submit active questionnaires without existing max point submission
+    if (!projectRoleService.getUserPermissionsForProject(groupId, projectId).contains(
+      PermissionType.PROJECT_EDITOR)) {
+      verifyActiveAndWithoutMaxPointSubmission(groupId, projectId, questionnaire, user);
     }
 
     List<Question> questions = questionnaire.getQuestions();
@@ -99,6 +101,20 @@ public class QuestionnaireSubmissionService {
       submissionRequest, questions, submission);
 
     if (savedSubmission == null) {
+      throw new QuestionnaireSubmissionFailedException();
+    }
+  }
+
+  private void verifyActiveAndWithoutMaxPointSubmission(
+    Long groupId, Long projectId, Questionnaire questionnaire,
+    ApplicationUser user) {
+    if (!questionnaire.getStatus().equals(QuestionnaireStatus.ACTIVE)) {
+      throw new QuestionnaireSubmissionFailedException();
+    }
+    Optional<QuestionnaireSubmission> maxPointSubmission =
+      questionnaireSubmissionDao.findByGroupIdAndProjectIdAndQuestionnaireIdAndUserAndMaxPoint(
+        groupId, projectId, questionnaire.getId(), user);
+    if (maxPointSubmission.isPresent()) {
       throw new QuestionnaireSubmissionFailedException();
     }
   }
