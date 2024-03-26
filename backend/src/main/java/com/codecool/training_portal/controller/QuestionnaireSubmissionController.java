@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(
@@ -53,8 +54,11 @@ public class QuestionnaireSubmissionController {
   @GetMapping("/maxPoints")
   public ResponseEntity<?> getQuestionnaireSubmission(
     @PathVariable Long groupId, @PathVariable Long projectId, @PathVariable Long questionnaireId) {
-    QuestionnaireSubmissionResponseDto questionnaire = questionnaireSubmissionService
+    Optional<QuestionnaireSubmissionResponseDto> questionnaire = questionnaireSubmissionService
       .getMaxPointQuestionnaireSubmission(groupId, projectId, questionnaireId);
-    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", questionnaire));
+    if (questionnaire.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Max points submission not found"));
+    }
+    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", questionnaire.get()));
   }
 }

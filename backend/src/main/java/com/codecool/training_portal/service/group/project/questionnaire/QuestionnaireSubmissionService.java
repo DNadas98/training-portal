@@ -60,16 +60,18 @@ public class QuestionnaireSubmissionService {
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
-  public QuestionnaireSubmissionResponseDto getMaxPointQuestionnaireSubmission(
+  public Optional<QuestionnaireSubmissionResponseDto> getMaxPointQuestionnaireSubmission(
     Long groupId, Long projectId, Long questionnaireId) {
     ApplicationUser user = userProvider.getAuthenticatedUser();
-    QuestionnaireSubmission questionnaireSubmission =
+    Optional<QuestionnaireSubmission> questionnaireSubmission =
       questionnaireSubmissionDao.findByGroupIdAndProjectIdAndQuestionnaireIdAndUserAndMaxPoint(
         groupId,
-        projectId, questionnaireId, user).orElseThrow(
-        QuestionnaireSubmissionNotFoundException::new);
-    return questionnaireSubmissionConverter.toQuestionnaireSubmissionResponseDto(
-      questionnaireSubmission, questionnaireSubmission.getQuestionnaire());
+        projectId, questionnaireId, user);
+    if (questionnaireSubmission.isEmpty()) {
+      return Optional.empty();
+    }
+    return Optional.of(questionnaireSubmissionConverter.toQuestionnaireSubmissionResponseDto(
+      questionnaireSubmission.get(), questionnaireSubmission.get().getQuestionnaire()));
   }
 
 

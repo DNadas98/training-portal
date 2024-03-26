@@ -166,7 +166,7 @@ export default function SubmitQuestionnaire() {
           {questionnaire.questions.map((question, questionIndex) => {
             return (
               <Card key={question.id}>
-                <CardHeader title={question.text} titleTypographyProps={{variant: "body1"}}
+                <CardHeader title={`${question.order}. ${question.text}`} titleTypographyProps={{variant: "body1"}}
                             subheader={<Typography variant={"body2"} gutterBottom>Max
                               points: {question.points}</Typography>}/>
                 <CardContent>

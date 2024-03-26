@@ -11,7 +11,7 @@ function BackButton({path, text, isFullWidth = false}: BackButtonProps) {
   const navigate = useNavigate();
   return (
     <Button type="button"
-            variant="contained"
+            variant="text"
             fullWidth={isFullWidth}
             onClick={() => path ? navigate(path) : navigate(-1)}>
       {text ?? "Back"}

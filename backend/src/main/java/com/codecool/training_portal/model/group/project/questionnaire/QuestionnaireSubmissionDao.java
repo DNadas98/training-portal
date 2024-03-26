@@ -15,7 +15,8 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
       "AND qs.questionnaire.project.id = :projectId " +
       "AND qs.questionnaire.id = :questionnaireId " +
       "AND qs.user = :user " +
-      "AND qs.maxPoints > qs.receivedPoints")
+      "AND qs.maxPoints > qs.receivedPoints " +
+      "ORDER BY qs.receivedPoints DESC")
   List<QuestionnaireSubmission> findAllByGroupIdAndProjectIdAndQuestionnaireIdAndUserAndNotMaxPoint(
     Long groupId, Long projectId, Long questionnaireId, ApplicationUser user);
 
@@ -34,7 +35,7 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
     "AND qs.questionnaire.id = :questionnaireId " +
     "AND qs.id = :submissionId " +
     "AND qs.user = :user " +
-    "ORDER BY qs.createdAt DESC")
+    "ORDER BY qs.receivedPoints DESC")
   Optional<QuestionnaireSubmission> findByGroupIdAndProjectIdAndQuestionnaireIdAndIdAndUser(
     Long groupId, Long projectId, Long questionnaireId, Long submissionId, ApplicationUser user);
 }
