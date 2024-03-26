@@ -22,6 +22,7 @@ import {
 import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
 import {QuestionType} from "../../../dto/QuestionType.ts";
 import {QuestionnaireSubmissionRequestDto} from "../../../dto/QuestionnaireSubmissionRequestDto.ts";
+import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
 
 export default function SubmitQuestionnaire() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -49,10 +50,11 @@ export default function SubmitQuestionnaire() {
         setQuestionnaireError("Questionnaire with the provided details was not found");
         return;
       }
+      const path = projectPermissions.includes(PermissionType.PROJECT_EDITOR)
+        ? `groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}`
+        : `groups/${groupId}/projects/${projectId}/questionnaires/${questionnaireId}`;
 
-      const response = await authJsonFetch({
-        path: `groups/${groupId}/projects/${projectId}/questionnaires/${questionnaireId}`
-      });
+      const response = await authJsonFetch({path});
       if (!response?.status || response.status > 399 || !response?.data) {
         setQuestionnaire(undefined);
         setQuestionnaireError(response?.error ?? "Failed to load questionnaire");
@@ -78,8 +80,10 @@ export default function SubmitQuestionnaire() {
   };
 
   useEffect(() => {
-    loadQuestionnaire().then();
-  }, [groupId, projectId, questionnaireId]);
+    if (!permissionsLoading) {
+      loadQuestionnaire().then();
+    }
+  }, [groupId, projectId, questionnaireId, permissionsLoading]);
 
   const handleCheckboxChange = (questionIndex, answerId, isChecked) => {
     const updatedFormData = {...formData};
@@ -116,7 +120,7 @@ export default function SubmitQuestionnaire() {
       notification.openNotification({
         type: "success", vertical: "top", horizontal: "center", message: response.message
       })
-      navigate(`/groups/${groupId}/projects/${projectId}/questionnaires`);
+      navigate(`/groups/${groupId}/projects/${projectId}`);
     } catch (e) {
       notification.openNotification({
         type: "error", vertical: "top", horizontal: "center", message: defaultError
@@ -131,7 +135,7 @@ export default function SubmitQuestionnaire() {
       text: "Are you sure you would like to exit without completing the questionnaire? You will have to start again next time.",
       confirmText: "Yes, exit without saving",
       cancelText: "No, continue the questionnaire",
-      onConfirm: () => navigate(`/groups/${groupId}/projects/${projectId}/questionnaires`)
+      onConfirm: () => navigate(-1)
     });
   }
 
@@ -142,14 +146,14 @@ export default function SubmitQuestionnaire() {
       type: "error", vertical: "top", horizontal: "center",
       message: "Access Denied: Insufficient permissions"
     });
-    navigate(`/groups/${groupId}/projects/${projectId}/questionnaires`);
+    navigate(`/groups/${groupId}/projects/${projectId}`);
     return <></>;
   } else if (!questionnaire) {
     notification.openNotification({
       type: "error", vertical: "top", horizontal: "center",
       message: questionnaireError ?? "Failed to load questionnaire"
     });
-    navigate(`/groups/${groupId}/projects/${projectId}/questionnaires`);
+    navigate(`/groups/${groupId}/projects/${projectId}`);
     return <></>;
   }
 

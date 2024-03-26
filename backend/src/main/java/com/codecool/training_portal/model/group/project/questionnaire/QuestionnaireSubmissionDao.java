@@ -33,6 +33,15 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
     "WHERE qs.questionnaire.project.userGroup.id = :groupId " +
     "AND qs.questionnaire.project.id = :projectId " +
     "AND qs.questionnaire.id = :questionnaireId " +
+    "AND qs.user = :user " +
+    "ORDER BY qs.receivedPoints DESC, " +
+    "qs.createdAt DESC")
+  List<QuestionnaireSubmission> findAllByGroupIdAndProjectIdAndQuestionnaireIdAndUser(Long groupId, Long projectId, Long questionnaireId, ApplicationUser user);
+
+  @Query("SELECT qs FROM QuestionnaireSubmission qs " +
+    "WHERE qs.questionnaire.project.userGroup.id = :groupId " +
+    "AND qs.questionnaire.project.id = :projectId " +
+    "AND qs.questionnaire.id = :questionnaireId " +
     "AND qs.id = :submissionId " +
     "AND qs.user = :user " +
     "ORDER BY qs.receivedPoints DESC")

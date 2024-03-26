@@ -198,4 +198,21 @@ public class QuestionnaireSubmissionService {
           SubmittedAnswerStatus.UNCHECKED, newSubmittedQuestion));
     }
   }
+
+
+  @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
+  public List<QuestionnaireSubmissionResponseDto> getOwnQuestionnaireSubmissionsAsEditor(
+    Long groupId, Long projectId, Long questionnaireId) {
+    ApplicationUser user = userProvider.getAuthenticatedUser();
+    List<QuestionnaireSubmission> questionnaireSubmissions;
+    questionnaireSubmissions =
+      questionnaireSubmissionDao.findAllByGroupIdAndProjectIdAndQuestionnaireIdAndUser(
+        groupId, projectId, questionnaireId, user);
+    List<QuestionnaireSubmissionResponseDto> questionnaireSubmissionResponseDtos =
+      questionnaireSubmissions.stream().map(
+        questionnaireSubmission -> questionnaireSubmissionConverter.toQuestionnaireSubmissionResponseDto(
+          questionnaireSubmission, questionnaireSubmission.getQuestionnaire())).toList();
+    return questionnaireSubmissionResponseDtos;
+  }
 }

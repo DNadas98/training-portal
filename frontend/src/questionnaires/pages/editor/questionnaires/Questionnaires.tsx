@@ -69,6 +69,13 @@ export default function Questionnaires() {
     navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}/update`);
   };
 
+  const handleTestQuestionnaire = (questionnaireId: number) => {
+    navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}/tests/new`);
+  };
+
+  const handleViewTests = (questionnaireId: number) => {
+    navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}/tests`);
+  };
   const [questionnairesFilterValue, setQuestionnairesFilterValue] = useState<string>("");
 
   const questionnairesFiltered = useMemo(() => {
@@ -132,8 +139,9 @@ export default function Questionnaires() {
                           questionnaires={questionnairesFiltered}
                           handleQuestionnaireSearch={handleQuestionnairesSearch}
                           onAddClick={handleAddQuestionnaire}
+                          onTestClick={handleTestQuestionnaire}
                           onEditClick={handleEditQuestionnaire}
                           onDeleteClick={handleDeleteClick}
-    />
+                          onViewTestsClick={handleViewTests}/>
   );
 }

@@ -18,6 +18,8 @@ interface QuestionnaireBrowserProps {
   handleQuestionnaireSearch: (event: FormEvent<HTMLInputElement>) => void;
   onAddClick: () => void;
   onEditClick: (questionnaireId: number) => unknown;
+  onTestClick: (questionnaireId: number) => unknown;
+  onViewTestsClick: (questionnaireId: number) => unknown;
   onDeleteClick: (questionnaireId: number) => void;
 }
 
@@ -44,7 +46,9 @@ export default function QuestionnaireBrowser(props: QuestionnaireBrowserProps) {
           <QuestionnaireList loading={props.questionnairesLoading}
                              questionnaires={props.questionnaires}
                              onEditClick={props.onEditClick}
-                             onDeleteClick={props.onDeleteClick}/>
+                             onTestClick={props.onTestClick}
+                             onDeleteClick={props.onDeleteClick}
+                             onViewTestsClick={props.onViewTestsClick}/>
         </Stack>
       </Grid>
     </Grid>

@@ -45,7 +45,7 @@ export default function UserQuestionnaireSubmissionBrowser(props: UserQuestionna
             />
           </Stack>
           : <Card>
-            <CardHeader title={"You have not submitted this questionnaire yet."}
+            <CardHeader title={"No submissions were found for this questionnaire."}
                         sx={{textAlign: "center"}}/>
             <CardContent sx={{justifyContent: "center"}}>
               <BackButton text={"Back to questionnaires"}/>

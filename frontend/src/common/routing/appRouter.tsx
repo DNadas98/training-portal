@@ -33,6 +33,8 @@ import Logout from "../../authentication/pages/Logout.tsx";
 import UserQuestionnaires from "../../questionnaires/pages/user/questionnaires/UserQuestionnaires.tsx";
 import SubmitQuestionnaire from "../../questionnaires/pages/user/submissions/SubmitQuestionnaire.tsx";
 import UserQuestionnaireSubmissions from "../../questionnaires/pages/user/submissions/UserQuestionnaireSubmissions.tsx";
+import EditorQuestionnaireSubmissions
+  from "../../questionnaires/pages/editor/submissions/EditorQuestionnaireSubmissions.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -142,6 +144,14 @@ const appRouter = createBrowserRouter([
           },
           {
             path: ":groupId/projects/:projectId/editor/questionnaires", element: <Questionnaires/>
+          },
+          {
+            path: ":groupId/projects/:projectId/editor/questionnaires/:questionnaireId/tests/new",
+            element: <SubmitQuestionnaire/>,
+          },
+          {
+            path: ":groupId/projects/:projectId/editor/questionnaires/:questionnaireId/tests",
+            element: <EditorQuestionnaireSubmissions/>,
           },
           {
             path: ":groupId/projects/:projectId/editor/questionnaires/create", element: <QuestionnaireEditor/>,

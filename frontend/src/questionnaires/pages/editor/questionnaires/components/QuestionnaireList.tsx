@@ -5,17 +5,22 @@ import {
   AccordionSummary,
   Button,
   Card,
-  CardContent, Divider, Stack,
+  CardContent,
+  Divider,
+  Stack,
   Typography
 } from "@mui/material";
 import ExpandIcon from "../../../../../common/utils/components/ExpandIcon.tsx";
 import LoadingSpinner from "../../../../../common/utils/components/LoadingSpinner.tsx";
 import {QuestionnaireResponseEditorDto} from "../../../../dto/QuestionnaireResponseEditorDto.ts";
+import {QuestionnaireStatus} from "../../../../dto/QuestionnaireStatus.ts";
 
 interface QuestionnaireListProps {
   loading: boolean;
   questionnaires: QuestionnaireResponseEditorDto[];
   onEditClick: (questionnaireId: number) => unknown;
+  onTestClick: (questionnaireId: number) => unknown;
+  onViewTestsClick: (questionnaireId: number) => unknown;
   onDeleteClick: (questionnaireId: number) => void;
 }
 
@@ -55,24 +60,46 @@ export default function QuestionnaireList(props: QuestionnaireListProps) {
               <Typography>Status: {questionnaire.status}</Typography>
             </AccordionDetails>
             <AccordionActions>
-              <Stack spacing={2} direction={"row"} width={"100%"}>
-                <Button sx={{textTransform: "none"}}
-                        fullWidth
-                        variant={"contained"}
-                        onClick={() => {
-                          props.onEditClick(questionnaire.id);
-                        }}>
-                  Edit
-                </Button>
-                <Button sx={{textTransform: "none", color: "white"}}
-                        fullWidth
-                        variant={"contained"}
-                        color={"error"}
-                        onClick={() => {
-                          props.onDeleteClick(questionnaire.id);
-                        }}>
-                  Delete
-                </Button>
+              <Stack spacing={2} width={"100%"}>
+                <Stack spacing={2} direction={"row"} width={"100%"}>
+                  <Button sx={{textTransform: "none"}}
+                          fullWidth
+                          variant={"contained"}
+                          onClick={() => {
+                            props.onEditClick(questionnaire.id);
+                          }}>
+                    Edit
+                  </Button>
+                  <Button sx={{textTransform: "none", color: "white"}}
+                          fullWidth
+                          variant={"contained"}
+                          color={"error"}
+                          onClick={() => {
+                            props.onDeleteClick(questionnaire.id);
+                          }}>
+                    Delete
+                  </Button>
+                </Stack>
+                {questionnaire.status !== QuestionnaireStatus.INACTIVE
+                  ? <Stack spacing={2} direction={"row"} width={"100%"}>
+                    <Button sx={{textTransform: "none"}}
+                            fullWidth
+                            variant={"outlined"}
+                            onClick={() => {
+                              props.onTestClick(questionnaire.id);
+                            }}>
+                      Test
+                    </Button>
+                    <Button sx={{textTransform: "none"}}
+                            fullWidth
+                            variant={"outlined"}
+                            onClick={() => {
+                              props.onViewTestsClick(questionnaire.id);
+                            }}>
+                      View Tests
+                    </Button>
+                  </Stack>
+                  : <></>}
               </Stack>
             </AccordionActions>
           </Accordion>
