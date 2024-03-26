@@ -15,26 +15,28 @@ import java.util.Optional;
 public interface ProjectDao extends JpaRepository<Project, Long> {
   @Query(
     "SELECT p FROM Project p WHERE p.id = :projectId" +
-            " AND p.userGroup.id = :groupId")
+      " AND p.userGroup.id = :groupId")
   Optional<Project> findByIdAndGroupId(
-          @Param("projectId") Long projectId, @Param("groupId") Long groupId);
+    @Param("projectId") Long projectId, @Param("groupId") Long groupId);
 
   @Query(
     "SELECT p FROM Project p" +
-            " WHERE :applicationUser MEMBER OF p.assignedMembers" +
-            " AND p.userGroup = :userGroup")
+      " WHERE :applicationUser MEMBER OF p.assignedMembers" +
+      " AND p.userGroup = :userGroup " +
+      "ORDER BY p.startDate DESC")
   List<Project> findAllWithMemberAndGroup(
-          @Param("applicationUser") ApplicationUser applicationUser, @Param(
-          "userGroup") UserGroup userGroup);
+    @Param("applicationUser") ApplicationUser applicationUser, @Param(
+    "userGroup") UserGroup userGroup);
 
   @Query(
     "SELECT p FROM Project p" +
-            " WHERE :applicationUser NOT MEMBER OF p.assignedMembers" +
+      " WHERE :applicationUser NOT MEMBER OF p.assignedMembers" +
       " AND p.id NOT IN " +
       "(SELECT pr.project.id FROM ProjectJoinRequest pr" +
       " WHERE pr.applicationUser = :applicationUser" +
       " AND pr.status IN (:statuses))" +
-            " AND p.userGroup = :userGroup")
+      " AND p.userGroup = :userGroup " +
+      "ORDER BY p.startDate DESC")
   List<Project> findAllWithoutMemberAndJoinRequestInGroup(
     @Param("applicationUser") ApplicationUser applicationUser,
     @Param("statuses") List<RequestStatus> statuses,

@@ -9,7 +9,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Set;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -68,7 +68,7 @@ public class DateTimeService {
     }
   }
 
-  public Instant getEarliestTaskStartDate(Set<Task> tasks) throws IllegalArgumentException {
+  public Instant getEarliestTaskStartDate(List<Task> tasks) throws IllegalArgumentException {
     if (tasks.isEmpty()) {
       throw new IllegalArgumentException();
     }
@@ -84,7 +84,7 @@ public class DateTimeService {
     }).get().getStartDate();
   }
 
-  public Instant getLatestTaskDeadline(Set<Task> tasks) throws IllegalArgumentException {
+  public Instant getLatestTaskDeadline(List<Task> tasks) throws IllegalArgumentException {
     if (tasks.isEmpty()) {
       throw new IllegalArgumentException();
     }

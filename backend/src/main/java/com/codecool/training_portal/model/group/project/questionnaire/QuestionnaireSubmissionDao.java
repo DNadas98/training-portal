@@ -43,8 +43,7 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
     "AND qs.questionnaire.project.id = :projectId " +
     "AND qs.questionnaire.id = :questionnaireId " +
     "AND qs.id = :submissionId " +
-    "AND qs.user = :user " +
-    "ORDER BY qs.receivedPoints DESC")
+    "AND qs.user = :user")
   Optional<QuestionnaireSubmission> findByGroupIdAndProjectIdAndQuestionnaireIdAndIdAndUser(
     Long groupId, Long projectId, Long questionnaireId, Long submissionId, ApplicationUser user);
 }

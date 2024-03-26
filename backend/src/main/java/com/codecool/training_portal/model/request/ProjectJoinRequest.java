@@ -4,6 +4,10 @@ import com.codecool.training_portal.model.auth.ApplicationUser;
 import com.codecool.training_portal.model.group.project.Project;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.Instant;
 
 @Entity
 @Table(name = "project_join_request")
@@ -16,6 +20,12 @@ public class ProjectJoinRequest {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
+  @CreationTimestamp
+  private Instant createdAt;
+
+  @UpdateTimestamp
+  private Instant updatedAt;
 
   @ManyToOne
   @JoinColumn(name = "project_id")

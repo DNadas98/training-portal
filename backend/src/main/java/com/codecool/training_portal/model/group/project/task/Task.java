@@ -6,8 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -39,7 +39,8 @@ public class Task {
     inverseJoinColumns = @JoinColumn(name = "user_id"))
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
-  private Set<ApplicationUser> assignedMembers;
+  @OrderBy("username ASC")
+  private List<ApplicationUser> assignedMembers;
 
 
   public Task(
@@ -54,19 +55,19 @@ public class Task {
     this.deadline = deadline;
     this.taskStatus = taskStatus;
     this.project = project;
-      this.assignedMembers = new HashSet<>();
-      this.assignedMembers.add(taskCreator);
+    this.assignedMembers = new ArrayList<>();
+    this.assignedMembers.add(taskCreator);
   }
 
-    public Set<ApplicationUser> getAssignedMembers() {
-        return Set.copyOf(this.assignedMembers);
+  public List<ApplicationUser> getAssignedMembers() {
+    return List.copyOf(this.assignedMembers);
   }
 
-    public void assignMember(ApplicationUser applicationUser) {
-        this.assignedMembers.add(applicationUser);
+  public void assignMember(ApplicationUser applicationUser) {
+    this.assignedMembers.add(applicationUser);
   }
 
-    public void removeMember(ApplicationUser applicationUser) {
-        this.assignedMembers.remove(applicationUser);
+  public void removeMember(ApplicationUser applicationUser) {
+    this.assignedMembers.remove(applicationUser);
   }
 }

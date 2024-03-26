@@ -13,10 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -54,31 +51,40 @@ public class ApplicationUser implements UserDetails {
   private Set<GlobalRole> globalRoles = new HashSet<>();
 
   @ManyToMany(mappedBy = "admins", fetch = FetchType.LAZY)
-  private Set<UserGroup> adminUserGroups = new HashSet<>();
+  @OrderBy("name ASC")
+  private List<UserGroup> adminUserGroups = new ArrayList<>();
 
   @ManyToMany(mappedBy = "editors", fetch = FetchType.LAZY)
-  private Set<UserGroup> editorUserGroups = new HashSet<>();
+  @OrderBy("name ASC")
+  private List<UserGroup> editorUserGroups = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "members", fetch = FetchType.LAZY)
-    private Set<UserGroup> memberUserGroups = new HashSet<>();
+  @ManyToMany(mappedBy = "members", fetch = FetchType.LAZY)
+  @OrderBy("name ASC")
+  private List<UserGroup> memberUserGroups = new ArrayList<>();
 
   @ManyToMany(mappedBy = "admins", fetch = FetchType.LAZY)
-  private Set<Project> adminProjects = new HashSet<>();
+  @OrderBy("startDate ASC, name ASC")
+  private List<Project> adminProjects = new ArrayList<>();
 
   @ManyToMany(mappedBy = "editors", fetch = FetchType.LAZY)
-  private Set<Project> editorProjects = new HashSet<>();
+  @OrderBy("startDate ASC, name ASC")
+  private List<Project> editorProjects = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "assignedMembers", fetch = FetchType.LAZY)
-  private Set<Project> assignedProjects = new HashSet<>();
+  @ManyToMany(mappedBy = "assignedMembers", fetch = FetchType.LAZY)
+  @OrderBy("startDate ASC, name ASC")
+  private List<Project> assignedProjects = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "assignedMembers", fetch = FetchType.LAZY)
-  private Set<Task> assignedTasks = new HashSet<>();
+  @ManyToMany(mappedBy = "assignedMembers", fetch = FetchType.LAZY)
+  @OrderBy("startDate ASC, name ASC")
+  private List<Task> assignedTasks = new ArrayList<>();
 
   @OneToMany(mappedBy = "applicationUser", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-  private Set<UserGroupJoinRequest> joinRequests = new HashSet<>();
+  @OrderBy("updatedAt DESC")
+  private List<UserGroupJoinRequest> joinRequests = new ArrayList<>();
 
   @OneToMany(mappedBy = "applicationUser", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-  private Set<ProjectJoinRequest> projectJoinRequests = new HashSet<>();
+  @OrderBy("updatedAt DESC")
+  private List<ProjectJoinRequest> projectJoinRequests = new ArrayList<>();
 
 
   public ApplicationUser(String username, String email, String password) {
@@ -98,10 +104,6 @@ public class ApplicationUser implements UserDetails {
 
   public void addGlobalRole(GlobalRole globalRole) {
     this.globalRoles.add(globalRole);
-  }
-
-  public void removeGlobalRole(GlobalRole globalRole) {
-    this.globalRoles.remove(globalRole);
   }
 
   // UserDetails
@@ -212,31 +214,31 @@ public class ApplicationUser implements UserDetails {
 
   @PreRemove
   private void preRemove() {
-      // Disassociate from UserGroup entities
-      for (UserGroup userGroup : new HashSet<>(adminUserGroups)) {
-          userGroup.removeAdmin(this);
+    // Disassociate from UserGroup entities
+    for (UserGroup userGroup : new ArrayList<>(adminUserGroups)) {
+      userGroup.removeAdmin(this);
     }
-      for (UserGroup userGroup : new HashSet<>(editorUserGroups)) {
-          userGroup.removeEditor(this);
+    for (UserGroup userGroup : new ArrayList<>(editorUserGroups)) {
+      userGroup.removeEditor(this);
     }
-      for (UserGroup userGroup : new HashSet<>(memberUserGroups)) {
-          userGroup.removeMember(this);
+    for (UserGroup userGroup : new ArrayList<>(memberUserGroups)) {
+      userGroup.removeMember(this);
     }
 
     // Disassociate from Project entities
-    for (Project project : new HashSet<>(adminProjects)) {
+    for (Project project : new ArrayList<>(adminProjects)) {
       project.removeAdmin(this);
     }
-    for (Project project : new HashSet<>(editorProjects)) {
+    for (Project project : new ArrayList<>(editorProjects)) {
       project.removeEditor(this);
     }
-    for (Project project : new HashSet<>(assignedProjects)) {
-        project.removeMember(this);
+    for (Project project : new ArrayList<>(assignedProjects)) {
+      project.removeMember(this);
     }
 
     // Disassociate from Task entities
-    for (Task task : new HashSet<>(assignedTasks)) {
-        task.removeMember(this);
+    for (Task task : new ArrayList<>(assignedTasks)) {
+      task.removeMember(this);
     }
   }
 }

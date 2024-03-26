@@ -13,25 +13,27 @@ import java.util.Optional;
 @Repository
 public interface TaskDao extends JpaRepository<Task, Long> {
   @Query(
-          "SELECT t FROM Task t WHERE t.project.userGroup.id = :groupId" +
+    "SELECT t FROM Task t WHERE t.project.userGroup.id = :groupId" +
       " AND t.project.id = :projectId" +
       " AND t.id = :taskId")
   Optional<Task> findByGroupIdAndProjectIdAndTaskId(
-          @Param("groupId") Long groupId,
+    @Param("groupId") Long groupId,
     @Param("projectId") Long projectId,
     @Param("taskId") Long taskId);
 
   @Query(
     "SELECT t FROM Task t" +
       " WHERE t.project = :project" +
-            " AND :user MEMBER OF t.assignedMembers"
+      " AND :user MEMBER OF t.assignedMembers " +
+      "ORDER BY t.startDate ASC"
   )
   List<Task> findAllByProjectAndApplicationUser(Project project, ApplicationUser user);
 
   @Query(
     "SELECT t FROM Task t" +
       " WHERE t.project = :project" +
-            " AND :user NOT MEMBER OF t.assignedMembers"
+      " AND :user NOT MEMBER OF t.assignedMembers " +
+      "ORDER BY t.startDate ASC"
   )
   List<Task> findAllByProjectAndWithoutApplicationUser(Project project, ApplicationUser user);
 
@@ -39,7 +41,8 @@ public interface TaskDao extends JpaRepository<Task, Long> {
     "SELECT t FROM Task t" +
       " WHERE t.project = :project" +
       " AND t.taskStatus = :taskStatus" +
-            " AND :user MEMBER OF t.assignedMembers"
+      " AND :user MEMBER OF t.assignedMembers " +
+      "ORDER BY t.startDate ASC"
   )
   List<Task> findAllByProjectAndTaskStatusAndApplicationUser(
     Project project, TaskStatus taskStatus, ApplicationUser user);
@@ -48,7 +51,9 @@ public interface TaskDao extends JpaRepository<Task, Long> {
     "SELECT t FROM Task t" +
       " WHERE t.project = :project" +
       " AND t.taskStatus = :taskStatus" +
-            " AND :user NOT MEMBER OF t.assignedMembers"
+      " AND :user NOT MEMBER OF t.assignedMembers " +
+      "ORDER BY t.startDate ASC"
   )
-  List<Task> findAllByProjectAndTaskStatusAndWithoutApplicationUser(Project project, TaskStatus taskStatus, ApplicationUser user);
+  List<Task> findAllByProjectAndTaskStatusAndWithoutApplicationUser(
+    Project project, TaskStatus taskStatus, ApplicationUser user);
 }

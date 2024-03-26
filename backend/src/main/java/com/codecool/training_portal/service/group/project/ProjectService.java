@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -97,7 +96,7 @@ public class ProjectService {
 
         Instant projectStartDate = dateTimeService.toStoredDate(updateRequestDto.startDate());
         Instant projectDeadline = dateTimeService.toStoredDate(updateRequestDto.deadline());
-        Set<Task> tasks = project.getTasks();
+      List<Task> tasks = project.getTasks();
         if (tasks.isEmpty()) {
             dateTimeService.validateProjectDates(projectStartDate, projectDeadline);
         } else {
@@ -113,11 +112,6 @@ public class ProjectService {
         project.setDeadline(projectDeadline);
         Project savedProject = projectDao.save(project);
         return projectConverter.getProjectResponsePrivateDto(savedProject);
-    }
-
-    private void clearProjectData(Project project) {
-        project.removeAllMembers();
-        //TODO remove all answered exam forms
     }
 
     @Transactional(rollbackFor = Exception.class)

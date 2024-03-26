@@ -6,8 +6,8 @@ import com.codecool.training_portal.model.request.UserGroupJoinRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -26,55 +26,59 @@ public class UserGroup {
   @Column(length = 500)
   private String description;
 
-    @OneToMany(mappedBy = "userGroup", orphanRemoval = true, cascade = CascadeType.REMOVE)
+  @OneToMany(mappedBy = "userGroup", orphanRemoval = true, cascade = CascadeType.REMOVE)
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
-  private Set<Project> projects;
+  @OrderBy("startDate DESC")
+  private List<Project> projects = new ArrayList<>();
 
-    @OneToMany(mappedBy = "userGroup", orphanRemoval = true, cascade = CascadeType.REMOVE)
+  @OneToMany(mappedBy = "userGroup", orphanRemoval = true, cascade = CascadeType.REMOVE)
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
-    private Set<UserGroupJoinRequest> joinRequests = new HashSet<>();
+  @OrderBy("updatedAt DESC")
+  private List<UserGroupJoinRequest> joinRequests = new ArrayList<>();
 
   @ManyToMany
   @JoinTable(name = "group_admins", joinColumns = @JoinColumn(name = "group_id"),
     inverseJoinColumns = @JoinColumn(name = "user_id"))
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
-  private Set<ApplicationUser> admins;
+  @OrderBy("username ASC")
+  private List<ApplicationUser> admins;
 
   @ManyToMany
   @JoinTable(name = "group_editors", joinColumns = @JoinColumn(name = "group_id"),
     inverseJoinColumns = @JoinColumn(name = "user_id"))
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
-  private Set<ApplicationUser> editors;
+  @OrderBy("username ASC")
+  private List<ApplicationUser> editors;
 
   @ManyToMany
   @JoinTable(name = "group_members", joinColumns = @JoinColumn(name = "group_id"),
     inverseJoinColumns = @JoinColumn(name = "user_id"))
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
-  private Set<ApplicationUser> members;
+  @OrderBy("username ASC")
+  private List<ApplicationUser> members;
 
-    public UserGroup(String name, String description, ApplicationUser groupCreator) {
+  public UserGroup(String name, String description, ApplicationUser groupCreator) {
     this.name = name;
     this.description = description;
-    this.admins = new HashSet<>();
-    this.editors = new HashSet<>();
-        this.members = new HashSet<>();
-        this.admins.add(groupCreator);
-        this.editors.add(groupCreator);
-        this.members.add(groupCreator);
-    this.projects = new HashSet<>();
+    this.admins = new ArrayList<>();
+    this.editors = new ArrayList<>();
+    this.members = new ArrayList<>();
+    this.admins.add(groupCreator);
+    this.editors.add(groupCreator);
+    this.members.add(groupCreator);
   }
 
-  public Set<Project> getProjects() {
-    return Set.copyOf(projects);
+  public List<Project> getProjects() {
+    return List.copyOf(projects);
   }
 
-  public Set<ApplicationUser> getAdmins() {
-    return Set.copyOf(admins);
+  public List<ApplicationUser> getAdmins() {
+    return List.copyOf(admins);
   }
 
   public void addAdmin(ApplicationUser applicationUser) {
@@ -85,8 +89,8 @@ public class UserGroup {
     admins.remove(applicationUser);
   }
 
-  public Set<ApplicationUser> getEditors() {
-    return Set.copyOf(editors);
+  public List<ApplicationUser> getEditors() {
+    return List.copyOf(editors);
   }
 
   public void addEditor(ApplicationUser applicationUser) {
@@ -97,15 +101,15 @@ public class UserGroup {
     editors.remove(applicationUser);
   }
 
-    public Set<ApplicationUser> getMembers() {
-        return Set.copyOf(members);
+  public List<ApplicationUser> getMembers() {
+    return List.copyOf(members);
   }
 
-    public void addMember(ApplicationUser applicationUser) {
-        members.add(applicationUser);
+  public void addMember(ApplicationUser applicationUser) {
+    members.add(applicationUser);
   }
 
-    public void removeMember(ApplicationUser applicationUser) {
-        members.remove(applicationUser);
+  public void removeMember(ApplicationUser applicationUser) {
+    members.remove(applicationUser);
   }
 }

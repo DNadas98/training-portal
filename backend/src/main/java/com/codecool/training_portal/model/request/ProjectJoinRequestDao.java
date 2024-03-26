@@ -2,6 +2,7 @@ package com.codecool.training_portal.model.request;
 
 import com.codecool.training_portal.model.auth.ApplicationUser;
 import com.codecool.training_portal.model.group.project.Project;
+import jakarta.persistence.OrderBy;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -19,6 +20,7 @@ public interface ProjectJoinRequestDao extends JpaRepository<ProjectJoinRequest,
   Optional<ProjectJoinRequest> findByGroupIdAndProjectIdAndRequestId(
           Long groupId, Long projectId, Long requestId);
 
+  @OrderBy("createdAt DESC")
   List<ProjectJoinRequest> findByProjectAndStatus(Project project, RequestStatus status);
 
   Optional<ProjectJoinRequest> findOneByProjectAndApplicationUser(
@@ -26,5 +28,6 @@ public interface ProjectJoinRequestDao extends JpaRepository<ProjectJoinRequest,
 
   Optional<ProjectJoinRequest> findByIdAndApplicationUser(Long id, ApplicationUser applicationUser);
 
+  @OrderBy("createdAt DESC")
   List<ProjectJoinRequest> findByApplicationUser(ApplicationUser applicationUser);
 }
