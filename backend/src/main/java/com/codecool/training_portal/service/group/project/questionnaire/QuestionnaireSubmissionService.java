@@ -88,9 +88,12 @@ public class QuestionnaireSubmissionService {
       projectId, questionnaireId).orElseThrow(QuestionnaireNotFoundException::new);
 
     // Non-editors can only submit active questionnaires without existing max point submission
+    // Editors still can not submit inactive questionnaires
     if (!projectRoleService.getUserPermissionsForProject(groupId, projectId).contains(
       PermissionType.PROJECT_EDITOR)) {
       verifyActiveAndWithoutMaxPointSubmission(groupId, projectId, questionnaire, user);
+    } else if (questionnaire.getStatus().equals(QuestionnaireStatus.INACTIVE)) {
+      throw new QuestionnaireSubmissionFailedException();
     }
 
     List<Question> questions = questionnaire.getQuestions();
