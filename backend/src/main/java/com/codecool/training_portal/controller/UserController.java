@@ -1,7 +1,7 @@
 package com.codecool.training_portal.controller;
 
 import com.codecool.training_portal.dto.user.UserResponsePrivateDto;
-import com.codecool.training_portal.dto.user.UserUsernameUpdateDto;
+import com.codecool.training_portal.dto.user.UserDetailsUpdateDto;
 import com.codecool.training_portal.service.auth.ApplicationUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,18 +27,18 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", userDetails));
   }
 
-  @PatchMapping("/username")
-  public ResponseEntity<?> updateOwnApplicationUser(
-    @RequestBody @Valid UserUsernameUpdateDto updateDto) {
-    UserResponsePrivateDto userDetails = applicationUserService.updateOwnUsername(
-      updateDto.username());
-    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", userDetails));
+  @PatchMapping("/details")
+  public ResponseEntity<?> updateUserDetails(
+    @RequestBody @Valid UserDetailsUpdateDto updateDto, Locale locale) {
+    applicationUserService.updateOwnDetails(updateDto);
+    return ResponseEntity.status(HttpStatus.OK).body(
+      Map.of("message", messageSource.getMessage("user.details.update.success", null, locale)));
   }
 
   @DeleteMapping
   public ResponseEntity<?> deleteOwnApplicationUser(Locale locale) {
     applicationUserService.deleteOwnApplicationUser();
     return ResponseEntity.status(HttpStatus.OK).body(
-      Map.of("message", messageSource.getMessage("user.delete.success",null,locale)));
+      Map.of("message", messageSource.getMessage("user.delete.success", null, locale)));
   }
 }

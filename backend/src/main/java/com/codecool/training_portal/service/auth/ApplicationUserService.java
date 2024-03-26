@@ -1,5 +1,6 @@
 package com.codecool.training_portal.service.auth;
 
+import com.codecool.training_portal.dto.user.UserDetailsUpdateDto;
 import com.codecool.training_portal.dto.user.UserResponsePrivateDto;
 import com.codecool.training_portal.dto.user.UserResponsePublicDto;
 import com.codecool.training_portal.exception.auth.UnauthorizedException;
@@ -9,6 +10,7 @@ import com.codecool.training_portal.model.auth.ApplicationUserDao;
 import com.codecool.training_portal.model.auth.GlobalRole;
 import com.codecool.training_portal.service.converter.UserConverter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,7 @@ public class ApplicationUserService {
   private final ApplicationUserDao applicationUserDao;
   private final UserConverter userConverter;
   private final UserProvider userProvider;
+  private final PasswordEncoder passwordEncoder;
 
   public UserResponsePrivateDto getOwnUserDetails() throws UnauthorizedException {
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
@@ -39,11 +42,20 @@ public class ApplicationUserService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  public UserResponsePrivateDto updateOwnUsername(String username) {
+  public void updateOwnDetails(UserDetailsUpdateDto updateDto) {
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
-    applicationUser.setUsername(username);
-    ApplicationUser updatedApplicationUser = applicationUserDao.save(applicationUser);
-    return userConverter.toUserResponsePrivateDto(updatedApplicationUser);
+    if (updateDto.oldPassword() == null || !passwordEncoder.matches(
+      updateDto.oldPassword(), applicationUser.getPassword())) {
+      throw new UnauthorizedException();
+    }
+    if (updateDto.username() != null) {
+      applicationUser.setUsername(updateDto.username());
+    }
+    if (updateDto.newPassword() != null) {
+      applicationUser.setPassword(passwordEncoder.encode(updateDto.newPassword()));
+
+    }
+    applicationUserDao.save(applicationUser);
   }
 
   @Transactional(rollbackFor = Exception.class)

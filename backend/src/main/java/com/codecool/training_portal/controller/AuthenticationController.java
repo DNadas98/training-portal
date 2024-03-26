@@ -36,7 +36,6 @@ public class AuthenticationController {
                 "message",
                 messageSource.getMessage("auth.registration.started", null, locale)));
     }
-    //...
 
     @PostMapping("/verify-registration")
     public ResponseEntity<?> verifyRegistration(
