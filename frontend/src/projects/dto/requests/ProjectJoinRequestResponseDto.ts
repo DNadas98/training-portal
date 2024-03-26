@@ -1,8 +1,8 @@
 import {
   UserResponsePublicDto
 } from "../../../user/dto/UserResponsePublicDto.ts";
-import {RequestStatus} from "../RequestStatus.ts";
 import {ProjectResponsePublicDto} from "../ProjectResponsePublicDto.ts";
+import {RequestStatus} from "../../../groups/dto/RequestStatus.ts";
 
 export interface ProjectJoinRequestResponseDto {
   readonly requestId: number;

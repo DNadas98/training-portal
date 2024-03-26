@@ -1,7 +1,7 @@
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {useNavigate, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
 import {
   useNotification
@@ -10,6 +10,18 @@ import {GroupJoinRequestResponseDto} from "../../dto/requests/GroupJoinRequestRe
 import {RequestStatus} from "../../dto/RequestStatus.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {isValidId} from "../../../common/utils/isValidId.ts";
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  Grid,
+  List,
+  ListItem,
+  Stack, TextField,
+  Typography
+} from "@mui/material";
 
 export default function GroupJoinRequests() {
   const {loading, groupPermissions} = usePermissions();
@@ -94,6 +106,22 @@ export default function GroupJoinRequests() {
     await handleJoinRequest(requestId, RequestStatus.APPROVED);
   }
 
+  const [joinRequestsFilterValue, setJoinRequestsFilterValue] = useState<string>("");
+
+  const joinRequestsFiltered = useMemo(() => {
+    if (!groupJoinRequests?.length) {
+      return [];
+    }
+    return groupJoinRequests.filter(request => {
+        return request.user.username.toLowerCase().includes(joinRequestsFilterValue)
+      }
+    );
+  }, [groupJoinRequests, joinRequestsFilterValue]);
+
+  const handleJoinRequestSearch = (event: any) => {
+    setJoinRequestsFilterValue(event.target.value.toLowerCase().trim());
+  };
+
   if (loading || groupJoinRequestsLoading) {
     return <LoadingSpinner/>;
   } else if (!groupPermissions?.length || groupJoinRequestError) {
@@ -101,34 +129,44 @@ export default function GroupJoinRequests() {
     navigate(`/groups`, {replace: true});
     return <></>;
   }
-  return (<div>
-    {!groupJoinRequests?.length
-      ? <div>
-        <h3>No group join requests were found for this group.</h3>
-      </div>
-      : <div>
-        <h3>Group Join Requests</h3>
-        <ul>{groupJoinRequests.map(request => {
-          return <li key={request.requestId}>
-            <h4>{request.user?.username}</h4>
-            <p>{request.status}</p>
-            <button onClick={async () => {
-              await handleApproveClick(request.requestId)
-            }}>Approve
-            </button>
-            <button onClick={() => {
-              handleDeclineClick(request.requestId);
-            }}>Decline
-            </button>
-          </li>
+  return (<Grid container alignItems={"center"} justifyContent={"center"}> <Grid item xs={10}>
+    <Card elevation={10}>
+      <CardHeader title={"Group Join Requests"} titleTypographyProps={{variant: "h5"}}/>
+      <CardContent>
+        <TextField sx={{width: "100%", padding: 2}} type={"text"} variant={"standard"}
+                   value={joinRequestsFilterValue}
+                   placeholder={"Search By Username"}
+                   onChange={handleJoinRequestSearch}/>
+        {groupJoinRequestsLoading ? <LoadingSpinner/> : !joinRequestsFiltered?.length
+        ? <Typography variant={"body1"}>No pending group join requests were found.</Typography>
+        : <List>{joinRequestsFiltered.map(request => {
+          return <ListItem key={request.requestId}><Card elevation={10} sx={{width: "100%"}}>
+            <CardContent><Stack spacing={1}>
+              <Typography variant={"h6"}>{request.user?.username}</Typography>
+              <Typography>{request.status}</Typography>
+              <Stack direction={"row"} spacing={1}>
+                <Button variant={"contained"} onClick={async () => {
+                  await handleApproveClick(request.requestId)
+                }}>Approve
+                </Button>
+                <Button color={"error"} variant={"contained"} onClick={() => {
+                  handleDeclineClick(request.requestId);
+                }}>Decline
+                </Button>
+              </Stack>
+            </Stack></CardContent>
+          </Card> </ListItem>
         })}
-        </ul>
-      </div>
-    }
-    <button onClick={() => {
-      navigate(`/groups/${groupId}`)
-    }}>
-      Back
-    </button>
-  </div>)
+        </List>
+      } </CardContent>
+      <CardActions>
+        <Button onClick={() => {
+          navigate(`/groups/${groupId}`)
+        }}>
+          Back To Dashboard
+        </Button>
+      </CardActions>
+    </Card>
+  </Grid>
+  </Grid>)
 }

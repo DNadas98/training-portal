@@ -12,6 +12,17 @@ import {
 import {
   ProjectJoinRequestResponseDto
 } from "../../../projects/dto/requests/ProjectJoinRequestResponseDto.ts";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Grid,
+  List,
+  ListItem,
+  Stack,
+  Typography
+} from "@mui/material";
 
 export default function UserJoinRequests() {
   const dialog = useDialog();
@@ -137,51 +148,62 @@ export default function UserJoinRequests() {
     });
   }
 
-  return (<div>
-    {groupJoinRequestsLoading ? <LoadingSpinner/> : !groupJoinRequests?.length
-      ? <div>
-        <h3>No pending group join requests were found.</h3>
-      </div>
-      : <div>
-        <h3>Group Join Requests</h3>
-        <ul>{groupJoinRequests.map(request => {
-          return <li key={request.requestId}>
-            <h4>{request.group?.name}</h4>
-            <p>{request.status}</p>
-            <button onClick={async () => {
-              handleGroupJoinRequestDeleteClick(request.requestId);
-            }}>
-              Delete
-            </button>
-          </li>
+  return (<Grid container alignItems={"center"} justifyContent={"center"}> <Grid item xs={10}> <Stack spacing={2}>
+    <Card elevation={10}>
+      <CardHeader title={"Group Join Requests"} titleTypographyProps={{variant: "h5"}}/>
+      <CardContent>{groupJoinRequestsLoading ? <LoadingSpinner/> : !groupJoinRequests?.length
+        ? <Typography variant={"body1"}>No pending group join requests were found.</Typography>
+        : <List>{groupJoinRequests.map(request => {
+          return <ListItem key={request.requestId}><Card elevation={10} sx={{width: "100%"}}>
+            <CardContent><Stack spacing={1}>
+              <Typography variant={"h6"}>{request.group?.name}</Typography>
+              <Typography>Request Status: {request.status}</Typography>
+              <Button sx={{maxWidth: "fit-content"}} color={"error"} variant={"contained"} onClick={async () => {
+                handleGroupJoinRequestDeleteClick(request.requestId);
+              }}>
+                Remove
+              </Button>
+            </Stack></CardContent>
+          </Card> </ListItem>
         })}
-        </ul>
-      </div>
-    }
-    {projectJoinRequestsLoading ? <LoadingSpinner/> : !projectJoinRequests?.length
-      ? <div>
-        <h3>No pending project join requests were found.</h3>
-      </div>
-      : <div>
-        <h3>Project Join Requests</h3>
-        <ul>{projectJoinRequests.map(request => {
-          return <li key={request.requestId}>
-            <h4>{request.project?.name}</h4>
-            <p>{request.status}</p>
-            <button onClick={async () => {
-              handleProjectJoinRequestDeleteClick(request.requestId);
-            }}>
-              Delete
-            </button>
-          </li>
+        </List>
+      } </CardContent>
+    </Card>
+    <Card elevation={10}>
+      <CardHeader title={"Project Join Requests"} titleTypographyProps={{variant: "h5"}}/>
+      <CardContent>{projectJoinRequestsLoading ? <LoadingSpinner/> : !projectJoinRequests?.length
+        ? <Typography variant={"body1"}>No pending project join requests were found.</Typography>
+        : <List>{projectJoinRequests.map(request => {
+          return <ListItem key={request.requestId}><Card elevation={10} sx={{width: "100%"}}>
+            <CardContent><Stack spacing={1}>
+              <Typography variant={"h6"}>{request.project?.name}</Typography>
+              <Typography>Request Status: {request.status}</Typography>
+              <Button sx={{maxWidth: "fit-content"}} color={"error"} variant={"contained"} onClick={async () => {
+                handleProjectJoinRequestDeleteClick(request.requestId);
+              }}>
+                Remove
+              </Button>
+            </Stack></CardContent>
+          </Card></ListItem>
         })}
-        </ul>
-      </div>
-    }
-    <button onClick={() => {
-      navigate(-1)
-    }}>
-      Back
-    </button>
-  </div>)
+        </List>
+      } </CardContent>
+    </Card>
+    <Card elevation={10}>
+      <CardContent>
+        <Stack direction={"row"} spacing={2}>
+          <Button onClick={() => {
+            navigate("/groups")
+          }}>
+            Groups
+          </Button>
+          <Button onClick={() => {
+            navigate("/user")
+          }}>
+            Profile
+          </Button>
+        </Stack>
+      </CardContent>
+    </Card>
+  </Stack> </Grid> </Grid>)
 }
