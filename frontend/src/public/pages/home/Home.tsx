@@ -17,11 +17,7 @@ import {
   useTheme
 } from "@mui/material";
 import siteConfig from "../../../common/config/siteConfig.ts";
-import {
-  AccountBoxOutlined,
-  AddchartOutlined,
-  DomainAddOutlined,
-} from "@mui/icons-material";
+import {AccountBoxOutlined, FactCheckOutlined, GroupAddOutlined,} from "@mui/icons-material";
 import {Link as RouterLink} from "react-router-dom";
 
 const Home = () => {
@@ -66,23 +62,23 @@ const Home = () => {
                         <AccountBoxOutlined color={"secondary"}/>
                       </ListItemIcon>
                       <ListItemText>
-                        Create an account, or sign in with Google, Facebook or GitHub
+                        Create an account and sign in
                       </ListItemText>
                     </ListItem>
                     <ListItem>
                       <ListItemIcon>
-                        <DomainAddOutlined color={"secondary"}/>
+                        <GroupAddOutlined color={"secondary"}/>
                       </ListItemIcon>
                       <ListItemText>
-                        Add your group or request to join an existing one.
+                        Submit a request to join your group and ongoing projects
                       </ListItemText>
                     </ListItem>
                     <ListItem>
                       <ListItemIcon>
-                        <AddchartOutlined color={"secondary"}/>
+                        <FactCheckOutlined color={"secondary"}/>
                       </ListItemIcon>
                       <ListItemText>
-                        Create and manage projects and tasks in a group
+                        Study the educational materials, then complete the questionnaires
                       </ListItemText>
                     </ListItem>
                   </List>
