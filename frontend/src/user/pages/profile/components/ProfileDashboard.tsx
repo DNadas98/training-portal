@@ -1,6 +1,9 @@
-import {Box, Button, Card, CardContent, CardHeader, Grid, Stack, TextField} from "@mui/material";
+import {Button, Card, CardContent, CardHeader, Dialog, DialogContent, DialogTitle, Grid, Stack,} from "@mui/material";
 import {GlobalRole} from "../../../../authentication/dto/userInfo/GlobalRole.ts";
 import ProfileMainCard from "./ProfileMainCard.tsx";
+import UsernameUpdateForm from "./UsernameUpdateForm.tsx";
+import PasswordUpdateForm from "./PasswordUpdateForm.tsx";
+import EmailUpdateForm from "./EmailUpdateForm.tsx";
 
 interface ProfileDashboardProps {
   username: string,
@@ -9,7 +12,15 @@ interface ProfileDashboardProps {
   onApplicationUserDelete: () => unknown,
   applicationUserDeleteLoading: boolean,
   onRequestsClick: () => void,
-  handleUserDetailsUpdate: (event: any) => Promise<void>
+  handleUsernameUpdate: (event: any) => Promise<void>,
+  handleUserPasswordUpdate: (event: any) => Promise<void>,
+  handleUserEmailUpdate: (event: any) => Promise<void>,
+  usernameFormOpen: boolean,
+  setUsernameFormOpen: (value: (((prevState: boolean) => boolean) | boolean)) => void,
+  passwordFormOpen: boolean,
+  setPasswordFormOpen: (value: (((prevState: boolean) => boolean) | boolean)) => void,
+  emailFormOpen: boolean,
+  setEmailFormOpen: (value: (((prevState: boolean) => boolean) | boolean)) => void
 }
 
 export default function ProfileDashboard(props: ProfileDashboardProps) {
@@ -30,44 +41,46 @@ export default function ProfileDashboard(props: ProfileDashboardProps) {
             </Button> </CardContent>
           </Card>
           <Card>
-            <CardHeader title={"Update User Details"} titleTypographyProps={{variant: "h6"}}/>
+            <CardHeader title={"Manage User Details"} titleTypographyProps={{variant: "h6"}}/>
             <CardContent>
-              <Box component={"form"} onSubmit={props.handleUserDetailsUpdate}>
-                <Stack spacing={2}>
-                  <TextField name={"username"}
-                             type={"text"}
-                             label={"Username"}
-                             required
-                             defaultValue={props.username}
-                             inputProps={{minLength: 1, maxLength: 50}}/>
-                  <TextField name={"oldPassword"}
-                             type={"password"}
-                             label={"Current Password"}
-                             required
-                             inputProps={{minLength: 8, maxLength: 50}}/>
-                  <TextField name={"newPassword"}
-                             type={"password"}
-                             label={"(Optional) New Password"}/>
-                  <TextField name={"confirmNewPassword"}
-                             type={"password"}
-                             label={"(Optional) Confirm New Password"}/>
-                  <Stack direction={"row"} spacing={2}>
-                    <Button type={"submit"} sx={{maxWidth: "fit-content"}} variant={"outlined"}>
-                      Update Details
-                    </Button>
-                  </Stack>
-                </Stack>
-              </Box>
+              <Stack spacing={2}>
+                <Button type={"button"} sx={{maxWidth: "fit-content"}}
+                        onClick={() => props.setUsernameFormOpen(true)}>
+                  Change Username
+                </Button>
+                <Button type={"button"} sx={{maxWidth: "fit-content"}}
+                        onClick={() => props.setEmailFormOpen(true)}>
+                  Change E-mail Address
+                </Button>
+                <Button type={"button"} sx={{maxWidth: "fit-content"}}
+                        onClick={() => props.setPasswordFormOpen(true)}>
+                  Change Password
+                </Button>
+                <Button type={"button"} sx={{maxWidth: "fit-content"}}
+                        disabled={props.applicationUserDeleteLoading}
+                        onClick={props.onApplicationUserDelete}
+                        variant={"contained"} color={"error"}>
+                  Remove All User Data
+                </Button>
+              </Stack>
             </CardContent>
           </Card>
-          <Card><CardContent>
-            <Button type={"button"} sx={{maxWidth: "fit-content"}}
-                    disabled={props.applicationUserDeleteLoading}
-                    onClick={props.onApplicationUserDelete}
-                    variant={"contained"} color={"error"}>
-              Remove All User Data
-            </Button>
-          </CardContent></Card>
+          <Dialog open={props.usernameFormOpen} onClose={() => props.setUsernameFormOpen(false)}>
+            <DialogTitle>Change Username</DialogTitle>
+            <DialogContent>
+              <UsernameUpdateForm handleUsernameUpdate={props.handleUsernameUpdate} username={props.username}/>
+            </DialogContent>
+          </Dialog>
+          <Dialog open={props.emailFormOpen} onClose={() => props.setEmailFormOpen(false)}>
+            <DialogTitle>Change E-mail Address</DialogTitle>
+            <EmailUpdateForm handleUserEmailUpdate={props.handleUserEmailUpdate}/>
+          </Dialog>
+          <Dialog open={props.passwordFormOpen} onClose={() => props.setPasswordFormOpen(false)}>
+            <DialogTitle>Change Password</DialogTitle>
+            <DialogContent>
+              <PasswordUpdateForm handleUserPasswordUpdate={props.handleUserPasswordUpdate}/>
+            </DialogContent>
+          </Dialog>
         </Stack></Grid></Grid>
   )
 }

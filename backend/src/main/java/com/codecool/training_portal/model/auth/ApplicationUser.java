@@ -129,9 +129,9 @@ public class ApplicationUser implements UserDetails {
   }
 
   /**
-   * Returns the password used to authenticate the user.
+   * Returns the newPassword used to authenticate the user.
    *
-   * @return the password
+   * @return the newPassword
    */
   @Override
   public String getPassword() {
@@ -162,7 +162,7 @@ public class ApplicationUser implements UserDetails {
   }
 
   /**
-   * Indicates whether the user's credentials (password) has expired. Expired
+   * Indicates whether the user's credentials (newPassword) has expired. Expired
    * credentials prevent authentication.
    *
    * @return <code>true</code> if the user's credentials are valid (ie non-expired),

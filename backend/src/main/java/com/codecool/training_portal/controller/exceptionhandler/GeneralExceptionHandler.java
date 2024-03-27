@@ -1,9 +1,6 @@
 package com.codecool.training_portal.controller.exceptionhandler;
 
-import com.codecool.training_portal.exception.auth.InvalidCredentialsException;
-import com.codecool.training_portal.exception.auth.UnauthorizedException;
-import com.codecool.training_portal.exception.auth.UserAlreadyExistsException;
-import com.codecool.training_portal.exception.auth.UserNotFoundException;
+import com.codecool.training_portal.exception.auth.*;
 import com.codecool.training_portal.exception.group.DuplicateGroupJoinRequestException;
 import com.codecool.training_portal.exception.group.GroupJoinRequestNotFoundException;
 import com.codecool.training_portal.exception.group.GroupNotFoundException;
@@ -21,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -68,7 +66,7 @@ public class GeneralExceptionHandler {
       Map.of("error", "The provided credentials are invalid"));
   }
 
-  @ExceptionHandler(BadCredentialsException.class)
+  @ExceptionHandler(AuthenticationException.class)
   public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException e) {
     logger.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
@@ -82,6 +80,13 @@ public class GeneralExceptionHandler {
     logger.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
       Map.of("error", "Access Denied: Insufficient permissions"));
+  }
+
+  @ExceptionHandler(PasswordVerificationFailedException.class)
+  public ResponseEntity<?> handlePasswordVerificationFailedException(PasswordVerificationFailedException e) {
+    logger.error(e.getMessage());
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+      Map.of("error", "The provided newPassword is incorrect"));
   }
 
   // 404

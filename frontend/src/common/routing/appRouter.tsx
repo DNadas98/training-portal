@@ -5,8 +5,7 @@ import NotFound from "../../public/pages/errorPages/NotFound.tsx";
 import RequireAuthentication from "../../authentication/components/RequireAuthentication.tsx";
 import {GlobalRole} from "../../authentication/dto/userInfo/GlobalRole.ts";
 import UserLayout from "../../user/layout/UserLayout.tsx";
-import RegisterVerificationRedirect
-  from "../../authentication/pages/redirect/RegisterVerificationRedirect.tsx";
+import RegisterVerificationRedirect from "../../authentication/pages/redirect/RegisterVerificationRedirect.tsx";
 import GroupDashboard from "../../groups/pages/dashboard/GroupDashboard.tsx";
 import GroupLayout from "../../groups/layout/GroupLayout.tsx";
 import UpdateGroup from "../../groups/pages/update/UpdateGroup.tsx";
@@ -35,6 +34,10 @@ import SubmitQuestionnaire from "../../questionnaires/pages/user/submissions/Sub
 import UserQuestionnaireSubmissions from "../../questionnaires/pages/user/submissions/UserQuestionnaireSubmissions.tsx";
 import EditorQuestionnaireSubmissions
   from "../../questionnaires/pages/editor/submissions/EditorQuestionnaireSubmissions.tsx";
+import EmailChangeVerificationRedirect from "../../authentication/pages/redirect/EmailChangeVerificationRedirect.tsx";
+import PasswordReset from "../../authentication/pages/passwordReset/PasswordReset.tsx";
+import PasswordResetVerificationRedirect
+  from "../../authentication/pages/redirect/PasswordResetVerificationRedirect.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -45,6 +48,7 @@ const appRouter = createBrowserRouter([
     children: [
       {path: "", element: <Home/>},
       {path: "login", element: <Login/>},
+      {path: "password-reset", element: <PasswordReset/>},
       {path: "register", element: <Register/>},
       {path: "/*", element: <NotFound/>}
     ]
@@ -57,6 +61,12 @@ const appRouter = createBrowserRouter([
     children: [
       {
         path: "registration", element: <RegisterVerificationRedirect/>
+      },
+      {
+        path: "email-change", element: <EmailChangeVerificationRedirect/>
+      },
+      {
+        path: "password-reset", element: <PasswordResetVerificationRedirect/>
       }
     ]
   },

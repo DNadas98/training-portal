@@ -6,7 +6,7 @@ import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx"
 import {ApiResponseDto} from "../../../common/api/dto/ApiResponseDto.ts";
 import DialogAlert from "../../../common/utils/components/DialogAlert.tsx";
 
-export default function RegisterVerificationRedirect() {
+export default function EmailChangeVerificationRedirect() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<null | string>(null);
   const notification = useNotification();
@@ -15,13 +15,13 @@ export default function RegisterVerificationRedirect() {
 
   const fetchVerification = async (code: string, id: string) => {
     return await publicJsonFetch({
-      path: `verification/registration?code=${code}&id=${id}`, method: "POST"
+      path: `verification/email-change?code=${code}&id=${id}`, method: "POST"
     });
   };
 
   const handleError = (error: string | undefined = undefined) => {
     const message = error ??
-      "An error has occurred during the sign up verification process";
+      "An error has occurred during the e-mail change verification process";
     setError(message);
   };
 

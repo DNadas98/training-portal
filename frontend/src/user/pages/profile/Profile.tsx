@@ -7,8 +7,10 @@ import {useNotification} from "../../../common/notification/context/Notification
 import useLogout from "../../../authentication/hooks/useLogout.ts";
 import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {useNavigate} from "react-router-dom";
-import {UserDetailsUpdateDto} from "../../dto/UserDetailsUpdateDto.ts";
+import {UserPasswordUpdateDto} from "../../dto/UserPasswordUpdateDto.ts";
 import useRefresh from "../../../authentication/hooks/useRefresh.ts";
+import {UserUsernameUpdateDto} from "../../dto/UserUsernameUpdateDto.ts";
+import {UserEmailUpdateDto} from "../../dto/UserEmailUpdateDto.ts";
 
 export default function Profile() {
   const [applicationUserDeleteLoading, setApplicationUserDeleteLoading] = useState<boolean>(false);
@@ -53,36 +55,23 @@ export default function Profile() {
     })
   }
 
-  const isValidPassword = (password: string | undefined) => {
-    return password && password?.length >= 8 && password?.length <= 50;
-  }
+  const [usernameFormOpen, setUsernameFormOpen] = useState<boolean>(false);
+  const [emailFormOpen, setEmailFormOpen] = useState<boolean>(false);
+  const [passwordFormOpen, setPasswordFormOpen] = useState<boolean>(false);
 
-  async function handleUserDetailsUpdate(event: any) {
+  async function handleUsernameUpdate(event: any) {
     const defaultError =
-      "Failed to update user details.\n Please try again later, if the issue still persists, please contact our administrators";
+      "Failed to update username.\n Please try again later, if the issue still persists, please contact our administrators";
     try {
       event.preventDefault();
       setUserDetailsUpdateLoading(true);
       const formData = new FormData(event.target);
-      const dto: UserDetailsUpdateDto = {
+      const dto: UserUsernameUpdateDto = {
         username: formData.get("username") as string,
-        oldPassword: formData.get("oldPassword") as string,
+        password: formData.get("password") as string,
       }
-
-      const newPassword = formData.get("newPassword") as any;
-      const confirmNewPassword = formData.get("confirmNewPassword") as any;
-      if (newPassword?.length > 1) {
-        if (!isValidPassword(newPassword) || !isValidPassword(confirmNewPassword)) {
-          return notifyOnError("Password must be 8-50 characters long");
-        }
-        if (newPassword !== confirmNewPassword) {
-          return notifyOnError("New Password and Confirm New Password fields do not match");
-        }
-        dto.newPassword = newPassword as string;
-      }
-
       const response = await authJsonFetch({
-        path: `user/details`, method: "PATCH", body: dto
+        path: `user/username`, method: "PATCH", body: dto
       });
       if (response?.status !== 200 || !response.message) {
         return notifyOnError(response?.error ?? defaultError);
@@ -90,7 +79,74 @@ export default function Profile() {
       notification.openNotification({
         type: "success", vertical: "top", horizontal: "center", message: response.message
       });
+      setUsernameFormOpen(false);
       await refresh();
+    } catch (e) {
+      return notifyOnError(defaultError);
+    } finally {
+      setUserDetailsUpdateLoading(false);
+    }
+  }
+
+  async function handleUserPasswordUpdate(event: any) {
+    const defaultError =
+      "Failed to update password.\n Please try again later, if the issue still persists, please contact our administrators";
+    try {
+      event.preventDefault();
+      setUserDetailsUpdateLoading(true);
+      const formData = new FormData(event.target);
+      const dto: UserPasswordUpdateDto = {
+        password: formData.get("password") as string,
+        newPassword: formData.get("newPassword") as string,
+      }
+      const confirmNewPassword = formData.get("confirmNewPassword") as any;
+      if (dto.newPassword !== confirmNewPassword) {
+        return notifyOnError("New Password and Confirm New Password fields do not match");
+      }
+      const response = await authJsonFetch({
+        path: `user/password`, method: "PATCH", body: dto
+      });
+      if (response?.status !== 200 || !response.message) {
+        return notifyOnError(response?.error ?? defaultError);
+      }
+      notification.openNotification({
+        type: "success", vertical: "top", horizontal: "center", message: response.message
+      });
+      setPasswordFormOpen(false);
+      await refresh();
+    } catch (e) {
+      return notifyOnError(defaultError);
+    } finally {
+      setUserDetailsUpdateLoading(false);
+    }
+  }
+
+  async function handleUserEmailUpdate(event: any) {
+    const defaultError =
+      "Failed to update e-mail address.\n Please try again later, if the issue still persists, please contact our administrators";
+    try {
+      event.preventDefault();
+      setUserDetailsUpdateLoading(true);
+      const formData = new FormData(event.target);
+      const dto: UserEmailUpdateDto = {
+        email: formData.get("email") as string,
+        password: formData.get("password") as string,
+      }
+      if (dto.email === email) {
+        notifyOnError("The provided e-mail address matches your current e-mail address");
+        setEmailFormOpen(false);
+      }
+      const response = await authJsonFetch({
+        path: `user/email`, method: "PATCH", body: dto
+      });
+      if (response?.status !== 200 || !response.message) {
+        return notifyOnError(response?.error ?? defaultError);
+      }
+      notification.openNotification({
+        type: "success", vertical: "top", horizontal: "center", message: response.message
+      });
+      setEmailFormOpen(false);
+      await logout(true);
     } catch (e) {
       return notifyOnError(defaultError);
     } finally {
@@ -114,7 +170,15 @@ export default function Profile() {
                         roles={roles}
                         onApplicationUserDelete={openDeleteApplicationUserDialog}
                         applicationUserDeleteLoading={applicationUserDeleteLoading}
-                        handleUserDetailsUpdate={handleUserDetailsUpdate}
+                        handleUsernameUpdate={handleUsernameUpdate}
+                        handleUserEmailUpdate={handleUserEmailUpdate}
+                        handleUserPasswordUpdate={handleUserPasswordUpdate}
+                        usernameFormOpen={usernameFormOpen}
+                        setUsernameFormOpen={setUsernameFormOpen}
+                        passwordFormOpen={passwordFormOpen}
+                        setPasswordFormOpen={setPasswordFormOpen}
+                        emailFormOpen={emailFormOpen}
+                        setEmailFormOpen={setEmailFormOpen}
                         onRequestsClick={() => {
                           navigate("/user/requests")
                         }}

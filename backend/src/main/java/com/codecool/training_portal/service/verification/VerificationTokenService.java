@@ -1,6 +1,7 @@
 package com.codecool.training_portal.service.verification;
 
 import com.codecool.training_portal.dto.verification.VerificationTokenDto;
+import com.codecool.training_portal.exception.auth.InvalidCredentialsException;
 import com.codecool.training_portal.exception.auth.UnauthorizedException;
 import com.codecool.training_portal.exception.verification.VerificationTokenDoesNotExistsException;
 import com.codecool.training_portal.model.verification.VerificationToken;
@@ -25,7 +26,7 @@ public class VerificationTokenService {
 
   public VerificationToken getVerificationToken(VerificationTokenDto tokenDto) {
     VerificationToken token = verificationTokenDao.findById(tokenDto.id())
-      .orElseThrow(() -> new VerificationTokenDoesNotExistsException());
+      .orElseThrow(() -> new InvalidCredentialsException());
     return token;
   }
 
@@ -40,5 +41,4 @@ public class VerificationTokenService {
   public void deleteVerificationToken(Long tokenId) {
     verificationTokenDao.deleteById(tokenId);
   }
-
 }

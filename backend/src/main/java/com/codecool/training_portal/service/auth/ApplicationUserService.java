@@ -1,20 +1,25 @@
 package com.codecool.training_portal.service.auth;
 
-import com.codecool.training_portal.dto.user.UserDetailsUpdateDto;
-import com.codecool.training_portal.dto.user.UserResponsePrivateDto;
-import com.codecool.training_portal.dto.user.UserResponsePublicDto;
-import com.codecool.training_portal.exception.auth.UnauthorizedException;
-import com.codecool.training_portal.exception.auth.UserNotFoundException;
+import com.codecool.training_portal.dto.email.EmailRequestDto;
+import com.codecool.training_portal.dto.user.*;
+import com.codecool.training_portal.dto.verification.VerificationTokenDto;
+import com.codecool.training_portal.exception.auth.*;
 import com.codecool.training_portal.model.auth.ApplicationUser;
 import com.codecool.training_portal.model.auth.ApplicationUserDao;
 import com.codecool.training_portal.model.auth.GlobalRole;
+import com.codecool.training_portal.model.verification.EmailChangeVerificationToken;
+import com.codecool.training_portal.model.verification.EmailChangeVerificationTokenDao;
 import com.codecool.training_portal.service.converter.UserConverter;
+import com.codecool.training_portal.service.email.EmailService;
+import com.codecool.training_portal.service.email.EmailTemplateService;
+import com.codecool.training_portal.service.verification.VerificationTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +28,10 @@ public class ApplicationUserService {
   private final UserConverter userConverter;
   private final UserProvider userProvider;
   private final PasswordEncoder passwordEncoder;
+  private final EmailChangeVerificationTokenDao emailChangeVerificationTokenDao;
+  private final EmailService emailService;
+  private final EmailTemplateService emailTemplateService;
+  private final VerificationTokenService verificationTokenService;
 
   public UserResponsePrivateDto getOwnUserDetails() throws UnauthorizedException {
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
@@ -36,25 +45,23 @@ public class ApplicationUserService {
 
   public UserResponsePrivateDto getApplicationUserById(Long userId) throws UnauthorizedException {
     ApplicationUser user = applicationUserDao.findById(userId).orElseThrow(
-      () -> new UserNotFoundException(userId)
-    );
+      () -> new UserNotFoundException(userId));
     return userConverter.toUserResponsePrivateDto(user);
   }
 
   @Transactional(rollbackFor = Exception.class)
-  public void updateOwnDetails(UserDetailsUpdateDto updateDto) {
+  public void updateUsername(UserUsernameUpdateDto updateDto) {
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
-    if (updateDto.oldPassword() == null || !passwordEncoder.matches(
-      updateDto.oldPassword(), applicationUser.getPassword())) {
-      throw new UnauthorizedException();
-    }
-    if (updateDto.username() != null) {
-      applicationUser.setUsername(updateDto.username());
-    }
-    if (updateDto.newPassword() != null) {
-      applicationUser.setPassword(passwordEncoder.encode(updateDto.newPassword()));
+    verifyPassword(updateDto.password(), applicationUser);
+    applicationUser.setUsername(updateDto.username());
+    applicationUserDao.save(applicationUser);
+  }
 
-    }
+  @Transactional(rollbackFor = Exception.class)
+  public void updatePassword(UserPasswordUpdateDto updateDto) {
+    ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
+    verifyPassword(updateDto.password(), applicationUser);
+    applicationUser.setPassword(passwordEncoder.encode(updateDto.newPassword()));
     applicationUserDao.save(applicationUser);
   }
 
@@ -67,11 +74,94 @@ public class ApplicationUserService {
   @Transactional(rollbackFor = Exception.class)
   public void deleteApplicationUserById(Long id) {
     ApplicationUser user = applicationUserDao.findById(id).orElseThrow(
-      () -> new UserNotFoundException(id)
-    );
+      () -> new UserNotFoundException(id));
     if (user.getGlobalRoles().contains(GlobalRole.ADMIN)) {
       throw new UnauthorizedException();
     }
     applicationUserDao.delete(user);
+  }
+
+  @Transactional(rollbackFor = Exception.class)
+  public void sendEmailChangeVerificationEmail(UserEmailUpdateDto updateDto) throws Exception {
+    VerificationTokenDto verificationTokenDto = null;
+    try {
+      ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
+      verifyPassword(updateDto.password(), applicationUser);
+
+      verifyChangedEmail(updateDto, applicationUser);
+      verifyEmailNotTaken(updateDto);
+      verifyTokenDoesNotExist(updateDto, applicationUser);
+
+      UUID verificationCode = UUID.randomUUID();
+      EmailChangeVerificationToken savedVerificationToken = getEmailChangeVerificationToken(
+        updateDto, applicationUser, verificationCode);
+      verificationTokenDto = new VerificationTokenDto(
+        savedVerificationToken.getId(),
+        verificationCode);
+
+      EmailRequestDto emailRequestDto = emailTemplateService.getEmailChangeVerificationEmailDto(
+        verificationTokenDto, updateDto.email(), applicationUser.getUsername());
+
+      emailService.sendMailToUserAddress(emailRequestDto);
+    } catch (Exception e) {
+      cleanUpVerificationToken(verificationTokenDto);
+      throw e;
+    }
+  }
+
+  private void verifyPassword(String password, ApplicationUser applicationUser) {
+    if (password == null || !passwordEncoder.matches(
+      password, applicationUser.getPassword())) {
+      throw new PasswordVerificationFailedException();
+    }
+  }
+
+  private EmailChangeVerificationToken getEmailChangeVerificationToken(
+    UserEmailUpdateDto updateDto, ApplicationUser applicationUser, UUID verificationCode) {
+    String hashedVerificationCode = verificationTokenService.getHashedVerificationCode(
+      verificationCode);
+    EmailChangeVerificationToken savedVerificationToken = emailChangeVerificationTokenDao.save(
+      new EmailChangeVerificationToken(updateDto.email(), applicationUser.getId(),
+        hashedVerificationCode));
+    return savedVerificationToken;
+  }
+
+  private void cleanUpVerificationToken(VerificationTokenDto verificationTokenDto) {
+    if (verificationTokenDto != null && verificationTokenDto.id() != null) {
+      verificationTokenService.deleteVerificationToken(verificationTokenDto.id());
+    }
+  }
+
+  private void verifyTokenDoesNotExist(
+    UserEmailUpdateDto updateDto, ApplicationUser applicationUser) {
+    emailChangeVerificationTokenDao.findByNewEmailOrUserId(
+      updateDto.email(), applicationUser.getId()).ifPresent(token -> {
+      throw new UserAlreadyExistsException();
+    });
+  }
+
+  private void verifyEmailNotTaken(UserEmailUpdateDto updateDto) {
+    applicationUserDao.findByEmail(updateDto.email()).ifPresent(user -> {
+      throw new UserAlreadyExistsException();
+    });
+  }
+
+  private void verifyChangedEmail(
+    UserEmailUpdateDto updateDto, ApplicationUser applicationUser) {
+    if (applicationUser.getEmail().equals(updateDto.email())) {
+      throw new UserAlreadyExistsException();
+    }
+  }
+
+  @Transactional(rollbackFor = Exception.class)
+  public void changeEmail(VerificationTokenDto verificationTokenDto) {
+    EmailChangeVerificationToken verificationToken =
+      (EmailChangeVerificationToken) verificationTokenService.getVerificationToken(
+        verificationTokenDto);
+    ApplicationUser user = applicationUserDao.findById(verificationToken.getUserId()).orElseThrow(
+      () -> new InvalidCredentialsException());
+    user.setEmail(verificationToken.getNewEmail());
+    applicationUserDao.save(user);
+    verificationTokenService.deleteVerificationToken(verificationToken.getId());
   }
 }

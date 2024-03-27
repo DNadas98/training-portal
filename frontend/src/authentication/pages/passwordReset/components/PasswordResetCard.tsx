@@ -1,15 +1,13 @@
-import {Avatar, Button, Card, CardContent, Divider, Grid, Stack, Typography} from "@mui/material";
+import {Avatar, Button, Card, CardContent, Grid, Stack, Typography} from "@mui/material";
 import {Lock} from "@mui/icons-material";
 import EmailInput from "../../../components/inputs/EmailInput.tsx";
-import PasswordInput from "../../../components/inputs/PasswordInput.tsx";
 import {FormEvent} from "react";
-import {Link as RouterLink} from "react-router-dom";
 
-interface LoginCardProps {
+interface PasswordResetCardProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
 }
 
-export default function LoginCard({onSubmit}: LoginCardProps) {
+export default function PasswordResetCard({onSubmit}: PasswordResetCardProps) {
   return (
     <Grid container justifyContent={"center"}>
       <Grid item xs={10} sm={8} md={7} lg={6}>
@@ -22,12 +20,11 @@ export default function LoginCard({onSubmit}: LoginCardProps) {
             spacing={2}
             alignItems={"center"}
             justifyContent={"center"}>
-            <Avatar variant={"rounded"}
-                    sx={{backgroundColor: "secondary.main"}}>
+            <Avatar variant={"rounded"} sx={{backgroundColor: "secondary.main"}}>
               <Lock/>
             </Avatar>
             <Typography variant="h5" gutterBottom>
-              Sign In
+              Request Password Reset
             </Typography>
           </Stack>
           <CardContent sx={{justifyContent: "center", textAlign: "center"}}>
@@ -42,32 +39,12 @@ export default function LoginCard({onSubmit}: LoginCardProps) {
                 <form onSubmit={onSubmit}>
                   <Stack spacing={2}>
                     <EmailInput/>
-                    <PasswordInput/>
                     <Button type={"submit"}
                             variant={"contained"}>
-                      Sign In
+                      Send Reset E-mail
                     </Button>
                   </Stack>
                 </form>
-              </Grid>
-              <Grid item xs={12}>
-                <Stack spacing={2}>
-                <Divider sx={{
-                  marginBottom: 2
-                }}/>
-                  <Button variant={"text"}
-                          component={RouterLink}
-                          to={"/password-reset"}
-                          sx={{textTransform: "none"}}>
-                    Forgot your password? Click Here!
-                  </Button>
-                <Button variant={"text"}
-                        component={RouterLink}
-                        to={"/register"}
-                        sx={{textTransform: "none"}}>
-                  Don't have an account? Sign Up!
-                </Button>
-                </Stack>
               </Grid>
             </Grid>
           </CardContent>

@@ -18,29 +18,61 @@ public class EmailTemplateService {
   private String FRONTEND_BASE_URL;
 
   public EmailRequestDto getRegistrationEmailDto(
-    VerificationTokenDto verificationTokenDto, String toEmail, String username)
-    throws IOException {
-    return new EmailRequestDto(toEmail, getRegistrationSubjectText(),
+    VerificationTokenDto verificationTokenDto, String toEmail, String username) throws IOException {
+    return new EmailRequestDto(toEmail, "Registration verification to Spring Project Manager",
       getRegistrationEmailContent(verificationTokenDto, username));
   }
 
-  private String getRegistrationSubjectText() {
-    return "Registration verification to Spring Project Manager";
+  private String getRegistrationEmailContent(
+    VerificationTokenDto verificationTokenDto, String username) throws IOException {
+    String path = "templates/registration_verification_email.html";
+    String template = getTemplate(path);
+    String verificationUrl = getVerificationUrl(
+      "%s/redirect/registration?code=%s&id=%s", verificationTokenDto);
+    return String.format(template, username, verificationUrl);
   }
 
-  private String getRegistrationEmailContent(
-    VerificationTokenDto verificationTokenDto, String username)
-    throws IOException {
-    String path = "templates/registration_verification_email.html";
+  public EmailRequestDto getEmailChangeVerificationEmailDto(
+    VerificationTokenDto verificationTokenDto, String email, String username) throws IOException {
+    return new EmailRequestDto(email, "Email change verification for Spring Project Manager",
+      getEmailChangeEmailContent(verificationTokenDto, username));
+  }
+
+  private String getEmailChangeEmailContent(
+    VerificationTokenDto verificationTokenDto, String username) throws IOException {
+    String path = "templates/email_change_email.html";
+    String template = getTemplate(path);
+    String verificationUrl = getVerificationUrl(
+      "%s/redirect/email-change?code=%s&id=%s", verificationTokenDto);
+    return String.format(template, username, verificationUrl);
+  }
+
+
+  public EmailRequestDto getPasswordResetEmailDto(
+    VerificationTokenDto verificationTokenDto, String email, String username) throws IOException {
+    return new EmailRequestDto(email, "Password reset request for Spring Project Manager",
+      getPasswordResetEmailContent(verificationTokenDto, username));
+  }
+
+  private String getPasswordResetEmailContent(
+    VerificationTokenDto verificationTokenDto, String username) throws IOException {
+    String path = "templates/password_reset_email.html";
+    String template = getTemplate(path);
+    String verificationUrl = getVerificationUrl(
+      "%s/redirect/password-reset?code=%s&id=%s", verificationTokenDto);
+    return String.format(template, username, verificationUrl);
+  }
+
+  private static String getTemplate(String path) throws IOException {
     String template = new String(
       Files.readAllBytes(Paths.get(new ClassPathResource(path).getURI())), StandardCharsets.UTF_8);
+    return template;
+  }
 
-    String verificationUrl = String.format(
-      "%s/redirect/registration?code=%s&id=%s",
-      FRONTEND_BASE_URL,
+  private String getVerificationUrl(String url, VerificationTokenDto verificationTokenDto) {
+    String verificationUrl = String.format(url, FRONTEND_BASE_URL,
       URLEncoder.encode(verificationTokenDto.verificationCode().toString(), StandardCharsets.UTF_8),
       URLEncoder.encode(verificationTokenDto.id().toString(), StandardCharsets.UTF_8));
-
-    return String.format(template, username, verificationUrl);
+    return verificationUrl;
   }
 }

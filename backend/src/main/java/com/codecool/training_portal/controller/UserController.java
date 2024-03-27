@@ -1,7 +1,6 @@
 package com.codecool.training_portal.controller;
 
-import com.codecool.training_portal.dto.user.UserResponsePrivateDto;
-import com.codecool.training_portal.dto.user.UserDetailsUpdateDto;
+import com.codecool.training_portal.dto.user.*;
 import com.codecool.training_portal.service.auth.ApplicationUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +26,31 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", userDetails));
   }
 
-  @PatchMapping("/details")
-  public ResponseEntity<?> updateUserDetails(
-    @RequestBody @Valid UserDetailsUpdateDto updateDto, Locale locale) {
-    applicationUserService.updateOwnDetails(updateDto);
+  @PatchMapping("/username")
+  public ResponseEntity<?> updateUsername(
+    @RequestBody @Valid UserUsernameUpdateDto updateDto, Locale locale) {
+    applicationUserService.updateUsername(updateDto);
     return ResponseEntity.status(HttpStatus.OK).body(
-      Map.of("message", messageSource.getMessage("user.details.update.success", null, locale)));
+      Map.of("message", messageSource.getMessage(
+        "user.details.update.success", null, locale)));
+  }
+
+  @PatchMapping("/password")
+  public ResponseEntity<?> updatePassword(
+    @RequestBody @Valid UserPasswordUpdateDto updateDto, Locale locale) {
+    applicationUserService.updatePassword(updateDto);
+    return ResponseEntity.status(HttpStatus.OK).body(
+      Map.of("message", messageSource.getMessage(
+        "user.details.update.success", null, locale)));
+  }
+
+  @PatchMapping("/email")
+  public ResponseEntity<?> requestEmailUpdate(
+    @RequestBody @Valid UserEmailUpdateDto updateDto, Locale locale) throws Exception {
+    applicationUserService.sendEmailChangeVerificationEmail(updateDto);
+    return ResponseEntity.status(HttpStatus.OK).body(
+      Map.of("message", messageSource.getMessage(
+        "user.email.change.pending", null, locale)));
   }
 
   @DeleteMapping
