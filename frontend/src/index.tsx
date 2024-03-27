@@ -15,8 +15,7 @@ import {
 } from "./common/notification/context/NotificationProvider.tsx";
 import "./index.css"
 import {DialogProvider} from "./common/dialog/context/DialogProvider.tsx";
-import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
-import {LocalizationProvider} from "@mui/x-date-pickers";
+import {LocaleProvider} from "./common/localization/context/LocaleProvider.tsx";
 
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement as HTMLElement);
@@ -25,17 +24,17 @@ const router = appRouter;
 root.render(
   <DevSupport ComponentPreviews={ComponentPreviews} useInitialHook={useInitial}>
     <ThemePaletteModeProvider>
-      <AppThemeProvider>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <NotificationProvider>
-          <DialogProvider>
-            <AuthenticationProvider>
-              <RouterProvider router={router}/>
-            </AuthenticationProvider>
-          </DialogProvider>
-        </NotificationProvider>
-        </LocalizationProvider>
-      </AppThemeProvider>
+      <LocaleProvider>
+        <AppThemeProvider>
+            <NotificationProvider>
+              <DialogProvider>
+                <AuthenticationProvider>
+                  <RouterProvider router={router}/>
+                </AuthenticationProvider>
+              </DialogProvider>
+            </NotificationProvider>
+        </AppThemeProvider>
+      </LocaleProvider>
     </ThemePaletteModeProvider>
   </DevSupport>
 );

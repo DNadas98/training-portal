@@ -4,12 +4,15 @@ import EmailInput from "../../../components/inputs/EmailInput.tsx";
 import PasswordInput from "../../../components/inputs/PasswordInput.tsx";
 import {FormEvent} from "react";
 import {Link as RouterLink} from "react-router-dom";
+import useLocalized from "../../../../common/localization/hooks/useLocalized.tsx";
 
 interface LoginCardProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
 }
 
 export default function LoginCard({onSubmit}: LoginCardProps) {
+  const getLocalized = useLocalized();
+
   return (
     <Grid container justifyContent={"center"}>
       <Grid item xs={10} sm={8} md={7} lg={6}>
@@ -27,7 +30,7 @@ export default function LoginCard({onSubmit}: LoginCardProps) {
               <Lock/>
             </Avatar>
             <Typography variant="h5" gutterBottom>
-              Sign In
+              {getLocalized("pages.sign_in.title")}
             </Typography>
           </Stack>
           <CardContent sx={{justifyContent: "center", textAlign: "center"}}>
@@ -45,28 +48,28 @@ export default function LoginCard({onSubmit}: LoginCardProps) {
                     <PasswordInput/>
                     <Button type={"submit"}
                             variant={"contained"}>
-                      Sign In
+                      {getLocalized("pages.sign_in.submit_button")}
                     </Button>
                   </Stack>
                 </form>
               </Grid>
               <Grid item xs={12}>
                 <Stack spacing={2}>
-                <Divider sx={{
-                  marginBottom: 2
-                }}/>
+                  <Divider sx={{
+                    marginBottom: 2
+                  }}/>
                   <Button variant={"text"}
                           component={RouterLink}
                           to={"/password-reset"}
                           sx={{textTransform: "none"}}>
-                    Forgot your password? Click Here!
+                    {getLocalized("pages.sign_in.forgot_password_button")}
                   </Button>
-                <Button variant={"text"}
-                        component={RouterLink}
-                        to={"/register"}
-                        sx={{textTransform: "none"}}>
-                  Don't have an account? Sign Up!
-                </Button>
+                  <Button variant={"text"}
+                          component={RouterLink}
+                          to={"/register"}
+                          sx={{textTransform: "none"}}>
+                    {getLocalized("pages.sign_in.sign_up_button")}
+                  </Button>
                 </Stack>
               </Grid>
             </Grid>

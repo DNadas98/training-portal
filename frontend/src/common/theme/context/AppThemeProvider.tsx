@@ -1,8 +1,12 @@
 import {createTheme, ThemeProvider} from "@mui/material/styles";
-import {ReactNode} from "react";
+import {ReactNode, useMemo} from "react";
 import {CssBaseline} from "@mui/material";
 import useThemePaletteMode from "./ThemePaletteModeProvider.tsx";
 import {darkPalette, lightPalette} from "../../config/colorPaletteConfig.ts";
+import * as locales from '@mui/material/locale';
+import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
+import {LocalizationProvider} from "@mui/x-date-pickers";
+import useLocaleContext from "../../localization/hooks/useLocaleContext.tsx";
 
 interface AppThemeProviderProps {
   children: ReactNode;
@@ -10,7 +14,8 @@ interface AppThemeProviderProps {
 
 export function AppThemeProvider({children}: AppThemeProviderProps) {
   const paletteMode = useThemePaletteMode().paletteMode;
-  const theme = createTheme({
+  const {locale} = useLocaleContext();
+  const theme = useMemo(() => createTheme({
     palette: paletteMode === "light"
       ? lightPalette
       : darkPalette,
@@ -24,7 +29,7 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
       },
       MuiButton: {
         defaultProps: {
-            color: "secondary"
+          color: "secondary"
         }
       },
       MuiAlert: {
@@ -37,12 +42,14 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
         defaultProps: {variant: "standard"}
       }
     }
-  });
+  }), [paletteMode]);
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline/>
-      {children}
-    </ThemeProvider>
+    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={locale as unknown as Locale}>
+      <ThemeProvider theme={createTheme(theme, locales[locale])}>
+        <CssBaseline/>
+        {children}
+      </ThemeProvider>
+    </LocalizationProvider>
   );
 }

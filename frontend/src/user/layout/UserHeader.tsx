@@ -8,6 +8,7 @@ import {loggedInMenuItems} from "../../common/menu/loggedInMenuItems.tsx";
 import {useAuthentication} from "../../authentication/hooks/useAuthentication.ts";
 import {AccountBoxRounded, MenuOutlined} from "@mui/icons-material";
 import { accountMenuItems } from "../../common/menu/accountMenuItems.tsx";
+import LocaleMenu from "../../common/localization/components/LocaleMenu.tsx";
 
 export default function UserHeader() {
   const theme = useTheme();
@@ -25,6 +26,7 @@ export default function UserHeader() {
         <MenuSmall items={accountMenuItems}
                    title={(authentication.getUsername() as string)}
                    icon={<AccountBoxRounded/>}/>
+        <LocaleMenu/>
         <ThemePaletteModeSwitch/>
       </Toolbar>
     </AppBar>

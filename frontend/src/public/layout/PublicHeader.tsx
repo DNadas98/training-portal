@@ -6,6 +6,7 @@ import MenuLarge from "../../common/utils/components/MenuLarge.tsx";
 import {publicMenuItems} from "../../common/menu/publicMenuItems.tsx";
 import {MenuOutlined} from "@mui/icons-material";
 import SiteNameH6 from "../../common/utils/components/SiteNameH6.tsx";
+import LocaleMenu from "../../common/localization/components/LocaleMenu.tsx";
 
 export default function PublicHeader() {
   const theme = useTheme();
@@ -20,6 +21,7 @@ export default function PublicHeader() {
             ? <MenuSmall items={publicMenuItems} icon={<MenuOutlined/>}/>
             : <MenuLarge items={publicMenuItems}/>
         }
+        <LocaleMenu/>
         <ThemePaletteModeSwitch/>
       </Toolbar>
     </AppBar>
