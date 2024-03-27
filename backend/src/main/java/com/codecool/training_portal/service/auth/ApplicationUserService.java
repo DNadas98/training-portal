@@ -100,7 +100,7 @@ public class ApplicationUserService {
         verificationCode);
 
       EmailRequestDto emailRequestDto = emailTemplateService.getEmailChangeVerificationEmailDto(
-        verificationTokenDto, updateDto.email(), applicationUser.getUsername());
+        verificationTokenDto, updateDto.email(), applicationUser.getActualUsername());
 
       emailService.sendMailToUserAddress(emailRequestDto);
     } catch (Exception e) {
@@ -159,7 +159,7 @@ public class ApplicationUserService {
       (EmailChangeVerificationToken) verificationTokenService.getVerificationToken(
         verificationTokenDto);
     ApplicationUser user = applicationUserDao.findById(verificationToken.getUserId()).orElseThrow(
-      () -> new InvalidCredentialsException());
+      InvalidCredentialsException::new);
     user.setEmail(verificationToken.getNewEmail());
     applicationUserDao.save(user);
     verificationTokenService.deleteVerificationToken(verificationToken.getId());

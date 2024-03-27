@@ -19,7 +19,7 @@ public class EmailTemplateService {
 
   public EmailRequestDto getRegistrationEmailDto(
     VerificationTokenDto verificationTokenDto, String toEmail, String username) throws IOException {
-    return new EmailRequestDto(toEmail, "Registration verification to Spring Project Manager",
+    return new EmailRequestDto(toEmail, "Registration verification to Training Portal",
       getRegistrationEmailContent(verificationTokenDto, username));
   }
 
@@ -34,7 +34,7 @@ public class EmailTemplateService {
 
   public EmailRequestDto getEmailChangeVerificationEmailDto(
     VerificationTokenDto verificationTokenDto, String email, String username) throws IOException {
-    return new EmailRequestDto(email, "Email change verification for Spring Project Manager",
+    return new EmailRequestDto(email, "Email change verification for Training Portal",
       getEmailChangeEmailContent(verificationTokenDto, username));
   }
 
@@ -50,7 +50,7 @@ public class EmailTemplateService {
 
   public EmailRequestDto getPasswordResetEmailDto(
     VerificationTokenDto verificationTokenDto, String email, String username) throws IOException {
-    return new EmailRequestDto(email, "Password reset request for Spring Project Manager",
+    return new EmailRequestDto(email, "Password reset request for Training Portal",
       getPasswordResetEmailContent(verificationTokenDto, username));
   }
 
