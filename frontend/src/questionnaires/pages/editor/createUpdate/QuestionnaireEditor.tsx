@@ -1,18 +1,11 @@
-import {useAuthJsonFetch} from "../../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../../common/notification/context/NotificationProvider.tsx";
 import {FormEvent, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import LoadingSpinner from "../../../../common/utils/components/LoadingSpinner.tsx";
 import usePermissions from "../../../../authentication/hooks/usePermissions.ts";
-import {
-  PermissionType
-} from "../../../../authentication/dto/PermissionType.ts";
+import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
 import {QuestionnaireCreateRequestDto} from "../../../dto/QuestionnaireCreateRequestDto.ts";
-import {
-  QuestionnaireResponseEditorDetailsDto
-} from "../../../dto/QuestionnaireResponseEditorDetailsDto.ts";
+import {QuestionnaireResponseEditorDetailsDto} from "../../../dto/QuestionnaireResponseEditorDetailsDto.ts";
 import {QuestionType} from "../../../dto/QuestionType.ts";
 import {QuestionCreateRequestDto} from "../../../dto/QuestionCreateRequestDto.ts";
 import QuestionnaireEditorForm from "./components/QuestionnaireEditorForm.tsx";
@@ -21,6 +14,7 @@ import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
 import {QuestionnaireStatus} from "../../../dto/QuestionnaireStatus.ts";
 import {QuestionnaireUpdateRequestDto} from "../../../dto/QuestionnaireUpdateRequestDto.ts";
 import {isValidId} from "../../../../common/utils/isValidId.ts";
+import useAuthJsonFetch from "../../../../common/api/hooks/useAuthJsonFetch.tsx";
 
 export default function QuestionnaireEditor() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();

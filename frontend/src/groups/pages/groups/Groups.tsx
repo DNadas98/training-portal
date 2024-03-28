@@ -1,11 +1,9 @@
 import GroupBrowser from "./components/GroupBrowser.tsx";
-import {FormEvent, useEffect, useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {GroupResponsePublicDto} from "../../dto/GroupResponsePublicDto.ts";
-import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {useNavigate} from "react-router-dom";
+import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 
 export default function Groups() {
   const [groupsWithUserLoading, setGroupsWithUserLoading] = useState<boolean>(true);
@@ -79,13 +77,11 @@ export default function Groups() {
     );
   }, [groupsWithoutUser, groupsWithoutUserFilterValue]);
 
-  const handleGroupsWithUserSearch = (event: FormEvent<HTMLInputElement>) => {
-    // @ts-ignore
+  const handleGroupsWithUserSearch = (event: any) => {
     setGroupsWithUserFilterValue(event.target.value.toLowerCase().trim());
   };
 
-  const handleGroupsWithoutUserSearch = (event: FormEvent<HTMLInputElement>) => {
-    // @ts-ignore
+  const handleGroupsWithoutUserSearch = (event: any) => {
     setGroupsWithoutUserFilterValue(event.target.value.toLowerCase().trim());
   };
 

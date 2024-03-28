@@ -1,29 +1,18 @@
+import {useNotification} from "../../notification/context/NotificationProvider.tsx";
+import {useAuthentication} from "../../../authentication/hooks/useAuthentication.ts";
+import useRefresh from "../../../authentication/hooks/useRefresh.ts";
+import useLogout from "../../../authentication/hooks/useLogout.ts";
+import useLocaleContext from "../../localization/hooks/useLocaleContext.tsx";
 import {ApiRequestDto} from "../dto/ApiRequestDto.ts";
 import {ApiResponseDto} from "../dto/ApiResponseDto.ts";
-import {useNotification} from "../../notification/context/NotificationProvider.tsx";
-import useLogout from "../../../authentication/hooks/useLogout.ts";
-import useRefresh from "../../../authentication/hooks/useRefresh.ts";
-import {useAuthentication} from "../../../authentication/hooks/useAuthentication.ts";
+import {getRequestConfig, handleUnknownError, verifyHttpResponse} from "../utils/apiUtils.ts";
 
-export async function publicJsonFetch(request: ApiRequestDto): Promise<ApiResponseDto> {
-  try {
-    const requestConfig = getRequestConfig(request);
-    const baseUrl = import.meta.env.VITE_API_BASE_URL;
-    const httpResponse: Response = await fetch(`${baseUrl}/${request.path}`, requestConfig);
-    verifyHttpResponse(httpResponse);
-    const responseObject = await httpResponse?.json();
-    const apiResponse: ApiResponseDto = {...responseObject, status: httpResponse.status}
-    return apiResponse;
-  } catch (e) {
-    return handleUnknownError();
-  }
-}
-
-export function useAuthJsonFetch() {
+export default function useAuthJsonFetch() {
   const notification = useNotification();
   const authentication = useAuthentication();
   const refresh = useRefresh();
   const logout = useLogout();
+  const {locale} = useLocaleContext();
 
   const notifyAndLogout = async (
     httpResponse: Response, errorMessage: string | undefined = undefined) => {
@@ -38,7 +27,7 @@ export function useAuthJsonFetch() {
   }
   const authJsonFetch = async (request: ApiRequestDto) => {
     try {
-      const requestConfig = getRequestConfig(request);
+      const requestConfig = getRequestConfig(request, locale);
       const accessToken = authentication.getAccessToken();
       if (!accessToken) {
         throw new Error("Unauthorized");
@@ -78,37 +67,6 @@ export function useAuthJsonFetch() {
     }
   };
   return authJsonFetch;
-}
-
-function getRequestConfig(request: ApiRequestDto): RequestInit {
-  const requestConfig: RequestInit = {
-    method: `${request?.method ?? "GET"}`,
-    headers: {
-      "Content-Type": "application/json"
-    },
-    credentials: "include"
-  };
-  if (request?.body) {
-    requestConfig.body = JSON.stringify(request.body);
-  }
-  return requestConfig;
-}
-
-function verifyHttpResponse(httpResponse: Response): void {
-  if (!httpResponse?.status) {
-    throw new Error("Invalid response received from the server");
-  }
-  if (httpResponse?.status !== 401 && httpResponse?.headers?.get("Content-Type") !== "application/json") {
-    throw new Error("Server response received in invalid format");
-  }
-}
-
-function handleUnknownError(): ApiResponseDto {
-  console.error("Failed to load requested resource");
-  return {
-    status: 500,
-    error: "An unknown error has occurred"
-  };
 }
 
 async function authenticatedFetch(path: string, requestConfig: RequestInit, accessToken: string): Promise<Response> {

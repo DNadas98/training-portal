@@ -2,11 +2,11 @@ import {Outlet, useParams} from "react-router-dom";
 import {Box} from "@mui/material";
 import {useEffect, useState} from "react";
 import {GroupResponsePublicDto} from "../dto/GroupResponsePublicDto.ts";
-import {useAuthJsonFetch} from "../../common/api/service/apiService.ts";
 import GroupHeader from "./GroupHeader.tsx";
 import UserFooter from "../../user/layout/UserFooter.tsx";
 import {isValidId} from "../../common/utils/isValidId.ts";
 import {ProjectResponseDetailsDto} from "../../projects/dto/ProjectResponseDetailsDto.ts";
+import useAuthJsonFetch from "../../common/api/hooks/useAuthJsonFetch.tsx";
 
 export default function GroupLayout() {
   const groupId = useParams()?.groupId;

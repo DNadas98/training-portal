@@ -2,7 +2,6 @@ import {useAuthentication} from "../../../authentication/hooks/useAuthentication
 import ProfileDashboard from "./components/ProfileDashboard.tsx";
 import {useState} from "react";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
-import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
 import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import useLogout from "../../../authentication/hooks/useLogout.ts";
 import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
@@ -11,6 +10,7 @@ import {UserPasswordUpdateDto} from "../../dto/UserPasswordUpdateDto.ts";
 import useRefresh from "../../../authentication/hooks/useRefresh.ts";
 import {UserUsernameUpdateDto} from "../../dto/UserUsernameUpdateDto.ts";
 import {UserEmailUpdateDto} from "../../dto/UserEmailUpdateDto.ts";
+import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 
 export default function Profile() {
   const [applicationUserDeleteLoading, setApplicationUserDeleteLoading] = useState<boolean>(false);
@@ -37,10 +37,10 @@ export default function Profile() {
       if (response?.status !== 200 || !response.message) {
         return notifyOnError(response?.error ?? defaultError);
       }
+      await logout(true);
       notification.openNotification({
         type: "success", vertical: "top", horizontal: "center", message: response.message
-      })
-      return await logout(true);
+      });
     } catch (e) {
       notifyOnError(defaultError);
     } finally {

@@ -1,14 +1,12 @@
 import {useEffect, useMemo, useState} from "react";
 import LoadingSpinner from "../../../../common/utils/components/LoadingSpinner.tsx";
 import usePermissions from "../../../../authentication/hooks/usePermissions.ts";
-import {useAuthJsonFetch} from "../../../../common/api/service/apiService.ts";
 import {useNavigate, useParams} from "react-router-dom";
-import {
-  useNotification
-} from "../../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../../common/notification/context/NotificationProvider.tsx";
 import {isValidId} from "../../../../common/utils/isValidId.ts";
 import UserQuestionnaireSubmissionBrowser from "./components/UserQuestionnaireSubmissionBrowser.tsx";
 import {QuestionnaireSubmissionResponseDto} from "../../../dto/QuestionnaireSubmissionResponseDto.ts";
+import useAuthJsonFetch from "../../../../common/api/hooks/useAuthJsonFetch.tsx";
 
 export default function UserQuestionnaireSubmissions() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();

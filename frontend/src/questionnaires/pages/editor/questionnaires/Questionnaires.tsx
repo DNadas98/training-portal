@@ -1,18 +1,14 @@
 import {useEffect, useMemo, useState} from "react";
 import LoadingSpinner from "../../../../common/utils/components/LoadingSpinner.tsx";
 import usePermissions from "../../../../authentication/hooks/usePermissions.ts";
-import {useAuthJsonFetch} from "../../../../common/api/service/apiService.ts";
 import {useNavigate, useParams} from "react-router-dom";
-import {
-  PermissionType
-} from "../../../../authentication/dto/PermissionType.ts";
-import {
-  useNotification
-} from "../../../../common/notification/context/NotificationProvider.tsx";
+import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
+import {useNotification} from "../../../../common/notification/context/NotificationProvider.tsx";
 import QuestionnaireBrowser from "./components/QuestionnaireBrowser.tsx";
 import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
 import {QuestionnaireResponseEditorDto} from "../../../dto/QuestionnaireResponseEditorDto.ts";
 import {isValidId} from "../../../../common/utils/isValidId.ts";
+import useAuthJsonFetch from "../../../../common/api/hooks/useAuthJsonFetch.tsx";
 
 export default function Questionnaires() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();

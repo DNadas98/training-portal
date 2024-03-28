@@ -2,12 +2,13 @@ import {useNotification} from "../../../common/notification/context/Notification
 import {FormEvent} from "react";
 import PasswordResetCard from "./components/PasswordResetCard.tsx";
 import {useNavigate} from "react-router-dom";
-import {publicJsonFetch} from "../../../common/api/service/apiService.ts";
 import {PasswordResetRequestDto} from "../../dto/PasswordResetRequestDto.ts";
+import usePublicJsonFetch from "../../../common/api/hooks/usePublicJsonFetch.tsx";
 
 export default function PasswordReset() {
   const notification = useNotification();
   const navigate = useNavigate();
+  const publicJsonFetch = usePublicJsonFetch();
 
   const handleError = (error: string | undefined = undefined) => {
     notification.openNotification({

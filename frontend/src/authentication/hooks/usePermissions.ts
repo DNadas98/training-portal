@@ -1,8 +1,8 @@
 import {PermissionType} from "../dto/PermissionType.ts";
 import {useParams} from "react-router-dom";
-import {useAuthJsonFetch} from "../../common/api/service/apiService.ts";
 import {useEffect, useState} from "react";
 import {IPermissionState} from "./IPermissionState.ts";
+import useAuthJsonFetch from "../../common/api/hooks/useAuthJsonFetch.tsx";
 
 export default function usePermissions() {
   const params = useParams();

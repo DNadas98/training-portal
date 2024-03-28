@@ -1,6 +1,5 @@
 import usePermissions from "../../../../authentication/hooks/usePermissions.ts";
 import {useEffect, useState} from "react";
-import {useAuthJsonFetch} from "../../../../common/api/service/apiService.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {useNotification} from "../../../../common/notification/context/NotificationProvider.tsx";
 import {isValidId} from "../../../../common/utils/isValidId.ts";
@@ -23,6 +22,7 @@ import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
 import {QuestionType} from "../../../dto/QuestionType.ts";
 import {QuestionnaireSubmissionRequestDto} from "../../../dto/QuestionnaireSubmissionRequestDto.ts";
 import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
+import useAuthJsonFetch from "../../../../common/api/hooks/useAuthJsonFetch.tsx";
 
 export default function SubmitQuestionnaire() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();

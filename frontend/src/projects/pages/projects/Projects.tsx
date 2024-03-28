@@ -1,13 +1,11 @@
 import ProjectBrowser from "./components/ProjectBrowser.tsx";
 import {useEffect, useMemo, useState} from "react";
-import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {ProjectResponseDetailsDto} from "../../dto/ProjectResponseDetailsDto.ts";
+import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 
 export default function Projects() {
   const {loading: permissionsLoading, groupPermissions} = usePermissions();

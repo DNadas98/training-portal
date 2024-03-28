@@ -1,4 +1,3 @@
-import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
 import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import AddProjectForm from "./components/AddProjectForm.tsx";
 import {FormEvent, useState} from "react";
@@ -8,6 +7,7 @@ import {ProjectResponseDetailsDto} from "../../dto/ProjectResponseDetailsDto.ts"
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import {PermissionType} from "../../../authentication/dto/PermissionType.ts";
+import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 
 export default function AddProject() {
     const {loading: permissionsLoading, groupPermissions} = usePermissions();

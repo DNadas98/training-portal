@@ -1,7 +1,4 @@
-import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import AddTaskForm from "./components/AddTaskForm.tsx";
 import {FormEvent, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
@@ -11,6 +8,7 @@ import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import {TaskStatus} from "../../dto/TaskStatus.ts";
 import {Importance} from "../../dto/Importance.ts";
 import {TaskCreateRequestDto} from "../../dto/TaskCreateRequestDto.ts";
+import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 
 export default function AddTask() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();

@@ -1,18 +1,14 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
-import {
-  PermissionType
-} from "../../../authentication/dto/PermissionType.ts";
+import {PermissionType} from "../../../authentication/dto/PermissionType.ts";
 import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {ProjectResponseDetailsDto} from "../../dto/ProjectResponseDetailsDto.ts";
 import {isValidId} from "../../../common/utils/isValidId.ts";
 import {Button, Card, CardActions, CardContent, CardHeader, Grid, Stack, Typography} from "@mui/material";
+import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 
 export default function ProjectDashboard() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -48,7 +44,6 @@ export default function ProjectDashboard() {
         setProjectError(response?.error ?? `Failed to load project`);
         return handleErrorNotification(response?.error);
       }
-      // @ts-ignore
       const projectData = {
         ...response.data,
         startDate: new Date(response.data.startDate as string),

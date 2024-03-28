@@ -1,6 +1,5 @@
 import {AppBar, Box, Divider, Stack, Toolbar, Typography, useMediaQuery, useTheme} from "@mui/material";
-import ThemePaletteModeSwitch
-  from "../../common/theme/components/ThemePaletteModeSwitch.tsx";
+import ThemePaletteModeSwitch from "../../common/theme/components/ThemePaletteModeSwitch.tsx";
 import SiteNameH6 from "../../common/utils/components/SiteNameH6.tsx";
 import MenuSmall from "../../common/utils/components/MenuSmall.tsx";
 import MenuLarge from "../../common/utils/components/MenuLarge.tsx";
@@ -10,6 +9,7 @@ import {AccountBoxRounded, MenuOutlined} from "@mui/icons-material";
 import {accountMenuItems} from "../../common/menu/accountMenuItems.tsx";
 import {GroupResponsePublicDto} from "../dto/GroupResponsePublicDto.ts";
 import {ProjectResponseDetailsDto} from "../../projects/dto/ProjectResponseDetailsDto.ts";
+import LocaleMenu from "../../common/localization/components/LocaleMenu.tsx";
 
 interface GroupHeaderProps {
   group: undefined | GroupResponsePublicDto,
@@ -32,6 +32,7 @@ export default function GroupHeader(props: GroupHeaderProps) {
         <MenuSmall items={accountMenuItems}
                    icon={<AccountBoxRounded/>}
                    title={(authentication.getUsername() as string)}/>
+        <LocaleMenu/>
         <ThemePaletteModeSwitch/>
       </Toolbar>
       {

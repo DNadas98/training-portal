@@ -1,12 +1,12 @@
 import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {useState} from "react";
-import {publicJsonFetch} from "../../../common/api/service/apiService.ts";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {ApiResponseDto} from "../../../common/api/dto/ApiResponseDto.ts";
 import DialogAlert from "../../../common/utils/components/DialogAlert.tsx";
 import {Box, Button, Dialog, DialogContent, DialogTitle, Stack, TextField} from "@mui/material";
 import {PasswordResetDto} from "../../dto/PasswordResetDto.ts";
+import usePublicJsonFetch from "../../../common/api/hooks/usePublicJsonFetch.tsx";
 
 export default function PasswordResetVerificationRedirect() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -14,6 +14,7 @@ export default function PasswordResetVerificationRedirect() {
   const notification = useNotification();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const publicJsonFetch = usePublicJsonFetch();
 
   const fetchVerification = async (code: string, id: string, password: string) => {
     const dto: PasswordResetDto = {

@@ -1,17 +1,13 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
-import {
-  PermissionType
-} from "../../../authentication/dto/PermissionType.ts";
+import {PermissionType} from "../../../authentication/dto/PermissionType.ts";
 import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {TaskResponseDto} from "../../dto/TaskResponseDto.ts";
 import {isValidId} from "../../../common/utils/isValidId.ts";
+import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 
 export default function TaskDashboard() {
   const {loading: permissionsLoading,projectPermissions, taskPermissions} = usePermissions();

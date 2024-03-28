@@ -1,16 +1,17 @@
 import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {FormEvent} from "react";
-import {publicJsonFetch} from "../../../common/api/service/apiService.ts";
 import LoginCard from "./components/LoginCard.tsx";
 import {LoginRequestDto} from "../../dto/LoginRequestDto.ts";
 import {useNavigate} from "react-router-dom";
 import {useAuthentication} from "../../hooks/useAuthentication.ts";
 import {AuthenticationDto} from "../../dto/AuthenticationDto.ts";
+import usePublicJsonFetch from "../../../common/api/hooks/usePublicJsonFetch.tsx";
 
 export default function Login() {
   const notification = useNotification();
   const authentication = useAuthentication();
   const navigate = useNavigate();
+  const publicJsonFetch = usePublicJsonFetch();
 
   const loginUser = async (loginRequestDto: LoginRequestDto) => {
     return await publicJsonFetch({

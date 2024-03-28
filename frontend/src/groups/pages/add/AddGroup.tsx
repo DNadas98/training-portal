@@ -1,13 +1,11 @@
-import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import AddGroupForm from "./components/AddGroupForm.tsx";
-import {FormEvent, useState} from "react";
+import {useState} from "react";
 import {GroupCreateRequestDto} from "../../dto/GroupCreateRequestDto.ts";
 import {useNavigate} from "react-router-dom";
 import {GroupResponsePrivateDto} from "../../dto/GroupResponsePrivateDto.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
+import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 
 export default function AddGroup() {
   const authJsonFetch = useAuthJsonFetch();
@@ -29,11 +27,10 @@ export default function AddGroup() {
     });
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: any) => {
     try {
       setLoading(true);
       event.preventDefault();
-      // @ts-ignore
       const formData = new FormData(event.currentTarget);
       const name = formData.get('name') as string;
       const description = formData.get('description') as string;

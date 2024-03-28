@@ -2,12 +2,13 @@ import RegisterCard from "./components/RegisterCard.tsx";
 import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {FormEvent} from "react";
 import {RegisterRequestDto} from "../../dto/RegisterRequestDto.ts";
-import {publicJsonFetch} from "../../../common/api/service/apiService.ts";
 import {useNavigate} from "react-router-dom";
+import usePublicJsonFetch from "../../../common/api/hooks/usePublicJsonFetch.tsx";
 
 export default function Register() {
   const navigate = useNavigate();
   const notification = useNotification();
+  const publicJsonFetch = usePublicJsonFetch();
   const validatePassword = (password: string, confirmPassword: string) => {
     if (password !== confirmPassword) {
       notification.openNotification({

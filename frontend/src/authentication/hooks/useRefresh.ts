@@ -1,14 +1,15 @@
-import * as apiService from "../../common/api/service/apiService.ts";
 import {AuthenticationDto} from "../dto/AuthenticationDto.ts";
 import {useAuthentication} from "./useAuthentication.ts";
 import {RefreshResponseDto} from "../dto/RefreshResponseDto.ts";
+import usePublicJsonFetch from "../../common/api/hooks/usePublicJsonFetch.tsx";
 
 export default function useRefresh() {
   const authentication = useAuthentication();
-  const defaultErrorMessage="Failed to refresh authentication";
+  const defaultErrorMessage = "Failed to refresh authentication";
+  const publicJsonFetch = usePublicJsonFetch()
   const refresh = async (): Promise<RefreshResponseDto> => {
     try {
-      const refreshResponse = await apiService.publicJsonFetch({
+      const refreshResponse = await publicJsonFetch({
         path: "auth/refresh", method: "GET"
       });
 

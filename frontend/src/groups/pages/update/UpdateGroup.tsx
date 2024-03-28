@@ -1,19 +1,15 @@
-import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
-import {FormEvent, useEffect, useState} from "react";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useEffect, useState} from "react";
 import {GroupCreateRequestDto} from "../../dto/GroupCreateRequestDto.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {GroupResponsePrivateDto} from "../../dto/GroupResponsePrivateDto.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {GroupUpdateRequestDto} from "../../dto/GroupUpdateRequestDto.ts";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
-import {
-  PermissionType
-} from "../../../authentication/dto/PermissionType.ts";
+import {PermissionType} from "../../../authentication/dto/PermissionType.ts";
 import UpdateGroupForm from "./components/UpdateGroupForm.tsx";
 import {isValidId} from "../../../common/utils/isValidId.ts";
+import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 
 export default function UpdateGroup() {
   const {loading, groupPermissions} = usePermissions();
@@ -70,11 +66,10 @@ export default function UpdateGroup() {
     });
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: any) => {
     try {
       setGroupLoading(true);
       event.preventDefault();
-      // @ts-ignore
       const formData = new FormData(event.currentTarget);
       const name = formData.get('name') as string;
       const description = formData.get('description') as string;

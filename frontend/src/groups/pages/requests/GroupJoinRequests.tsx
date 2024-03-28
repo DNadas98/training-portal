@@ -2,10 +2,7 @@ import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useMemo, useState} from "react";
-import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {GroupJoinRequestResponseDto} from "../../dto/requests/GroupJoinRequestResponseDto.ts";
 import {RequestStatus} from "../../dto/RequestStatus.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
@@ -19,9 +16,11 @@ import {
   Grid,
   List,
   ListItem,
-  Stack, TextField,
+  Stack,
+  TextField,
   Typography
 } from "@mui/material";
+import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 
 export default function GroupJoinRequests() {
   const {loading, groupPermissions} = usePermissions();

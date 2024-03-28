@@ -1,15 +1,13 @@
 import TaskBrowser from "./components/TaskBrowser.tsx";
-import {FormEvent, useEffect, useMemo, useState} from "react";
-import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-    useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useEffect, useMemo, useState} from "react";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {TaskResponseDto} from "../../dto/TaskResponseDto.ts";
 import {ApiResponseDto} from "../../../common/api/dto/ApiResponseDto.ts";
 import {isValidId} from "../../../common/utils/isValidId.ts";
+import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 
 export default function Tasks() {
     const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -109,13 +107,11 @@ export default function Tasks() {
         );
     }, [tasksWithoutUser, tasksWithoutUserFilterValue]);
 
-    const handleTasksWithUserSearch = (event: FormEvent<HTMLInputElement>) => {
-        // @ts-ignore
+  const handleTasksWithUserSearch = (event: any) => {
         setTasksWithUserFilterValue(event.target.value.toLowerCase().trim());
     };
 
-    const handleTasksWithoutUserSearch = (event: FormEvent<HTMLInputElement>) => {
-        // @ts-ignore
+  const handleTasksWithoutUserSearch = (event: any) => {
         setTasksWithoutUserFilterValue(event.target.value.toLowerCase().trim());
     };
 

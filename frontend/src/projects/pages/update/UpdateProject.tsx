@@ -1,7 +1,4 @@
-import {useAuthJsonFetch} from "../../../common/api/service/apiService.ts";
-import {
-  useNotification
-} from "../../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {FormEvent, useEffect, useState} from "react";
 import {ProjectCreateRequestDto} from "../../dto/ProjectCreateRequestDto.ts";
 import {useNavigate, useParams} from "react-router-dom";
@@ -9,11 +6,10 @@ import {ProjectResponseDetailsDto} from "../../dto/ProjectResponseDetailsDto.ts"
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {ProjectUpdateRequestDto} from "../../dto/ProjectUpdateRequestDto.ts";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
-import {
-  PermissionType
-} from "../../../authentication/dto/PermissionType.ts";
+import {PermissionType} from "../../../authentication/dto/PermissionType.ts";
 import UpdateProjectForm from "./components/UpdateProjectForm.tsx";
 import {isValidId} from "../../../common/utils/isValidId.ts";
+import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 
 export default function UpdateProject() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
