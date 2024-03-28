@@ -6,7 +6,6 @@ export default function ThemePaletteModeSwitch() {
   const {paletteMode, togglePaletteMode} = useThemePaletteMode();
   return (
     <IconButton size={"large"}
-                edge="start"
                 color={"inherit"}
                 onClick={togglePaletteMode}>
       {paletteMode === "light"

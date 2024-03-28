@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Button, Divider, Menu, MenuItem, Typography} from '@mui/material';
+import {Divider, IconButton, Menu, MenuItem, Typography} from '@mui/material';
 import {LanguageOutlined} from "@mui/icons-material";
 import useLocalized from "../hooks/useLocalized.tsx";
 import useLocaleContext from "../hooks/useLocaleContext.tsx";
@@ -22,7 +22,7 @@ const LocaleMenu = () => {
   };
 
   return (<>
-    <Button color={"inherit"} onClick={handleOpenMenu} sx={{marginRight: 1.5}}><LanguageOutlined/></Button>
+    <IconButton color={"inherit"} onClick={handleOpenMenu}><LanguageOutlined/></IconButton>
     <Menu
       anchorEl={anchorEl}
       open={Boolean(anchorEl)}

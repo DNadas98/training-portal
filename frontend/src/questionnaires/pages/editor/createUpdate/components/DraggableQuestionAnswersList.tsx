@@ -1,18 +1,21 @@
 import {
   Button,
   Card,
-  CardContent, Checkbox, IconButton,
+  CardContent,
+  Checkbox,
+  IconButton,
   List,
   ListItem,
   Radio,
   Stack,
   TextField,
-  Typography, useMediaQuery, useTheme
+  Typography
 } from "@mui/material";
 import {Draggable, Droppable} from "react-beautiful-dnd";
 import {QuestionType} from "../../../../dto/QuestionType.ts";
 import {QuestionCreateRequestDto} from "../../../../dto/QuestionCreateRequestDto.ts";
 import DeleteIcon from "../../../../../common/utils/components/DeleteIcon.tsx";
+import IsSmallScreen from "../../../../../common/utils/IsSmallScreen.tsx";
 
 interface DraggableQuestionAnswersListProps {
   qIndex: number;
@@ -22,8 +25,7 @@ interface DraggableQuestionAnswersListProps {
 }
 
 export default function DraggableQuestionAnswersList(props: DraggableQuestionAnswersListProps) {
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSmallScreen = IsSmallScreen();
   return (
     <Droppable droppableId={`droppableAnswers-${props.qIndex}`}
                type={`answers-${props.qIndex}`}>

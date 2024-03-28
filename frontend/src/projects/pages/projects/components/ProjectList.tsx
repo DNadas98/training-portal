@@ -6,11 +6,13 @@ import {
   AccordionSummary,
   Button,
   Card,
-  CardContent, Stack,
+  CardContent,
+  Stack,
   Typography
 } from "@mui/material";
 import ExpandIcon from "../../../../common/utils/components/ExpandIcon.tsx";
 import {ProjectResponseDetailsDto} from "../../../dto/ProjectResponseDetailsDto.ts";
+import useLocalizedDateTime from "../../../../common/localization/hooks/useLocalizedDateTime.tsx";
 
 interface ProjectListProps {
   loading: boolean,
@@ -22,7 +24,7 @@ interface ProjectListProps {
 }
 
 export default function ProjectList(props: ProjectListProps) {
-
+  const getLocalizedDateTime = useLocalizedDateTime();
   return props.loading
     ? <LoadingSpinner/>
     : props.projects?.length > 0
@@ -43,7 +45,7 @@ export default function ProjectList(props: ProjectListProps) {
                   wordBreak: "break-word",
                   paddingRight: 1
                 }}>
-                  {project.startDate.toLocaleString()} - {project.deadline.toLocaleString()}
+                  {getLocalizedDateTime(project.startDate)} - {getLocalizedDateTime(project.deadline)}
                 </Typography>
               </Stack>
             </AccordionSummary>

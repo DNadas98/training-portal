@@ -1,7 +1,7 @@
-import { Button, Divider, IconButton, Menu, MenuItem, Typography } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
-import { MouseEventHandler, ReactNode, useState } from "react";
-import { IMenuItem } from "../../menu/IMenuItem.ts";
+import {Button, Divider, IconButton, Menu, MenuItem, Typography} from "@mui/material";
+import {Link as RouterLink} from "react-router-dom";
+import {MouseEventHandler, ReactNode, useState} from "react";
+import {IMenuItem} from "../../menu/IMenuItem.ts";
 
 interface TitleMenuProps {
   title?: string;
@@ -44,7 +44,6 @@ export default function MenuSmall(props: TitleMenuProps) {
       {props?.icon ? (
         <IconButton
           size="large"
-          edge="start"
           color="inherit"
           onClick={handleMenu}
         >

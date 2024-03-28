@@ -1,6 +1,6 @@
-import {AppBar, Box, Divider, Stack, Toolbar, Typography, useMediaQuery, useTheme} from "@mui/material";
+import {AppBar, Box, Divider, Stack, Toolbar, Typography, useTheme} from "@mui/material";
 import ThemePaletteModeSwitch from "../../common/theme/components/ThemePaletteModeSwitch.tsx";
-import SiteNameH6 from "../../common/utils/components/SiteNameH6.tsx";
+import SiteLogo from "../../common/utils/components/SiteLogo.tsx";
 import MenuSmall from "../../common/utils/components/MenuSmall.tsx";
 import MenuLarge from "../../common/utils/components/MenuLarge.tsx";
 import {loggedInMenuItems} from "../../common/menu/loggedInMenuItems.tsx";
@@ -10,6 +10,8 @@ import {accountMenuItems} from "../../common/menu/accountMenuItems.tsx";
 import {GroupResponsePublicDto} from "../dto/GroupResponsePublicDto.ts";
 import {ProjectResponseDetailsDto} from "../../projects/dto/ProjectResponseDetailsDto.ts";
 import LocaleMenu from "../../common/localization/components/LocaleMenu.tsx";
+import IsSmallScreen from "../../common/utils/IsSmallScreen.tsx";
+import useLocalizedDate from "../../common/localization/hooks/useLocalizedDate.tsx";
 
 interface GroupHeaderProps {
   group: undefined | GroupResponsePublicDto,
@@ -18,12 +20,14 @@ interface GroupHeaderProps {
 
 export default function GroupHeader(props: GroupHeaderProps) {
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isSmallScreen = IsSmallScreen();
   const authentication = useAuthentication();
+  const getLocalizedDate = useLocalizedDate();
+
   return (
     <AppBar position="static" sx={{marginBottom: 4}}>
       <Toolbar>
-        <SiteNameH6/>
+        <SiteLogo/>
         <Box flexGrow={1}></Box>
         {isSmallScreen
           ? <MenuSmall items={loggedInMenuItems} icon={<MenuOutlined/>}/>
@@ -70,7 +74,7 @@ export default function GroupHeader(props: GroupHeaderProps) {
                         }
                       ]}/>
                     <Typography variant={"body2"}>
-                      ( {props.project.startDate.toLocaleDateString()} - {props.project.deadline.toLocaleDateString()} )
+                      ( {getLocalizedDate(props.project.startDate)} - {getLocalizedDate(props.project.deadline)} )
                     </Typography>
                   </>
                   : <></>

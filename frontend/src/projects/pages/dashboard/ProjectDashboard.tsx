@@ -9,6 +9,7 @@ import {ProjectResponseDetailsDto} from "../../dto/ProjectResponseDetailsDto.ts"
 import {isValidId} from "../../../common/utils/isValidId.ts";
 import {Button, Card, CardActions, CardContent, CardHeader, Grid, Stack, Typography} from "@mui/material";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
+import useLocalizedDateTime from "../../../common/localization/hooks/useLocalizedDateTime.tsx";
 
 export default function ProjectDashboard() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -21,6 +22,7 @@ export default function ProjectDashboard() {
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
   const navigate = useNavigate();
+  const getLocalizedDateTime = useLocalizedDateTime();
 
   function handleErrorNotification(message?: string) {
     notification.openNotification({
@@ -131,10 +133,10 @@ export default function ProjectDashboard() {
             {project.description}
           </Typography>
           <Typography>
-            Start Date: {project.startDate.toLocaleString()}
+            Start Date: {getLocalizedDateTime(project.startDate)}
           </Typography>
           <Typography>
-            Deadline: {project.startDate.toLocaleString()}
+            Deadline: {getLocalizedDateTime(project.deadline)}
           </Typography>
         </CardContent>
         <CardActions> <Stack spacing={0.5}>

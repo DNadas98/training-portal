@@ -1,25 +1,24 @@
-import {AppBar, Box, Toolbar, useMediaQuery, useTheme} from "@mui/material";
-import ThemePaletteModeSwitch
-  from "../../common/theme/components/ThemePaletteModeSwitch.tsx";
+import {AppBar, Box, Toolbar} from "@mui/material";
+import ThemePaletteModeSwitch from "../../common/theme/components/ThemePaletteModeSwitch.tsx";
 import MenuSmall from "../../common/utils/components/MenuSmall.tsx";
 import MenuLarge from "../../common/utils/components/MenuLarge.tsx";
 import {publicMenuItems} from "../../common/menu/publicMenuItems.tsx";
 import {MenuOutlined} from "@mui/icons-material";
-import SiteNameH6 from "../../common/utils/components/SiteNameH6.tsx";
+import SiteLogo from "../../common/utils/components/SiteLogo.tsx";
 import LocaleMenu from "../../common/localization/components/LocaleMenu.tsx";
+import IsSmallScreen from "../../common/utils/IsSmallScreen.tsx";
 
 export default function PublicHeader() {
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isSmallScreen = IsSmallScreen();
 
   return (
     <AppBar position="static" sx={{marginBottom: 4}}>
       <Toolbar>
-        <SiteNameH6/>
+        <SiteLogo/>
         <Box flexGrow={1}/>
         {isSmallScreen
-            ? <MenuSmall items={publicMenuItems} icon={<MenuOutlined/>}/>
-            : <MenuLarge items={publicMenuItems}/>
+          ? <MenuSmall items={publicMenuItems} icon={<MenuOutlined/>}/>
+          : <MenuLarge items={publicMenuItems}/>
         }
         <LocaleMenu/>
         <ThemePaletteModeSwitch/>

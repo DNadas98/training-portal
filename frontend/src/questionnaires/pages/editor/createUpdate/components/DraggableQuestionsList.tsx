@@ -2,17 +2,23 @@ import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import {
   Button,
   Card,
-  CardContent, Grid, IconButton,
+  CardContent,
+  Grid,
+  IconButton,
   List,
-  ListItem, MenuItem, Select,
-  Stack, TextField,
-  Typography, useMediaQuery, useTheme
+  ListItem,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Typography
 } from "@mui/material";
 import {QuestionType} from "../../../../dto/QuestionType.ts";
 import {QuestionCreateRequestDto} from "../../../../dto/QuestionCreateRequestDto.ts";
 import DraggableQuestionAnswersList from "./DraggableQuestionAnswersList.tsx";
 import DeleteIcon from "../../../../../common/utils/components/DeleteIcon.tsx";
 import AddIcon from "../../../../../common/utils/components/AddIcon.tsx";
+import IsSmallScreen from "../../../../../common/utils/IsSmallScreen.tsx";
 
 interface DraggableQuestionsListProps {
   onDragEnd: (result: any) => void;
@@ -25,8 +31,7 @@ interface DraggableQuestionsListProps {
 }
 
 export default function DraggableQuestionsList(props: DraggableQuestionsListProps) {
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSmallScreen = IsSmallScreen();
   return (
     <DragDropContext onDragEnd={props.onDragEnd}>
       <Droppable droppableId="droppableQuestions" type="questions">

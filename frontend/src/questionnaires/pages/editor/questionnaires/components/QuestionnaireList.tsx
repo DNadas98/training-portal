@@ -14,6 +14,7 @@ import ExpandIcon from "../../../../../common/utils/components/ExpandIcon.tsx";
 import LoadingSpinner from "../../../../../common/utils/components/LoadingSpinner.tsx";
 import {QuestionnaireResponseEditorDto} from "../../../../dto/QuestionnaireResponseEditorDto.ts";
 import {QuestionnaireStatus} from "../../../../dto/QuestionnaireStatus.ts";
+import useLocalizedDateTime from "../../../../../common/localization/hooks/useLocalizedDateTime.tsx";
 
 interface QuestionnaireListProps {
   loading: boolean;
@@ -25,7 +26,7 @@ interface QuestionnaireListProps {
 }
 
 export default function QuestionnaireList(props: QuestionnaireListProps) {
-
+  const getLocalizedDateTime = useLocalizedDateTime();
   return props.loading
     ? <LoadingSpinner/>
     : props.questionnaires?.length > 0
@@ -49,12 +50,12 @@ export default function QuestionnaireList(props: QuestionnaireListProps) {
               <Divider sx={{marginTop: 2, marginBottom: 2}}/>
               <Typography variant={"body2"}>
                 Created
-                at {questionnaire.createdAt.toLocaleString(navigator.language)} by {questionnaire.createdBy.username}
+                at {getLocalizedDateTime(questionnaire.createdAt)} by {questionnaire.createdBy.username}
               </Typography>
               <Divider sx={{marginTop: 1, marginBottom: 1}}/>
               <Typography variant={"body2"}>
                 Last updated
-                at {questionnaire.updatedAt.toLocaleString(navigator.language)} by {questionnaire.updatedBy.username}
+                at {getLocalizedDateTime(questionnaire.updatedAt)} by {questionnaire.updatedBy.username}
               </Typography>
               <Divider sx={{marginTop: 1, marginBottom: 1}}/>
               <Typography>Status: {questionnaire.status}</Typography>

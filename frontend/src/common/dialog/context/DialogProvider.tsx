@@ -1,14 +1,7 @@
 import React, {createContext, ReactNode, useContext, useState} from "react";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  useMediaQuery,
-  useTheme
-} from "@mui/material";
+import {Button, Dialog, DialogActions, DialogContent, DialogContentText} from "@mui/material";
 import {DialogStateDto} from "../dto/DialogStateDto.ts";
+import IsSmallScreen from "../../utils/IsSmallScreen.tsx";
 
 interface DialogContextType {
   openDialog: (newDialogState: DialogStateDto) => void;
@@ -39,8 +32,7 @@ export const DialogProvider = ({children}: DialogProviderProps) => {
     blockScreen: false
   }
   const [dialogState, setDialogState] = useState<DialogStateDto>({...initialState});
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isSmallScreen = IsSmallScreen();
 
   const openDialog = (newDialogState: DialogStateDto) => {
     setDialogState({
@@ -69,7 +61,7 @@ export const DialogProvider = ({children}: DialogProviderProps) => {
       <Dialog
         open={isOpen}
         onClose={handleClose}
-        fullScreen={isMobile}
+        fullScreen={isSmallScreen}
       >
         <DialogContent>
           <DialogContentText>

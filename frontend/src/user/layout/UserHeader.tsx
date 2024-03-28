@@ -1,23 +1,22 @@
-import {AppBar, Box, Toolbar, useMediaQuery, useTheme} from "@mui/material";
-import ThemePaletteModeSwitch
-  from "../../common/theme/components/ThemePaletteModeSwitch.tsx";
+import {AppBar, Box, Toolbar} from "@mui/material";
+import ThemePaletteModeSwitch from "../../common/theme/components/ThemePaletteModeSwitch.tsx";
 import MenuLarge from "../../common/utils/components/MenuLarge.tsx";
-import SiteNameH6 from "../../common/utils/components/SiteNameH6.tsx";
+import SiteLogo from "../../common/utils/components/SiteLogo.tsx";
 import MenuSmall from "../../common/utils/components/MenuSmall.tsx";
 import {loggedInMenuItems} from "../../common/menu/loggedInMenuItems.tsx";
 import {useAuthentication} from "../../authentication/hooks/useAuthentication.ts";
 import {AccountBoxRounded, MenuOutlined} from "@mui/icons-material";
-import { accountMenuItems } from "../../common/menu/accountMenuItems.tsx";
+import {accountMenuItems} from "../../common/menu/accountMenuItems.tsx";
 import LocaleMenu from "../../common/localization/components/LocaleMenu.tsx";
+import IsSmallScreen from "../../common/utils/IsSmallScreen.tsx";
 
 export default function UserHeader() {
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isSmallScreen = IsSmallScreen();
   const authentication = useAuthentication();
   return (
     <AppBar position="static" sx={{marginBottom: 4}}>
       <Toolbar>
-        <SiteNameH6/>
+        <SiteLogo/>
         <Box flexGrow={1}/>
         {isSmallScreen
           ? <MenuSmall items={loggedInMenuItems} icon={<MenuOutlined/>}/>

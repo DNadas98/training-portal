@@ -7,6 +7,8 @@ import * as locales from '@mui/material/locale';
 import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import useLocaleContext from "../../localization/hooks/useLocaleContext.tsx";
+import {enGB, hu} from "date-fns/locale";
+import {Locale} from "date-fns"
 
 interface AppThemeProviderProps {
   children: ReactNode;
@@ -16,6 +18,15 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
   const paletteMode = useThemePaletteMode().paletteMode;
   const {locale} = useLocaleContext();
   const theme = useMemo(() => createTheme({
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 620, /* original: 600 */
+        md: 960,
+        lg: 1280,
+        xl: 1920,
+      }
+    },
     palette: paletteMode === "light"
       ? lightPalette
       : darkPalette,
@@ -35,10 +46,11 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
       },
       MuiAlert: {
         styleOverrides: {
-          standardInfo: {color: "secondary"},
-          standardSuccess: {color: "success"},
-          standardWarning: {color: "warning"},
-          standardError: {color: "error"}
+          standard: {color: "secondary"},
+          colorInfo: {color: "secondary"},
+          colorSuccess: {color: "success"},
+          colorWarning: {color: "warning"},
+          colorError: {color: "error"}
         },
         defaultProps: {variant: "standard"}
       },
@@ -65,8 +77,19 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
     }
   }), [paletteMode]);
 
+  const getDateFnsLocale = (locale): Locale => {
+    switch (locale.toString().substring(0, 2)) {
+      case "en":
+        return enGB;
+      case "hu":
+        return hu;
+      default:
+        return hu;
+    }
+  }
+
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={locale as unknown as Locale}>
+    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={getDateFnsLocale(locale) as Locale}>
       <ThemeProvider theme={createTheme(theme, locales[locale])}>
         <CssBaseline/>
         {children}
