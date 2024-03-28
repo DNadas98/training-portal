@@ -83,7 +83,7 @@ export default function GroupDashboard() {
       </Card></Grid>
       {(groupPermissions.includes(PermissionType.GROUP_EDITOR))
         && <Grid item xs={10}><Card>
-          <CardHeader title={"Company Editor Actions"} titleTypographyProps={{variant: "h6"}}/>
+          <CardHeader title={"Group Editor Actions"} titleTypographyProps={{variant: "h6"}}/>
           <CardActions>
             <Button onClick={() => {
               navigate(`/groups/${groupId}/update`)
@@ -95,7 +95,7 @@ export default function GroupDashboard() {
       {(groupPermissions.includes(PermissionType.GROUP_ADMIN))
         &&
         <Grid item xs={10}><Card>
-          <CardHeader title={"Company Administrator Actions"} titleTypographyProps={{variant: "h6"}}/>
+          <CardHeader title={"Group Administrator Actions"} titleTypographyProps={{variant: "h6"}}/>
           <CardActions>
             <Button onClick={handleJoinRequestClick}>View group join requests</Button>
           </CardActions>

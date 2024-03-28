@@ -9,12 +9,12 @@ export default function useLocalized() {
   useEffect(() => {
     setLocaleTexts(texts);
   }, [locale]);
+
   const getLocalized = (keystring: string): string => {
     if (!localeTexts) {
       return "";
     }
     let localizedText = localeTexts[locale];
-
     const keys = keystring?.split(".");
     for (const k of keys) {
       if (!localizedText || !localizedText[k]) {
@@ -22,7 +22,6 @@ export default function useLocalized() {
       }
       localizedText = localizedText[k];
     }
-
     return localizedText;
   };
 

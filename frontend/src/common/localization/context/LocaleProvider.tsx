@@ -1,6 +1,7 @@
 import {createContext, ReactNode, useEffect, useState} from 'react';
 import {ILocaleContext} from "./ILocaleContext.ts";
 import {SupportedLocaleType} from "./SupportedLocaleType.ts";
+import siteConfig from "../../config/siteConfig.ts";
 
 export const LocaleContext = createContext<ILocaleContext | undefined>(undefined);
 
@@ -18,7 +19,7 @@ const setLocaleToLocalStorage = (locale: SupportedLocaleType) => {
 };
 
 export function LocaleProvider({children}: LocaleProviderProps) {
-  const defaultLocale: SupportedLocaleType = "huHU";
+  const defaultLocale = siteConfig.defaultLocale as SupportedLocaleType;
   const [locale, setLocale] = useState<SupportedLocaleType>(() => {
     const storedLocale = getLocaleFromLocalStorage();
     return storedLocale || defaultLocale;
