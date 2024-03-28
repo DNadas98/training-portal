@@ -1,4 +1,4 @@
-import {DateTimePicker} from "@mui/x-date-pickers";
+import {MobileDateTimePicker} from "@mui/x-date-pickers";
 
 interface CustomDateTimeInputProps {
   name: string;
@@ -8,14 +8,11 @@ interface CustomDateTimeInputProps {
 
 export default function CustomDateTimeInput(props: CustomDateTimeInputProps) {
   return (
-    <DateTimePicker
+    <MobileDateTimePicker
       label={props.label}
       name={props.name}
       defaultValue={props.defaultValue ?? new Date()}
       timezone={"system"}
-      timeSteps={{minutes: 1}}
-      ampm={false}
-      ampmInClock={false}
     />
   )
 }
