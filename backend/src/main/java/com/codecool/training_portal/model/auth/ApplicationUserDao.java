@@ -35,4 +35,6 @@ public interface ApplicationUserDao extends JpaRepository<ApplicationUser, Long>
 
   @Query("SELECT u FROM ApplicationUser u LEFT JOIN FETCH u.assignedTasks WHERE u.id = :id")
   Optional<ApplicationUser> findByIdAndFetchAssignedTasks(@Param("id") Long id);
+
+  Optional<ApplicationUser> findByUsername(String username);
 }

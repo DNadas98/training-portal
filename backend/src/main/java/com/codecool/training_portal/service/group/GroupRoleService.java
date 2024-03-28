@@ -25,7 +25,7 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class GroupRoleService {
-    private final UserGroupDao userGroupDao;
+  private final UserGroupDao userGroupDao;
   private final ApplicationUserDao applicationUserDao;
   private final UserConverter userConverter;
   private final UserProvider userProvider;
@@ -34,21 +34,21 @@ public class GroupRoleService {
   @Transactional(readOnly = true)
   public Set<PermissionType> getUserPermissionsForGroup(Long groupId) {
     ApplicationUser user = userProvider.getAuthenticatedUser();
-      UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
-              () -> new GroupNotFoundException(groupId));
+    UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
+      () -> new GroupNotFoundException(groupId));
 
     if (user.getGlobalRoles().contains(GlobalRole.ADMIN)) {
-        return Set.of(PermissionType.GROUP_MEMBER, PermissionType.GROUP_EDITOR,
-                PermissionType.GROUP_ADMIN);
+      return Set.of(PermissionType.GROUP_MEMBER, PermissionType.GROUP_EDITOR,
+        PermissionType.GROUP_ADMIN);
     }
 
     Set<PermissionType> permissions = new HashSet<>();
-      permissions.add(PermissionType.GROUP_MEMBER);
-      if (permissionEvaluator.hasGroupEditorAccess(user.getId(), userGroup)) {
-          permissions.add(PermissionType.GROUP_EDITOR);
+    permissions.add(PermissionType.GROUP_MEMBER);
+    if (permissionEvaluator.hasGroupEditorAccess(user.getId(), userGroup)) {
+      permissions.add(PermissionType.GROUP_EDITOR);
     }
-      if (permissionEvaluator.hasGroupAdminAccess(user.getId(), userGroup)) {
-          permissions.add(PermissionType.GROUP_ADMIN);
+    if (permissionEvaluator.hasGroupAdminAccess(user.getId(), userGroup)) {
+      permissions.add(PermissionType.GROUP_ADMIN);
     }
     return permissions;
   }
@@ -56,90 +56,90 @@ public class GroupRoleService {
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_ADMIN')")
   public List<UserResponsePublicDto> getMembers(Long groupId) {
-      UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
-              () -> new GroupNotFoundException(groupId));
-      return userConverter.toUserResponsePublicDtos(userGroup.getMembers().stream().toList());
+    UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
+      () -> new GroupNotFoundException(groupId));
+    return userConverter.toUserResponsePublicDtos(userGroup.getMembers().stream().toList());
   }
 
   @Transactional(rollbackFor = Exception.class)
   @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_ADMIN')")
-  public void addMember(Long groupId, Long userId) {
-      UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
-              () -> new GroupNotFoundException(groupId));
-    ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
-      () -> new UserNotFoundException(userId));
-      userGroup.addMember(applicationUser);
-      userGroupDao.save(userGroup);
+  public void addMember(Long groupId, String username) {
+    UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
+      () -> new GroupNotFoundException(groupId));
+    ApplicationUser applicationUser = applicationUserDao.findByUsername(username).orElseThrow(
+      () -> new UserNotFoundException());
+    userGroup.addMember(applicationUser);
+    userGroupDao.save(userGroup);
   }
 
   @Transactional(rollbackFor = Exception.class)
   @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_ADMIN')")
   public void removeMember(Long groupId, Long userId) {
-      UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
-              () -> new GroupNotFoundException(groupId));
+    UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
+      () -> new GroupNotFoundException(groupId));
     ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
       () -> new UserNotFoundException(userId));
-      userGroup.removeMember(applicationUser);
-      userGroupDao.save(userGroup);
+    userGroup.removeMember(applicationUser);
+    userGroupDao.save(userGroup);
   }
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_ADMIN')")
   public List<UserResponsePublicDto> getEditors(Long groupId) {
-      UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
-              () -> new GroupNotFoundException(groupId));
-      return userConverter.toUserResponsePublicDtos(userGroup.getEditors().stream().toList());
+    UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
+      () -> new GroupNotFoundException(groupId));
+    return userConverter.toUserResponsePublicDtos(userGroup.getEditors().stream().toList());
   }
 
   @Transactional(rollbackFor = Exception.class)
   @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_ADMIN')")
   public void addEditor(Long groupId, Long userId) {
-      UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
-              () -> new GroupNotFoundException(groupId));
+    UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
+      () -> new GroupNotFoundException(groupId));
     ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
       () -> new UserNotFoundException(userId));
-      userGroup.addEditor(applicationUser);
-      userGroupDao.save(userGroup);
+    userGroup.addEditor(applicationUser);
+    userGroupDao.save(userGroup);
   }
 
   @Transactional(rollbackFor = Exception.class)
   @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_ADMIN')")
   public void removeEditor(Long groupId, Long userId) {
-      UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
-              () -> new GroupNotFoundException(groupId));
+    UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
+      () -> new GroupNotFoundException(groupId));
     ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
       () -> new UserNotFoundException(userId));
-      userGroup.removeEditor(applicationUser);
-      userGroupDao.save(userGroup);
+    userGroup.removeEditor(applicationUser);
+    userGroupDao.save(userGroup);
   }
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_ADMIN')")
   public List<UserResponsePublicDto> getAdmins(Long groupId) {
-      UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
-              () -> new GroupNotFoundException(groupId));
-      return userConverter.toUserResponsePublicDtos(userGroup.getAdmins().stream().toList());
+    UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
+      () -> new GroupNotFoundException(groupId));
+    return userConverter.toUserResponsePublicDtos(userGroup.getAdmins().stream().toList());
   }
 
   @Transactional(rollbackFor = Exception.class)
   @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_ADMIN')")
   public void addAdmin(Long groupId, Long userId) {
-      UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
-              () -> new GroupNotFoundException(groupId));
+    UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
+      () -> new GroupNotFoundException(groupId));
     ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
       () -> new UserNotFoundException(userId));
-      userGroup.addAdmin(applicationUser);
-      userGroupDao.save(userGroup);
+    userGroup.addAdmin(applicationUser);
+    userGroupDao.save(userGroup);
   }
 
   @Transactional(rollbackFor = Exception.class)
   @Secured("ADMIN")
   public void removeAdmin(Long groupId, Long userId) {
-      UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
-              () -> new GroupNotFoundException(groupId));
+    UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
+      () -> new GroupNotFoundException(groupId));
     ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
       () -> new UserNotFoundException(userId));
-      userGroup.removeAdmin(applicationUser);
-      userGroupDao.save(userGroup);
+    userGroup.removeAdmin(applicationUser);
+    userGroupDao.save(userGroup);
   }
 }

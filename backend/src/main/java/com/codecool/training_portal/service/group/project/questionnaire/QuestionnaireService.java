@@ -2,14 +2,13 @@ package com.codecool.training_portal.service.group.project.questionnaire;
 
 import com.codecool.training_portal.dto.group.project.questionnaire.*;
 import com.codecool.training_portal.exception.group.project.ProjectNotFoundException;
+import com.codecool.training_portal.exception.group.project.questionnaire.QuestionnaireAlreadyActivatedException;
 import com.codecool.training_portal.exception.group.project.questionnaire.QuestionnaireNotFoundException;
 import com.codecool.training_portal.model.auth.ApplicationUser;
+import com.codecool.training_portal.model.auth.GlobalRole;
 import com.codecool.training_portal.model.group.project.Project;
 import com.codecool.training_portal.model.group.project.ProjectDao;
-import com.codecool.training_portal.model.group.project.questionnaire.Answer;
-import com.codecool.training_portal.model.group.project.questionnaire.Question;
-import com.codecool.training_portal.model.group.project.questionnaire.Questionnaire;
-import com.codecool.training_portal.model.group.project.questionnaire.QuestionnaireDao;
+import com.codecool.training_portal.model.group.project.questionnaire.*;
 import com.codecool.training_portal.service.auth.UserProvider;
 import com.codecool.training_portal.service.converter.QuestionnaireConverter;
 import lombok.RequiredArgsConstructor;
@@ -99,6 +98,9 @@ public class QuestionnaireService {
       questionDto -> createQuestion(questionDto, questionnaire));
     ApplicationUser user = userProvider.getAuthenticatedUser();
     questionnaire.setUpdatedBy(user);
+    if (questionnaireUpdateRequestDto.status() == QuestionnaireStatus.ACTIVE) {
+      questionnaire.setActivated(true);
+    }
     questionnaireDao.save(questionnaire);
     return questionnaireConverter.toQuestionnaireResponseEditorDetailsDto(questionnaire);
   }
@@ -133,6 +135,10 @@ public class QuestionnaireService {
   public void deleteQuestionnaire(Long groupId, Long projectId, Long id) {
     Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndId(
       groupId, projectId, id).orElseThrow(QuestionnaireNotFoundException::new);
+    ApplicationUser user = userProvider.getAuthenticatedUser();
+    if (!user.getGlobalRoles().contains(GlobalRole.ADMIN) && questionnaire.isActivated()) {
+      throw new QuestionnaireAlreadyActivatedException();
+    }
     questionnaireDao.delete(questionnaire);
   }
 }

@@ -9,11 +9,14 @@ import com.codecool.training_portal.exception.group.project.DuplicateProjectJoin
 import com.codecool.training_portal.exception.group.project.ProjectJoinRequestNotFoundException;
 import com.codecool.training_portal.exception.group.project.ProjectNotFoundException;
 import com.codecool.training_portal.exception.group.project.UserAlreadyInProjectException;
+import com.codecool.training_portal.exception.group.project.questionnaire.QuestionnaireAlreadyActivatedException;
 import com.codecool.training_portal.exception.group.project.questionnaire.QuestionnaireNotFoundException;
 import com.codecool.training_portal.exception.group.project.task.TaskNotFoundException;
 import com.codecool.training_portal.exception.verification.VerificationTokenAlreadyExistsException;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -23,18 +26,22 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Locale;
 import java.util.Map;
 
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GeneralExceptionHandler {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final MessageSource messageSource;
+
   // 400
 
-    @ExceptionHandler(UserAlreadyInGroupException.class)
-    public ResponseEntity<?> handleUserAlreadyInGroup(UserAlreadyInGroupException e) {
+  @ExceptionHandler(UserAlreadyInGroupException.class)
+  public ResponseEntity<?> handleUserAlreadyInGroup(UserAlreadyInGroupException e) {
     logger.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-            Map.of("error", "User is already member of the requested group"));
+      Map.of("error", "User is already member of the requested group"));
   }
 
   @ExceptionHandler(UserAlreadyInProjectException.class)
@@ -75,6 +82,17 @@ public class GeneralExceptionHandler {
 
   // 403
 
+  @ExceptionHandler(QuestionnaireAlreadyActivatedException.class)
+  public ResponseEntity<?> handleQuestionnaireAlreadyActivatedException(
+    QuestionnaireAlreadyActivatedException e, Locale locale) {
+    logger.error(e.getMessage());
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+      Map.of(
+        "error",
+        messageSource.getMessage("questionnaire.delete.forbidden.already.activated", null,
+          locale)));
+  }
+
   @ExceptionHandler(AccessDeniedException.class)
   public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException e) {
     logger.error(e.getMessage());
@@ -83,7 +101,8 @@ public class GeneralExceptionHandler {
   }
 
   @ExceptionHandler(PasswordVerificationFailedException.class)
-  public ResponseEntity<?> handlePasswordVerificationFailedException(PasswordVerificationFailedException e) {
+  public ResponseEntity<?> handlePasswordVerificationFailedException(
+    PasswordVerificationFailedException e) {
     logger.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
       Map.of("error", "The provided newPassword is incorrect"));
@@ -98,18 +117,18 @@ public class GeneralExceptionHandler {
       Map.of("error", "Application user was not found"));
   }
 
-    @ExceptionHandler(GroupNotFoundException.class)
-    public ResponseEntity<?> handleGroupNotFound(GroupNotFoundException e) {
+  @ExceptionHandler(GroupNotFoundException.class)
+  public ResponseEntity<?> handleGroupNotFound(GroupNotFoundException e) {
     logger.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-            Map.of("error", "The requested group was not found"));
+      Map.of("error", "The requested group was not found"));
   }
 
-    @ExceptionHandler(GroupJoinRequestNotFoundException.class)
-    public ResponseEntity<?> handleGroupJoinRequestNotFound(GroupJoinRequestNotFoundException e) {
+  @ExceptionHandler(GroupJoinRequestNotFoundException.class)
+  public ResponseEntity<?> handleGroupJoinRequestNotFound(GroupJoinRequestNotFoundException e) {
     logger.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-            Map.of("error", "UserGroup join request with the provided details was not found"));
+      Map.of("error", "UserGroup join request with the provided details was not found"));
   }
 
   @ExceptionHandler(ProjectNotFoundException.class)
@@ -143,12 +162,12 @@ public class GeneralExceptionHandler {
 
   // 409
 
-    @ExceptionHandler(DuplicateGroupJoinRequestException.class)
-    public ResponseEntity<?> handleDuplicateGroupJoinRequest(
-            DuplicateGroupJoinRequestException e) {
+  @ExceptionHandler(DuplicateGroupJoinRequestException.class)
+  public ResponseEntity<?> handleDuplicateGroupJoinRequest(
+    DuplicateGroupJoinRequestException e) {
     logger.error(e.getMessage());
     return ResponseEntity.status(HttpStatus.CONFLICT).body(
-            Map.of("error", "UserGroup join request already exists with the provided details"));
+      Map.of("error", "UserGroup join request already exists with the provided details"));
   }
 
   @ExceptionHandler(DuplicateProjectJoinRequestException.class)

@@ -105,7 +105,7 @@ public class PopulateService {
     for (int j = 1; j <= i; j++) {
       ApplicationUser applicationUser = applicationUserDao.save(
         new ApplicationUser("Dev User " + j, "user" + j + "@test.test",
-          passwordEncoder.encode("devuser" + j + "newPassword")));
+          passwordEncoder.encode("devuser" + j + "password")));
       users.add(applicationUser);
     }
     return users;

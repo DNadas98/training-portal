@@ -33,6 +33,9 @@ public class Questionnaire {
   @Enumerated(EnumType.STRING)
   private QuestionnaireStatus status = QuestionnaireStatus.INACTIVE;
 
+  @Column(nullable = false)
+  private boolean activated = false;
+
   @OneToMany(mappedBy = "questionnaire", orphanRemoval = true, cascade = CascadeType.ALL,
     fetch = FetchType.LAZY)
   @OrderBy("questionOrder")
@@ -73,6 +76,13 @@ public class Questionnaire {
     this.updatedBy = createdBy;
   }
 
+  public void setStatus(QuestionnaireStatus status) {
+    this.status = status;
+    if (status == QuestionnaireStatus.ACTIVE) {
+      this.activated = true;
+    }
+  }
+
   public List<Question> getQuestions() {
     return List.copyOf(questions);
   }
@@ -81,5 +91,7 @@ public class Questionnaire {
     questions.add(question);
   }
 
-  public void removeAllQuestions() { this.questions.clear(); }
+  public void removeAllQuestions() {
+    this.questions.clear();
+  }
 }

@@ -82,7 +82,12 @@ public class UserGroup {
   }
 
   public void addAdmin(ApplicationUser applicationUser) {
-    admins.add(applicationUser);
+    if (!members.contains(applicationUser)) {
+      members.add(applicationUser);
+    }
+    if (!admins.contains(applicationUser)) {
+      admins.add(applicationUser);
+    }
   }
 
   public void removeAdmin(ApplicationUser applicationUser) {
@@ -94,7 +99,12 @@ public class UserGroup {
   }
 
   public void addEditor(ApplicationUser applicationUser) {
-    editors.add(applicationUser);
+    if (!members.contains(applicationUser)) {
+      members.add(applicationUser);
+    }
+    if (!editors.contains(applicationUser)) {
+      editors.add(applicationUser);
+    }
   }
 
   public void removeEditor(ApplicationUser applicationUser) {
@@ -106,7 +116,9 @@ public class UserGroup {
   }
 
   public void addMember(ApplicationUser applicationUser) {
-    members.add(applicationUser);
+    if (!members.contains(applicationUser)) {
+      members.add(applicationUser);
+    }
   }
 
   public void removeMember(ApplicationUser applicationUser) {

@@ -103,7 +103,12 @@ public class Project {
   }
 
   public void addAdmin(ApplicationUser applicationUser) {
-    this.admins.add(applicationUser);
+    if (!assignedMembers.contains(applicationUser)) {
+      assignedMembers.add(applicationUser);
+    }
+    if (!admins.contains(applicationUser)) {
+      admins.add(applicationUser);
+    }
   }
 
   public void removeAdmin(ApplicationUser applicationUser) {
@@ -115,7 +120,12 @@ public class Project {
   }
 
   public void addEditor(ApplicationUser applicationUser) {
-    this.editors.add(applicationUser);
+    if (!assignedMembers.contains(applicationUser)) {
+      assignedMembers.add(applicationUser);
+    }
+    if (!editors.contains(applicationUser)) {
+      editors.add(applicationUser);
+    }
   }
 
   public void removeEditor(ApplicationUser applicationUser) {
@@ -127,7 +137,9 @@ public class Project {
   }
 
   public void assignMember(ApplicationUser applicationUser) {
-    this.assignedMembers.add(applicationUser);
+    if (!assignedMembers.contains(applicationUser)) {
+      assignedMembers.add(applicationUser);
+    }
   }
 
   public void removeMember(ApplicationUser applicationUser) {

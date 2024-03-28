@@ -41,4 +41,6 @@ public interface ProjectDao extends JpaRepository<Project, Long> {
     @Param("applicationUser") ApplicationUser applicationUser,
     @Param("statuses") List<RequestStatus> statuses,
     @Param("userGroup") UserGroup userGroup);
+
+  List<Project> findAllByUserGroup(UserGroup userGroup);
 }
