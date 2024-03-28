@@ -26,7 +26,7 @@ public class Questionnaire {
   @Column(nullable = false, unique = true)
   private String name;
 
-  @Column(nullable = false)
+  @Column(length = 500, nullable = false)
   private String description;
 
   @Column(nullable = false)

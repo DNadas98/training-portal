@@ -19,7 +19,7 @@ public class SubmittedQuestion {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false)
+  @Column(length = 500, nullable = false)
   private String text;
 
   @Column(nullable = false)
