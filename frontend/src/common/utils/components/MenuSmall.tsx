@@ -22,19 +22,20 @@ export default function MenuSmall(props: TitleMenuProps) {
     setAnchorEl(null);
   };
 
-  const menuItems:ReactNode[] = [];
+  const menuItems: ReactNode[] = [];
 
   if (props.title) {
     menuItems.push(
       <Typography key="menu-title" paddingLeft={2} paddingRight={2}>
         {props.title}
       </Typography>,
-      <Divider key="menu-divider" />
+      <Divider key="menu-divider"/>
     );
   }
 
   menuItems.push(...props.items.map(item => (
-    <MenuItem key={item.path} component={RouterLink} to={item.path}>
+    <MenuItem key={item.path} component={RouterLink} to={item.path}
+              onClick={handleClose}>
       {item.title}
     </MenuItem>
   )));
@@ -55,7 +56,7 @@ export default function MenuSmall(props: TitleMenuProps) {
           size="small"
           color="inherit"
           onClick={handleMenu}
-          sx={{wordBreak:"break-all"}}
+          sx={{wordBreak: "break-all"}}
         >
           {props.title ?? "Menu"}
         </Button>

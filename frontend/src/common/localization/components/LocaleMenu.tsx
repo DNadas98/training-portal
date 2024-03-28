@@ -18,6 +18,7 @@ const LocaleMenu = () => {
   };
 
   const handleLocaleChange = (newLocale) => {
+    handleCloseMenu();
     setLocale(newLocale);
   };
 
