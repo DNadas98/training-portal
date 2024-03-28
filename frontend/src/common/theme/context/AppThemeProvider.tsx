@@ -23,7 +23,8 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
       MuiCssBaseline: {
         styleOverrides: {
           body: {
-            minWidth: "286px"
+            minWidth: "286px",
+            overflowX: "auto"
           }
         }
       },
@@ -40,6 +41,26 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
           standardError: {color: "error"}
         },
         defaultProps: {variant: "standard"}
+      },
+      MuiCheckbox: {
+        styleOverrides: {
+          root: {
+            color: "inherit",
+            "&.Mui-checked": {
+              "color": "inherit",
+            }
+          }
+        }
+      },
+      MuiRadio: {
+        styleOverrides: {
+          root: {
+            color: "inherit",
+            "&.Mui-checked": {
+              "color": "inherit"
+            }
+          }
+        }
       }
     }
   }), [paletteMode]);
