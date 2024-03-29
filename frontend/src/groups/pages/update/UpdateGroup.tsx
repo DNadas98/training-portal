@@ -24,13 +24,16 @@ export default function UpdateGroup() {
   const handleError = (error?: string) => {
     const defaultError = "An unknown error has occurred, please try again later";
     setGroupError(error ?? defaultError);
+    handleErrorNotification(error ?? defaultError);
+  };
+  const handleErrorNotification = (message: string) => {
     notification.openNotification({
       type: "error",
       vertical: "top",
       horizontal: "center",
-      message: error ?? defaultError,
+      message: message,
     });
-  };
+  }
 
   async function loadGroup() {
     try {
@@ -74,8 +77,12 @@ export default function UpdateGroup() {
       const name = formData.get('name') as string;
       const description = formData.get('description') as string;
       const detailedDescription = formData.get('detailedDescription') as string;
-      if (!detailedDescription?.length || detailedDescription.length > 10000) {
-        handleError("Detailed description must be shorter than 10000 characters");
+      if (!detailedDescription?.length) {
+        handleErrorNotification("A detailed description of the group is required to proceed");
+        return;
+      }
+      if (detailedDescription.length > 10000) {
+        handleErrorNotification("Detailed description must be shorter than 10000 characters");
         return;
       }
 
@@ -83,7 +90,7 @@ export default function UpdateGroup() {
       const response = await updateGroup(requestDto);
 
       if (!response || response.error || response?.status > 399 || !response.message || !response.data) {
-        handleError(response?.error);
+        handleErrorNotification(response?.error??"Failed to update group");
         return;
       }
       const addedGroup = response.data as GroupResponsePrivateDto;
@@ -93,7 +100,7 @@ export default function UpdateGroup() {
       })
       navigate(`/groups/${addedGroup.groupId}`);
     } catch (e) {
-      handleError();
+      handleErrorNotification("Failed to update group");
     } finally {
       setGroupLoading(false);
     }

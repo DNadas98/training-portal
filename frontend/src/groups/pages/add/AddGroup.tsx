@@ -38,7 +38,11 @@ export default function AddGroup() {
       const name = formData.get('name') as string;
       const description = formData.get('description') as string;
       const detailedDescription = formData.get('detailedDescription') as string;
-      if (!detailedDescription?.length || detailedDescription.length > 10000) {
+      if (!detailedDescription?.length) {
+        handleError("A detailed description of the group is required to proceed");
+        return;
+      }
+      if (detailedDescription.length > 10000) {
         handleError("Detailed description must be shorter than 10000 characters");
         return;
       }

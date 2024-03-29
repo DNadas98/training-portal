@@ -39,6 +39,15 @@ export default function AddProject() {
       const name = formData.get('name') as string;
       const description = formData.get('description') as string;
       const detailedDescription = formData.get('detailedDescription') as string;
+      if (!detailedDescription?.length) {
+        handleError("A detailed description of the project is required to proceed");
+        return;
+      }
+      if (detailedDescription.length > 10000) {
+        handleError("Detailed description must be shorter than 10000 characters");
+        return;
+      }
+
       const startDate = new Date(formData.get("startDate") as string).toISOString();
       const deadline = new Date(formData.get("deadline") as string).toISOString();
 

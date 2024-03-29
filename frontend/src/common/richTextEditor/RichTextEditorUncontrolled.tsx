@@ -58,7 +58,7 @@ export default function RichTextEditorUncontrolled(props: CustomRteEditorProps) 
           </>
         )}
       </RichTextEditor>
-      <input type="hidden" ref={hiddenInputRef} id={props.name} name={props.name}/>
+      <input type="hidden" ref={hiddenInputRef} id={props.name} name={props.name} required/>
       </Grid>
     </Grid>
   );

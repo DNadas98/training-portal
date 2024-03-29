@@ -25,13 +25,16 @@ export default function UpdateProject() {
   const handleError = (error?: string) => {
     const defaultError = "An unknown error has occurred, please try again later";
     setProjectError(error ?? defaultError);
+    handleErrorNotification(error ?? defaultError);
+  };
+  const handleErrorNotification = (message: string) => {
     notification.openNotification({
       type: "error",
       vertical: "top",
       horizontal: "center",
-      message: error ?? defaultError,
+      message: message,
     });
-  };
+  }
 
   async function loadProject() {
     try {
@@ -82,6 +85,15 @@ export default function UpdateProject() {
       const name = formData.get('name') as string;
       const description = formData.get('description') as string;
       const detailedDescription = formData.get('detailedDescription') as string;
+      if (!detailedDescription?.length) {
+        handleErrorNotification("A detailed description of the project is required to proceed");
+        return;
+      }
+      if (detailedDescription.length > 10000) {
+        handleErrorNotification("Detailed description must be shorter than 10000 characters");
+        return;
+      }
+
       const startDate = new Date(formData.get("startDate") as string).toISOString();
       const deadline = new Date(formData.get("deadline") as string).toISOString();
 
@@ -91,7 +103,7 @@ export default function UpdateProject() {
       const response = await updateProject(requestDto);
 
       if (!response || response.error || response?.status > 399 || !response.data) {
-        handleError(response?.error);
+        handleErrorNotification(response?.error ?? "Failed to update project");
         return;
       }
       notification.openNotification({
@@ -100,7 +112,7 @@ export default function UpdateProject() {
       });
       navigate(`/groups/${groupId}/projects/${projectId}`);
     } catch (e) {
-      handleError();
+      handleErrorNotification("Failed to update project");
     } finally {
       setProjectLoading(false);
     }
