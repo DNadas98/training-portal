@@ -35,20 +35,29 @@ export default function GroupList(props: GroupListProps) {
                      variant={"elevation"}
                      sx={{paddingTop: 0.5, paddingBottom: 0.5}}>
             <AccordionSummary expandIcon={<ExpandIcon/>}>
-              <Button component={Link} to={`/groups/${group.groupId}`}
-                      sx={{textTransform: "none"}}>
-                <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                  <ForwardIcon/>
-                  <Typography variant={"h6"} sx={{
-                    wordBreak: "break-word",
-                    paddingRight: 1,
-                    minWidth: "100%",
-                    flexGrow: 1
-                  }}>
-                    {group.name}
-                  </Typography>
-                </Stack>
-              </Button>
+              {props.userIsMember
+                ? <Button component={Link} to={`/groups/${group.groupId}`}
+                          sx={{textTransform: "none"}}>
+                  <Stack direction={"row"} alignItems={"center"} spacing={1}>
+                    <ForwardIcon/>
+                    <Typography variant={"h6"} sx={{
+                      wordBreak: "break-word",
+                      paddingRight: 1,
+                      minWidth: "100%",
+                      flexGrow: 1
+                    }}>
+                      {group.name}
+                    </Typography>
+                  </Stack>
+                </Button>
+                : <Typography variant={"h6"} sx={{
+                  wordBreak: "break-word",
+                  paddingRight: 1,
+                  minWidth: "100%",
+                  flexGrow: 1
+                }}>
+                  {group.name}
+                </Typography>}
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant={"body2"}>
