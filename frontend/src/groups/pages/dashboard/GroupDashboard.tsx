@@ -6,18 +6,24 @@ import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx"
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import {PermissionType} from "../../../authentication/dto/PermissionType.ts";
 import {isValidId} from "../../../common/utils/isValidId.ts";
-import {Button, Card, CardActions, CardContent, CardHeader, Grid, Typography} from "@mui/material";
+import {Button, Card, CardActions, CardContent, CardHeader, Grid, Stack} from "@mui/material";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
+import {useAuthentication} from "../../../authentication/hooks/useAuthentication.ts";
+import {GlobalRole} from "../../../authentication/dto/userInfo/GlobalRole.ts";
+import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
+import RichTextDisplay from "../../../common/richTextEditor/RichTextDisplay.tsx";
 
 export default function GroupDashboard() {
   const {loading, groupPermissions} = usePermissions();
   const groupId = useParams()?.groupId;
   const [groupLoading, setGroupLoading] = useState(true);
   const [group, setGroup] = useState<GroupResponsePrivateDto | undefined>(undefined);
-  const [groupErrorStatus, setGroupError] = useState<string | undefined>(undefined);
+  const [groupError, setGroupError] = useState<string | undefined>(undefined);
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
   const navigate = useNavigate();
+  const authentication = useAuthentication();
+  const dialog = useDialog();
 
   function handleErrorNotification(message?: string) {
     notification.openNotification({
@@ -63,19 +69,54 @@ export default function GroupDashboard() {
     navigate(`/groups/${groupId}/projects`);
   }
 
+  async function deleteGroup() {
+    try {
+      setGroupLoading(true);
+      if (!isValidId(groupId)) {
+        handleErrorNotification("The provided group ID is invalid");
+        setGroupLoading(false);
+        return
+      }
+      const response = await authJsonFetch({
+        path: `admin/groups/${groupId}`, method: "DELETE"
+      });
+      if (!response?.status || response.status > 404 || !response?.message) {
+        handleErrorNotification(response?.error ?? `Failed to delete group with ID ${groupId}`);
+        return;
+      }
+      notification.openNotification({
+        type: "success", vertical: "top", horizontal: "center",
+        message: `Group ${group?.name} was deleted successfully`
+      });
+      navigate("/groups");
+    } catch (e) {
+      handleErrorNotification(`Failed to delete group with ID ${groupId}`);
+    } finally {
+      setGroupLoading(false);
+    }
+  }
+
+  function handleDeleteGroupClick() {
+    dialog.openDialog({
+      text: "Are you sure you would like to delete this group, along with all group data?",
+      confirmText: "Yes, delete the group", onConfirm: () => deleteGroup()
+    });
+  }
+
   if (loading || groupLoading) {
     return <LoadingSpinner/>;
-  } else if (!groupPermissions?.length || !group) {
-    handleErrorNotification(groupErrorStatus ?? "Access Denied: Insufficient permissions");
+  } else if (!authentication.getRoles()?.length || !groupPermissions?.length || !group) {
+    handleErrorNotification(groupError ?? "Access Denied: Insufficient permissions");
     navigate("/groups", {replace: true});
     return <></>;
   }
+
   return (
     <Grid container justifyContent={"center"} alignItems={"center"} spacing={2}>
       <Grid item xs={10}><Card>
         <CardHeader title={group.name}/>
         <CardContent>
-          <Typography>{group.description}</Typography>
+          <RichTextDisplay content={group.description}/>
         </CardContent>
         <CardActions>
           <Button onClick={handleProjectsClick}>View projects</Button>
@@ -97,7 +138,12 @@ export default function GroupDashboard() {
         <Grid item xs={10}><Card>
           <CardHeader title={"Group Administrator Actions"} titleTypographyProps={{variant: "h6"}}/>
           <CardActions>
-            <Button onClick={handleJoinRequestClick}>View group join requests</Button>
+            <Stack spacing={2}>
+              <Button onClick={handleJoinRequestClick}>View group join requests</Button>
+              {!authentication.getRoles().includes(GlobalRole.ADMIN) ? <></> :
+                <Button sx={{width: "fit-content"}} onClick={handleDeleteGroupClick}>Delete Group</Button>
+              }
+            </Stack>
           </CardActions>
         </Card></Grid>
       }

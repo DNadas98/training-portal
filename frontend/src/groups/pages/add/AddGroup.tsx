@@ -6,15 +6,18 @@ import {useNavigate} from "react-router-dom";
 import {GroupResponsePrivateDto} from "../../dto/GroupResponsePrivateDto.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
+import {GlobalRole} from "../../../authentication/dto/userInfo/GlobalRole.ts";
+import {useAuthentication} from "../../../authentication/hooks/useAuthentication.ts";
 
 export default function AddGroup() {
+  const authentication = useAuthentication();
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
   const addGroup = async (requestDto: GroupCreateRequestDto) => {
     return await authJsonFetch({
-      path: "groups", method: "POST", body: requestDto
+      path: "admin/groups", method: "POST", body: requestDto
     });
   };
 
@@ -51,6 +54,15 @@ export default function AddGroup() {
       setLoading(false);
     }
   };
+
+  if (!authentication.getRoles()?.includes(GlobalRole.ADMIN)) {
+    navigate(-1);
+    notification.openNotification({
+      type: "error", vertical: "top", horizontal: "center",
+      message: "Access Denied: Insufficient Permissions"
+    });
+    return <></>
+  }
 
   return (loading
       ? <LoadingSpinner/>

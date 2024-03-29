@@ -2,7 +2,7 @@ import React from "react";
 import {Avatar, Button, Card, CardContent, Grid, Stack, Typography} from "@mui/material";
 import {DomainAddOutlined} from "@mui/icons-material";
 import GroupNameInput from "../../../components/GroupNameInput.tsx";
-import GoupDescriptionInput from "../../../components/GoupDescriptionInput.tsx";
+import GroupDescriptionInput from "../../../components/GroupDescriptionInput.tsx";
 
 interface AddGroupFormProps {
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>
@@ -11,10 +11,9 @@ interface AddGroupFormProps {
 export default function AddGroupForm(props: AddGroupFormProps) {
   return (
     <Grid container justifyContent={"center"}>
-      <Grid item xs={10} sm={8} md={7} lg={6}>
+      <Grid item xs={11}>
         <Card sx={{
           paddingTop: 4, textAlign: "center",
-          maxWidth: 800, width: "100%",
           marginLeft: "auto", marginRight: "auto"
         }}>
           <Stack
@@ -36,12 +35,11 @@ export default function AddGroupForm(props: AddGroupFormProps) {
               textAlign: "center",
               gap: "2rem"
             }}>
-              <Grid item xs={10} sm={9} md={7} lg={6}
-                    sx={{borderColor: "secondary.main"}}>
+              <Grid item xs={12} sx={{borderColor: "secondary.main"}}>
                 <form onSubmit={props.onSubmit}>
                   <Stack spacing={2}>
                     <GroupNameInput/>
-                    <GoupDescriptionInput/>
+                    <GroupDescriptionInput/>
                     <Button type={"submit"}
                             variant={"contained"}>
                       Add Group

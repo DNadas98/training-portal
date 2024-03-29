@@ -1,18 +1,16 @@
 import {GroupResponsePublicDto} from "../../../dto/GroupResponsePublicDto.ts";
 import {
-  Avatar,
   Card,
   CardContent,
   CardHeader,
-  Grid,
-  IconButton,
+  Grid, IconButton,
   Stack,
   TextField
 } from "@mui/material";
 import GroupList from "./GroupList.tsx";
-import {AddOutlined} from "@mui/icons-material";
 import {FormEvent} from "react";
-import {useNavigate} from "react-router-dom";
+import AddIcon from "../../../../common/utils/components/AddIcon.tsx";
+import {Link} from "react-router-dom";
 
 interface GroupBrowserProps {
   groupsWithUserLoading: boolean,
@@ -24,10 +22,10 @@ interface GroupBrowserProps {
   handleViewDashboardClick: (groupId: number) => unknown,
   handleJoinRequestClick: (groupId: number) => Promise<void>
   actionButtonDisabled: boolean;
+  isGlobalAdmin: boolean | undefined;
 }
 
 export default function GroupBrowser(props: GroupBrowserProps) {
-  const navigate = useNavigate();
 
   return (
     <Grid container spacing={2} justifyContent={"center"} alignItems={"top"}>
@@ -36,11 +34,18 @@ export default function GroupBrowser(props: GroupBrowserProps) {
           <Card>
             <CardHeader title={"Your groups"} sx={{textAlign: "center"}}/>
             <CardContent>
+              <Stack spacing={2} direction={"row"}>
+                {props.isGlobalAdmin
+                  ? <IconButton component={Link} to={"/groups/create"}>
+                    <AddIcon/>
+                  </IconButton>
+                  : <></>}
                 <TextField variant={"standard"} type={"search"}
                            label={"Search"}
                            fullWidth
                            onInput={props.handleGroupsWithUserSearch}
                 />
+              </Stack>
             </CardContent>
           </Card>
           <GroupList loading={props.groupsWithUserLoading}

@@ -4,6 +4,8 @@ import {GroupResponsePublicDto} from "../../dto/GroupResponsePublicDto.ts";
 import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {useNavigate} from "react-router-dom";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
+import {useAuthentication} from "../../../authentication/hooks/useAuthentication.ts";
+import {GlobalRole} from "../../../authentication/dto/userInfo/GlobalRole.ts";
 
 export default function Groups() {
   const [groupsWithUserLoading, setGroupsWithUserLoading] = useState<boolean>(true);
@@ -14,6 +16,7 @@ export default function Groups() {
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
   const navigate = useNavigate();
+  const authentication = useAuthentication();
 
   async function loadGroupsWithUser() {
     try {
@@ -130,6 +133,7 @@ export default function Groups() {
                   handleGroupsWithoutUserSearch={handleGroupsWithoutUserSearch}
                   handleViewDashboardClick={loadGroupDashboard}
                   handleJoinRequestClick={sendGroupJoinRequest}
-                  actionButtonDisabled={actionButtonDisabled}/>
+                  actionButtonDisabled={actionButtonDisabled}
+                  isGlobalAdmin={authentication.getRoles()?.includes(GlobalRole.ADMIN)}/>
   )
 }
