@@ -11,12 +11,12 @@ import {
   Typography
 } from "@mui/material";
 import ExpandIcon from "../../../../common/utils/components/ExpandIcon.tsx";
-import {ProjectResponseDetailsDto} from "../../../dto/ProjectResponseDetailsDto.ts";
 import useLocalizedDateTime from "../../../../common/localization/hooks/useLocalizedDateTime.tsx";
+import {ProjectResponsePublicDto} from "../../../dto/ProjectResponsePublicDto.ts";
 
 interface ProjectListProps {
   loading: boolean,
-  projects: ProjectResponseDetailsDto[],
+  projects: ProjectResponsePublicDto[],
   notFoundText: string,
   onActionButtonClick: (projectId: number) => unknown;
   actionButtonDisabled: boolean;

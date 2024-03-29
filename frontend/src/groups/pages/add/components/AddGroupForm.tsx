@@ -3,6 +3,7 @@ import {Avatar, Button, Card, CardContent, Grid, Stack, Typography} from "@mui/m
 import {DomainAddOutlined} from "@mui/icons-material";
 import GroupNameInput from "../../../components/GroupNameInput.tsx";
 import GroupDescriptionInput from "../../../components/GroupDescriptionInput.tsx";
+import RichTextEditorUncontrolled from "../../../../common/richTextEditor/RichTextEditorUncontrolled.tsx";
 
 interface AddGroupFormProps {
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>
@@ -40,6 +41,7 @@ export default function AddGroupForm(props: AddGroupFormProps) {
                   <Stack spacing={2}>
                     <GroupNameInput/>
                     <GroupDescriptionInput/>
+                    <RichTextEditorUncontrolled name={"detailedDescription"}/>
                     <Button type={"submit"}
                             variant={"contained"}>
                       Add Group

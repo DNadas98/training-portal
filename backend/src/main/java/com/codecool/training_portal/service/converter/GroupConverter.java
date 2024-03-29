@@ -25,7 +25,7 @@ public class GroupConverter {
   public GroupResponsePrivateDTO getGroupResponsePrivateDto(UserGroup userGroup) {
     return new GroupResponsePrivateDTO(
       userGroup.getId(), userGroup.getName(),
-      userGroup.getDescription());
+      userGroup.getDescription(),userGroup.getDetailedDescription());
   }
 
   public GroupResponsePublicDTO getGroupResponsePublicDto(UserGroup userGroup) {

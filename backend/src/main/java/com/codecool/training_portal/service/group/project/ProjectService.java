@@ -73,11 +73,20 @@ public class ProjectService {
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
-  public ProjectResponsePrivateDTO getProjectById(Long groupId, Long projectId)
+  public ProjectResponsePrivateDTO getProjectDetailsById(Long groupId, Long projectId)
     throws UnauthorizedException {
     Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
     return projectConverter.getProjectResponsePrivateDto(project);
+  }
+
+  @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
+  public ProjectResponsePublicDTO getProjectById(Long groupId, Long projectId)
+    throws UnauthorizedException {
+    Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
+      () -> new ProjectNotFoundException(projectId));
+    return projectConverter.getProjectResponsePublicDto(project);
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -92,8 +101,9 @@ public class ProjectService {
     Instant projectStartDate = dateTimeService.toStoredDate(createRequestDto.startDate());
     Instant projectDeadline = dateTimeService.toStoredDate(createRequestDto.deadline());
     dateTimeService.validateProjectDates(projectStartDate, projectDeadline);
-
-    Project project = new Project(createRequestDto.name(), createRequestDto.description(),
+    String detailedDescription = createRequestDto.detailedDescription();
+    //TODO: sanitize detailedDescription HTML
+    Project project = new Project(createRequestDto.name(), createRequestDto.description(),detailedDescription,
       projectStartDate, projectDeadline, applicationUser, userGroup);
     projectDao.save(project);
     return projectConverter.getProjectResponsePrivateDto(project);
@@ -121,6 +131,9 @@ public class ProjectService {
 
     project.setName(updateRequestDto.name());
     project.setDescription(updateRequestDto.description());
+    String detailedDescription = updateRequestDto.detailedDescription();
+    //TODO: sanitize detailedDescription HTML
+    project.setDetailedDescription(detailedDescription);
     project.setStartDate(projectStartDate);
     project.setDeadline(projectDeadline);
     Project savedProject = projectDao.save(project);

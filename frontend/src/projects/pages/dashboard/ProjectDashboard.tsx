@@ -10,6 +10,7 @@ import {isValidId} from "../../../common/utils/isValidId.ts";
 import {Button, Card, CardActions, CardContent, CardHeader, Grid, Stack, Typography} from "@mui/material";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 import useLocalizedDateTime from "../../../common/localization/hooks/useLocalizedDateTime.tsx";
+import RichTextDisplay from "../../../common/richTextEditor/RichTextDisplay.tsx";
 
 export default function ProjectDashboard() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -40,7 +41,7 @@ export default function ProjectDashboard() {
         return;
       }
       const response = await authJsonFetch({
-        path: `groups/${groupId}/projects/${projectId}`
+        path: `groups/${groupId}/projects/${projectId}/details`
       });
       if (!response?.status || response.status > 404 || !response?.data) {
         setProjectError(response?.error ?? `Failed to load project`);
@@ -129,9 +130,12 @@ export default function ProjectDashboard() {
       <Grid item xs={10}><Card>
         <CardHeader title={project.name}/>
         <CardContent>
-          <Typography gutterBottom>
-            {project.description}
-          </Typography>
+          <Stack spacing={2}>
+            <RichTextDisplay content={project.detailedDescription}/>
+            <Typography gutterBottom>
+              {project.description}
+            </Typography>
+          </Stack>
           <Typography>
             Start Date: {getLocalizedDateTime(project.startDate)}
           </Typography>

@@ -1,4 +1,4 @@
-import {Box} from "@mui/material";
+import {Grid} from "@mui/material";
 import {RichTextReadOnly} from "mui-tiptap";
 import useExtensions from "./UseExtensions.tsx";
 
@@ -17,8 +17,10 @@ interface CustomRteEditorProps {
 export default function RichTextDisplay(props: CustomRteEditorProps) {
   const extensions = useExtensions({});
   return (
-    <Box>
-      <RichTextReadOnly extensions={extensions} content={props.content}/>
-    </Box>
+    <Grid container padding={1}>
+      <Grid item xs={11}>
+        <RichTextReadOnly extensions={extensions} content={props.content}/>
+      </Grid>
+    </Grid>
   );
 }

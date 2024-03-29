@@ -26,8 +26,15 @@ public class Project {
   @Column(nullable = false)
   private String name;
 
-  @Column(length = 500, nullable = false)
+  @Column(length = 255, nullable = false)
+  @ToString.Exclude
+  @EqualsAndHashCode.Exclude
   private String description;
+
+  @Column(length = 10000, nullable = false)
+  @ToString.Exclude
+  @EqualsAndHashCode.Exclude
+  private String detailedDescription;
 
   @Column(nullable = false)
   private Instant startDate;
@@ -82,10 +89,12 @@ public class Project {
   private List<ApplicationUser> assignedMembers = new ArrayList<>();
 
   public Project(
-    String name, String description, Instant startDate, Instant deadline,
+    String name, String description, String detailedDescription, Instant startDate,
+    Instant deadline,
     ApplicationUser projectCreator, UserGroup userGroup) {
     this.name = name;
     this.description = description;
+    this.detailedDescription = detailedDescription;
     this.startDate = startDate;
     this.deadline = deadline;
     admins.add(projectCreator);

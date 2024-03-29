@@ -8,14 +8,14 @@ import {useAuthentication} from "../../authentication/hooks/useAuthentication.ts
 import {AccountBoxRounded, MenuOutlined} from "@mui/icons-material";
 import {accountMenuItems} from "../../common/menu/accountMenuItems.tsx";
 import {GroupResponsePublicDto} from "../dto/GroupResponsePublicDto.ts";
-import {ProjectResponseDetailsDto} from "../../projects/dto/ProjectResponseDetailsDto.ts";
 import LocaleMenu from "../../common/localization/components/LocaleMenu.tsx";
 import IsSmallScreen from "../../common/utils/IsSmallScreen.tsx";
 import useLocalizedDate from "../../common/localization/hooks/useLocalizedDate.tsx";
+import {ProjectResponsePublicDto} from "../../projects/dto/ProjectResponsePublicDto.ts";
 
 interface GroupHeaderProps {
   group: undefined | GroupResponsePublicDto,
-  project: ProjectResponseDetailsDto | undefined
+  project: ProjectResponsePublicDto | undefined
 }
 
 export default function GroupHeader(props: GroupHeaderProps) {

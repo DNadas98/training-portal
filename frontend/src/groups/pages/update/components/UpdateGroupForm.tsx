@@ -2,8 +2,9 @@ import React from "react";
 import {Avatar, Button, Card, CardContent, Grid, Stack, Typography} from "@mui/material";
 import {DomainOutlined} from "@mui/icons-material";
 import GroupNameInput from "../../../components/GroupNameInput.tsx";
-import GroupDescriptionInput from "../../../components/GroupDescriptionInput.tsx";
 import {GroupResponsePrivateDto} from "../../../dto/GroupResponsePrivateDto.ts";
+import GroupDescriptionInput from "../../../components/GroupDescriptionInput.tsx";
+import RichTextEditorUncontrolled from "../../../../common/richTextEditor/RichTextEditorUncontrolled.tsx";
 
 interface UpdateGroupFormProps {
   group: GroupResponsePrivateDto;
@@ -42,6 +43,8 @@ export default function UpdateGroupForm(props: UpdateGroupFormProps) {
                   <Stack spacing={2}>
                     <GroupNameInput name={props.group.name}/>
                     <GroupDescriptionInput description={props.group.description}/>
+                    <RichTextEditorUncontrolled name={"detailedDescription"}
+                                                defaultValue={props.group.detailedDescription}/>
                     <Button type={"submit"}
                             variant={"contained"}>
                       Update group details

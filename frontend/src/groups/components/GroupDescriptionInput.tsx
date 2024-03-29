@@ -1,6 +1,4 @@
-import {Grid} from "@mui/material";
-import RichTextEditorUncontrolled from "../../common/richTextEditor/RichTextEditorUncontrolled.tsx";
-
+import {TextField} from "@mui/material";
 
 interface GroupDescriptionInputProps {
   description?: string;
@@ -8,10 +6,8 @@ interface GroupDescriptionInputProps {
 
 export default function GroupDescriptionInput(props: GroupDescriptionInputProps) {
   return (
-    <Grid container alignItems={"left"} justifyContent={"left"} textAlign={"left"}>
-      <Grid item xs={12}>
-        <RichTextEditorUncontrolled name={"description"} defaultValue={props.description}/>
-      </Grid>
-    </Grid>
+    <TextField name={"description"} defaultValue={props.description ?? ""}
+               placeholder={"Short Description, max 255 characters"}
+               multiline inputProps={{minLength: 1, maxLength: 255}} minRows={1}/>
   )
 }

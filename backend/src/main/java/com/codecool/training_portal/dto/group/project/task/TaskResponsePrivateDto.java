@@ -11,7 +11,7 @@ public record TaskResponsePrivateDto(
   @NotNull @Min(1) Long projectId,
   @NotNull @Min(1) Long taskId,
   @NotNull @Length(min = 1, max = 50) String name,
-  @NotNull @Length(min = 1, max = 500) String description,
+  @NotNull @Length(min = 1, max = 255) String description,
   @NotNull Importance importance,
   @NotNull @Min(1) @Max(5) Integer difficulty,
   @NotNull String startDate,

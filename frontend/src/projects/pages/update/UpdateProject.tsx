@@ -42,7 +42,7 @@ export default function UpdateProject() {
         return
       }
       const response = await authJsonFetch({
-        path: `groups/${groupId}/projects/${projectId}`
+        path: `groups/${groupId}/projects/${projectId}/details`
       });
       if (!response?.status || response.status > 404 || !response?.data) {
         return handleError(response?.error);
@@ -81,14 +81,12 @@ export default function UpdateProject() {
       const formData = new FormData(event.currentTarget);
       const name = formData.get('name') as string;
       const description = formData.get('description') as string;
+      const detailedDescription = formData.get('detailedDescription') as string;
       const startDate = new Date(formData.get("startDate") as string).toISOString();
       const deadline = new Date(formData.get("deadline") as string).toISOString();
 
       const requestDto: ProjectUpdateRequestDto = {
-        name,
-        description,
-        startDate,
-        deadline
+        name, description, detailedDescription, startDate, deadline
       };
       const response = await updateProject(requestDto);
 
@@ -119,6 +117,7 @@ export default function UpdateProject() {
   return <UpdateProjectForm onSubmit={handleSubmit}
                             name={project.name}
                             description={project.description}
+                            detailedDescription={project.detailedDescription}
                             startDate={project.startDate}
                             deadline={project.deadline}/>
 }

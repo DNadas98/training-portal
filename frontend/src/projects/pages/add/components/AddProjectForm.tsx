@@ -5,6 +5,7 @@ import ProjectNameInput from "../../../components/ProjectNameInput.tsx";
 import ProjectDescriptionInput from "../../../components/ProjectDescriptionInput.tsx";
 import StartDateInput from "../../../../common/utils/components/StartDateInput.tsx";
 import DeadlineInput from "../../../../common/utils/components/DeadlineInput.tsx";
+import RichTextEditorUncontrolled from "../../../../common/richTextEditor/RichTextEditorUncontrolled.tsx";
 
 interface AddGroupFormProps {
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>
@@ -13,10 +14,9 @@ interface AddGroupFormProps {
 export default function AddProjectForm(props: AddGroupFormProps) {
   return (
     <Grid container justifyContent={"center"}>
-      <Grid item xs={10} sm={8} md={7} lg={6}>
+      <Grid item xs={11}>
         <Card sx={{
           paddingTop: 4, textAlign: "center",
-          maxWidth: 800, width: "100%",
           marginLeft: "auto", marginRight: "auto"
         }}>
           <Stack
@@ -38,12 +38,13 @@ export default function AddProjectForm(props: AddGroupFormProps) {
               textAlign: "center",
               gap: "2rem"
             }}>
-              <Grid item xs={10} sm={9} md={7} lg={6}
+              <Grid item xs={12}
                     sx={{borderColor: "secondary.main"}}>
                 <form onSubmit={props.onSubmit}>
                   <Stack spacing={2}>
                     <ProjectNameInput/>
                     <ProjectDescriptionInput/>
+                    <RichTextEditorUncontrolled name={"detailedDescription"}/>
                     <StartDateInput/>
                     <DeadlineInput/>
                     <Button type={"submit"}

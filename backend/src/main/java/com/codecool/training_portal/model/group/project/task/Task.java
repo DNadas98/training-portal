@@ -19,14 +19,22 @@ public class Task {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+  @Column(nullable = false)
   private String name;
 
-  @Column(length = 500)
+  @Column(length = 255, nullable = false)
   private String description;
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
   private Importance importance;
+  @Column(nullable = false)
   private Integer difficulty;
+  @Column(nullable = false)
   private Instant startDate;
+  @Column(nullable = false)
   private Instant deadline;
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
   private TaskStatus taskStatus;
 
   @ManyToOne

@@ -41,7 +41,7 @@ export default function UpdateGroup() {
         return
       }
       const response = await authJsonFetch({
-        path: `groups/${groupId}`
+        path: `groups/${groupId}/details`
       });
       if (!response?.status || response.status > 404 || !response?.data) {
         return handleError(response?.error);
@@ -73,8 +73,13 @@ export default function UpdateGroup() {
       const formData = new FormData(event.currentTarget);
       const name = formData.get('name') as string;
       const description = formData.get('description') as string;
+      const detailedDescription = formData.get('detailedDescription') as string;
+      if (!detailedDescription?.length || detailedDescription.length > 10000) {
+        handleError("Detailed description must be shorter than 10000 characters");
+        return;
+      }
 
-      const requestDto: GroupUpdateRequestDto = {name, description};
+      const requestDto: GroupUpdateRequestDto = {name, description, detailedDescription};
       const response = await updateGroup(requestDto);
 
       if (!response || response.error || response?.status > 399 || !response.message || !response.data) {

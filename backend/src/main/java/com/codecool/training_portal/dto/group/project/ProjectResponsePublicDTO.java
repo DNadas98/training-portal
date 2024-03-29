@@ -8,7 +8,7 @@ public record ProjectResponsePublicDTO(
   @NotNull @Min(1) Long groupId,
   @NotNull @Min(1) Long projectId,
   @NotNull @Length(min = 1, max = 50) String name,
-  @NotNull @Length(min = 1, max = 500) String description,
+  @NotNull @Length(min = 1, max = 255) String description,
   @NotNull String startDate,
   @NotNull String deadline) {
 }

@@ -23,8 +23,15 @@ public class UserGroup {
   @Column(unique = true)
   private String name;
 
-  @Column(length = 500)
+  @Column(length = 255, nullable = false)
+  @ToString.Exclude
+  @EqualsAndHashCode.Exclude
   private String description;
+
+  @Column(length = 10000, nullable = false)
+  @ToString.Exclude
+  @EqualsAndHashCode.Exclude
+  private String detailedDescription;
 
   @OneToMany(mappedBy = "userGroup", orphanRemoval = true, cascade = CascadeType.REMOVE)
   @EqualsAndHashCode.Exclude
@@ -62,9 +69,11 @@ public class UserGroup {
   @OrderBy("username ASC")
   private List<ApplicationUser> members;
 
-  public UserGroup(String name, String description, ApplicationUser groupCreator) {
+  public UserGroup(
+    String name, String description, String detailedDescription, ApplicationUser groupCreator) {
     this.name = name;
     this.description = description;
+    this.detailedDescription = detailedDescription;
     this.admins = new ArrayList<>();
     this.editors = new ArrayList<>();
     this.members = new ArrayList<>();

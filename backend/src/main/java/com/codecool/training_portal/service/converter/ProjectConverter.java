@@ -28,7 +28,7 @@ public class ProjectConverter {
 
   public ProjectResponsePrivateDTO getProjectResponsePrivateDto(Project project) {
     return new ProjectResponsePrivateDTO(project.getUserGroup().getId(), project.getId(),
-      project.getName(), project.getDescription(),
+      project.getName(), project.getDescription(),project.getDetailedDescription(),
       dateTimeService.toDisplayedDate(project.getStartDate()),
       dateTimeService.toDisplayedDate(project.getDeadline()),
       taskConverter.getTaskResponsePublicDtos(project.getTasks().stream().toList()));

@@ -37,8 +37,13 @@ export default function AddGroup() {
       const formData = new FormData(event.currentTarget);
       const name = formData.get('name') as string;
       const description = formData.get('description') as string;
+      const detailedDescription = formData.get('detailedDescription') as string;
+      if (!detailedDescription?.length || detailedDescription.length > 10000) {
+        handleError("Detailed description must be shorter than 10000 characters");
+        return;
+      }
 
-      const requestDto: GroupCreateRequestDto = {name, description};
+      const requestDto: GroupCreateRequestDto = {name, description, detailedDescription};
       const response = await addGroup(requestDto);
 
       if (!response || response.error || response?.status > 399 || !response.message || !response.data) {

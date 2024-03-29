@@ -64,11 +64,20 @@ public class GroupService {
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_MEMBER')")
-  public GroupResponsePrivateDTO getGroupById(Long groupId)
+  public GroupResponsePrivateDTO getGroupDetailsById(Long groupId)
     throws GroupNotFoundException, UnauthorizedException {
     UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
       () -> new GroupNotFoundException(groupId));
     return groupConverter.getGroupResponsePrivateDto(userGroup);
+  }
+
+  @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_MEMBER')")
+  public GroupResponsePublicDTO getGroupById(Long groupId)
+    throws GroupNotFoundException, UnauthorizedException {
+    UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
+      () -> new GroupNotFoundException(groupId));
+    return groupConverter.getGroupResponsePublicDto(userGroup);
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -76,8 +85,10 @@ public class GroupService {
   public GroupResponsePrivateDTO createGroup(
     GroupCreateRequestDto createRequestDto) throws ConstraintViolationException {
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
+    String detailedDescription = createRequestDto.detailedDescription();
+    //TODO: sanitize detailedDescription HTML
     UserGroup userGroup = new UserGroup(
-      createRequestDto.name(), createRequestDto.description(), applicationUser);
+      createRequestDto.name(), createRequestDto.description(),detailedDescription, applicationUser);
     userGroup.addMember(applicationUser);
     userGroupDao.save(userGroup);
     return groupConverter.getGroupResponsePrivateDto(userGroup);
@@ -91,6 +102,9 @@ public class GroupService {
       () -> new GroupNotFoundException(groupId));
     userGroup.setName(updateRequestDto.name());
     userGroup.setDescription(updateRequestDto.description());
+    String detailedDescription = updateRequestDto.detailedDescription();
+    //TODO: sanitize detailedDescription HTML
+    userGroup.setDetailedDescription(detailedDescription);
     UserGroup updatedUserGroup = userGroupDao.save(userGroup);
     return groupConverter.getGroupResponsePrivateDto(updatedUserGroup);
   }

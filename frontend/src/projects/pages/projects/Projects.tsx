@@ -4,16 +4,16 @@ import {useNotification} from "../../../common/notification/context/Notification
 import {useNavigate, useParams} from "react-router-dom";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
-import {ProjectResponseDetailsDto} from "../../dto/ProjectResponseDetailsDto.ts";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
+import {ProjectResponsePublicDto} from "../../dto/ProjectResponsePublicDto.ts";
 
 export default function Projects() {
   const {loading: permissionsLoading, groupPermissions} = usePermissions();
   const groupId = useParams()?.groupId;
   const [projectsWithUserLoading, setProjectsWithUserLoading] = useState<boolean>(true);
-  const [projectsWithUser, setProjectsWithUser] = useState<ProjectResponseDetailsDto[]>([]);
+  const [projectsWithUser, setProjectsWithUser] = useState<ProjectResponsePublicDto[]>([]);
   const [projectsWithoutUserLoading, setProjectsWithoutUserLoading] = useState<boolean>(true);
-  const [projectsWithoutUser, setProjectsWithoutUser] = useState<ProjectResponseDetailsDto[]>([]);
+  const [projectsWithoutUser, setProjectsWithoutUser] = useState<ProjectResponsePublicDto[]>([]);
 
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
@@ -39,7 +39,7 @@ export default function Projects() {
           deadline: new Date(project.deadline)
         }
       });
-      setProjectsWithUser(projectData as ProjectResponseDetailsDto[]);
+      setProjectsWithUser(projectData as ProjectResponsePublicDto[]);
     } catch (e) {
       setProjectsWithUser([]);
     } finally {
@@ -67,7 +67,7 @@ export default function Projects() {
           deadline: new Date(project.deadline)
         }
       });
-      setProjectsWithoutUser(projectData as ProjectResponseDetailsDto[]);
+      setProjectsWithoutUser(projectData as ProjectResponsePublicDto[]);
     } catch (e) {
       setProjectsWithoutUser([]);
     } finally {

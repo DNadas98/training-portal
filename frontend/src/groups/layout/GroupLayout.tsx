@@ -5,14 +5,14 @@ import {GroupResponsePublicDto} from "../dto/GroupResponsePublicDto.ts";
 import GroupHeader from "./GroupHeader.tsx";
 import UserFooter from "../../user/layout/UserFooter.tsx";
 import {isValidId} from "../../common/utils/isValidId.ts";
-import {ProjectResponseDetailsDto} from "../../projects/dto/ProjectResponseDetailsDto.ts";
 import useAuthJsonFetch from "../../common/api/hooks/useAuthJsonFetch.tsx";
+import {ProjectResponsePublicDto} from "../../projects/dto/ProjectResponsePublicDto.ts";
 
 export default function GroupLayout() {
   const groupId = useParams()?.groupId;
   const [group, setGroup] = useState<GroupResponsePublicDto | undefined>(undefined);
   const projectId = useParams()?.projectId;
-  const [project, setProject] = useState<ProjectResponseDetailsDto | undefined>(undefined);
+  const [project, setProject] = useState<ProjectResponsePublicDto | undefined>(undefined);
   const authJsonFetch = useAuthJsonFetch();
 
   async function loadGroup() {
@@ -44,7 +44,7 @@ export default function GroupLayout() {
         startDate: new Date(response.data.startDate),
         deadline: new Date(response.data.deadline)
       };
-      setProject((projectData as ProjectResponseDetailsDto));
+      setProject((projectData as ProjectResponsePublicDto));
     } catch (e) {
       setProject(undefined);
     }
