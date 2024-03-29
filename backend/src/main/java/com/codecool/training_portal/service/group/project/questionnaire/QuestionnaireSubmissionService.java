@@ -1,9 +1,6 @@
 package com.codecool.training_portal.service.group.project.questionnaire;
 
-import com.codecool.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionRequestDto;
-import com.codecool.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionResponseDto;
-import com.codecool.training_portal.dto.group.project.questionnaire.SubmittedAnswerRequestDto;
-import com.codecool.training_portal.dto.group.project.questionnaire.SubmittedQuestionRequestDto;
+import com.codecool.training_portal.dto.group.project.questionnaire.*;
 import com.codecool.training_portal.exception.group.project.questionnaire.QuestionnaireNotFoundException;
 import com.codecool.training_portal.exception.group.project.questionnaire.QuestionnaireSubmissionFailedException;
 import com.codecool.training_portal.exception.group.project.questionnaire.QuestionnaireSubmissionNotFoundException;
@@ -97,7 +94,8 @@ public class QuestionnaireSubmissionService {
     }
 
     List<Question> questions = questionnaire.getQuestions();
-    QuestionnaireSubmission submission = new QuestionnaireSubmission(questionnaire, user);
+    QuestionnaireSubmission submission = new QuestionnaireSubmission(questionnaire, user,
+      questionnaire.getStatus());
     questionnaireSubmissionDao.save(submission);
 
     QuestionnaireSubmission savedSubmission = processQuestionnaireSubmission(
@@ -207,18 +205,19 @@ public class QuestionnaireSubmissionService {
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
-  public List<QuestionnaireSubmissionResponseDto> getOwnQuestionnaireSubmissionsAsEditor(
+  public List<QuestionnaireSubmissionResponseEditorDto> getOwnQuestionnaireSubmissionsAsEditor(
     Long groupId, Long projectId, Long questionnaireId) {
     ApplicationUser user = userProvider.getAuthenticatedUser();
     List<QuestionnaireSubmission> questionnaireSubmissions;
     questionnaireSubmissions =
       questionnaireSubmissionDao.findAllByGroupIdAndProjectIdAndQuestionnaireIdAndUser(
         groupId, projectId, questionnaireId, user);
-    List<QuestionnaireSubmissionResponseDto> questionnaireSubmissionResponseDtos =
+    List<QuestionnaireSubmissionResponseEditorDto> responseDtos =
       questionnaireSubmissions.stream().map(
-        questionnaireSubmission -> questionnaireSubmissionConverter.toQuestionnaireSubmissionResponseDto(
+        questionnaireSubmission -> questionnaireSubmissionConverter
+          .toQuestionnaireSubmissionResponseEditorDto(
           questionnaireSubmission, questionnaireSubmission.getQuestionnaire())).toList();
-    return questionnaireSubmissionResponseDtos;
+    return responseDtos;
   }
 
 

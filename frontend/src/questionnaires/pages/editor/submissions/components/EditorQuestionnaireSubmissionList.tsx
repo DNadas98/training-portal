@@ -1,10 +1,10 @@
 import {Button, Card, CardActions, CardContent, Typography} from "@mui/material";
-import {QuestionnaireSubmissionResponseDto} from "../../../../dto/QuestionnaireSubmissionResponseDto.ts";
 import UserQuestionnaireSubmissionCard from "../../../user/submissions/components/UserQuestionnaireSubmissionCard.tsx";
+import {QuestionnaireSubmissionResponseEditorDto} from "../../../../dto/QuestionnaireSubmissionResponseEditorDto.ts";
 
 interface EditorQuestionnaireSubmissionListProps {
   maxPoints: boolean,
-  questionnaireSubmissions: QuestionnaireSubmissionResponseDto[],
+  questionnaireSubmissions: QuestionnaireSubmissionResponseEditorDto[],
   onDeleteClick: (submissionId: number) => void;
 }
 

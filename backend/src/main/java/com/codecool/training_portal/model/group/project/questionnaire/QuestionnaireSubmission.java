@@ -29,6 +29,10 @@ public class QuestionnaireSubmission {
   @Min(0)
   private Integer receivedPoints = 0;
 
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private QuestionnaireStatus status;
+
   @CreationTimestamp
   private Instant createdAt;
 
@@ -49,8 +53,9 @@ public class QuestionnaireSubmission {
   private List<SubmittedQuestion> submittedQuestions = new ArrayList<>();
 
   public QuestionnaireSubmission(
-    Questionnaire questionnaire, ApplicationUser user) {
+    Questionnaire questionnaire, ApplicationUser user, QuestionnaireStatus status) {
     this.questionnaire = questionnaire;
     this.user = user;
+    this.status = status;
   }
 }

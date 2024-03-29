@@ -1,6 +1,7 @@
 package com.codecool.training_portal.service.converter;
 
 import com.codecool.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionResponseDto;
+import com.codecool.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionResponseEditorDto;
 import com.codecool.training_portal.dto.group.project.questionnaire.SubmittedAnswerResponseDto;
 import com.codecool.training_portal.dto.group.project.questionnaire.SubmittedQuestionResponseDto;
 import com.codecool.training_portal.model.group.project.questionnaire.Questionnaire;
@@ -33,5 +34,25 @@ public class QuestionnaireSubmissionConverter {
       ).collect(Collectors.toList()), questionnaireSubmission.getReceivedPoints(),
       questionnaireSubmission.getMaxPoints(),
       dateTimeService.toDisplayedDate(questionnaireSubmission.getCreatedAt()));
+  }
+
+  public QuestionnaireSubmissionResponseEditorDto toQuestionnaireSubmissionResponseEditorDto(
+    QuestionnaireSubmission questionnaireSubmission, Questionnaire questionnaire) {
+    return new QuestionnaireSubmissionResponseEditorDto(questionnaireSubmission.getId(),
+      questionnaire.getName(), questionnaire.getDescription(),
+      questionnaireSubmission.getSubmittedQuestions().stream().map(
+        submittedQuestion -> new SubmittedQuestionResponseDto(submittedQuestion.getId(),
+          submittedQuestion.getText(), submittedQuestion.getType(),
+          submittedQuestion.getReceivedPoints(), submittedQuestion.getMaxPoints(),
+          submittedQuestion.getQuestionOrder(),
+          submittedQuestion.getSubmittedAnswers().stream().map(
+            submittedAnswer -> new SubmittedAnswerResponseDto(submittedAnswer.getId(),
+              submittedAnswer.getText(), submittedAnswer.getAnswerOrder(),
+              submittedAnswer.getStatus())
+          ).collect(Collectors.toList()))
+      ).collect(Collectors.toList()), questionnaireSubmission.getReceivedPoints(),
+      questionnaireSubmission.getMaxPoints(),
+      dateTimeService.toDisplayedDate(questionnaireSubmission.getCreatedAt()),
+      questionnaireSubmission.getStatus());
   }
 }

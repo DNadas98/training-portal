@@ -15,11 +15,11 @@ import {
 import ExpandIcon from "../../../../../common/utils/components/ExpandIcon.tsx";
 import {SubmittedAnswerStatus} from "../../../../dto/SubmittedAnswerStatus.ts";
 import {QuestionType} from "../../../../dto/QuestionType.ts";
-import {QuestionnaireSubmissionResponseDto} from "../../../../dto/QuestionnaireSubmissionResponseDto.ts";
 import useLocalizedDateTime from "../../../../../common/localization/hooks/useLocalizedDateTime.tsx";
+import {QuestionnaireSubmissionResponseEditorDto} from "../../../../dto/QuestionnaireSubmissionResponseEditorDto.ts";
 
 interface UserQuestionnaireSubmissionCardProps {
-  submission: QuestionnaireSubmissionResponseDto;
+  submission: QuestionnaireSubmissionResponseEditorDto;
 }
 
 export default function UserQuestionnaireSubmissionCard(props: UserQuestionnaireSubmissionCardProps) {
@@ -40,6 +40,12 @@ export default function UserQuestionnaireSubmissionCard(props: UserQuestionnaire
         paddingRight: 1
       }}>
         {props.submission.name}
+      </Typography>
+      <Typography variant={"body2"} sx={{
+        wordBreak: "break-word",
+        paddingRight: 1
+      }}>
+        Submitted Status: {props.submission.status}
       </Typography>
     </Stack> </AccordionSummary>
     <AccordionDetails>

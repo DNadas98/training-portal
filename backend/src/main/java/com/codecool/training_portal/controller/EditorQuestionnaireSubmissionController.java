@@ -2,6 +2,7 @@ package com.codecool.training_portal.controller;
 
 import com.codecool.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionRequestDto;
 import com.codecool.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionResponseDto;
+import com.codecool.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionResponseEditorDto;
 import com.codecool.training_portal.service.group.project.questionnaire.QuestionnaireSubmissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -25,7 +26,7 @@ public class EditorQuestionnaireSubmissionController {
   @GetMapping
   public ResponseEntity<?> getAllQuestionnaireSubmissions(
     @PathVariable Long groupId, @PathVariable Long projectId, @PathVariable Long questionnaireId) {
-    List<QuestionnaireSubmissionResponseDto> submissions = questionnaireSubmissionService
+    List<QuestionnaireSubmissionResponseEditorDto> submissions = questionnaireSubmissionService
       .getOwnQuestionnaireSubmissionsAsEditor(
         groupId, projectId, questionnaireId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", submissions));

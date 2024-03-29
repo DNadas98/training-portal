@@ -4,17 +4,17 @@ import usePermissions from "../../../../authentication/hooks/usePermissions.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {useNotification} from "../../../../common/notification/context/NotificationProvider.tsx";
 import {isValidId} from "../../../../common/utils/isValidId.ts";
-import {QuestionnaireSubmissionResponseDto} from "../../../dto/QuestionnaireSubmissionResponseDto.ts";
 import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
 import {Card, CardContent, CardHeader, Grid, Stack, TextField} from "@mui/material";
 import EditorQuestionnaireSubmissionList from "./components/EditorQuestionnaireSubmissionList.tsx";
 import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
 import useAuthJsonFetch from "../../../../common/api/hooks/useAuthJsonFetch.tsx";
+import {QuestionnaireSubmissionResponseEditorDto} from "../../../dto/QuestionnaireSubmissionResponseEditorDto.ts";
 
 export default function EditorQuestionnaireSubmissions() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
   const [questionnaireSubmissionsLoading, setQuestionnaireSubmissionsLoading] = useState<boolean>(true);
-  const [questionnaireSubmissions, setQuestionnaireSubmissions] = useState<QuestionnaireSubmissionResponseDto[]>([]);
+  const [questionnaireSubmissions, setQuestionnaireSubmissions] = useState<QuestionnaireSubmissionResponseEditorDto[]>([]);
   const authJsonFetch = useAuthJsonFetch();
   const navigate = useNavigate();
   const notification = useNotification();
@@ -42,7 +42,7 @@ export default function EditorQuestionnaireSubmissions() {
         setQuestionnaireSubmissions([]);
         return;
       }
-      setQuestionnaireSubmissions(response.data as QuestionnaireSubmissionResponseDto[]);
+      setQuestionnaireSubmissions(response.data as QuestionnaireSubmissionResponseEditorDto[]);
     } catch (e) {
       setQuestionnaireSubmissions([]);
     } finally {
