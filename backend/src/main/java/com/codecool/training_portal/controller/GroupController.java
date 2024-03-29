@@ -35,11 +35,17 @@ public class GroupController {
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", groups));
     }
 
-    @GetMapping("/{groupId}")
-    public ResponseEntity<?> getGroupById(@PathVariable @Min(1) Long groupId) {
-        GroupResponsePrivateDTO group = groupService.getGroupById(groupId);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", group));
-    }
+  @GetMapping("/{groupId}/details")
+  public ResponseEntity<?> getGroupDetailsById(@PathVariable @Min(1) Long groupId) {
+    GroupResponsePrivateDTO group = groupService.getGroupDetailsById(groupId);
+    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", group));
+  }
+
+  @GetMapping("/{groupId}")
+  public ResponseEntity<?> getGroupById(@PathVariable @Min(1) Long groupId) {
+    GroupResponsePublicDTO group = groupService.getGroupById(groupId);
+    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", group));
+  }
 
     @PutMapping("/{groupId}")
     public ResponseEntity<?> updateGroup(

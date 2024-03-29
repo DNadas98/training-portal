@@ -37,12 +37,19 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", projects));
     }
 
-    @GetMapping("/{projectId}")
-    public ResponseEntity<?> getProjectById(@PathVariable @Min(1) Long groupId, @PathVariable @Min(
-            1) Long projectId) {
-        ProjectResponsePrivateDTO project = projectService.getProjectById(groupId, projectId);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", project));
-    }
+  @GetMapping("/{projectId}/details")
+  public ResponseEntity<?> getProjectDetailsById(@PathVariable @Min(1) Long groupId, @PathVariable @Min(
+    1) Long projectId) {
+    ProjectResponsePrivateDTO project = projectService.getProjectDetailsById(groupId, projectId);
+    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", project));
+  }
+
+  @GetMapping("/{projectId}")
+  public ResponseEntity<?> getProjectById(@PathVariable @Min(1) Long groupId, @PathVariable @Min(
+    1) Long projectId) {
+    ProjectResponsePublicDTO project = projectService.getProjectById(groupId, projectId);
+    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", project));
+  }
 
     @PostMapping
     public ResponseEntity<?> createProject(@PathVariable @Min(
