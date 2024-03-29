@@ -132,9 +132,7 @@ export default function ProjectDashboard() {
         <CardContent>
           <Stack spacing={2}>
             <RichTextDisplay content={project.detailedDescription}/>
-            <Typography gutterBottom>
-              {project.description}
-            </Typography>
+            {/*<Typography gutterBottom>{project.description}</Typography>*/}
           </Stack>
           <Typography>
             Start Date: {getLocalizedDateTime(project.startDate)}

@@ -6,7 +6,7 @@ import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx"
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import {PermissionType} from "../../../authentication/dto/PermissionType.ts";
 import {isValidId} from "../../../common/utils/isValidId.ts";
-import {Button, Card, CardActions, CardContent, CardHeader, Grid, Stack, Typography} from "@mui/material";
+import {Button, Card, CardActions, CardContent, CardHeader, Grid, Stack} from "@mui/material";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 import {useAuthentication} from "../../../authentication/hooks/useAuthentication.ts";
 import {GlobalRole} from "../../../authentication/dto/userInfo/GlobalRole.ts";
@@ -117,7 +117,7 @@ export default function GroupDashboard() {
         <CardHeader title={group.name}/>
         <CardContent>
           <Stack spacing={2}>
-            <Typography>{group.description}</Typography>
+            {/*<Typography>{group.description}</Typography>*/}
             <RichTextDisplay content={group.detailedDescription}/>
           </Stack>
         </CardContent>
