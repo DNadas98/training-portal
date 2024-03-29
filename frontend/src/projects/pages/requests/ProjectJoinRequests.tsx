@@ -167,9 +167,9 @@ export default function ProjectJoinRequests() {
         } </CardContent>
       <CardActions>
         <Button onClick={() => {
-          navigate(`/groups/${groupId}/projects/${projectId}`)
+          navigate(`/groups/${groupId}/projects/${projectId}/admin`)
         }}>
-          Back To Dashboard
+          Back To Admin Dashboard
         </Button>
       </CardActions>
     </Card>

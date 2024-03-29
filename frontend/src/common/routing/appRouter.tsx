@@ -38,6 +38,7 @@ import EmailChangeVerificationRedirect from "../../authentication/pages/redirect
 import PasswordReset from "../../authentication/pages/passwordReset/PasswordReset.tsx";
 import PasswordResetVerificationRedirect
   from "../../authentication/pages/redirect/PasswordResetVerificationRedirect.tsx";
+import ProjectAdminDashboard from "../../projects/pages/adminDashboard/ProjectAdminDashboard.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -119,6 +120,9 @@ const appRouter = createBrowserRouter([
           },
           {
             path: ":groupId/projects/:projectId", element: <ProjectDashboard/>
+          },
+          {
+            path: ":groupId/projects/:projectId/admin", element: <ProjectAdminDashboard/>
           },
           {
             path: ":groupId/projects/:projectId/update", element: <UpdateProject/>

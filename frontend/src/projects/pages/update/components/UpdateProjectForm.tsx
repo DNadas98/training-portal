@@ -19,10 +19,9 @@ interface UpdateProjectFormProps {
 export default function UpdateProjectForm(props: UpdateProjectFormProps) {
   return (
     <Grid container justifyContent={"center"}>
-      <Grid item xs={10} sm={8} md={7} lg={6}>
+      <Grid item xs={11}>
         <Card sx={{
           paddingTop: 4, textAlign: "center",
-          maxWidth: 800, width: "100%",
           marginLeft: "auto", marginRight: "auto"
         }}>
           <Stack
@@ -44,7 +43,7 @@ export default function UpdateProjectForm(props: UpdateProjectFormProps) {
               textAlign: "center",
               gap: "2rem"
             }}>
-              <Grid item xs={10} sm={9} md={7} lg={6}
+              <Grid item xs={12}
                     sx={{borderColor: "secondary.main"}}>
                 <form onSubmit={props.onSubmit}>
                   <Stack spacing={2}>
