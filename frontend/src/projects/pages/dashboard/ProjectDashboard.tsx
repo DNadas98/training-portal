@@ -146,7 +146,7 @@ export default function ProjectDashboard() {
             View active questionnaires
           </Button>
           <Button sx={{width: "fit-content"}} onClick={() => navigate(`/groups/${groupId}/projects`)}>
-            Back to company
+            Back to project
           </Button>
         </Stack></CardActions>
       </Card> </Grid>
