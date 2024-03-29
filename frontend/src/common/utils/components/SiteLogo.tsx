@@ -1,6 +1,7 @@
-import {Button, IconButton, Link} from "@mui/material";
+import {Button, IconButton} from "@mui/material";
 import siteConfig from "../../config/siteConfig.ts";
 import IsSmallScreen from "../IsSmallScreen.tsx";
+import {Link} from "react-router-dom";
 
 export default function SiteLogo() {
   const {siteName} = siteConfig;
@@ -8,13 +9,13 @@ export default function SiteLogo() {
 
   return (
     isSmallScreen
-      ? <IconButton>
+      ? <IconButton component={Link} to={"/"}>
         <img src={"/logo.png"} width={30} height={30} alt={""}
              style={{borderRadius: "15%"}}/>
       </IconButton>
       : <Button
         component={Link}
-        href={"/"}
+        to={"/"}
         fullWidth={false}
         sx={{
           maxWidth: "fit-content",
