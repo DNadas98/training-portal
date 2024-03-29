@@ -5,7 +5,8 @@ import {
   CardHeader,
   Grid, IconButton,
   Stack,
-  TextField
+  TextField,
+  Tooltip
 } from "@mui/material";
 import GroupList from "./GroupList.tsx";
 import {FormEvent} from "react";
@@ -36,9 +37,11 @@ export default function GroupBrowser(props: GroupBrowserProps) {
             <CardContent>
               <Stack spacing={2} direction={"row"}>
                 {props.isGlobalAdmin
-                  ? <IconButton component={Link} to={"/groups/create"}>
-                    <AddIcon/>
-                  </IconButton>
+                  ? <Tooltip title={"Add new group"} arrow>
+                    <IconButton component={Link} to={"/groups/create"}>
+                      <AddIcon/>
+                    </IconButton>
+                  </Tooltip>
                   : <></>}
                 <TextField variant={"standard"} type={"search"}
                            label={"Search"}
