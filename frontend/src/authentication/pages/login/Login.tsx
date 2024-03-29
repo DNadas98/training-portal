@@ -30,7 +30,7 @@ export default function Login() {
 
   const handleSuccess = (data: AuthenticationDto) => {
     authentication.authenticate(data);
-    navigate("/user");
+    navigate("/groups");
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
