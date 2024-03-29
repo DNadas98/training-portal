@@ -7,10 +7,13 @@ import {
   Button,
   Card,
   CardContent,
+  Stack,
   Typography
 } from "@mui/material";
 import {GroupResponsePublicDto} from "../../../dto/GroupResponsePublicDto.ts";
 import ExpandIcon from "../../../../common/utils/components/ExpandIcon.tsx";
+import {Link} from "react-router-dom";
+import ForwardIcon from "../../../../common/utils/components/ForwardIcon.tsx";
 
 interface GroupListProps {
   loading: boolean,
@@ -32,12 +35,20 @@ export default function GroupList(props: GroupListProps) {
                      variant={"elevation"}
                      sx={{paddingTop: 0.5, paddingBottom: 0.5}}>
             <AccordionSummary expandIcon={<ExpandIcon/>}>
-              <Typography variant={"h6"} sx={{
-                wordBreak: "break-word",
-                paddingRight: 1
-              }}>
-                {group.name}
-              </Typography>
+              <Button component={Link} to={`/groups/${group.groupId}`}
+                      sx={{textTransform: "none"}}>
+                <Stack direction={"row"} alignItems={"center"} spacing={1}>
+                  <ForwardIcon/>
+                  <Typography variant={"h6"} sx={{
+                    wordBreak: "break-word",
+                    paddingRight: 1,
+                    minWidth: "100%",
+                    flexGrow: 1
+                  }}>
+                    {group.name}
+                  </Typography>
+                </Stack>
+              </Button>
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant={"body2"}>

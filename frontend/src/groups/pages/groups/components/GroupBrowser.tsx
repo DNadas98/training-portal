@@ -27,7 +27,6 @@ interface GroupBrowserProps {
 }
 
 export default function GroupBrowser(props: GroupBrowserProps) {
-
   return (
     <Grid container spacing={2} justifyContent={"center"} alignItems={"top"}>
       <Grid item xs={10} sm={8} md={5} lg={4}>
