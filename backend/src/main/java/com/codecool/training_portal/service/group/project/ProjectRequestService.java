@@ -27,7 +27,7 @@ import java.util.Optional;
 public class ProjectRequestService {
   private final ProjectDao projectDao;
   private final ProjectJoinRequestDao requestDao;
-  private final ProjectRoleService projectRoleService;
+  private final ProjectAdminService projectAdminService;
   private final UserProvider userProvider;
   private final ProjectConverter projectConverter;
 
@@ -86,7 +86,8 @@ public class ProjectRequestService {
       () -> new ProjectJoinRequestNotFoundException(requestId));
     request.setStatus(updateDto.status());
     if (request.getStatus().equals(RequestStatus.APPROVED)) {
-        projectRoleService.assignMember(groupId, projectId, request.getApplicationUser().getId());
+      projectAdminService.assignMember(
+        groupId, projectId, request.getApplicationUser().getActualUsername());
       requestDao.delete(request);
     }
   }

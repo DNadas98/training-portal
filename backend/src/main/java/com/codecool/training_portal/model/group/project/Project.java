@@ -88,6 +88,14 @@ public class Project {
   @OrderBy("username ASC")
   private List<ApplicationUser> assignedMembers = new ArrayList<>();
 
+  @ManyToMany
+  @JoinTable(name = "project_inactive_members", joinColumns = @JoinColumn(name = "project_id"),
+    inverseJoinColumns = @JoinColumn(name = "user_id"))
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
+  @OrderBy("username ASC")
+  private List<ApplicationUser> inactiveMembers = new ArrayList<>();
+
   public Project(
     String name, String description, String detailedDescription, Instant startDate,
     Instant deadline,
@@ -152,6 +160,13 @@ public class Project {
   }
 
   public void removeMember(ApplicationUser applicationUser) {
+    this.inactiveMembers.add(applicationUser);
     this.assignedMembers.remove(applicationUser);
+    if (this.editors.contains(applicationUser)) {
+      this.editors.remove(applicationUser);
+    }
+    if (this.admins.contains(applicationUser)) {
+      this.admins.remove(applicationUser);
+    }
   }
 }

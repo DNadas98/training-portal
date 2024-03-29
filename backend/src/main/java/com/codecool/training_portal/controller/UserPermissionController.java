@@ -2,7 +2,7 @@ package com.codecool.training_portal.controller;
 
 import com.codecool.training_portal.model.auth.PermissionType;
 import com.codecool.training_portal.service.group.GroupRoleService;
-import com.codecool.training_portal.service.group.project.ProjectRoleService;
+import com.codecool.training_portal.service.group.project.ProjectService;
 import com.codecool.training_portal.service.group.project.task.TaskRoleService;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class UserPermissionController {
     private final GroupRoleService groupRoleService;
-  private final ProjectRoleService projectRoleService;
+  private final ProjectService projectService;
   private final TaskRoleService taskRoleService;
 
     @GetMapping("/groups/{groupId}")
@@ -34,7 +34,7 @@ public class UserPermissionController {
   public ResponseEntity<?> getOwnPermissionsForProject(
             @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId
   ) {
-    Set<PermissionType> permissions = projectRoleService.getUserPermissionsForProject(
+      Set<PermissionType> permissions = projectService.getUserPermissionsForProject(
             groupId, projectId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", permissions));
   }

@@ -8,6 +8,8 @@ import com.codecool.training_portal.exception.auth.UnauthorizedException;
 import com.codecool.training_portal.exception.group.GroupNotFoundException;
 import com.codecool.training_portal.exception.group.project.ProjectNotFoundException;
 import com.codecool.training_portal.model.auth.ApplicationUser;
+import com.codecool.training_portal.model.auth.GlobalRole;
+import com.codecool.training_portal.model.auth.PermissionType;
 import com.codecool.training_portal.model.group.UserGroup;
 import com.codecool.training_portal.model.group.UserGroupDao;
 import com.codecool.training_portal.model.group.project.Project;
@@ -26,7 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -146,5 +150,27 @@ public class ProjectService {
     Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(() ->
       new ProjectNotFoundException(projectId));
     projectDao.delete(project);
+  }
+
+  @Transactional(readOnly = true)
+  public Set<PermissionType> getUserPermissionsForProject(Long groupId, Long projectId) {
+    ApplicationUser user = userProvider.getAuthenticatedUser();
+    Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
+      () -> new ProjectNotFoundException(projectId));
+
+    if (user.getGlobalRoles().contains(GlobalRole.ADMIN)) {
+      return Set.of(PermissionType.PROJECT_ASSIGNED_MEMBER, PermissionType.PROJECT_EDITOR,
+        PermissionType.PROJECT_ADMIN);
+    }
+
+    Set<PermissionType> permissions = new HashSet<>();
+    permissions.add(PermissionType.PROJECT_ASSIGNED_MEMBER);
+    if (customPermissionEvaluator.hasProjectEditorAccess(user.getId(), project)) {
+      permissions.add(PermissionType.PROJECT_EDITOR);
+    }
+    if (customPermissionEvaluator.hasProjectAdminAccess(user.getId(), project)) {
+      permissions.add(PermissionType.PROJECT_ADMIN);
+    }
+    return permissions;
   }
 }

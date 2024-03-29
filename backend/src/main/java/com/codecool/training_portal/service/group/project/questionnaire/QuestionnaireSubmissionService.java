@@ -12,7 +12,7 @@ import com.codecool.training_portal.model.auth.PermissionType;
 import com.codecool.training_portal.model.group.project.questionnaire.*;
 import com.codecool.training_portal.service.auth.UserProvider;
 import com.codecool.training_portal.service.converter.QuestionnaireSubmissionConverter;
-import com.codecool.training_portal.service.group.project.ProjectRoleService;
+import com.codecool.training_portal.service.group.project.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class QuestionnaireSubmissionService {
   private final SubmittedAnswerDao submittedAnswerDao;
   private final QuestionnaireSubmissionConverter questionnaireSubmissionConverter;
   private final UserProvider userProvider;
-  private final ProjectRoleService projectRoleService;
+  private final ProjectService projectService;
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
@@ -89,7 +89,7 @@ public class QuestionnaireSubmissionService {
 
     // Non-editors can only submit active questionnaires without existing max point submission
     // Editors still can not submit inactive questionnaires
-    if (!projectRoleService.getUserPermissionsForProject(groupId, projectId).contains(
+    if (!projectService.getUserPermissionsForProject(groupId, projectId).contains(
       PermissionType.PROJECT_EDITOR)) {
       verifyActiveAndWithoutMaxPointSubmission(groupId, projectId, questionnaire, user);
     } else if (questionnaire.getStatus().equals(QuestionnaireStatus.INACTIVE)) {
