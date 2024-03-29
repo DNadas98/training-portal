@@ -2,6 +2,7 @@ package com.codecool.training_portal.model.auth;
 
 import com.codecool.training_portal.model.group.UserGroup;
 import com.codecool.training_portal.model.group.project.Project;
+import com.codecool.training_portal.model.group.project.questionnaire.Questionnaire;
 import com.codecool.training_portal.model.group.project.task.Task;
 import com.codecool.training_portal.model.request.ProjectJoinRequest;
 import com.codecool.training_portal.model.request.UserGroupJoinRequest;
@@ -86,6 +87,13 @@ public class ApplicationUser implements UserDetails {
   @OrderBy("updatedAt DESC")
   private List<ProjectJoinRequest> projectJoinRequests = new ArrayList<>();
 
+  @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+  @OrderBy("updatedAt DESC")
+  private List<Questionnaire> createdQuestionnaires = new ArrayList<>();
+
+  @OneToMany(mappedBy = "updatedBy", fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+  @OrderBy("updatedAt DESC")
+  private List<Questionnaire> lastUpdatedQuestionnaires = new ArrayList<>();
 
   public ApplicationUser(String username, String email, String password) {
     this.username = username;
@@ -215,30 +223,26 @@ public class ApplicationUser implements UserDetails {
   @PreRemove
   private void preRemove() {
     // Disassociate from UserGroup entities
-    for (UserGroup userGroup : new ArrayList<>(adminUserGroups)) {
-      userGroup.removeAdmin(this);
-    }
-    for (UserGroup userGroup : new ArrayList<>(editorUserGroups)) {
-      userGroup.removeEditor(this);
-    }
     for (UserGroup userGroup : new ArrayList<>(memberUserGroups)) {
-      userGroup.removeMember(this);
+      userGroup.deleteMember(this);
     }
 
     // Disassociate from Project entities
-    for (Project project : new ArrayList<>(adminProjects)) {
-      project.removeAdmin(this);
-    }
-    for (Project project : new ArrayList<>(editorProjects)) {
-      project.removeEditor(this);
-    }
     for (Project project : new ArrayList<>(assignedProjects)) {
-      project.removeMember(this);
+      project.deleteMember(this);
     }
 
     // Disassociate from Task entities
     for (Task task : new ArrayList<>(assignedTasks)) {
       task.removeMember(this);
+    }
+
+    // Disassociate from Questionnaire entities
+    for (Questionnaire questionnaire : new ArrayList<>(createdQuestionnaires)) {
+      questionnaire.setCreatedBy(null);
+    }
+    for (Questionnaire questionnaire : new ArrayList<>(lastUpdatedQuestionnaires)) {
+      questionnaire.setUpdatedBy(null);
     }
   }
 }

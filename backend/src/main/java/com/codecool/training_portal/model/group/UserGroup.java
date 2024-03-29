@@ -69,6 +69,14 @@ public class UserGroup {
   @OrderBy("username ASC")
   private List<ApplicationUser> members;
 
+  @ManyToMany
+  @JoinTable(name = "group_inactive_members", joinColumns = @JoinColumn(name = "group_id"),
+    inverseJoinColumns = @JoinColumn(name = "user_id"))
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
+  @OrderBy("username ASC")
+  private List<ApplicationUser> inactiveMembers = new ArrayList<>();
+
   public UserGroup(
     String name, String description, String detailedDescription, ApplicationUser groupCreator) {
     this.name = name;
@@ -131,6 +139,17 @@ public class UserGroup {
   }
 
   public void removeMember(ApplicationUser applicationUser) {
+    inactiveMembers.add(applicationUser);
+    deleteMember(applicationUser);
+  }
+
+  public void deleteMember(ApplicationUser applicationUser) {
     members.remove(applicationUser);
+    if (editors.contains(applicationUser)) {
+      editors.remove(applicationUser);
+    }
+    if (admins.contains(applicationUser)) {
+      admins.remove(applicationUser);
+    }
   }
 }

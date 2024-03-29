@@ -161,6 +161,10 @@ public class Project {
 
   public void removeMember(ApplicationUser applicationUser) {
     this.inactiveMembers.add(applicationUser);
+    deleteMember(applicationUser);
+  }
+
+  public void deleteMember(ApplicationUser applicationUser) {
     this.assignedMembers.remove(applicationUser);
     if (this.editors.contains(applicationUser)) {
       this.editors.remove(applicationUser);

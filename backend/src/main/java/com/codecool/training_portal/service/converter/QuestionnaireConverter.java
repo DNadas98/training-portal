@@ -2,6 +2,7 @@ package com.codecool.training_portal.service.converter;
 
 import com.codecool.training_portal.dto.group.project.questionnaire.*;
 import com.codecool.training_portal.dto.user.UserResponsePublicDto;
+import com.codecool.training_portal.model.auth.ApplicationUser;
 import com.codecool.training_portal.model.group.project.questionnaire.Answer;
 import com.codecool.training_portal.model.group.project.questionnaire.Question;
 import com.codecool.training_portal.model.group.project.questionnaire.Questionnaire;
@@ -57,15 +58,25 @@ public class QuestionnaireConverter {
 
   private QuestionnaireResponseEditorDto toQuestionnaireResponseEditorDto(
     Questionnaire questionnaire) {
-    UserResponsePublicDto createdBy = userConverter.toUserResponsePublicDto(
-      questionnaire.getCreatedBy());
+    final UserResponsePublicDto createdByDto;
+    final UserResponsePublicDto updatedByDto;
+    ApplicationUser createdBy = questionnaire.getCreatedBy();
+    if (createdBy == null) {
+      createdByDto = new UserResponsePublicDto(0L, "Removed User Account");
+    } else {
+      createdByDto = userConverter.toUserResponsePublicDto(createdBy);
+    }
+    ApplicationUser updatedBy = questionnaire.getUpdatedBy();
+    if (updatedBy == null) {
+      updatedByDto = new UserResponsePublicDto(0L, "Removed User Account");
+    } else {
+      updatedByDto = userConverter.toUserResponsePublicDto(updatedBy);
+    }
     String createdAt = dateTimeService.toDisplayedDate(questionnaire.getCreatedAt());
-    UserResponsePublicDto updatedBy = userConverter.toUserResponsePublicDto(
-      questionnaire.getUpdatedBy());
     String updatedAt = dateTimeService.toDisplayedDate(questionnaire.getUpdatedAt());
     return new QuestionnaireResponseEditorDto(
       questionnaire.getId(), questionnaire.getName(), questionnaire.getDescription(),
-      questionnaire.getStatus(), createdBy, createdAt, updatedBy, updatedAt);
+      questionnaire.getStatus(), createdByDto, createdAt, updatedByDto, updatedAt);
   }
 
   private QuestionResponseDto toQuestionResponseDto(Question question) {

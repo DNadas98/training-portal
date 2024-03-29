@@ -53,7 +53,7 @@ public class Questionnaire {
   Instant createdAt;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "created_by_user_id", nullable = false)
+  @JoinColumn(name = "created_by_user_id", nullable = true)
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
   private ApplicationUser createdBy;
@@ -62,7 +62,7 @@ public class Questionnaire {
   Instant updatedAt;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "updated_by_user_id", nullable = false)
+  @JoinColumn(name = "updated_by_user_id", nullable = true)
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
   private ApplicationUser updatedBy;
