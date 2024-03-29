@@ -3,6 +3,7 @@ package com.codecool.training_portal.model.auth;
 import com.codecool.training_portal.model.group.UserGroup;
 import com.codecool.training_portal.model.group.project.Project;
 import com.codecool.training_portal.model.group.project.questionnaire.Questionnaire;
+import com.codecool.training_portal.model.group.project.questionnaire.QuestionnaireSubmission;
 import com.codecool.training_portal.model.group.project.task.Task;
 import com.codecool.training_portal.model.request.ProjectJoinRequest;
 import com.codecool.training_portal.model.request.UserGroupJoinRequest;
@@ -94,6 +95,10 @@ public class ApplicationUser implements UserDetails {
   @OneToMany(mappedBy = "updatedBy", fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
   @OrderBy("updatedAt DESC")
   private List<Questionnaire> lastUpdatedQuestionnaires = new ArrayList<>();
+
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+  @OrderBy("createdAt DESC")
+  private List<QuestionnaireSubmission> questionnaireSubmissions = new ArrayList<>();
 
   public ApplicationUser(String username, String email, String password) {
     this.username = username;
@@ -237,7 +242,7 @@ public class ApplicationUser implements UserDetails {
       task.removeMember(this);
     }
 
-    // Disassociate from Questionnaire entities
+    // Disassociate from Questionnaire entities, but keep the Questionnaires
     for (Questionnaire questionnaire : new ArrayList<>(createdQuestionnaires)) {
       questionnaire.setCreatedBy(null);
     }

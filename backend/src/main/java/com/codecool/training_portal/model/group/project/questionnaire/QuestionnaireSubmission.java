@@ -29,6 +29,9 @@ public class QuestionnaireSubmission {
   @Min(0)
   private Integer receivedPoints = 0;
 
+  @CreationTimestamp
+  private Instant createdAt;
+
   @ManyToOne
   @JoinColumn(name = "questionnaire_id", nullable = false)
   private Questionnaire questionnaire;
@@ -44,10 +47,6 @@ public class QuestionnaireSubmission {
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
   private List<SubmittedQuestion> submittedQuestions = new ArrayList<>();
-
-
-  @CreationTimestamp
-  private Instant createdAt;
 
   public QuestionnaireSubmission(
     Questionnaire questionnaire, ApplicationUser user) {
