@@ -216,7 +216,20 @@ public class QuestionnaireSubmissionService {
       questionnaireSubmissions.stream().map(
         questionnaireSubmission -> questionnaireSubmissionConverter
           .toQuestionnaireSubmissionResponseEditorDto(
-          questionnaireSubmission, questionnaireSubmission.getQuestionnaire())).toList();
+            questionnaireSubmission, questionnaireSubmission.getQuestionnaire())).toList();
+    return responseDtos;
+  }
+
+  @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ADMIN')")
+  public List<QuestionnaireSubmissionStatsAdminDto> getQuestionnaireSubmissionStatistics(
+    Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status) {
+    List<QuestionnaireSubmissionStatsInternalDto> questionnaireStats = questionnaireSubmissionDao
+      .findQuestionnaireSubmissionDetails(groupId, projectId, questionnaireId,status);
+    List<QuestionnaireSubmissionStatsAdminDto> responseDtos =
+      questionnaireStats.stream().map(
+        dto -> questionnaireSubmissionConverter
+          .toQuestionnaireSubmissionStatsAdminDto(dto)).toList();
     return responseDtos;
   }
 
