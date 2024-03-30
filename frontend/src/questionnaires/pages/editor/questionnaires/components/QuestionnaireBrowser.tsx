@@ -1,26 +1,20 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  Grid,
-  IconButton,
-  Stack,
-  TextField
-} from "@mui/material";
+import {Card, CardContent, CardHeader, Grid, IconButton, Stack, TextField} from "@mui/material";
 import {FormEvent} from "react";
 import AddIcon from "../../../../../common/utils/components/AddIcon.tsx";
 import QuestionnaireList from "./QuestionnaireList.tsx";
 import {QuestionnaireResponseEditorDto} from "../../../../dto/QuestionnaireResponseEditorDto.ts";
 
 interface QuestionnaireBrowserProps {
-  questionnairesLoading: boolean;
-  questionnaires: QuestionnaireResponseEditorDto[];
-  handleQuestionnaireSearch: (event: FormEvent<HTMLInputElement>) => void;
-  onAddClick: () => void;
-  onEditClick: (questionnaireId: number) => unknown;
-  onTestClick: (questionnaireId: number) => unknown;
-  onViewTestsClick: (questionnaireId: number) => unknown;
-  onDeleteClick: (questionnaireId: number) => void;
+  questionnairesLoading: boolean,
+  questionnaires: QuestionnaireResponseEditorDto[],
+  handleQuestionnaireSearch: (event: FormEvent<HTMLInputElement>) => void,
+  onAddClick: () => void,
+  onEditClick: (questionnaireId: number) => unknown,
+  onTestClick: (questionnaireId: number) => unknown,
+  onViewTestsClick: (questionnaireId: number) => unknown,
+  onDeleteClick: (questionnaireId: number) => void,
+  handleStatisticClick: (questionnaireId: number) => void,
+  isAdmin: boolean
 }
 
 export default function QuestionnaireBrowser(props: QuestionnaireBrowserProps) {
@@ -48,7 +42,9 @@ export default function QuestionnaireBrowser(props: QuestionnaireBrowserProps) {
                              onEditClick={props.onEditClick}
                              onTestClick={props.onTestClick}
                              onDeleteClick={props.onDeleteClick}
-                             onViewTestsClick={props.onViewTestsClick}/>
+                             onViewTestsClick={props.onViewTestsClick}
+                             handleStatisticClick={props.handleStatisticClick}
+                             isAdmin={props.isAdmin}/>
         </Stack>
       </Grid>
     </Grid>

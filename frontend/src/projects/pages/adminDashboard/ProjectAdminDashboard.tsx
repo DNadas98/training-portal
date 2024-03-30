@@ -32,10 +32,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import {QuestionnaireStatus} from "../../../questionnaires/dto/QuestionnaireStatus.ts";
-import {
-  QuestionnaireSubmissionResponseAdminDto
-} from "../../../questionnaires/dto/QuestionnaireSubmissionResponseAdminDto.ts";
 
 
 export default function ProjectAdminDashboard() {
@@ -53,9 +49,6 @@ export default function ProjectAdminDashboard() {
   const [displayedUsers, setDisplayedUsers] = useState<UserResponseWithPermissionsDto[]>([]);
   const [displayedUsersLoading, setDisplayedUsersLoading] = useState<boolean>(true);
   const [displayedPermissionType, setDisplayedPermissionType] = useState<PermissionType>(PermissionType.PROJECT_ASSIGNED_MEMBER)
-  const [questionnaireStatistics, setQuestionnaireStatistics] = useState<QuestionnaireSubmissionResponseAdminDto[]>([]);
-  const [questionnaireStatisticsLoading, setQuestionnaireStatisticsLoading] = useState<boolean>(true)
-  const [displayedQuestionnaireStatus, setDisplayedQuestionnaireStatus] = useState<QuestionnaireStatus>(QuestionnaireStatus.ACTIVE);
 
   function handleErrorNotification(message?: string) {
     notification.openNotification({
@@ -126,34 +119,8 @@ export default function ProjectAdminDashboard() {
     }
   }
 
-  async function loadQuestionnaireStatistics() {
-    try {
-      setQuestionnaireStatisticsLoading(true);
-      const response = await authJsonFetch({
-        path:
-          `groups/${groupId}/projects/${projectId}/admin/questionnaires/${2}/submissions/stats?status=${QuestionnaireStatus.ACTIVE}`
-        , method: "GET"
-      });
-      if (!response|| !response?.status || response.status > 404 || !response?.data) {
-        notification.openNotification({
-          type: "error", vertical: "top", horizontal: "center",
-          message: response?.error ?? "Failed to load questionnaire statistics"
-        });
-      }
-      setQuestionnaireStatistics(response.data);
-    } catch (e) {
-      notification.openNotification({
-        type: "error", vertical: "top", horizontal: "center",
-        message: "Failed to load questionnaire statistics"
-      });
-    } finally {
-      setQuestionnaireStatisticsLoading(false);
-    }
-  }
-
   useEffect(() => {
     loadProject()
-    loadQuestionnaireStatistics()
   }, []);
 
   useEffect(() => {
@@ -173,20 +140,6 @@ export default function ProjectAdminDashboard() {
 
   const handleUserSearch = (event: any) => {
     setUsersFilterValue(event.target.value.toLowerCase().trim());
-  };
-
-  const [statisticsFilterValue, setStatisticsFilterValue] = useState<string>("");
-  const statisticsFiltered = useMemo(() => {
-    if (!questionnaireStatistics?.length) {
-      return [];
-    }
-    return questionnaireStatistics.filter(stat => {
-        return stat.username.toLowerCase().includes(statisticsFilterValue)
-      }
-    );
-  }, [questionnaireStatistics, statisticsFilterValue]);
-  const handleStatisticsSearch = (event: any) => {
-    setStatisticsFilterValue(event.target.value.toLowerCase().trim());
   };
 
   async function deleteProject() {
@@ -471,63 +424,7 @@ export default function ProjectAdminDashboard() {
               </Grid>
             </Grid>
           }
-          {questionnaireStatisticsLoading
-            ? <LoadingSpinner/>
-            : <Grid container>
-              <Grid item xs={12}>
-                <Grid container spacing={1}>
-                  <Grid item xs={12} sm={true}>
-                    <TextField type={"search"}
-                               placeholder={"Search by username"}
-                               fullWidth
-                               onChange={handleStatisticsSearch}/>
-                  </Grid>
-                  <Grid item xs={12} sm={"auto"}>
-                    <Select value={displayedQuestionnaireStatus} onChange={(event: any) => {
-                      setDisplayedQuestionnaireStatus(event.target.value);
-                    }}
-                            sx={{minWidth: 150}}>
-                      <MenuItem value={QuestionnaireStatus.ACTIVE}><Typography>
-                        Active
-                      </Typography></MenuItem>
-                      <MenuItem value={QuestionnaireStatus.TEST}><Typography>
-                        Test
-                      </Typography></MenuItem>
-                    </Select>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item xs={12}>
-                <TableContainer component={Paper}>
-                  <Table sx={{minWidth: 500}}>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Username</TableCell>
-                        <TableCell>Max Date</TableCell>
-                        <TableCell>Max Points</TableCell>
-                        <TableCell>Last Date</TableCell>
-                        <TableCell>Last Points</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {statisticsFiltered.map((stat) => (
-                        <TableRow
-                          key={`${stat.userId}-${stat.lastSubmissionId}-${stat.maxPointSubmissionId}`}
-                          sx={{'&:last-child td, &:last-child th': {border: 0}}}
-                        >
-                          <TableCell>{stat.username}</TableCell>
-                          <TableCell>{getLocalizedDateTime(new Date(stat.maxPointSubmissionCreatedAt))}</TableCell>
-                          <TableCell>{stat.maxPointSubmissionReceivedPoints} / {stat.questionnaireMaxPoints}</TableCell>
-                          <TableCell>{getLocalizedDateTime(new Date(stat.lastSubmissionCreatedAt))}</TableCell>
-                          <TableCell>{stat.lastSubmissionReceivedPoints} / {stat.questionnaireMaxPoints}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </Grid>
-            </Grid>
-          }
+
         </CardContent>
       </Card> </Grid>
     </Grid>

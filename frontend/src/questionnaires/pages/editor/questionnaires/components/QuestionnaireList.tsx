@@ -17,12 +17,14 @@ import {QuestionnaireStatus} from "../../../../dto/QuestionnaireStatus.ts";
 import useLocalizedDateTime from "../../../../../common/localization/hooks/useLocalizedDateTime.tsx";
 
 interface QuestionnaireListProps {
-  loading: boolean;
-  questionnaires: QuestionnaireResponseEditorDto[];
-  onEditClick: (questionnaireId: number) => unknown;
-  onTestClick: (questionnaireId: number) => unknown;
-  onViewTestsClick: (questionnaireId: number) => unknown;
-  onDeleteClick: (questionnaireId: number) => void;
+  loading: boolean,
+  questionnaires: QuestionnaireResponseEditorDto[],
+  onEditClick: (questionnaireId: number) => unknown,
+  onTestClick: (questionnaireId: number) => unknown,
+  onViewTestsClick: (questionnaireId: number) => unknown,
+  onDeleteClick: (questionnaireId: number) => void,
+  handleStatisticClick: (questionnaireId: number) => void,
+  isAdmin: boolean
 }
 
 export default function QuestionnaireList(props: QuestionnaireListProps) {
@@ -101,6 +103,15 @@ export default function QuestionnaireList(props: QuestionnaireListProps) {
                     </Button>
                   </Stack>
                   : <></>}
+                {props.isAdmin && <Button sx={{textTransform: "none"}}
+                                          fullWidth
+                                          variant={"text"}
+                                          onClick={() => {
+                                            props.handleStatisticClick(questionnaire.id);
+                                          }}>
+                  Statistics
+                </Button>
+                }
               </Stack>
             </AccordionActions>
           </Accordion>

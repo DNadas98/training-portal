@@ -39,6 +39,7 @@ import PasswordReset from "../../authentication/pages/passwordReset/PasswordRese
 import PasswordResetVerificationRedirect
   from "../../authentication/pages/redirect/PasswordResetVerificationRedirect.tsx";
 import ProjectAdminDashboard from "../../projects/pages/adminDashboard/ProjectAdminDashboard.tsx";
+import QuestionnaireStatistics from "../../questionnaires/pages/editor/statistics/QuestionnaireStatistics.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -158,6 +159,10 @@ const appRouter = createBrowserRouter([
           },
           {
             path: ":groupId/projects/:projectId/editor/questionnaires", element: <Questionnaires/>
+          },
+          {
+            path: ":groupId/projects/:projectId/editor/questionnaires/:questionnaireId/statistics",
+            element: <QuestionnaireStatistics/>,
           },
           {
             path: ":groupId/projects/:projectId/editor/questionnaires/:questionnaireId/tests/new",
