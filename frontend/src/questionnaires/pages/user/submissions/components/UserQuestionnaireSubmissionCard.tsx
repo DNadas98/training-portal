@@ -35,12 +35,15 @@ export default function UserQuestionnaireSubmissionCard(props: UserQuestionnaire
       }}>
         {getLocalizedDateTime(new Date(props.submission.createdAt))}
       </Typography>
-      <Typography variant={"body1"} sx={{
-        wordBreak: "break-word",
-        paddingRight: 1
-      }}>
-        {props.submission.name}
-      </Typography>
+      <Stack direction={"row"} spacing={2}>
+        <Typography variant={"body1"} sx={{
+          wordBreak: "break-word",
+          paddingRight: 1
+        }}>
+          {props.submission.name}
+        </Typography>
+        <Typography variant={"body1"}>{props.submission.receivedPoints} / {props.submission.maxPoints}</Typography>
+      </Stack>
       <Typography variant={"body2"} sx={{
         wordBreak: "break-word",
         paddingRight: 1

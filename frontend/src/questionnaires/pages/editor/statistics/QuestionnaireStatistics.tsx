@@ -56,7 +56,7 @@ export default function QuestionnaireStatistics() {
       setQuestionnaireLoading(true);
       const response = await authJsonFetch({
         path:
-          `groups/${groupId}/projects/${projectId}/questionnaires/${questionnaireId}`
+          `groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}`
         , method: "GET"
       });
       if (!response || !response?.status || !response.data || response.status > 399) {
@@ -83,7 +83,7 @@ export default function QuestionnaireStatistics() {
       setQuestionnaireStatisticsLoading(true);
       const response = await authJsonFetch({
         path:
-          `groups/${groupId}/projects/${projectId}/admin/questionnaires/${questionnaireId}/submissions/stats?status=${QuestionnaireStatus.ACTIVE}`
+          `groups/${groupId}/projects/${projectId}/admin/questionnaires/${questionnaireId}/submissions/stats?status=${displayedQuestionnaireStatus}`
         , method: "GET"
       });
       if (!response || !response?.status || !response.data || response.status > 399) {
@@ -107,8 +107,11 @@ export default function QuestionnaireStatistics() {
 
   useEffect(() => {
     loadQuestionnaire()
-    loadQuestionnaireStatistics()
   }, []);
+
+  useEffect(() => {
+    loadQuestionnaireStatistics()
+  }, [displayedQuestionnaireStatus]);
 
 
   const [statisticsFilterValue, setStatisticsFilterValue] = useState<string>("");
@@ -125,15 +128,24 @@ export default function QuestionnaireStatistics() {
     setStatisticsFilterValue(event.target.value.toLowerCase().trim());
   };
 
+  const hasValidSubmission = (stat: QuestionnaireSubmissionResponseAdminDto) => {
+    return stat.maxPointSubmissionId !== null && stat.maxPointSubmissionId !== undefined &&
+      stat.maxPointSubmissionCreatedAt !== null && stat.maxPointSubmissionCreatedAt !== undefined &&
+      stat.maxPointSubmissionReceivedPoints !== null && stat.maxPointSubmissionReceivedPoints !== undefined &&
+      stat.lastSubmissionId !== null && stat.lastSubmissionId !== undefined &&
+      stat.lastSubmissionCreatedAt !== null && stat.lastSubmissionCreatedAt !== undefined &&
+      stat.lastSubmissionReceivedPoints !== null && stat.lastSubmissionReceivedPoints !== undefined;
+  }
+
   if (permissionsLoading || questionnaireLoading || questionnaireStatisticsLoading) {
     return <LoadingSpinner/>;
   } else if ((!projectPermissions?.length) || !projectPermissions.includes(PermissionType.PROJECT_ADMIN)) {
     handleErrorNotification("Access Denied: Insufficient permissions");
     navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`, {replace: true});
     return <></>;
-  } else if (!questionnaire || !questionnaireStatistics) {
+  } else if (!questionnaire) {
     handleErrorNotification("Failed to load questionnaire");
-    navigate(`/groups/${groupId}/projects${projectId}/editor/questionnaires`, {replace: true});
+    navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`, {replace: true});
     return <></>;
   }
 
@@ -193,10 +205,14 @@ export default function QuestionnaireStatistics() {
                       sx={{'&:last-child td, &:last-child th': {border: 0}}}
                     >
                       <TableCell>{stat.username}</TableCell>
-                      <TableCell>{getLocalizedDateTime(new Date(stat.maxPointSubmissionCreatedAt))}</TableCell>
+                      {hasValidSubmission(stat)
+                        ?<>
+                      <TableCell> {getLocalizedDateTime(new Date(stat.maxPointSubmissionCreatedAt as string))}</TableCell>
                       <TableCell>{stat.maxPointSubmissionReceivedPoints} / {stat.questionnaireMaxPoints}</TableCell>
-                      <TableCell>{getLocalizedDateTime(new Date(stat.lastSubmissionCreatedAt))}</TableCell>
+                      <TableCell>{getLocalizedDateTime(new Date(stat.lastSubmissionCreatedAt as string))}</TableCell>
                       <TableCell>{stat.lastSubmissionReceivedPoints} / {stat.questionnaireMaxPoints}</TableCell>
+                        </>
+                        : <TableCell>No questionnaire submissions found</TableCell>}
                     </TableRow>
                   ))
                   : <TableRow>

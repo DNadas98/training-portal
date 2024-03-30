@@ -7,6 +7,7 @@ import com.codecool.training_portal.service.datetime.DateTimeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,12 +57,28 @@ public class QuestionnaireSubmissionConverter {
 
   public QuestionnaireSubmissionStatsAdminDto toQuestionnaireSubmissionStatsAdminDto(
     QuestionnaireSubmissionStatsInternalDto dto) {
+    Instant maxPointSubmissionCreatedAt = dto.maxPointSubmissionCreatedAt();
+    String maxPointSubmissionCreatedAtResult;
+    if (maxPointSubmissionCreatedAt == null) {
+      maxPointSubmissionCreatedAtResult = null;
+    } else {
+      maxPointSubmissionCreatedAtResult = dateTimeService.toDisplayedDate(
+        dto.maxPointSubmissionCreatedAt());
+    }
+    Instant lastSubmissionCreatedAt = dto.lastSubmissionCreatedAt();
+    String lastSubmissionCreatedAtResult;
+    if (lastSubmissionCreatedAt == null) {
+      lastSubmissionCreatedAtResult = null;
+    } else {
+      lastSubmissionCreatedAtResult = dateTimeService.toDisplayedDate(
+        dto.lastSubmissionCreatedAt());
+    }
     return new QuestionnaireSubmissionStatsAdminDto(
       dto.questionnaireName(), dto.questionnaireMaxPoints(), dto.maxPointSubmissionId(),
-      dateTimeService.toDisplayedDate(dto.maxPointSubmissionCreatedAt()),
+      maxPointSubmissionCreatedAtResult,
       dto.maxPointSubmissionReceivedPoints(),
       dto.lastSubmissionId(),
-      dateTimeService.toDisplayedDate(dto.lastSubmissionCreatedAt()),
+      lastSubmissionCreatedAtResult,
       dto.lastSubmissionReceivedPoints(),
       dto.userId(), dto.username()
     );

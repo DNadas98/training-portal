@@ -67,6 +67,6 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
       "WHERE q.project.userGroup.id = :groupId " +
       "AND q.project.id = :projectId " +
       "AND q.id = :questionnaireId ")
-  List<QuestionnaireSubmissionStatsInternalDto> findQuestionnaireSubmissionDetails(
+  List<QuestionnaireSubmissionStatsInternalDto> findQuestionnaireSubmissionDetailsByStatus(
     Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status);
 }

@@ -225,7 +225,15 @@ public class QuestionnaireSubmissionService {
   public List<QuestionnaireSubmissionStatsAdminDto> getQuestionnaireSubmissionStatistics(
     Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status) {
     List<QuestionnaireSubmissionStatsInternalDto> questionnaireStats = questionnaireSubmissionDao
-      .findQuestionnaireSubmissionDetails(groupId, projectId, questionnaireId,status);
+      .findQuestionnaireSubmissionDetailsByStatus(groupId, projectId, questionnaireId,status);
+    if (questionnaireStats.isEmpty()) {
+      return new ArrayList<>();
+    }
+    if (!status.equals(QuestionnaireStatus.ACTIVE)) {
+      return questionnaireStats.stream().filter(dto->dto.lastSubmissionCreatedAt()!=null).map(
+        dto -> questionnaireSubmissionConverter
+          .toQuestionnaireSubmissionStatsAdminDto(dto)).toList();
+    }
     List<QuestionnaireSubmissionStatsAdminDto> responseDtos =
       questionnaireStats.stream().map(
         dto -> questionnaireSubmissionConverter
