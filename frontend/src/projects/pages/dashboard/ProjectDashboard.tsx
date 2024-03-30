@@ -68,9 +68,9 @@ export default function ProjectDashboard() {
     navigate(`/groups/${groupId}/projects/${projectId}/admin`);
   }
 
-  function handleTasksClick() {
+  /*function handleTasksClick() {
     navigate(`/groups/${groupId}/projects/${projectId}/tasks`);
-  }
+  }*/
 
   function handleEditorQuestionnairesClick() {
     navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`);
@@ -120,9 +120,9 @@ export default function ProjectDashboard() {
             <Button sx={{width: "fit-content"}} onClick={handleEditorQuestionnairesClick}>
               View all questionnaires
             </Button>
-            <Button sx={{width: "fit-content"}} onClick={handleTasksClick}>
+           {/* <Button sx={{width: "fit-content"}} onClick={handleTasksClick}>
               View tasks
-            </Button>
+            </Button>*/}
           </Stack></CardActions>
         </Card> </Grid>
       }

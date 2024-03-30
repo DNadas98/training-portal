@@ -17,10 +17,10 @@ import AddProject from "../../projects/pages/add/AddProject.tsx";
 import ProjectDashboard from "../../projects/pages/dashboard/ProjectDashboard.tsx";
 import UpdateProject from "../../projects/pages/update/UpdateProject.tsx";
 import ProjectJoinRequests from "../../projects/pages/requests/ProjectJoinRequests.tsx";
-import Tasks from "../../tasks/pages/tasks/Tasks.tsx";
+/*import Tasks from "../../tasks/pages/tasks/Tasks.tsx";
 import AddTask from "../../tasks/pages/add/AddTask.tsx";
 import TaskDashboard from "../../tasks/pages/dashboard/TaskDashboard.tsx";
-import UpdateTask from "../../tasks/pages/update/UpdateTask.tsx";
+import UpdateTask from "../../tasks/pages/update/UpdateTask.tsx";*/
 import Questionnaires from "../../questionnaires/pages/editor/questionnaires/Questionnaires.tsx";
 import QuestionnaireEditor from "../../questionnaires/pages/editor/createUpdate/QuestionnaireEditor.tsx";
 import Home from "../../public/pages/home/Home.tsx";
@@ -132,7 +132,7 @@ const appRouter = createBrowserRouter([
             path: ":groupId/projects/:projectId/requests",
             element: <ProjectJoinRequests/>
           },
-          {
+          /*{
             path: ":groupId/projects/:projectId/tasks", element: <Tasks/>
           },
           {
@@ -145,7 +145,7 @@ const appRouter = createBrowserRouter([
           {
             path: ":groupId/projects/:projectId/tasks/:taskId/update",
             element: <UpdateTask/>
-          },
+          },*/
           {
             path: ":groupId/projects/:projectId/questionnaires", element: <UserQuestionnaires/>
           },
