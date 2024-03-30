@@ -177,7 +177,7 @@ export default function SubmitQuestionnaire() {
                   {question.answers.map(answer => {
                     return <Grid container key={answer.id} spacing={1}
                                  justifyContent={"center"} alignItems={"baseline"}>
-                      <Grid item xs={1}>
+                      <Grid item>
                         {question.type === QuestionType.CHECKBOX ? (
                           <Checkbox
                             checked={formData.questions[questionIndex].checkedAnswers.some(a => a.answerId === answer.id)}
@@ -190,7 +190,7 @@ export default function SubmitQuestionnaire() {
                           />
                         )}
                       </Grid>
-                      <Grid item xs={11}>
+                      <Grid item xs={true} textAlign={"left"}>
                         <Typography variant={"body1"} gutterBottom>{answer.text}</Typography>
                       </Grid>
                     </Grid>

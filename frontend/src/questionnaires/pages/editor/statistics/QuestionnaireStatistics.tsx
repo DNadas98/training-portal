@@ -150,7 +150,7 @@ export default function QuestionnaireStatistics() {
   }
 
   return (
-    <Grid container><Grid item xs={11}><Card>
+    <Grid container justifyContent={"center"} alignItems={"center"}><Grid item xs={11}><Card>
       <CardHeader title={"Questionnaire Statistics"}/>
       <CardContent>{questionnaireStatisticsLoading
         ? <LoadingSpinner/>
@@ -206,11 +206,11 @@ export default function QuestionnaireStatistics() {
                     >
                       <TableCell>{stat.username}</TableCell>
                       {hasValidSubmission(stat)
-                        ?<>
-                      <TableCell> {getLocalizedDateTime(new Date(stat.maxPointSubmissionCreatedAt as string))}</TableCell>
-                      <TableCell>{stat.maxPointSubmissionReceivedPoints} / {stat.questionnaireMaxPoints}</TableCell>
-                      <TableCell>{getLocalizedDateTime(new Date(stat.lastSubmissionCreatedAt as string))}</TableCell>
-                      <TableCell>{stat.lastSubmissionReceivedPoints} / {stat.questionnaireMaxPoints}</TableCell>
+                        ? <>
+                          <TableCell> {getLocalizedDateTime(new Date(stat.maxPointSubmissionCreatedAt as string))}</TableCell>
+                          <TableCell>{stat.maxPointSubmissionReceivedPoints} / {stat.questionnaireMaxPoints}</TableCell>
+                          <TableCell>{getLocalizedDateTime(new Date(stat.lastSubmissionCreatedAt as string))}</TableCell>
+                          <TableCell>{stat.lastSubmissionReceivedPoints} / {stat.questionnaireMaxPoints}</TableCell>
                         </>
                         : <TableCell>No questionnaire submissions found</TableCell>}
                     </TableRow>

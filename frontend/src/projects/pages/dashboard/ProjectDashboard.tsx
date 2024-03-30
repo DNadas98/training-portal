@@ -105,7 +105,7 @@ export default function ProjectDashboard() {
           </Typography>
         </CardContent>
         <CardActions> <Stack spacing={0.5}>
-          <Button sx={{width: "fit-content"}} onClick={handleUserQuestionnairesClick}>
+          <Button sx={{width: "fit-content", textAlign:"left"}} onClick={handleUserQuestionnairesClick}>
             View active questionnaires
           </Button>
           <Button sx={{width: "fit-content"}} onClick={() => navigate(`/groups/${groupId}/projects`)}>

@@ -28,22 +28,26 @@ export default function UserQuestionnaireSubmissionCard(props: UserQuestionnaire
   return <Accordion key={props.submission.id} defaultExpanded={false}
                     variant={"elevation"}
                     sx={{paddingTop: 0.5, paddingBottom: 0.5}}>
-    <AccordionSummary expandIcon={<ExpandIcon/>}><Stack spacing={0.5}>
+    <AccordionSummary expandIcon={<ExpandIcon/>}><Stack spacing={0.5} width={"100%"}>
       <Typography variant={"h6"} sx={{
         wordBreak: "break-word",
         paddingRight: 1
       }}>
         {getLocalizedDateTime(new Date(props.submission.createdAt))}
       </Typography>
-      <Stack direction={"row"} spacing={2}>
-        <Typography variant={"body1"} sx={{
-          wordBreak: "break-word",
-          paddingRight: 1
-        }}>
-          {props.submission.name}
-        </Typography>
-        <Typography variant={"body1"}>{props.submission.receivedPoints} / {props.submission.maxPoints}</Typography>
-      </Stack>
+      <Grid container>
+        <Grid item xs={12} sm={10}>
+          <Typography variant={"body1"} sx={{
+            wordBreak: "break-word",
+            paddingRight: 1
+          }}>
+            {props.submission.name}
+          </Typography>
+        </Grid>
+        <Grid item xs={12} sm={2}>
+          <Typography variant={"body1"}>{props.submission.receivedPoints} / {props.submission.maxPoints}</Typography>
+        </Grid>
+      </Grid>
       <Typography variant={"body2"} sx={{
         wordBreak: "break-word",
         paddingRight: 1
@@ -73,7 +77,7 @@ export default function UserQuestionnaireSubmissionCard(props: UserQuestionnaire
                             ? theme.palette.error.main
                             : "inherit"
                       }}>
-                  <Grid item xs={2} sm={1}>
+                  <Grid item>
                     {question.type === QuestionType.CHECKBOX ? (
                       <Checkbox disabled sx={{":disabled": {color: "inherit"}}}
                                 checked={answer.status !== SubmittedAnswerStatus.UNCHECKED}
@@ -84,7 +88,7 @@ export default function UserQuestionnaireSubmissionCard(props: UserQuestionnaire
                       />
                     )}
                   </Grid>
-                  <Grid item xs={10} sm={11}>
+                  <Grid item xs={true}>
                     <Typography variant={"body1"} gutterBottom>{answer.text}</Typography>
                   </Grid>
                 </Grid>))}

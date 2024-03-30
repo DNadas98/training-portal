@@ -52,7 +52,7 @@ export default function UserQuestionnaireList(props: UserQuestionnaireListProps)
                   View past submissions
                 </Button>
                 : <Stack spacing={0.5} width={"100%"}>
-                  <Button sx={{width: "fit-content"}} onClick={() => {
+                  <Button sx={{width: "fit-content", textAlign: "left"}} onClick={() => {
                     props.handleFillOutClick(questionnaire.id);
                   }}>
                     Fill out this questionnaire
