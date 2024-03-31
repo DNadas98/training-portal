@@ -1,6 +1,9 @@
 package com.codecool.training_portal.controller;
 
-import com.codecool.training_portal.dto.user.*;
+import com.codecool.training_portal.dto.user.UserEmailUpdateDto;
+import com.codecool.training_portal.dto.user.UserPasswordUpdateDto;
+import com.codecool.training_portal.dto.user.UserResponsePrivateDto;
+import com.codecool.training_portal.dto.user.UserUsernameUpdateDto;
 import com.codecool.training_portal.service.auth.ApplicationUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +58,7 @@ public class UserController {
 
   @DeleteMapping
   public ResponseEntity<?> deleteOwnApplicationUser(Locale locale) {
-    applicationUserService.deleteOwnApplicationUser();
+    applicationUserService.archiveOwnApplicationUser();
     return ResponseEntity.status(HttpStatus.OK).body(
       Map.of("message", messageSource.getMessage("user.delete.success", null, locale)));
   }

@@ -9,4 +9,11 @@ import java.util.UUID;
 public record VerificationTokenDto(
   @NotNull @Min(1) Long id,
   @NotNull @Length(min = 1, max = 100) UUID verificationCode) {
+
+  @Override
+  public String toString() {
+    return "VerificationTokenDto{" +
+      "id=" + id +
+      '}';
+  }
 }

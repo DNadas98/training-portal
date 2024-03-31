@@ -6,7 +6,6 @@ import com.codecool.training_portal.dto.verification.VerificationTokenDto;
 import com.codecool.training_portal.exception.auth.*;
 import com.codecool.training_portal.model.auth.ApplicationUser;
 import com.codecool.training_portal.model.auth.ApplicationUserDao;
-import com.codecool.training_portal.model.auth.GlobalRole;
 import com.codecool.training_portal.model.verification.EmailChangeVerificationToken;
 import com.codecool.training_portal.model.verification.EmailChangeVerificationTokenDao;
 import com.codecool.training_portal.service.converter.UserConverter;
@@ -66,19 +65,30 @@ public class ApplicationUserService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  public void deleteOwnApplicationUser() {
+  public void archiveOwnApplicationUser() {
     ApplicationUser user = userProvider.getAuthenticatedUser();
-    applicationUserDao.delete(user);
+    String archived = UUID.randomUUID() + "archived";
+    user.setUsername(archived);
+    user.setEmail(archived + "@" + archived + ".net");
+    user.setPassword("");
+    user.setEnabled(false);
+    applicationUserDao.save(user);
   }
 
   @Transactional(rollbackFor = Exception.class)
-  public void deleteApplicationUserById(Long id) {
+  public void archiveApplicationUserById(Long id) {
     ApplicationUser user = applicationUserDao.findById(id).orElseThrow(
       () -> new UserNotFoundException(id));
-    if (user.getGlobalRoles().contains(GlobalRole.ADMIN)) {
+    /*if (user.getGlobalRoles().contains(GlobalRole.ADMIN)) {
       throw new UnauthorizedException();
     }
-    applicationUserDao.delete(user);
+    applicationUserDao.delete(user);*/
+    String archived = UUID.randomUUID() + "archived";
+    user.setUsername(archived);
+    user.setEmail(archived + "@" + archived + ".net");
+    user.setPassword("");
+    user.setEnabled(false);
+    applicationUserDao.save(user);
   }
 
   @Transactional(rollbackFor = Exception.class)
