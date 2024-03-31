@@ -6,6 +6,7 @@ import com.codecool.training_portal.model.group.project.questionnaire.Questionna
 public record QuestionnaireResponseEditorDto(
   Long id, String name, String description,
   QuestionnaireStatus status,
+  Integer maxPoints,
   UserResponsePublicDto createdBy, String createdAt,
   UserResponsePublicDto updatedBy, String updatedAt) {
 }

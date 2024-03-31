@@ -43,6 +43,8 @@ public class Questionnaire {
   @ToString.Exclude
   private List<Question> questions = new ArrayList<>();
 
+  private Integer maxPoints = 0;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "project_id", nullable = false)
   @EqualsAndHashCode.Exclude
@@ -89,9 +91,11 @@ public class Questionnaire {
 
   public void addQuestion(Question question) {
     questions.add(question);
+    maxPoints += question.getPoints();
   }
 
   public void removeAllQuestions() {
     this.questions.clear();
+    maxPoints = 0;
   }
 }

@@ -24,14 +24,14 @@ public class QuestionnaireConverter {
     List<Questionnaire> questionnaires) {
     return questionnaires.stream().map(
       questionnaire -> new QuestionnaireResponseDto(questionnaire.getId(), questionnaire.getName(),
-        questionnaire.getDescription())).collect(Collectors.toList());
+        questionnaire.getDescription(), questionnaire.getMaxPoints())).collect(Collectors.toList());
   }
 
   @Transactional(readOnly = true)
   public QuestionnaireResponseDetailsDto toQuestionnaireResponseDetailsDto(
     Questionnaire questionnaire) {
     return new QuestionnaireResponseDetailsDto(questionnaire.getId(),
-      questionnaire.getName(), questionnaire.getDescription(),
+      questionnaire.getName(), questionnaire.getDescription(), questionnaire.getMaxPoints(),
       questionnaire.getQuestions().stream().map(this::toQuestionResponseDto)
         .collect(Collectors.toList()));
   }
@@ -52,7 +52,8 @@ public class QuestionnaireConverter {
       questionnaire);
     return new QuestionnaireResponseEditorDetailsDto(
       questionnaire.getId(), questionnaire.getName(), questionnaire.getDescription(),
-      questionnaire.getStatus(), dto.createdBy(), dto.createdAt(), dto.updatedBy(), dto.updatedAt(),
+      questionnaire.getStatus(), questionnaire.getMaxPoints(), dto.createdBy(), dto.createdAt(),
+      dto.updatedBy(), dto.updatedAt(),
       questions);
   }
 
@@ -76,7 +77,8 @@ public class QuestionnaireConverter {
     String updatedAt = dateTimeService.toDisplayedDate(questionnaire.getUpdatedAt());
     return new QuestionnaireResponseEditorDto(
       questionnaire.getId(), questionnaire.getName(), questionnaire.getDescription(),
-      questionnaire.getStatus(), createdByDto, createdAt, updatedByDto, updatedAt);
+      questionnaire.getStatus(), questionnaire.getMaxPoints(), createdByDto, createdAt,
+      updatedByDto, updatedAt);
   }
 
   private QuestionResponseDto toQuestionResponseDto(Question question) {

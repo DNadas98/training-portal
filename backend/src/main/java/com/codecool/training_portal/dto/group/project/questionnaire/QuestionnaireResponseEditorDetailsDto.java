@@ -8,6 +8,7 @@ import java.util.List;
 public record QuestionnaireResponseEditorDetailsDto(
   Long id, String name, String description,
   QuestionnaireStatus status,
+  Integer maxPoints,
   UserResponsePublicDto createdBy, String createdAt,
   UserResponsePublicDto updatedBy, String updatedAt,
   List<QuestionResponseEditorDto> questions) {

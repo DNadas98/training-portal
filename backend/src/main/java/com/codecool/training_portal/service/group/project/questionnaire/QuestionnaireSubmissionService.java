@@ -224,21 +224,41 @@ public class QuestionnaireSubmissionService {
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ADMIN')")
   public List<QuestionnaireSubmissionStatsAdminDto> getQuestionnaireSubmissionStatistics(
     Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status) {
-    List<QuestionnaireSubmissionStatsInternalDto> questionnaireStats = questionnaireSubmissionDao
-      .findQuestionnaireSubmissionDetailsByStatus(groupId, projectId, questionnaireId,status);
-    if (questionnaireStats.isEmpty()) {
-      return new ArrayList<>();
-    }
+    final List<QuestionnaireSubmissionStatsInternalDto> questionnaireStats;
     if (!status.equals(QuestionnaireStatus.ACTIVE)) {
-      return questionnaireStats.stream().filter(dto->dto.lastSubmissionCreatedAt()!=null).map(
-        dto -> questionnaireSubmissionConverter
-          .toQuestionnaireSubmissionStatsAdminDto(dto)).toList();
+      return getNonActiveQuestionnaireStatistics(groupId, projectId, questionnaireId, status);
     }
+    questionnaireStats = questionnaireSubmissionDao
+      .getActiveQuestionnaireSubmissionStatistics(groupId, projectId, questionnaireId);
+    List<QuestionnaireSubmissionStatsInternalDto> questionnaireStatsOfAllMembers = new ArrayList<>(
+      questionnaireStats);
+    Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndId(groupId,
+      projectId, questionnaireId).orElseThrow(QuestionnaireNotFoundException::new);
+    List<QuestionnaireSubmissionStatsInternalDto> memberWithoutSubmissionDtos =
+      questionnaireSubmissionDao.findMembersWithoutSubmissionsForQuestionnaire(
+        groupId, projectId, questionnaireId, status).stream().map(
+        user -> new QuestionnaireSubmissionStatsInternalDto(
+          questionnaire.getName(), questionnaire.getMaxPoints(), null, null, null, null, null, null,
+          user.getId(), user.getActualUsername())).toList();
+    questionnaireStatsOfAllMembers.addAll(memberWithoutSubmissionDtos);
+
     List<QuestionnaireSubmissionStatsAdminDto> responseDtos =
-      questionnaireStats.stream().map(
+      questionnaireStatsOfAllMembers.stream().map(
         dto -> questionnaireSubmissionConverter
           .toQuestionnaireSubmissionStatsAdminDto(dto)).toList();
     return responseDtos;
+  }
+
+  private List<QuestionnaireSubmissionStatsAdminDto> getNonActiveQuestionnaireStatistics(
+    Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status) {
+    List<QuestionnaireSubmissionStatsInternalDto> questionnaireStats = questionnaireSubmissionDao
+      .getQuestionnaireSubmissionStatisticsByStatus(groupId, projectId, questionnaireId, status);
+    if (questionnaireStats.isEmpty()) {
+      return new ArrayList<>();
+    }
+    return questionnaireStats.stream().filter(dto -> dto.lastSubmissionCreatedAt() != null).map(
+      dto -> questionnaireSubmissionConverter
+        .toQuestionnaireSubmissionStatsAdminDto(dto)).toList();
   }
 
 
