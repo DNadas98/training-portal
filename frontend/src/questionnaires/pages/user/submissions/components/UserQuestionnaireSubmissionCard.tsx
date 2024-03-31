@@ -48,12 +48,13 @@ export default function UserQuestionnaireSubmissionCard(props: UserQuestionnaire
           <Typography variant={"body1"}>{props.submission.receivedPoints} / {props.submission.maxPoints}</Typography>
         </Grid>
       </Grid>
-      <Typography variant={"body2"} sx={{
-        wordBreak: "break-word",
-        paddingRight: 1
-      }}>
-        Submitted Status: {props.submission.status}
-      </Typography>
+      {props.submission.status
+        ? <Typography variant={"body2"} sx={{
+          wordBreak: "break-word",
+          paddingRight: 1
+        }}> Submitted Status: {props.submission.status}
+        </Typography>
+        : <></>}
     </Stack> </AccordionSummary>
     <AccordionDetails>
       <Typography variant={"body1"}>

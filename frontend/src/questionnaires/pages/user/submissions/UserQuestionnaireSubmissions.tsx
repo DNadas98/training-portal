@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useState} from "react";
 import LoadingSpinner from "../../../../common/utils/components/LoadingSpinner.tsx";
 import usePermissions from "../../../../authentication/hooks/usePermissions.ts";
 import {useNavigate, useParams} from "react-router-dom";
@@ -75,19 +75,6 @@ export default function UserQuestionnaireSubmissions() {
     loadMaxPointQuestionnaires();
   }, [groupId, projectId]);
 
-  const [questionnaireSubmissionsFilterValue, setQuestionnaireSubmissionsFilterValue] = useState<string>("");
-
-  const questionnaireSubmissionsFiltered = useMemo(() => {
-    return questionnaireSubmissions.filter(submission => {
-        return submission.name.toLowerCase().includes(questionnaireSubmissionsFilterValue);
-      }
-    );
-  }, [questionnaireSubmissions, questionnaireSubmissionsFilterValue]);
-
-  const handleQuestionnaireSubmissionsSearch = (event: any) => {
-    setQuestionnaireSubmissionsFilterValue(event.target.value.toLowerCase().trim());
-  }
-
   if (permissionsLoading || questionnaireSubmissionsLoading || maxPointQuestionnaireSubmissionsLoading) {
     return <LoadingSpinner/>;
   } else if (!projectPermissions.length) {
@@ -101,9 +88,8 @@ export default function UserQuestionnaireSubmissions() {
 
   return (
     <UserQuestionnaireSubmissionBrowser
-      questionnaireSubmissions={questionnaireSubmissionsFiltered}
+      questionnaireSubmissions={questionnaireSubmissions}
       maxPointQuestionnaireSubmission={maxPointQuestionnaireSubmission}
-      handleQuestionnaireSubmissionsSearch={handleQuestionnaireSubmissionsSearch}
     />
   );
 }

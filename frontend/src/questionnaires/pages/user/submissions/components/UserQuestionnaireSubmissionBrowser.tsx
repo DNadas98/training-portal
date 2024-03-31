@@ -4,7 +4,6 @@ import {
   CardHeader,
   Grid,
   Stack,
-  TextField
 } from "@mui/material";
 import UserQuestionnaireSubmissionList from "./UserQuestionnaireSubmissionList.tsx";
 import {QuestionnaireSubmissionResponseDto} from "../../../../dto/QuestionnaireSubmissionResponseDto.ts";
@@ -14,7 +13,6 @@ import BackButton from "../../../../../common/utils/components/BackButton.tsx";
 interface UserQuestionnaireSubmissionBrowserProps {
   questionnaireSubmissions: QuestionnaireSubmissionResponseDto[],
   maxPointQuestionnaireSubmission: QuestionnaireSubmissionResponseDto | undefined,
-  handleQuestionnaireSubmissionsSearch: (event: any) => void
 }
 
 export default function UserQuestionnaireSubmissionBrowser(props: UserQuestionnaireSubmissionBrowserProps) {
@@ -32,13 +30,6 @@ export default function UserQuestionnaireSubmissionBrowser(props: UserQuestionna
         {props.questionnaireSubmissions?.length
           ? <Stack spacing={2}><Card>
             <CardHeader title={`${props.questionnaireSubmissions[0].name}`} sx={{textAlign: "center"}}/>
-            <CardContent>
-              <TextField variant={"standard"} type={"search"}
-                         label={"Search"}
-                         fullWidth
-                         onInput={props.handleQuestionnaireSubmissionsSearch}
-              />
-            </CardContent>
           </Card>
             <UserQuestionnaireSubmissionList questionnaireSubmissions={props.questionnaireSubmissions}
                                              maxPoints={false}

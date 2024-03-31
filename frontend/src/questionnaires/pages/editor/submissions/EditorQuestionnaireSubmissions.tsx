@@ -5,16 +5,19 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useNotification} from "../../../../common/notification/context/NotificationProvider.tsx";
 import {isValidId} from "../../../../common/utils/isValidId.ts";
 import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
-import {Card, CardContent, CardHeader, Grid, Stack} from "@mui/material";
+import {Card, CardHeader, Grid, Stack} from "@mui/material";
 import EditorQuestionnaireSubmissionList from "./components/EditorQuestionnaireSubmissionList.tsx";
 import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
 import useAuthJsonFetch from "../../../../common/api/hooks/useAuthJsonFetch.tsx";
 import {QuestionnaireSubmissionResponseEditorDto} from "../../../dto/QuestionnaireSubmissionResponseEditorDto.ts";
+import {QuestionnaireResponseDto} from "../../../dto/QuestionnaireResponseDto.ts";
 
 export default function EditorQuestionnaireSubmissions() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
   const [questionnaireSubmissionsLoading, setQuestionnaireSubmissionsLoading] = useState<boolean>(true);
   const [questionnaireSubmissions, setQuestionnaireSubmissions] = useState<QuestionnaireSubmissionResponseEditorDto[]>([]);
+  const [questionnaire, setQuestionnaire] = useState<QuestionnaireResponseDto | undefined>(undefined);
+  const [questionnaireLoading, setQuestionnaireLoading] = useState<boolean>(true);
   const authJsonFetch = useAuthJsonFetch();
   const navigate = useNavigate();
   const notification = useNotification();
@@ -26,7 +29,7 @@ export default function EditorQuestionnaireSubmissions() {
 
   const loadQuestionnaireSubmissions = async () => {
     try {
-      if (!isValidId(groupId) || !isValidId(projectId)) {
+      if (!isValidId(groupId) || !isValidId(projectId) || !isValidId(questionnaireId)) {
         setQuestionnaireSubmissions([]);
         return;
       }
@@ -50,7 +53,34 @@ export default function EditorQuestionnaireSubmissions() {
     }
   };
 
+  const loadQuestionnaire = async () => {
+    try {
+      if (!isValidId(groupId) || !isValidId(projectId) || !isValidId(questionnaireId)) {
+        setQuestionnaire(undefined);
+        return;
+      }
+      setQuestionnaireLoading(true);
+      const response = await authJsonFetch({
+        path: `groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}`
+      });
+      if (!response?.status || response.status > 399 || !response?.data) {
+        notification.openNotification({
+          type: "error", vertical: "top", horizontal: "center",
+          message: `${response?.error ?? "Failed to load questionnaire submissions"}`
+        });
+        setQuestionnaire(undefined);
+        return;
+      }
+      setQuestionnaire(response.data as QuestionnaireResponseDto);
+    } catch (e) {
+      setQuestionnaire(undefined);
+    } finally {
+      setQuestionnaireLoading(false);
+    }
+  };
+
   useEffect(() => {
+    loadQuestionnaire();
     loadQuestionnaireSubmissions();
   }, [groupId, projectId]);
 
@@ -91,7 +121,7 @@ export default function EditorQuestionnaireSubmissions() {
     });
   }
 
-  if (permissionsLoading || questionnaireSubmissionsLoading) {
+  if (permissionsLoading || questionnaireLoading || questionnaireSubmissionsLoading) {
     return <LoadingSpinner/>;
   } else if (!projectPermissions.includes(PermissionType.PROJECT_EDITOR)) {
     notification.openNotification({
@@ -100,12 +130,19 @@ export default function EditorQuestionnaireSubmissions() {
     });
     navigate(`/groups/${groupId}/projects`);
     return <></>;
+  } else if (!questionnaire) {
+    notification.openNotification({
+      type: "error", vertical: "top", horizontal: "center",
+      message: "Failed to load questionnaire data"
+    });
+    navigate(`/groups/${groupId}/projects`);
+    return <></>;
   }
 
   return (
     <Grid container spacing={2} justifyContent={"center"} alignItems={"top"}>
       <Grid item xs={10} sm={10} md={9} lg={8}><Stack spacing={2}><Card>
-        <CardHeader title={"Submitted Tests"} sx={{textAlign: "center"}}/>
+        <CardHeader title={questionnaire.name} sx={{textAlign: "center"}}/>
       </Card>
         {questionnaireSubmissions?.length
           ?
