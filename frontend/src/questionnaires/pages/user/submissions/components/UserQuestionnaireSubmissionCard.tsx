@@ -6,6 +6,7 @@ import {
   CardContent,
   CardHeader,
   Checkbox,
+  Divider,
   Grid,
   Radio,
   Stack,
@@ -17,6 +18,7 @@ import {SubmittedAnswerStatus} from "../../../../dto/SubmittedAnswerStatus.ts";
 import {QuestionType} from "../../../../dto/QuestionType.ts";
 import useLocalizedDateTime from "../../../../../common/localization/hooks/useLocalizedDateTime.tsx";
 import {QuestionnaireSubmissionResponseEditorDto} from "../../../../dto/QuestionnaireSubmissionResponseEditorDto.ts";
+import IsSmallScreen from "../../../../../common/utils/IsSmallScreen.tsx";
 
 interface UserQuestionnaireSubmissionCardProps {
   submission: QuestionnaireSubmissionResponseEditorDto;
@@ -25,36 +27,37 @@ interface UserQuestionnaireSubmissionCardProps {
 export default function UserQuestionnaireSubmissionCard(props: UserQuestionnaireSubmissionCardProps) {
   const theme = useTheme();
   const getLocalizedDateTime = useLocalizedDateTime();
+  const isSmallScreen = IsSmallScreen();
   return <Accordion key={props.submission.id} defaultExpanded={false}
                     variant={"elevation"}
                     sx={{paddingTop: 0.5, paddingBottom: 0.5}}>
     <AccordionSummary expandIcon={<ExpandIcon/>}><Stack spacing={0.5} width={"100%"}>
-      <Typography variant={"h6"} sx={{
-        wordBreak: "break-word",
-        paddingRight: 1
-      }}>
-        {getLocalizedDateTime(new Date(props.submission.createdAt))}
-      </Typography>
-      <Grid container>
-        <Grid item xs={12} sm={10}>
+      <Grid container alignItems={"baseline"} spacing={1} justifyContent={"left"}>
+        <Grid item xs={12} sm={"auto"}>
+          <Typography variant={"h6"}>
+            {props.submission.receivedPoints} / {props.submission.maxPoints} Points
+          </Typography>
+        </Grid>
+        {!isSmallScreen ? <Grid item><Divider variant={"fullWidth"} orientation={"vertical"}/></Grid> : <></>}
+        <Grid item xs={12} sm={"auto"}>
           <Typography variant={"body1"} sx={{
             wordBreak: "break-word",
             paddingRight: 1
           }}>
-            {props.submission.name}
+            {getLocalizedDateTime(new Date(props.submission.createdAt))}
           </Typography>
         </Grid>
-        <Grid item xs={12} sm={2}>
-          <Typography variant={"body1"}>{props.submission.receivedPoints} / {props.submission.maxPoints}</Typography>
-        </Grid>
+        {!isSmallScreen ? <Grid item><Divider variant={"fullWidth"} orientation={"vertical"}/></Grid> : <></>}
+        {props.submission.status
+          ? <Grid item xs={12} sm={"auto"}>
+            <Typography variant={"body1"} sx={{
+              wordBreak: "break-word",
+              paddingRight: 1
+            }}> Submitted Status: {props.submission.status}
+            </Typography>
+          </Grid>
+          : <></>}
       </Grid>
-      {props.submission.status
-        ? <Typography variant={"body2"} sx={{
-          wordBreak: "break-word",
-          paddingRight: 1
-        }}> Submitted Status: {props.submission.status}
-        </Typography>
-        : <></>}
     </Stack> </AccordionSummary>
     <AccordionDetails>
       <Typography variant={"body1"}>

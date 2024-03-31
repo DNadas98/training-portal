@@ -6,6 +6,7 @@ export interface QuestionnaireResponseEditorDto {
   name: string;
   description: string;
   status: QuestionnaireStatus;
+  maxPoints: number;
   createdBy: UserResponsePublicDto;
   createdAt: Date;
   updatedBy: UserResponsePublicDto;

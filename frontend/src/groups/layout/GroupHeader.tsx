@@ -67,10 +67,6 @@ export default function GroupHeader(props: GroupHeaderProps) {
                         {
                           path: `/groups/${props.group.groupId}/projects/${props.project.projectId}`,
                           title: "Project Dashboard"
-                        },
-                        {
-                          path: `/groups/${props.group.groupId}/projects/${props.project.projectId}/questionnaires`,
-                          title: "Questionnaires"
                         }
                       ]}/>
                     <Typography variant={"body2"}>

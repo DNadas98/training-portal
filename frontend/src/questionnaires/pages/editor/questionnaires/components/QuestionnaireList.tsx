@@ -7,6 +7,7 @@ import {
   Card,
   CardContent,
   Divider,
+  Grid,
   Stack,
   Typography
 } from "@mui/material";
@@ -38,12 +39,24 @@ export default function QuestionnaireList(props: QuestionnaireListProps) {
                      variant={"elevation"}
                      sx={{paddingTop: 0.5, paddingBottom: 0.5}}>
             <AccordionSummary expandIcon={<ExpandIcon/>}>
-              <Typography variant={"h6"} sx={{
-                wordBreak: "break-word",
-                paddingRight: 1
-              }}>
-                {questionnaire.name}
-              </Typography>
+              <Grid container alignItems={"center"} justifyContent={"space-between"}>
+                <Grid item xs={12} md={true}>
+                  <Typography variant={"h6"} sx={{
+                    wordBreak: "break-word",
+                    paddingRight: 1
+                  }}>
+                    {questionnaire.name}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={"auto"}>
+                  <Typography variant={"body1"} sx={{
+                    wordBreak: "break-word",
+                    paddingRight: 1
+                  }}>
+                    Max Points: {questionnaire.maxPoints}
+                  </Typography>
+                </Grid>
+              </Grid>
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant={"body2"}>

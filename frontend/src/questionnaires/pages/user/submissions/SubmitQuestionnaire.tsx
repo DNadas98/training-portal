@@ -160,8 +160,25 @@ export default function SubmitQuestionnaire() {
   return (<Grid container justifyContent={"center"} alignItems={"center"} spacing={2}>
     <Grid item xs={10}>
       <Card sx={{marginBottom: 2}}>
-        <CardHeader title={questionnaire.name} titleTypographyProps={{variant: "h5"}}/>
         <CardContent>
+          <Grid container alignItems={"center"} justifyContent={"space-between"} mb={2}>
+            <Grid item xs={12} md={true}>
+              <Typography variant={"h5"} sx={{
+                wordBreak: "break-word",
+                paddingRight: 1
+              }}>
+                {questionnaire.name}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={"auto"}>
+              <Typography variant={"body1"} sx={{
+                wordBreak: "break-word",
+                paddingRight: 1
+              }}>
+                Max Points: {questionnaire.maxPoints}
+              </Typography>
+            </Grid>
+          </Grid>
           <Typography>{questionnaire.description}</Typography>
         </CardContent>
       </Card>
