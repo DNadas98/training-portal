@@ -16,6 +16,7 @@ import LoadingSpinner from "../../../../../common/utils/components/LoadingSpinne
 import {QuestionnaireResponseEditorDto} from "../../../../dto/QuestionnaireResponseEditorDto.ts";
 import {QuestionnaireStatus} from "../../../../dto/QuestionnaireStatus.ts";
 import useLocalizedDateTime from "../../../../../common/localization/hooks/useLocalizedDateTime.tsx";
+import RichTextDisplay from "../../../../../common/richTextEditor/RichTextDisplay.tsx";
 
 interface QuestionnaireListProps {
   loading: boolean,
@@ -59,9 +60,7 @@ export default function QuestionnaireList(props: QuestionnaireListProps) {
               </Grid>
             </AccordionSummary>
             <AccordionDetails>
-              <Typography variant={"body2"}>
-                {questionnaire.description}
-              </Typography>
+              <RichTextDisplay content={questionnaire.description}/>
               <Divider sx={{marginTop: 2, marginBottom: 2}}/>
               <Typography variant={"body2"}>
                 Created

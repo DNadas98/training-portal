@@ -5,24 +5,13 @@ import {useNotification} from "../../../../common/notification/context/Notificat
 import {isValidId} from "../../../../common/utils/isValidId.ts";
 import {QuestionnaireResponseDetailsDto} from "../../../dto/QuestionnaireResponseDetailsDto.ts";
 import LoadingSpinner from "../../../../common/utils/components/LoadingSpinner.tsx";
-import {
-  Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
-  Checkbox,
-  Grid,
-  Radio,
-  Stack,
-  Typography
-} from "@mui/material";
+import {Box, Button, Card, CardActions, CardContent, Checkbox, Grid, Radio, Stack, Typography} from "@mui/material";
 import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
 import {QuestionType} from "../../../dto/QuestionType.ts";
 import {QuestionnaireSubmissionRequestDto} from "../../../dto/QuestionnaireSubmissionRequestDto.ts";
 import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
 import useAuthJsonFetch from "../../../../common/api/hooks/useAuthJsonFetch.tsx";
+import RichTextDisplay from "../../../../common/richTextEditor/RichTextDisplay.tsx";
 
 export default function SubmitQuestionnaire() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -179,7 +168,7 @@ export default function SubmitQuestionnaire() {
               </Typography>
             </Grid>
           </Grid>
-          <Typography>{questionnaire.description}</Typography>
+          <RichTextDisplay content={questionnaire.description}/>
         </CardContent>
       </Card>
       <Box component={"form"} onSubmit={submitQuestionnaire}>
@@ -187,10 +176,13 @@ export default function SubmitQuestionnaire() {
           {questionnaire.questions.map((question, questionIndex) => {
             return (
               <Card key={question.id}>
-                <CardHeader title={`${question.order}. ${question.text}`} titleTypographyProps={{variant: "body1"}}
-                            subheader={<Typography variant={"body2"} gutterBottom>Max
-                              points: {question.points}</Typography>}/>
                 <CardContent>
+                  <Stack direction={"row"} spacing={1} alignItems={"baseline"}>
+                    <Typography>{question.order}.</Typography>
+                    <RichTextDisplay content={question.text}/>
+                  </Stack>
+                  <Typography variant={"body2"} gutterBottom>Max
+                    points: {question.points}</Typography>
                   {question.answers.map(answer => {
                     return <Grid container key={answer.id} spacing={1}
                                  justifyContent={"center"} alignItems={"baseline"}>

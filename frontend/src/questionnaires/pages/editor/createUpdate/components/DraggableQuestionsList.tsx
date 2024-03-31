@@ -19,6 +19,7 @@ import DraggableQuestionAnswersList from "./DraggableQuestionAnswersList.tsx";
 import DeleteIcon from "../../../../../common/utils/components/DeleteIcon.tsx";
 import AddIcon from "../../../../../common/utils/components/AddIcon.tsx";
 import IsSmallScreen from "../../../../../common/utils/IsSmallScreen.tsx";
+import RichTextEditorControlled from "../../../../../common/richTextEditor/RichTextEditorControlled.tsx";
 
 interface DraggableQuestionsListProps {
   onDragEnd: (result: any) => void;
@@ -64,31 +65,17 @@ export default function DraggableQuestionsList(props: DraggableQuestionsListProp
                                   Delete
                                 </Button>
                               </Stack>
-                              <TextField
-                                required
-                                fullWidth
-                                multiline={true}
-                                minRows={2}
-                                label="Question Text"
-                                value={question.text}
-                                variant={"outlined"}
-                                onChange={(e) => props.handleQuestionChange(qIndex, "text", e.target.value)}
-                              />
+                              <RichTextEditorControlled id={qIndex}
+                                                        value={question.text}
+                                                        onChange={(currentValue: string) => props.handleQuestionChange(qIndex, "text", currentValue)}/>
                             </Stack>
                             : <Stack spacing={2} direction={"row"} alignItems={"center"}>
                               <Typography variant={"h5"}>
                                 {question.order}.
                               </Typography>
-                              <TextField
-                                required
-                                fullWidth
-                                multiline={true}
-                                minRows={1}
-                                label="Question Text"
-                                value={question.text}
-                                variant={"outlined"}
-                                onChange={(e) => props.handleQuestionChange(qIndex, "text", e.target.value)}
-                              />
+                              <RichTextEditorControlled id={qIndex}
+                                                        value={question.text}
+                                                        onChange={(currentValue: string) => props.handleQuestionChange(qIndex, "text", currentValue)}/>
                               <IconButton type="button"
                                           disabled={props.questions.length<2}
                                           onClick={() => props.removeQuestion(qIndex)}>

@@ -9,7 +9,7 @@ import useExtensions from "./UseExtensions.tsx";
  * @param defaultValue
  * @see https://react.dev/reference/react-dom/components/input#props
  */
-interface CustomRteEditorProps {
+interface RichTextEditorUncontrolledProps {
   name: string;
   defaultValue?: string;
 }
@@ -19,7 +19,7 @@ interface CustomRteEditorProps {
  * @param props `name` and `defaultValue` of an uncontrolled form element
  * @see https://github.com/sjdemartini/mui-tiptap
  */
-export default function RichTextEditorUncontrolled(props: CustomRteEditorProps) {
+export default function RichTextEditorUncontrolled(props: RichTextEditorUncontrolledProps) {
   const extensions = useExtensions({});
   const rteRef = useRef<RichTextEditorRef>(null);
   const [content, setContent] = useState(props.defaultValue ?? "");

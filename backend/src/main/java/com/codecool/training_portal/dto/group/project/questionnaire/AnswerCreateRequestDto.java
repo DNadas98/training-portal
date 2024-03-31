@@ -1,4 +1,8 @@
 package com.codecool.training_portal.dto.group.project.questionnaire;
 
-public record AnswerCreateRequestDto(String text, Boolean correct, Integer order) {
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
+public record AnswerCreateRequestDto(@NotNull String text, @NotNull Boolean correct,
+                                     @NotNull @Min(1) Integer order) {
 }

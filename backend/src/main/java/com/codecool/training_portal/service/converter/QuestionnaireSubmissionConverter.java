@@ -1,11 +1,13 @@
 package com.codecool.training_portal.service.converter;
 
 import com.codecool.training_portal.dto.group.project.questionnaire.*;
+import com.codecool.training_portal.model.group.project.questionnaire.Question;
 import com.codecool.training_portal.model.group.project.questionnaire.Questionnaire;
 import com.codecool.training_portal.model.group.project.questionnaire.QuestionnaireSubmission;
 import com.codecool.training_portal.service.datetime.DateTimeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;

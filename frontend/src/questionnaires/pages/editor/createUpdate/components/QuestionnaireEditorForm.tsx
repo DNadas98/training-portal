@@ -1,20 +1,10 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  MenuItem,
-  Select,
-  Stack,
-  TextField,
-  Typography
-} from "@mui/material";
+import {Box, Button, Card, CardContent, Grid, MenuItem, Select, Stack, TextField, Typography} from "@mui/material";
 import DraggableQuestionsList from "./DraggableQuestionsList.tsx";
 import AddIcon from "../../../../../common/utils/components/AddIcon.tsx";
 import {QuestionCreateRequestDto} from "../../../../dto/QuestionCreateRequestDto.ts";
 import {FormEventHandler, MouseEventHandler} from "react";
 import {QuestionnaireStatus} from "../../../../dto/QuestionnaireStatus.ts";
+import RichTextEditorControlled from "../../../../../common/richTextEditor/RichTextEditorControlled.tsx";
 
 interface QuestionnaireEditorFormProps {
   name: string | undefined,
@@ -62,15 +52,8 @@ export default function QuestionnaireEditorForm(props: QuestionnaireEditorFormPr
                     variant={"outlined"}
                     onChange={(e) => props.setName(e.target.value)}
                   />
-                  <TextField
-                    required
-                    fullWidth
-                    label="Description"
-                    multiline
-                    minRows={4}
-                    value={props.description}
-                    onChange={(e) => props.setDescription(e.target.value)}
-                  />
+                  <RichTextEditorControlled id={"questionnaire-description"} value={props.description ?? ""}
+                                            onChange={(currentValue: string) => props.setDescription(currentValue)}/>
                   <Grid container spacing={2} alignItems={"center"}>
                     <Grid item>
                       <Typography sx={{whiteSpace: "nowrap"}}>

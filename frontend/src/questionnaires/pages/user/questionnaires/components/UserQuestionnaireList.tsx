@@ -13,6 +13,7 @@ import {
 import ExpandIcon from "../../../../../common/utils/components/ExpandIcon.tsx";
 import LoadingSpinner from "../../../../../common/utils/components/LoadingSpinner.tsx";
 import {QuestionnaireResponseDto} from "../../../../dto/QuestionnaireResponseDto.ts";
+import RichTextDisplay from "../../../../../common/richTextEditor/RichTextDisplay.tsx";
 
 interface UserQuestionnaireListProps {
   loading: boolean,
@@ -53,9 +54,7 @@ export default function UserQuestionnaireList(props: UserQuestionnaireListProps)
               </Grid>
             </AccordionSummary>
             <AccordionDetails>
-              <Typography variant={"body2"}>
-                {questionnaire.description}
-              </Typography>
+              <RichTextDisplay content={questionnaire.description}/>
             </AccordionDetails>
             <AccordionActions>
               {props.maxPoints

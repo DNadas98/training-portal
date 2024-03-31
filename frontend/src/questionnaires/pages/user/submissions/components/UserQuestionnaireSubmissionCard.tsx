@@ -4,7 +4,6 @@ import {
   AccordionSummary,
   Card,
   CardContent,
-  CardHeader,
   Checkbox,
   Divider,
   Grid,
@@ -19,6 +18,7 @@ import {QuestionType} from "../../../../dto/QuestionType.ts";
 import useLocalizedDateTime from "../../../../../common/localization/hooks/useLocalizedDateTime.tsx";
 import {QuestionnaireSubmissionResponseEditorDto} from "../../../../dto/QuestionnaireSubmissionResponseEditorDto.ts";
 import IsSmallScreen from "../../../../../common/utils/IsSmallScreen.tsx";
+import RichTextDisplay from "../../../../../common/richTextEditor/RichTextDisplay.tsx";
 
 interface UserQuestionnaireSubmissionCardProps {
   submission: QuestionnaireSubmissionResponseEditorDto;
@@ -60,17 +60,18 @@ export default function UserQuestionnaireSubmissionCard(props: UserQuestionnaire
       </Grid>
     </Stack> </AccordionSummary>
     <AccordionDetails>
-      <Typography variant={"body1"}>
-        {props.submission.description}
-      </Typography>
+      <RichTextDisplay content={props.submission.description}/>
       <Stack spacing={2} marginTop={2}>
         {props.submission.questions.map(question => <Card elevation={10} key={question.id}>
-          <CardHeader title={`${question.order}. ${question.text}`} titleTypographyProps={{variant: "body1"}}
-                      subheader={<Typography variant={"body2"}>
-                        Received Points: <strong> {question.receivedPoints} / {question.maxPoints}</strong>
-                      </Typography>}/>
           <CardContent>
             <Stack spacing={2}>
+              <Stack direction={"row"} spacing={1} alignItems={"baseline"}>
+                <Typography>{question.order}.</Typography>
+                <RichTextDisplay content={question.text}/>
+              </Stack>
+              <Typography variant={"body2"}>
+                Received Points: <strong> {question.receivedPoints} / {question.maxPoints}</strong>
+              </Typography>
               {question.answers.map(answer => (
                 <Grid container key={answer.id} spacing={1}
                       justifyContent={"center"} alignItems={"baseline"}

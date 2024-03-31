@@ -23,10 +23,10 @@ public class Questionnaire {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false, unique = true)
+  @Column(nullable = false, length = 100, unique = true)
   private String name;
 
-  @Column(length = 500, nullable = false)
+  @Column(length = 10000, nullable = false)
   private String description;
 
   @Column(nullable = false)

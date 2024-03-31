@@ -1,4 +1,7 @@
 package com.codecool.training_portal.dto.group.project.questionnaire;
 
-public record SubmittedAnswerRequestDto(Long answerId) {
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
+public record SubmittedAnswerRequestDto(@NotNull @Min(1) Long answerId) {
 }
