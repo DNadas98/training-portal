@@ -141,7 +141,7 @@ class ApplicationUserServiceTest {
       true);
     applicationUserService.updateUsername(updateDto);
 
-    assertEquals(updateDto.username(), authenticatedUser.getUsername());
+    assertEquals(updateDto.username(), authenticatedUser.getActualUsername());
   }
 
   @Test
@@ -159,17 +159,18 @@ class ApplicationUserServiceTest {
   }
 
   @Test
-  void updatePassword_updates_password() {
+  void updatePassword_updates_password_to_new_hashed_password() {
     ApplicationUser authenticatedUser = testUsers.get(0);
-    String newPassword = "newPassword";
-    UserPasswordUpdateDto updateDto = new UserPasswordUpdateDto("password", newPassword);
+    UserPasswordUpdateDto updateDto = new UserPasswordUpdateDto(authenticatedUser.getPassword(), "newPassword");
 
     when(userProvider.getAuthenticatedUser()).thenReturn(authenticatedUser);
-    when(passwordEncoder.matches(updateDto.password(), authenticatedUser.getPassword())).thenReturn(
+    when(passwordEncoder.matches(anyString(),anyString())).thenReturn(
       true);
     applicationUserService.updatePassword(updateDto);
 
-    assertTrue(passwordEncoder.matches(newPassword, authenticatedUser.getPassword()));
+    verify(passwordEncoder).encode(updateDto.newPassword());
+    assertNotEquals(authenticatedUser.getPassword(), updateDto.newPassword());
+    verify(applicationUserDao).save(authenticatedUser);
   }
 
   @Test
@@ -193,7 +194,7 @@ class ApplicationUserServiceTest {
     when(userProvider.getAuthenticatedUser()).thenReturn(authenticatedUser);
     applicationUserService.archiveOwnApplicationUser();
 
-    assertTrue(authenticatedUser.getUsername().contains("archived"));
+    assertTrue(authenticatedUser.getActualUsername().contains("archived"));
     assertTrue(authenticatedUser.getEmail().contains("archived"));
     assertEquals("", authenticatedUser.getPassword());
     assertFalse(authenticatedUser.isEnabled());
