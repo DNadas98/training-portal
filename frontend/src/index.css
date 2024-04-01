@@ -1,5 +1,12 @@
+/* apply background image */
 #root {
     background-image: url("/background.svg");
     background-repeat: no-repeat;
     background-size: cover;
+}
+
+/* set cursor of rich text editor to input cursor */
+
+.MuiTiptap-RichTextContent-editable:hover {
+    cursor: text;
 }
