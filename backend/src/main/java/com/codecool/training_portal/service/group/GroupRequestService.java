@@ -19,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -83,9 +84,12 @@ public class GroupRequestService {
     UserGroupJoinRequest request = requestDao.findByIdAndGroupId(requestId, groupId).orElseThrow(
       () -> new GroupJoinRequestNotFoundException(requestId));
     request.setStatus(updateDto.status());
+    request.setUpdatedAt(Instant.now());
     if (request.getStatus().equals(RequestStatus.APPROVED)) {
       groupRoleService.addMember(groupId, request.getApplicationUser().getActualUsername());
       requestDao.delete(request);
+    } else {
+      requestDao.save(request);
     }
   }
 }

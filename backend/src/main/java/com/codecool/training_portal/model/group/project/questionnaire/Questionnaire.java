@@ -61,7 +61,7 @@ public class Questionnaire {
   private ApplicationUser createdBy;
 
   @UpdateTimestamp
-  Instant updatedAt;
+  private Instant updatedAt;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "updated_by_user_id", nullable = true)

@@ -12,6 +12,7 @@ import {QuestionnaireSubmissionRequestDto} from "../../../dto/QuestionnaireSubmi
 import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
 import useAuthJsonFetch from "../../../../common/api/hooks/useAuthJsonFetch.tsx";
 import RichTextDisplay from "../../../../common/richTextEditor/RichTextDisplay.tsx";
+import useLocalizedDateTime from "../../../../common/localization/hooks/useLocalizedDateTime.tsx";
 
 export default function SubmitQuestionnaire() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -27,10 +28,26 @@ export default function SubmitQuestionnaire() {
   const projectId = useParams()?.projectId;
   const questionnaireId = useParams()?.questionnaireId;
 
+  const getLocalizedDateTime = useLocalizedDateTime();
+
   const [formData, setFormData] = useState<QuestionnaireSubmissionRequestDto>({
     questionnaireId: questionnaireId as string,
     questions: []
   });
+
+  const LOCAL_STORAGE_KEY = `questionnaireSubmission`;
+
+  const parseLocalStorageData = (key) => {
+    const savedData = localStorage.getItem(key);
+    if (savedData?.length) {
+      try {
+        return JSON.parse(savedData);
+      } catch (e) {
+        return undefined;
+      }
+    }
+    return undefined;
+  };
 
   const loadQuestionnaire = async () => {
     try {
@@ -49,16 +66,33 @@ export default function SubmitQuestionnaire() {
         setQuestionnaireError(response?.error ?? "Failed to load questionnaire");
         return;
       }
+      const fetchedQuestionnaire = response.data as QuestionnaireResponseDetailsDto;
+      setQuestionnaire(fetchedQuestionnaire);
 
-      setQuestionnaire(response.data as QuestionnaireResponseDetailsDto);
-      setFormData({
-        questionnaireId: response.data.id,
-        questions: response.data.questions.map(question => ({
-          questionId: question.id,
-          checkedAnswers: []
-        }))
-      });
-
+      const parsedData: (QuestionnaireSubmissionRequestDto & {
+        updatedAt: string
+      }) | undefined = parseLocalStorageData(LOCAL_STORAGE_KEY);
+      const serverUpdateTime = new Date(fetchedQuestionnaire.updatedAt);
+      if (parsedData && parsedData?.questionnaireId === fetchedQuestionnaire.id.toString() && parsedData.updatedAt
+        && new Date(parsedData.updatedAt) > serverUpdateTime) {
+        setFormData(parsedData);
+        const storeUpdateTimeString = getLocalizedDateTime(new Date(parsedData.updatedAt));
+        if (parsedData.questions.some(question => question.checkedAnswers.length > 0)) {
+          notification.openNotification({
+            type: "info", vertical: "top", horizontal: "center",
+            message: `Questionnaire submission restored: ${storeUpdateTimeString}`
+          });
+        }
+      } else {
+        setFormData({
+          questionnaireId: response.data.id,
+          questions: response.data.questions.map(question => ({
+            questionId: question.id,
+            checkedAnswers: []
+          }))
+        });
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
+      }
       setQuestionnaireError(undefined);
     } catch (e) {
       setQuestionnaire(undefined);
@@ -67,6 +101,15 @@ export default function SubmitQuestionnaire() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (formData && formData.questions.length) {
+      const dataToSave = JSON.stringify({
+        ...formData, updatedAt: new Date().toISOString()
+      });
+      localStorage.setItem(LOCAL_STORAGE_KEY, dataToSave);
+    }
+  }, [formData, questionnaireId]);
 
   useEffect(() => {
     if (!permissionsLoading) {
@@ -94,7 +137,7 @@ export default function SubmitQuestionnaire() {
     try {
       setLoading(true);
       if (formData.questions.some((question) => {
-        return questionnaire?.questions.filter(q=>q.id===question.questionId)[0]?.type === QuestionType.RADIO
+        return questionnaire?.questions.filter(q => q.id === question.questionId)[0]?.type === QuestionType.RADIO
           && !question.checkedAnswers.length;
       })) {
         notification.openNotification({
@@ -118,7 +161,8 @@ export default function SubmitQuestionnaire() {
 
       notification.openNotification({
         type: "success", vertical: "top", horizontal: "center", message: response.message
-      })
+      });
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
       navigate(`/groups/${groupId}/projects/${projectId}`);
     } catch (e) {
       notification.openNotification({
@@ -134,7 +178,10 @@ export default function SubmitQuestionnaire() {
       text: "Are you sure you would like to exit without completing the questionnaire? You will have to start again next time.",
       confirmText: "Yes, exit without saving",
       cancelText: "No, continue the questionnaire",
-      onConfirm: () => navigate(-1)
+      onConfirm: () => {
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
+        navigate(-1);
+      }
     });
   }
 

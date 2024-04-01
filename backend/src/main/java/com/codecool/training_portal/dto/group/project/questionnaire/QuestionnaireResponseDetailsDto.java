@@ -3,5 +3,5 @@ import java.util.List;
 
 public record QuestionnaireResponseDetailsDto(Long id, String name, String description,
                                               Integer maxPoints,
-                                              List<QuestionResponseDto> questions) {
+                                              List<QuestionResponseDto> questions,String updatedAt) {
 }

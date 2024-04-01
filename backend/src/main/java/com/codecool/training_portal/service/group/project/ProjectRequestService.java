@@ -19,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,9 +42,9 @@ public class ProjectRequestService {
   @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_MEMBER')")
   public ProjectJoinRequestResponseDto createJoinRequest(Long groupId, Long projectId) {
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
-      Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
+    Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-      if (project.getAssignedMembers().contains(applicationUser)) {
+    if (project.getAssignedMembers().contains(applicationUser)) {
       throw new UserAlreadyInProjectException();
     }
     Optional<ProjectJoinRequest> duplicateRequest = requestDao.findOneByProjectAndApplicationUser(
@@ -68,8 +69,8 @@ public class ProjectRequestService {
   @Transactional
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ADMIN')")
   public List<ProjectJoinRequestResponseDto> getJoinRequestsOfProject(
-          Long groupId, Long projectId) {
-      Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
+    Long groupId, Long projectId) {
+    Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
     List<ProjectJoinRequest> requests = requestDao.findByProjectAndStatus(
       project,
@@ -80,15 +81,18 @@ public class ProjectRequestService {
   @Transactional(rollbackFor = Exception.class)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ADMIN')")
   public void handleJoinRequest(
-          Long groupId, Long projectId, Long requestId, ProjectJoinRequestUpdateDto updateDto) {
-      ProjectJoinRequest request = requestDao.findByGroupIdAndProjectIdAndRequestId(
-              groupId, projectId, requestId).orElseThrow(
+    Long groupId, Long projectId, Long requestId, ProjectJoinRequestUpdateDto updateDto) {
+    ProjectJoinRequest request = requestDao.findByGroupIdAndProjectIdAndRequestId(
+      groupId, projectId, requestId).orElseThrow(
       () -> new ProjectJoinRequestNotFoundException(requestId));
     request.setStatus(updateDto.status());
+    request.setUpdatedAt(Instant.now());
     if (request.getStatus().equals(RequestStatus.APPROVED)) {
       projectAdminService.assignMember(
         groupId, projectId, request.getApplicationUser().getActualUsername());
       requestDao.delete(request);
+    } else {
+      requestDao.save(request);
     }
   }
 }

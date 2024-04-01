@@ -16,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -101,6 +102,7 @@ public class QuestionnaireService {
     if (questionnaireUpdateRequestDto.status() == QuestionnaireStatus.ACTIVE) {
       questionnaire.setActivated(true);
     }
+    questionnaire.setUpdatedAt(Instant.now());
     questionnaireDao.save(questionnaire);
     return questionnaireConverter.toQuestionnaireResponseEditorDetailsDto(questionnaire);
   }

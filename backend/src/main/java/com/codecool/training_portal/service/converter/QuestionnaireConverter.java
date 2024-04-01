@@ -33,7 +33,7 @@ public class QuestionnaireConverter {
     return new QuestionnaireResponseDetailsDto(questionnaire.getId(),
       questionnaire.getName(), questionnaire.getDescription(), questionnaire.getMaxPoints(),
       questionnaire.getQuestions().stream().map(this::toQuestionResponseDto)
-        .collect(Collectors.toList()));
+        .collect(Collectors.toList()),dateTimeService.toDisplayedDate(questionnaire.getUpdatedAt()));
   }
 
   @Transactional(readOnly = true)

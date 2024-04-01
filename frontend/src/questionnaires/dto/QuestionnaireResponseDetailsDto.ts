@@ -6,4 +6,5 @@ export interface QuestionnaireResponseDetailsDto {
   description: string;
   maxPoints: number;
   questions: QuestionResponseDto[];
+  updatedAt:string;
 }
