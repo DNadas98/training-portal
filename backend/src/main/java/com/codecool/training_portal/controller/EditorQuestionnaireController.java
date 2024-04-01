@@ -25,16 +25,18 @@ public class EditorQuestionnaireController {
   @GetMapping
   public ResponseEntity<?> getQuestionnaires(
     @PathVariable Long groupId, @PathVariable Long projectId) {
-    List<QuestionnaireResponseEditorDto> questionnaires = questionnaireService.getEditorQuestionnaires(
-      groupId, projectId);
+    List<QuestionnaireResponseEditorDto> questionnaires =
+      questionnaireService.getEditorQuestionnaires(
+        groupId, projectId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", questionnaires));
   }
 
   @GetMapping("/{questionnaireId}")
   public ResponseEntity<?> getQuestionnaire(
     @PathVariable Long groupId, @PathVariable Long projectId, @PathVariable Long questionnaireId) {
-    QuestionnaireResponseEditorDetailsDto questionnaire = questionnaireService.getEditorQuestionnaire(
-      groupId, projectId, questionnaireId);
+    QuestionnaireResponseEditorDetailsDto questionnaire =
+      questionnaireService.getEditorQuestionnaire(
+        groupId, projectId, questionnaireId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", questionnaire));
   }
 

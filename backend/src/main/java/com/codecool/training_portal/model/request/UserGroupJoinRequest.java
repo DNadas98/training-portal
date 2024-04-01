@@ -40,8 +40,8 @@ public class UserGroupJoinRequest {
   @Enumerated(EnumType.STRING)
   private RequestStatus status;
 
-    public UserGroupJoinRequest(UserGroup userGroup, ApplicationUser applicationUser) {
-        this.userGroup = userGroup;
+  public UserGroupJoinRequest(UserGroup userGroup, ApplicationUser applicationUser) {
+    this.userGroup = userGroup;
     this.applicationUser = applicationUser;
     this.status = RequestStatus.PENDING;
   }

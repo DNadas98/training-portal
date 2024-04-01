@@ -17,6 +17,11 @@ public class EmailTemplateService {
   @Value("${FRONTEND_BASE_URL}")
   private String FRONTEND_BASE_URL;
 
+  private static String getTemplate(String path) throws IOException {
+    String template = Files.readString(Paths.get(new ClassPathResource(path).getURI()));
+    return template;
+  }
+
   public EmailRequestDto getRegistrationEmailDto(
     VerificationTokenDto verificationTokenDto, String toEmail, String username) throws IOException {
     return new EmailRequestDto(toEmail, "Registration verification to Training Portal",
@@ -47,7 +52,6 @@ public class EmailTemplateService {
     return String.format(template, username, verificationUrl);
   }
 
-
   public EmailRequestDto getPasswordResetEmailDto(
     VerificationTokenDto verificationTokenDto, String email, String username) throws IOException {
     return new EmailRequestDto(email, "Password reset request for Training Portal",
@@ -61,12 +65,6 @@ public class EmailTemplateService {
     String verificationUrl = getVerificationUrl(
       "%s/redirect/password-reset?code=%s&id=%s", verificationTokenDto);
     return String.format(template, username, verificationUrl);
-  }
-
-  private static String getTemplate(String path) throws IOException {
-    String template = new String(
-      Files.readAllBytes(Paths.get(new ClassPathResource(path).getURI())), StandardCharsets.UTF_8);
-    return template;
   }
 
   private String getVerificationUrl(String url, VerificationTokenDto verificationTokenDto) {

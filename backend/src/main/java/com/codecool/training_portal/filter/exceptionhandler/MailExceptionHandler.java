@@ -1,4 +1,4 @@
-package com.codecool.training_portal.controller.exceptionhandler;
+package com.codecool.training_portal.filter.exceptionhandler;
 
 import jakarta.mail.Address;
 import jakarta.mail.SendFailedException;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class MailExceptionHandler {
@@ -37,8 +36,7 @@ public class MailExceptionHandler {
     logger.error("E-mail sending error details: {}", errorDetails);
     if (!invalidAddressesList.isEmpty()) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
-        "error", "Invalid e-mail address(es) received: " + invalidAddressesList.stream().collect(
-          Collectors.joining(", "))
+        "error", "Invalid e-mail address(es) received: " + String.join(", ", invalidAddressesList)
       ));
     }
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
@@ -83,6 +81,6 @@ public class MailExceptionHandler {
   private void collectAddresses(
     List<String> invalidAddressesList, Address[] invalidAddresses) {
     invalidAddressesList.addAll(Arrays.stream(invalidAddresses).map(Address::toString)
-      .collect(Collectors.toList()));
+      .toList());
   }
 }

@@ -32,7 +32,7 @@ import java.io.Serializable;
 @RequiredArgsConstructor
 public class CustomPermissionEvaluator implements PermissionEvaluator {
   private final ApplicationUserDao applicationUserDao;
-    private final UserGroupDao userGroupDao;
+  private final UserGroupDao userGroupDao;
   private final ProjectDao projectDao;
   private final TaskDao taskDao;
 
@@ -56,22 +56,29 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     }
     Long userId = (Long) authentication.getPrincipal();
 
-      if (targetDomainObject instanceof UserGroup) {
-          return handleGroupPermissions(
-                  userId, (UserGroup) targetDomainObject, (PermissionType) permission);
-    } else if (targetDomainObject instanceof Project) {
-      return handleProjectPermissions(
-        userId, (Project) targetDomainObject, (PermissionType) permission);
-    } else if (targetDomainObject instanceof Task) {
-      return handleTaskPermissions(
-        userId, (Task) targetDomainObject, (PermissionType) permission);
+    switch (targetDomainObject) {
+      case UserGroup userGroup -> {
+        return handleGroupPermissions(
+          userId, userGroup, (PermissionType) permission);
+      }
+      case Project project -> {
+        return handleProjectPermissions(
+          userId, project, (PermissionType) permission);
+      }
+      case Task task -> {
+        return handleTaskPermissions(
+          userId, task, (PermissionType) permission);
+      }
+      default -> {
+      }
     }
     return false;
   }
 
   /**
    * Alternative method for evaluating a permission where only the identifier of the
-   * target object is available, rather than the target instance itself.
+   * target object is available, rather than the target instance itself.<br/>
+   * Reads the target instance from the repository by {@code targetId}
    *
    * @param authentication <strong>Passed in automatically</strong> from the {@link org.springframework.security.core.context.SecurityContextHolder}<br>
    *                       Represents the user in question. Should not be null.
@@ -97,10 +104,10 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     PermissionType permissionType = PermissionType.valueOf(permission.toString());
 
     switch (targetType) {
-        case "UserGroup" -> {
-            UserGroup userGroup = userGroupDao.findById(id).orElseThrow(
-                    () -> new GroupNotFoundException(id));
-            return handleGroupPermissions(userId, userGroup, permissionType);
+      case "UserGroup" -> {
+        UserGroup userGroup = userGroupDao.findById(id).orElseThrow(
+          () -> new GroupNotFoundException(id));
+        return handleGroupPermissions(userId, userGroup, permissionType);
       }
       case "Project" -> {
         Project project = projectDao.findById(id).orElseThrow(
@@ -119,108 +126,97 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
 
   @Transactional(readOnly = true)
   public boolean handleGroupPermissions(
-          Long userId, UserGroup userGroup, PermissionType permissionType) {
-    switch (permissionType) {
-        case GROUP_ADMIN:
-            return hasGroupAdminAccess(userId, userGroup);
-        case GROUP_EDITOR:
-            return hasGroupEditorAccess(userId, userGroup);
-        case GROUP_MEMBER:
-            return hasGroupMemberAccess(userId, userGroup);
-      default:
-        return false;
-    }
+    Long userId, UserGroup userGroup, PermissionType permissionType) {
+    return switch (permissionType) {
+      case GROUP_ADMIN -> hasGroupAdminAccess(userId, userGroup);
+      case GROUP_EDITOR -> hasGroupEditorAccess(userId, userGroup);
+      case GROUP_MEMBER -> hasGroupMemberAccess(userId, userGroup);
+      default -> false;
+    };
   }
 
   @Transactional(readOnly = true)
   public boolean handleProjectPermissions(
     Long userId, Project project, PermissionType permissionType) {
-    switch (permissionType) {
-      case PROJECT_ADMIN:
-        return hasProjectAdminAccess(userId, project);
-      case PROJECT_EDITOR:
-        return hasProjectEditorAccess(userId, project);
-        case PROJECT_ASSIGNED_MEMBER:
-            return hasProjectAssignedMemberAccess(userId, project);
-      default:
-        return false;
-    }
+    return switch (permissionType) {
+      case PROJECT_ADMIN -> hasProjectAdminAccess(userId, project);
+      case PROJECT_EDITOR -> hasProjectEditorAccess(userId, project);
+      case PROJECT_ASSIGNED_MEMBER -> hasProjectAssignedMemberAccess(userId, project);
+      default -> false;
+    };
   }
 
   @Transactional(readOnly = true)
   public boolean handleTaskPermissions(
     Long userId, Task task, PermissionType permissionType) {
-    switch (permissionType) {
-        case TASK_ASSIGNED_MEMBER:
-            return hasTaskAssignedMemberAccess(userId, task);
-      default:
-        return false;
+    if (permissionType != null && permissionType == PermissionType.TASK_ASSIGNED_MEMBER) {
+      return hasTaskAssignedMemberAccess(userId, task);
     }
+    return false;
   }
 
   @Transactional(readOnly = true)
   public boolean hasGroupAdminAccess(Long userId, UserGroup userGroup) {
-      ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchAdminGroups(userId)
-      .orElseThrow(() -> new UserNotFoundException());
+    ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchAdminGroups(userId)
+      .orElseThrow(UserNotFoundException::new);
     return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN) ||
-            applicationUser.getAdminUserGroups().contains(userGroup);
+      applicationUser.getAdminUserGroups().contains(userGroup);
   }
 
   @Transactional(readOnly = true)
   public boolean hasGroupEditorAccess(Long userId, UserGroup userGroup) {
-      ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchEditorGroups(userId)
-      .orElseThrow(() -> new UserNotFoundException());
+    ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchEditorGroups(userId)
+      .orElseThrow(UserNotFoundException::new);
     return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN) ||
-            applicationUser.getEditorUserGroups().contains(userGroup);
+      applicationUser.getEditorUserGroups().contains(userGroup);
   }
 
   @Transactional(readOnly = true)
   public boolean hasGroupMemberAccess(Long userId, UserGroup userGroup) {
-      ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchMemberGroups(userId)
-      .orElseThrow(() -> new UserNotFoundException());
+    ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchMemberGroups(userId)
+      .orElseThrow(UserNotFoundException::new);
     return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN) ||
-            applicationUser.getMemberUserGroups().contains(userGroup);
+      applicationUser.getMemberUserGroups().contains(userGroup);
   }
 
   @Transactional(readOnly = true)
   public boolean hasProjectAdminAccess(Long userId, Project project) {
     ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchAdminProjects(userId)
-      .orElseThrow(() -> new UserNotFoundException());
+      .orElseThrow(UserNotFoundException::new);
     return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN) ||
-            applicationUser.getAdminProjects().contains(project) || hasGroupAdminAccess(
+      applicationUser.getAdminProjects().contains(project) || hasGroupAdminAccess(
       userId,
-            project.getUserGroup());
+      project.getUserGroup());
   }
 
   @Transactional(readOnly = true)
   public boolean hasProjectEditorAccess(Long userId, Project project) {
     ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchEditorProjects(userId)
-      .orElseThrow(() -> new UserNotFoundException());
+      .orElseThrow(UserNotFoundException::new);
     return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN) ||
-            applicationUser.getEditorProjects().contains(project) || hasGroupEditorAccess(
+      applicationUser.getEditorProjects().contains(project) || hasGroupEditorAccess(
       userId,
-            project.getUserGroup());
+      project.getUserGroup());
   }
 
   @Transactional(readOnly = true)
   public boolean hasProjectAssignedMemberAccess(
     Long userId, Project project) {
     ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchAssignedProjects(userId)
-      .orElseThrow(() -> new UserNotFoundException());
+      .orElseThrow(UserNotFoundException::new);
     return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN) ||
-            applicationUser.getAssignedProjects().contains(project) || hasGroupEditorAccess(
+      applicationUser.getAssignedProjects().contains(project) || hasGroupEditorAccess(
       userId,
-            project.getUserGroup());
+      project.getUserGroup());
   }
 
   @Transactional(readOnly = true)
   public boolean hasTaskAssignedMemberAccess(
     Long userId, Task task) {
     ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchAssignedTasks(userId)
-      .orElseThrow(() -> new UserNotFoundException());
+      .orElseThrow(UserNotFoundException::new);
     return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN) ||
       applicationUser.getAssignedTasks().contains(task) || hasProjectEditorAccess(
-      userId,
-      task.getProject());
+      userId, task.getProject());
   }
 }

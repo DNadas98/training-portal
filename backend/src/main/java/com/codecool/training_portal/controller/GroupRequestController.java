@@ -19,37 +19,38 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/groups/{groupId}/requests")
 public class GroupRequestController {
-    private final GroupRequestService requestService;
-    private final MessageSource messageSource;
+  private final GroupRequestService requestService;
+  private final MessageSource messageSource;
 
-    @GetMapping()
-    public ResponseEntity<?> readJoinRequestsOfGroup(
-            @PathVariable @Min(1) Long groupId) {
+  @GetMapping()
+  public ResponseEntity<?> readJoinRequestsOfGroup(
+    @PathVariable @Min(1) Long groupId) {
 
-        List<GroupJoinRequestResponseDto> requests = requestService.getJoinRequestsOfGroup(
-                groupId);
+    List<GroupJoinRequestResponseDto> requests = requestService.getJoinRequestsOfGroup(
+      groupId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", requests));
-    }
+    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", requests));
+  }
 
-    @PostMapping()
-    public ResponseEntity<?> joinGroup(@PathVariable @Min(1) Long groupId, Locale locale) {
-        GroupJoinRequestResponseDto createdRequest = requestService.createJoinRequest(groupId);
+  @PostMapping()
+  public ResponseEntity<?> joinGroup(@PathVariable @Min(1) Long groupId, Locale locale) {
+    GroupJoinRequestResponseDto createdRequest = requestService.createJoinRequest(groupId);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                Map.of("message",
-                        messageSource.getMessage("group.requests.create.success", null, locale),
-                        "data", createdRequest));
-    }
+    return ResponseEntity.status(HttpStatus.CREATED).body(
+      Map.of("message",
+        messageSource.getMessage("group.requests.create.success", null, locale),
+        "data", createdRequest));
+  }
 
-    @PutMapping("/{requestId}")
-    public ResponseEntity<?> updateJoinRequestById(
-            @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long requestId,
-            @RequestBody @Valid GroupJoinRequestUpdateDto requestDto, Locale locale) {
+  @PutMapping("/{requestId}")
+  public ResponseEntity<?> updateJoinRequestById(
+    @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long requestId,
+    @RequestBody @Valid GroupJoinRequestUpdateDto requestDto, Locale locale) {
 
-        requestService.handleJoinRequest(groupId, requestId, requestDto);
-        return ResponseEntity.status(HttpStatus.OK).body(
-                Map.of("message",
-                        messageSource.getMessage("group.requests.update.success", null, locale)));
-    }
+    requestService.handleJoinRequest(groupId, requestId, requestDto);
+    return ResponseEntity.status(HttpStatus.OK).body(
+      Map.of(
+        "message",
+        messageSource.getMessage("group.requests.update.success", null, locale)));
+  }
 }

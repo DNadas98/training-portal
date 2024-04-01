@@ -4,6 +4,7 @@ import com.codecool.training_portal.model.group.project.questionnaire.QuestionTy
 
 import java.util.List;
 
-public record QuestionResponseDto(Long id, String text, QuestionType type, Integer points, Integer order,
+public record QuestionResponseDto(Long id, String text, QuestionType type, Integer points,
+                                  Integer order,
                                   List<AnswerResponseDto> answers) {
 }

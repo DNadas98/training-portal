@@ -1,4 +1,4 @@
-package com.codecool.training_portal.controller.exceptionhandler;
+package com.codecool.training_portal.filter.exceptionhandler;
 
 import com.codecool.training_portal.exception.datetime.DateTimeBadRequestException;
 import lombok.RequiredArgsConstructor;

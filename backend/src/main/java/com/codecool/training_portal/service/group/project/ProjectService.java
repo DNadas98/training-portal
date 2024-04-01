@@ -107,7 +107,8 @@ public class ProjectService {
     dateTimeService.validateProjectDates(projectStartDate, projectDeadline);
     String detailedDescription = createRequestDto.detailedDescription();
     //TODO: sanitize detailedDescription HTML
-    Project project = new Project(createRequestDto.name(), createRequestDto.description(),detailedDescription,
+    Project project = new Project(createRequestDto.name(), createRequestDto.description(),
+      detailedDescription,
       projectStartDate, projectDeadline, applicationUser, userGroup);
     projectDao.save(project);
     return projectConverter.getProjectResponsePrivateDto(project);

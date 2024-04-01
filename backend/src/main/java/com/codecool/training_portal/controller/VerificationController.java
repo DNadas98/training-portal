@@ -11,7 +11,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Locale;
 import java.util.Map;
@@ -53,7 +56,8 @@ public class VerificationController {
     @RequestParam(name = "code") UUID verificationCode,
     @RequestParam(name = "id") @Min(1) Long verificationTokenId, Locale locale,
     @RequestBody @Valid PasswordResetDto passwordResetDto) {
-    authenticationService.resetPassword(new @Valid VerificationTokenDto(verificationTokenId, verificationCode),passwordResetDto);
+    authenticationService.resetPassword(
+      new @Valid VerificationTokenDto(verificationTokenId, verificationCode), passwordResetDto);
     return ResponseEntity.status(HttpStatus.OK).body(
       Map.of("message", messageSource.getMessage(
         "auth.password.reset.success", null, locale)));

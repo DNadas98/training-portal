@@ -19,13 +19,13 @@ public class GroupConverter {
 
   public List<GroupResponsePublicDTO> getGroupResponsePublicDtos(List<UserGroup> userGroups) {
     return userGroups.stream().map(
-      group -> getGroupResponsePublicDto(group)).collect(Collectors.toList());
+      this::getGroupResponsePublicDto).collect(Collectors.toList());
   }
 
   public GroupResponsePrivateDTO getGroupResponsePrivateDto(UserGroup userGroup) {
     return new GroupResponsePrivateDTO(
       userGroup.getId(), userGroup.getName(),
-      userGroup.getDescription(),userGroup.getDetailedDescription());
+      userGroup.getDescription(), userGroup.getDetailedDescription());
   }
 
   public GroupResponsePublicDTO getGroupResponsePublicDto(UserGroup userGroup) {
@@ -43,7 +43,7 @@ public class GroupConverter {
 
   public List<GroupJoinRequestResponseDto> getGroupJoinRequestResponseDtos(
     List<UserGroupJoinRequest> requests) {
-    return requests.stream().map(request -> getGroupJoinRequestResponseDto(request)).collect(
+    return requests.stream().map(this::getGroupJoinRequestResponseDto).collect(
       Collectors.toList());
   }
 }

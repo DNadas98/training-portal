@@ -11,18 +11,20 @@ import java.util.Optional;
 public interface ApplicationUserDao extends JpaRepository<ApplicationUser, Long> {
   Optional<ApplicationUser> findByEmail(String email);
 
+  Optional<ApplicationUser> findByGlobalRolesContaining(GlobalRole globalRole);
+
   @Query("SELECT u FROM ApplicationUser u WHERE u.email = :email OR u. username = :username")
   Optional<ApplicationUser> findByEmailOrUsername(
     @Param("email") String email, @Param("username") String username);
 
-    @Query("SELECT u FROM ApplicationUser u LEFT JOIN FETCH u.adminUserGroups WHERE u.id = :id")
-    Optional<ApplicationUser> findByIdAndFetchAdminGroups(@Param("id") Long id);
+  @Query("SELECT u FROM ApplicationUser u LEFT JOIN FETCH u.adminUserGroups WHERE u.id = :id")
+  Optional<ApplicationUser> findByIdAndFetchAdminGroups(@Param("id") Long id);
 
-    @Query("SELECT u FROM ApplicationUser u LEFT JOIN FETCH u.editorUserGroups WHERE u.id = :id")
-    Optional<ApplicationUser> findByIdAndFetchEditorGroups(@Param("id") Long id);
+  @Query("SELECT u FROM ApplicationUser u LEFT JOIN FETCH u.editorUserGroups WHERE u.id = :id")
+  Optional<ApplicationUser> findByIdAndFetchEditorGroups(@Param("id") Long id);
 
-    @Query("SELECT u FROM ApplicationUser u LEFT JOIN FETCH u.memberUserGroups WHERE u.id = :id")
-    Optional<ApplicationUser> findByIdAndFetchMemberGroups(@Param("id") Long id);
+  @Query("SELECT u FROM ApplicationUser u LEFT JOIN FETCH u.memberUserGroups WHERE u.id = :id")
+  Optional<ApplicationUser> findByIdAndFetchMemberGroups(@Param("id") Long id);
 
   @Query("SELECT u FROM ApplicationUser u LEFT JOIN FETCH u.adminProjects WHERE u.id = :id")
   Optional<ApplicationUser> findByIdAndFetchAdminProjects(@Param("id") Long id);

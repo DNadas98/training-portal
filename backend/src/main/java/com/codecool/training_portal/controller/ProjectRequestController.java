@@ -24,24 +24,24 @@ public class ProjectRequestController {
 
   @GetMapping()
   public ResponseEntity<?> readJoinRequestsOfProject(
-          @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId) {
+    @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId) {
 
     List<ProjectJoinRequestResponseDto> requests =
-            projectJoinRequestService.getJoinRequestsOfProject(groupId, projectId);
+      projectJoinRequestService.getJoinRequestsOfProject(groupId, projectId);
 
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", requests));
   }
 
   @PostMapping()
   public ResponseEntity<?> joinProject(
-          @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId, Locale locale) {
+    @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId, Locale locale) {
     ProjectJoinRequestResponseDto createdRequest = projectJoinRequestService.createJoinRequest(
-            groupId, projectId);
+      groupId, projectId);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(
       Map.of("message",
-              messageSource.getMessage("project.requests.create.success",null,locale),
-              "data", createdRequest));
+        messageSource.getMessage("project.requests.create.success", null, locale),
+        "data", createdRequest));
   }
 
   @PutMapping("/{requestId}")
@@ -49,9 +49,10 @@ public class ProjectRequestController {
     @PathVariable @Min(1) Long requestId,
     @RequestBody @Valid ProjectJoinRequestUpdateDto requestDto,
     @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId, Locale locale) {
-      projectJoinRequestService.handleJoinRequest(groupId, projectId, requestId, requestDto);
+    projectJoinRequestService.handleJoinRequest(groupId, projectId, requestId, requestDto);
     return ResponseEntity.status(HttpStatus.OK).body(
-      Map.of("message",
-              messageSource.getMessage("project.requests.update.success",null,locale)));
+      Map.of(
+        "message",
+        messageSource.getMessage("project.requests.update.success", null, locale)));
   }
 }

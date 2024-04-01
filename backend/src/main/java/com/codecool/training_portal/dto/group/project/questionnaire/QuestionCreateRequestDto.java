@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Set;
 
 public record QuestionCreateRequestDto(
-  @NotNull String text, @NotNull QuestionType type, @NotNull @Min(1) Integer order, @NotNull @Min(1) Integer points,
+  @NotNull String text, @NotNull QuestionType type, @NotNull @Min(1) Integer order,
+  @NotNull @Min(1) Integer points,
   Set<@Valid AnswerCreateRequestDto> answers) {
 }

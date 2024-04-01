@@ -6,5 +6,5 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 public record SubmittedQuestionRequestDto(
-  @NotNull Long questionId,@NotNull List<@Valid SubmittedAnswerRequestDto> checkedAnswers) {
+  @NotNull Long questionId, @NotNull List<@Valid SubmittedAnswerRequestDto> checkedAnswers) {
 }

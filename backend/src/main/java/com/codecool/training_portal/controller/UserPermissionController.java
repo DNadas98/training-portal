@@ -20,32 +20,32 @@ import java.util.Set;
 @RequestMapping("/api/v1/user/permissions")
 @RequiredArgsConstructor
 public class UserPermissionController {
-    private final GroupRoleService groupRoleService;
+  private final GroupRoleService groupRoleService;
   private final ProjectService projectService;
   private final TaskRoleService taskRoleService;
 
-    @GetMapping("/groups/{groupId}")
-    public ResponseEntity<?> getOwnPermissionsForGroup(@PathVariable @Min(1) Long groupId) {
-        Set<PermissionType> permissions = groupRoleService.getUserPermissionsForGroup(groupId);
+  @GetMapping("/groups/{groupId}")
+  public ResponseEntity<?> getOwnPermissionsForGroup(@PathVariable @Min(1) Long groupId) {
+    Set<PermissionType> permissions = groupRoleService.getUserPermissionsForGroup(groupId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", permissions));
   }
 
-    @GetMapping("/groups/{groupId}/projects/{projectId}")
+  @GetMapping("/groups/{groupId}/projects/{projectId}")
   public ResponseEntity<?> getOwnPermissionsForProject(
-            @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId
+    @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId
   ) {
-      Set<PermissionType> permissions = projectService.getUserPermissionsForProject(
-            groupId, projectId);
+    Set<PermissionType> permissions = projectService.getUserPermissionsForProject(
+      groupId, projectId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", permissions));
   }
 
-    @GetMapping("/groups/{groupId}/projects/{projectId}/tasks/{taskId}")
+  @GetMapping("/groups/{groupId}/projects/{projectId}/tasks/{taskId}")
   public ResponseEntity<?> getOwnPermissionsForTask(
-            @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId,
+    @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId,
     @PathVariable @Min(1) Long taskId
   ) {
     Set<PermissionType> permissions = taskRoleService.getUserPermissionsForTask(
-            groupId, projectId, taskId);
+      groupId, projectId, taskId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", permissions));
   }
 }

@@ -13,13 +13,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserProvider {
   private final ApplicationUserDao applicationUserDao;
 
+  /**
+   * Get the authenticated users ID from the SecurityContextHolder,
+   * then retrieve the ApplicationUser from the repository by ID
+   *
+   * @throws UnauthorizedException if the user is not authenticated
+   */
   @Transactional(readOnly = true)
   public ApplicationUser getAuthenticatedUser() throws UnauthorizedException {
     try {
       Long userId =
         (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
       ApplicationUser user = applicationUserDao.findById(userId).orElseThrow(
-        () -> new UnauthorizedException());
+        UnauthorizedException::new);
       return user;
     } catch (Exception e) {
       throw new UnauthorizedException();

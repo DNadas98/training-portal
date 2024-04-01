@@ -25,7 +25,9 @@ public class AdminQuestionnaireSubmissionController {
   public ResponseEntity<?> getAllQuestionnaireSubmissions(
     @PathVariable Long groupId, @PathVariable Long projectId, @PathVariable Long questionnaireId,
     @RequestParam QuestionnaireStatus status) {
-    List<QuestionnaireSubmissionStatsAdminDto> statistics = questionnaireSubmissionService.getQuestionnaireSubmissionStatistics(groupId, projectId, questionnaireId, status);
+    List<QuestionnaireSubmissionStatsAdminDto> statistics =
+      questionnaireSubmissionService.getQuestionnaireSubmissionStatistics(
+        groupId, projectId, questionnaireId, status);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", statistics));
   }
 

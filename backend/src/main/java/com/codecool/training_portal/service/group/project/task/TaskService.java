@@ -37,7 +37,7 @@ public class TaskService {
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
   public List<TaskResponsePublicDto> getAllTasks(Long groupId, Long projectId)
     throws ProjectNotFoundException, UnauthorizedException {
-      Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
+    Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
 
     List<Task> tasks = project.getTasks().stream().toList();
@@ -48,7 +48,7 @@ public class TaskService {
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
   public List<TaskResponsePublicDto> getAllTasks(Long groupId, Long projectId, Boolean withUser)
     throws ProjectNotFoundException, UnauthorizedException {
-      Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
+    Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
     ApplicationUser user = userProvider.getAuthenticatedUser();
     List<Task> tasks;
@@ -63,9 +63,9 @@ public class TaskService {
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
   public List<TaskResponsePublicDto> getAllTasks(
-          Long groupId, Long projectId, Boolean withUser, TaskStatus taskStatus)
+    Long groupId, Long projectId, Boolean withUser, TaskStatus taskStatus)
     throws ProjectNotFoundException, UnauthorizedException {
-      Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
+    Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
     ApplicationUser user = userProvider.getAuthenticatedUser();
     List<Task> tasks;
@@ -81,12 +81,12 @@ public class TaskService {
   @Transactional(rollbackFor = Exception.class)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
   public TaskResponsePublicDto createTask(
-          TaskCreateRequestDto createRequestDto, Long groupId, Long projectId)
+    TaskCreateRequestDto createRequestDto, Long groupId, Long projectId)
     throws ConstraintViolationException {
     Instant taskStartDate = dateTimeService.toStoredDate(createRequestDto.startDate());
     Instant taskDeadline = dateTimeService.toStoredDate(createRequestDto.deadline());
 
-      Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
+    Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
 
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
@@ -104,7 +104,7 @@ public class TaskService {
   @PreAuthorize("hasPermission(#taskId, 'Task', 'TASK_ASSIGNED_MEMBER')")
   public TaskResponsePublicDto getTaskById(Long groupId, Long projectId, Long taskId)
     throws UnauthorizedException {
-      Task task = taskDao.findByGroupIdAndProjectIdAndTaskId(groupId, projectId, taskId)
+    Task task = taskDao.findByGroupIdAndProjectIdAndTaskId(groupId, projectId, taskId)
       .orElseThrow(() -> new TaskNotFoundException(taskId));
     return taskConverter.getTaskResponsePublicDto(task);
   }
@@ -112,11 +112,11 @@ public class TaskService {
   @Transactional(rollbackFor = Exception.class)
   @PreAuthorize("hasPermission(#taskId, 'Task', 'TASK_ASSIGNED_MEMBER')")
   public TaskResponsePublicDto updateTask(
-          TaskUpdateRequestDto updateRequestDto, Long groupId, Long projectId, Long taskId)
+    TaskUpdateRequestDto updateRequestDto, Long groupId, Long projectId, Long taskId)
     throws ConstraintViolationException {
     Instant taskStartDate = dateTimeService.toStoredDate(updateRequestDto.startDate());
     Instant taskDeadline = dateTimeService.toStoredDate(updateRequestDto.deadline());
-      Task task = taskDao.findByGroupIdAndProjectIdAndTaskId(groupId, projectId, taskId)
+    Task task = taskDao.findByGroupIdAndProjectIdAndTaskId(groupId, projectId, taskId)
       .orElseThrow(() -> new TaskNotFoundException(taskId));
     Project project = task.getProject();
     dateTimeService.validateTaskDates(taskStartDate, taskDeadline, project.getStartDate(),
@@ -141,7 +141,7 @@ public class TaskService {
   @Transactional(rollbackFor = Exception.class)
   @PreAuthorize("hasPermission(#taskId, 'Task', 'TASK_ASSIGNED_MEMBER')")
   public void deleteTask(Long groupId, Long projectId, Long taskId) {
-      Task task = taskDao.findByGroupIdAndProjectIdAndTaskId(groupId, projectId, taskId)
+    Task task = taskDao.findByGroupIdAndProjectIdAndTaskId(groupId, projectId, taskId)
       .orElseThrow(() -> new TaskNotFoundException(taskId));
     taskDao.delete(task);
   }

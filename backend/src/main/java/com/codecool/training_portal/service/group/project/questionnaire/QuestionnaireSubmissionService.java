@@ -65,8 +65,7 @@ public class QuestionnaireSubmissionService {
     ApplicationUser user = userProvider.getAuthenticatedUser();
     Optional<QuestionnaireSubmission> questionnaireSubmission =
       questionnaireSubmissionDao.findByGroupIdAndProjectIdAndQuestionnaireIdAndUserAndMaxPoint(
-        groupId,
-        projectId, questionnaireId, user);
+        groupId, projectId, questionnaireId, user);
     if (questionnaireSubmission.isEmpty()) {
       return Optional.empty();
     }
@@ -88,7 +87,7 @@ public class QuestionnaireSubmissionService {
 
     Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndId(groupId,
       projectId, questionnaireId).orElseThrow(QuestionnaireNotFoundException::new);
-    verifyAllRadioIsAnswered(submissionRequest, questionnaire);
+    verifyAllRadioButtonQuestionIsAnswered(submissionRequest, questionnaire);
 
     // Non-editors can only submit active questionnaires without existing max point submission
     // Editors still can not submit inactive questionnaires
@@ -108,118 +107,10 @@ public class QuestionnaireSubmissionService {
       submissionRequest, questions, submission);
 
     if (savedSubmission == null) {
+      questionnaireSubmissionDao.delete(submission);
       throw new QuestionnaireSubmissionFailedException();
     }
   }
-
-  private void verifyAllRadioIsAnswered(
-    QuestionnaireSubmissionRequestDto submissionRequest, Questionnaire questionnaire) {
-    List<Question> questions = questionnaire.getQuestions();
-    if (submissionRequest.questions().stream().anyMatch(
-      submittedQuestion -> submittedQuestion.checkedAnswers().isEmpty()
-        && questions.stream().filter(q -> submittedQuestion.questionId().equals(q.getId()))
-        .findFirst().orElseThrow(() -> new QuestionnaireSubmissionFailedException()).getType()
-        .equals(QuestionType.RADIO))) {
-      throw new QuestionnaireSubmissionFailedException();
-    }
-  }
-
-  private void verifyActiveAndWithoutMaxPointSubmission(
-    Long groupId, Long projectId, Questionnaire questionnaire,
-    ApplicationUser user) {
-    if (!questionnaire.getStatus().equals(QuestionnaireStatus.ACTIVE)) {
-      throw new QuestionnaireSubmissionFailedException();
-    }
-    Optional<QuestionnaireSubmission> maxPointSubmission =
-      questionnaireSubmissionDao.findByGroupIdAndProjectIdAndQuestionnaireIdAndUserAndMaxPoint(
-        groupId, projectId, questionnaire.getId(), user);
-    if (maxPointSubmission.isPresent()) {
-      throw new QuestionnaireSubmissionFailedException();
-    }
-  }
-
-  private QuestionnaireSubmission processQuestionnaireSubmission(
-    QuestionnaireSubmissionRequestDto submissionRequest, List<Question> questions,
-    QuestionnaireSubmission submission) {
-    int submissionTotalPoints = 0;
-    int submissionReceivedPoints = 0;
-    List<SubmittedQuestion> submittedQuestions = new ArrayList<>();
-    for (SubmittedQuestionRequestDto submittedQuestionDto : submissionRequest.questions()) {
-      Question question = questions.stream().filter(
-          q -> q.getId().equals(submittedQuestionDto.questionId()))
-        .findFirst().orElseThrow(QuestionnaireSubmissionFailedException::new);
-      List<SubmittedAnswer> submittedAnswers = new ArrayList<>();
-
-      final int maxPoints = question.getPoints();
-      int receivedPoints = 0;
-      List<SubmittedAnswerRequestDto> checkedAnswerDtos = submittedQuestionDto.checkedAnswers();
-      if (question.getType().equals(QuestionType.RADIO) && checkedAnswerDtos.size() > 1) {
-        throw new QuestionnaireSubmissionFailedException();
-      }
-
-      List<Answer> allAnswers = question.getAnswers();
-      Set<Long> correctAnswerIds = allAnswers.stream()
-        .filter(Answer::getCorrect)
-        .map(Answer::getId)
-        .collect(Collectors.toSet());
-      List<SubmittedAnswerRequestDto> checkedCorrectAnswerDtos = checkedAnswerDtos.stream()
-        .filter(dto -> correctAnswerIds
-          .contains(dto.answerId())).toList();
-
-      // Since we have agreed on max or zero points for every question
-      if (checkedCorrectAnswerDtos.size() == correctAnswerIds.size() &&
-        checkedAnswerDtos.size() == checkedCorrectAnswerDtos.size()) {
-        receivedPoints += maxPoints;
-      }
-
-      submissionReceivedPoints += receivedPoints;
-      submissionTotalPoints += maxPoints;
-
-      SubmittedQuestion newSubmittedQuestion = new SubmittedQuestion(question.getText(),
-        question.getType(), question.getQuestionOrder(), maxPoints, receivedPoints, submission);
-      submittedQuestions.add(newSubmittedQuestion);
-
-      handleAnswers(
-        checkedAnswerDtos, allAnswers, correctAnswerIds, submittedAnswers, newSubmittedQuestion);
-      submittedQuestionDao.save(newSubmittedQuestion);
-      submittedAnswerDao.saveAll(submittedAnswers);
-    }
-    submission.setMaxPoints(submissionTotalPoints);
-    submission.setReceivedPoints(submissionReceivedPoints);
-    submission.setSubmittedQuestions(submittedQuestions);
-
-    return questionnaireSubmissionDao.save(submission);
-  }
-
-  private void handleAnswers(
-    List<SubmittedAnswerRequestDto> checkedAnswers, List<Answer> allAnswers,
-    Set<Long> correctAnswerIds, List<SubmittedAnswer> submittedAnswers,
-    SubmittedQuestion newSubmittedQuestion) {
-
-    Set<Answer> remainingAnswers = new HashSet<>(allAnswers);
-
-    for (SubmittedAnswerRequestDto checkedAnswer : checkedAnswers) {
-      Answer answer = remainingAnswers.stream().filter(
-          a -> a.getId().equals(checkedAnswer.answerId()))
-        .findFirst().orElseThrow(QuestionnaireSubmissionFailedException::new);
-
-      SubmittedAnswerStatus answerStatus = correctAnswerIds.contains(answer.getId()) ?
-        SubmittedAnswerStatus.CORRECT : SubmittedAnswerStatus.INCORRECT;
-
-      submittedAnswers.add(
-        new SubmittedAnswer(answer.getText(), answer.getAnswerOrder(), answerStatus,
-          newSubmittedQuestion));
-
-      remainingAnswers.remove(answer);
-    }
-
-    for (Answer remainingAnswer : remainingAnswers) {
-      submittedAnswers.add(
-        new SubmittedAnswer(remainingAnswer.getText(), remainingAnswer.getAnswerOrder(),
-          SubmittedAnswerStatus.UNCHECKED, newSubmittedQuestion));
-    }
-  }
-
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
@@ -262,21 +153,8 @@ public class QuestionnaireSubmissionService {
 
     List<QuestionnaireSubmissionStatsAdminDto> responseDtos =
       questionnaireStatsOfAllMembers.stream().map(
-        dto -> questionnaireSubmissionConverter
-          .toQuestionnaireSubmissionStatsAdminDto(dto)).toList();
+        questionnaireSubmissionConverter::toQuestionnaireSubmissionStatsAdminDto).toList();
     return responseDtos;
-  }
-
-  private List<QuestionnaireSubmissionStatsAdminDto> getNonActiveQuestionnaireStatistics(
-    Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status) {
-    List<QuestionnaireSubmissionStatsInternalDto> questionnaireStats = questionnaireSubmissionDao
-      .getQuestionnaireSubmissionStatisticsByStatus(groupId, projectId, questionnaireId, status);
-    if (questionnaireStats.isEmpty()) {
-      return new ArrayList<>();
-    }
-    return questionnaireStats.stream().filter(dto -> dto.lastSubmissionCreatedAt() != null).map(
-      dto -> questionnaireSubmissionConverter
-        .toQuestionnaireSubmissionStatsAdminDto(dto)).toList();
   }
 
 
@@ -290,5 +168,123 @@ public class QuestionnaireSubmissionService {
         groupId, projectId, questionnaireId, submissionId, user).orElseThrow(
         QuestionnaireSubmissionNotFoundException::new);
     questionnaireSubmissionDao.delete(questionnaireSubmission);
+  }
+
+
+  private void verifyAllRadioButtonQuestionIsAnswered(
+    QuestionnaireSubmissionRequestDto submissionRequest, Questionnaire questionnaire) {
+    List<Question> questions = questionnaire.getQuestions();
+    if (submissionRequest.questions().stream().anyMatch(
+      submittedQuestion -> submittedQuestion.checkedAnswers().isEmpty()
+        && questions.stream().filter(q -> submittedQuestion.questionId().equals(q.getId()))
+        .findFirst().orElseThrow(QuestionnaireSubmissionFailedException::new).getType()
+        .equals(QuestionType.RADIO))) {
+      throw new QuestionnaireSubmissionFailedException();
+    }
+  }
+
+  private void verifyActiveAndWithoutMaxPointSubmission(
+    Long groupId, Long projectId, Questionnaire questionnaire,
+    ApplicationUser user) {
+    if (!questionnaire.getStatus().equals(QuestionnaireStatus.ACTIVE)) {
+      throw new QuestionnaireSubmissionFailedException();
+    }
+    Optional<QuestionnaireSubmission> maxPointSubmission =
+      questionnaireSubmissionDao.findByGroupIdAndProjectIdAndQuestionnaireIdAndUserAndMaxPoint(
+        groupId, projectId, questionnaire.getId(), user);
+    if (maxPointSubmission.isPresent()) {
+      throw new QuestionnaireSubmissionFailedException();
+    }
+  }
+
+  private QuestionnaireSubmission processQuestionnaireSubmission(
+    QuestionnaireSubmissionRequestDto submissionRequest, List<Question> questions,
+    QuestionnaireSubmission submission) {
+    int submissionTotalPoints = 0;
+    int submissionReceivedPoints = 0;
+    List<SubmittedQuestion> submittedQuestions = new ArrayList<>();
+    for (SubmittedQuestionRequestDto submittedQuestionDto : submissionRequest.questions()) {
+      Question question = questions.stream().filter(
+          q -> q.getId().equals(submittedQuestionDto.questionId()))
+        .findFirst().orElseThrow(QuestionnaireSubmissionFailedException::new);
+
+      final int maxPoints = question.getPoints();
+      int receivedPoints = 0;
+      List<SubmittedAnswerRequestDto> checkedAnswerDtos = submittedQuestionDto.checkedAnswers();
+      if (question.getType().equals(QuestionType.RADIO) && checkedAnswerDtos.size() > 1) {
+        throw new QuestionnaireSubmissionFailedException();
+      }
+
+      List<Answer> allAnswers = question.getAnswers();
+      Set<Long> correctAnswerIds = allAnswers.stream()
+        .filter(Answer::getCorrect)
+        .map(Answer::getId)
+        .collect(Collectors.toSet());
+      List<SubmittedAnswerRequestDto> checkedCorrectAnswerDtos = checkedAnswerDtos.stream()
+        .filter(dto -> correctAnswerIds
+          .contains(dto.answerId())).toList();
+
+      // Since max or zero, and only integer points for every question was specified
+      if (checkedCorrectAnswerDtos.size() == correctAnswerIds.size() &&
+        checkedAnswerDtos.size() == checkedCorrectAnswerDtos.size()) {
+        receivedPoints += maxPoints;
+      }
+
+      submissionReceivedPoints += receivedPoints;
+      submissionTotalPoints += maxPoints;
+
+      SubmittedQuestion newSubmittedQuestion = new SubmittedQuestion(question.getText(),
+        question.getType(), question.getQuestionOrder(), maxPoints, receivedPoints, submission);
+      submittedQuestions.add(newSubmittedQuestion);
+
+      Set<SubmittedAnswer> submittedAnswers = processSubmittedAnswers(
+        checkedAnswerDtos, allAnswers, correctAnswerIds, newSubmittedQuestion);
+      submittedQuestionDao.save(newSubmittedQuestion);
+      submittedAnswerDao.saveAll(submittedAnswers);
+    }
+    submission.setMaxPoints(submissionTotalPoints);
+    submission.setReceivedPoints(submissionReceivedPoints);
+    submission.setSubmittedQuestions(submittedQuestions);
+
+    return questionnaireSubmissionDao.save(submission);
+  }
+
+  private Set<SubmittedAnswer> processSubmittedAnswers(
+    List<SubmittedAnswerRequestDto> checkedAnswers, List<Answer> allAnswers,
+    Set<Long> correctAnswerIds, SubmittedQuestion newSubmittedQuestion) {
+    Set<SubmittedAnswer> submittedAnswers = new HashSet<>();
+    Set<Answer> remainingAnswers = new HashSet<>(allAnswers);
+
+    for (SubmittedAnswerRequestDto checkedAnswer : checkedAnswers) {
+      Answer answer = remainingAnswers.stream().filter(
+          a -> a.getId().equals(checkedAnswer.answerId()))
+        .findFirst().orElseThrow(QuestionnaireSubmissionFailedException::new);
+      SubmittedAnswerStatus answerStatus = correctAnswerIds.contains(answer.getId()) ?
+        SubmittedAnswerStatus.CORRECT : SubmittedAnswerStatus.INCORRECT;
+      submittedAnswers.add(
+        new SubmittedAnswer(answer.getText(), answer.getAnswerOrder(), answerStatus,
+          newSubmittedQuestion));
+      remainingAnswers.remove(answer);
+      return submittedAnswers;
+    }
+
+    for (Answer remainingAnswer : remainingAnswers) {
+      submittedAnswers.add(
+        new SubmittedAnswer(remainingAnswer.getText(), remainingAnswer.getAnswerOrder(),
+          SubmittedAnswerStatus.UNCHECKED, newSubmittedQuestion));
+    }
+
+    return submittedAnswers;
+  }
+
+  private List<QuestionnaireSubmissionStatsAdminDto> getNonActiveQuestionnaireStatistics(
+    Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status) {
+    List<QuestionnaireSubmissionStatsInternalDto> questionnaireStats = questionnaireSubmissionDao
+      .getQuestionnaireSubmissionStatisticsByStatus(groupId, projectId, questionnaireId, status);
+    if (questionnaireStats.isEmpty()) {
+      return new ArrayList<>();
+    }
+    return questionnaireStats.stream().filter(dto -> dto.lastSubmissionCreatedAt() != null).map(
+      questionnaireSubmissionConverter::toQuestionnaireSubmissionStatsAdminDto).toList();
   }
 }

@@ -8,9 +8,11 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface EmailChangeVerificationTokenDao extends JpaRepository<EmailChangeVerificationToken, Long> {
+public interface EmailChangeVerificationTokenDao
+  extends JpaRepository<EmailChangeVerificationToken, Long> {
 
-  @Query("SELECT t FROM EmailChangeVerificationToken t WHERE t.newEmail = :newEmail OR t.userId = :userId")
+  @Query(
+    "SELECT t FROM EmailChangeVerificationToken t WHERE t.newEmail = :newEmail OR t.userId = :userId")
   Optional<RegistrationToken> findByNewEmailOrUserId(
     @Param("newEmail") String newEmail, @Param("userId") Long userId);
 }

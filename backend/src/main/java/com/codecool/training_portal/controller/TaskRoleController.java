@@ -20,35 +20,35 @@ import java.util.Map;
 public class TaskRoleController {
 
 
-    private final TaskRoleService taskRoleService;
-    private final MessageSource messageSource;
+  private final TaskRoleService taskRoleService;
+  private final MessageSource messageSource;
 
-    @GetMapping("members")
-    public ResponseEntity<?> getMembers(
-            @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId,
-            @PathVariable @Min(1) Long taskId) {
-        List<UserResponsePublicDto> members = taskRoleService.getAssignedMembers(
-                groupId,
-                projectId,
-                taskId);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", members));
-    }
+  @GetMapping("members")
+  public ResponseEntity<?> getMembers(
+    @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId,
+    @PathVariable @Min(1) Long taskId) {
+    List<UserResponsePublicDto> members = taskRoleService.getAssignedMembers(
+      groupId,
+      projectId,
+      taskId);
+    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", members));
+  }
 
-    @PostMapping("members")
-    public ResponseEntity<?> addSelf(
-            @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId,
-            @PathVariable @Min(1) Long taskId, Locale locale) {
-        taskRoleService.assignSelf(groupId, projectId, taskId);
-        return ResponseEntity.status(HttpStatus.OK).body(
-                Map.of("message", messageSource.getMessage("task.members.add.success", null, locale)));
-    }
+  @PostMapping("members")
+  public ResponseEntity<?> addSelf(
+    @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId,
+    @PathVariable @Min(1) Long taskId, Locale locale) {
+    taskRoleService.assignSelf(groupId, projectId, taskId);
+    return ResponseEntity.status(HttpStatus.OK).body(
+      Map.of("message", messageSource.getMessage("task.members.add.success", null, locale)));
+  }
 
-    @DeleteMapping("members")
-    public ResponseEntity<?> removeSelf(
-            @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId,
-            @PathVariable @Min(1) Long taskId, Locale locale) {
-        taskRoleService.removeSelf(groupId, projectId, taskId);
-        return ResponseEntity.status(HttpStatus.OK).body(
-                Map.of("message", messageSource.getMessage("task.members.remove.success", null, locale)));
-    }
+  @DeleteMapping("members")
+  public ResponseEntity<?> removeSelf(
+    @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId,
+    @PathVariable @Min(1) Long taskId, Locale locale) {
+    taskRoleService.removeSelf(groupId, projectId, taskId);
+    return ResponseEntity.status(HttpStatus.OK).body(
+      Map.of("message", messageSource.getMessage("task.members.remove.success", null, locale)));
+  }
 }

@@ -14,11 +14,11 @@ import java.util.Optional;
 public interface ProjectJoinRequestDao extends JpaRepository<ProjectJoinRequest, Long> {
   @Query(
     "SELECT pjr FROM ProjectJoinRequest pjr" +
-            " WHERE pjr.project.userGroup.id = :groupId" +
+      " WHERE pjr.project.userGroup.id = :groupId" +
       " AND pjr.project.id = :projectId" +
       " AND pjr.id = :requestId")
   Optional<ProjectJoinRequest> findByGroupIdAndProjectIdAndRequestId(
-          Long groupId, Long projectId, Long requestId);
+    Long groupId, Long projectId, Long requestId);
 
   @OrderBy("createdAt DESC")
   List<ProjectJoinRequest> findByProjectAndStatus(Project project, RequestStatus status);

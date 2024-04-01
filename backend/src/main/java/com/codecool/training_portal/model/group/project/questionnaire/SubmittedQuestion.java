@@ -50,7 +50,8 @@ public class SubmittedQuestion {
   private List<SubmittedAnswer> submittedAnswers = new ArrayList<>();
 
   public SubmittedQuestion(
-    String text, QuestionType type, Integer order, Integer maxPoints,Integer receivedPoints, QuestionnaireSubmission questionnaireSubmission) {
+    String text, QuestionType type, Integer order, Integer maxPoints, Integer receivedPoints,
+    QuestionnaireSubmission questionnaireSubmission) {
     this.text = text;
     this.type = type;
     this.questionOrder = order;

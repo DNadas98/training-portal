@@ -121,11 +121,6 @@ public class ApplicationUser implements UserDetails {
 
   // UserDetails
 
-  @Override
-  public String getUsername() {
-    return this.email;
-  }
-
   public String getActualUsername() {
     return this.username;
   }
@@ -149,6 +144,16 @@ public class ApplicationUser implements UserDetails {
   @Override
   public String getPassword() {
     return this.password;
+  }
+
+  /**
+   * @return THE E-MAIL ADDRESS !
+   * @warning DO NOT USE THIS FOR THE USERNAME, USE {@code getActualUsername}!<br/>
+   * This has to be called {@code getUsername} for Spring Security {@link UserDetails}
+   */
+  @Override
+  public String getUsername() {
+    return this.email;
   }
 
   /**

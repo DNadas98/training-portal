@@ -10,12 +10,12 @@ import java.util.Locale;
 @Configuration
 public class InternationalizationConfig {
 
-    @Bean
-    public MessageSource messageSource() {
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasenames("messages/messages", "messages/validation");
-        messageSource.setDefaultEncoding("UTF-8");
-        messageSource.setDefaultLocale(Locale.ENGLISH);
-        return messageSource;
-    }
+  @Bean
+  public MessageSource messageSource() {
+    ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+    messageSource.setBasenames("messages/messages", "messages/validation");
+    messageSource.setDefaultEncoding("UTF-8");
+    messageSource.setDefaultLocale(Locale.ENGLISH);
+    return messageSource;
+  }
 }

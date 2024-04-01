@@ -51,7 +51,7 @@ public class JwtService {
 
   public boolean isAccessTokenExpired(String accessToken) {
     try {
-    return isTokenExpired(accessToken, accessTokenSecret, accessTokenAlgorithm);
+      return isTokenExpired(accessToken, accessTokenSecret, accessTokenAlgorithm);
     } catch (JwtException e) {
       throw new UnauthorizedException();
     }
@@ -59,8 +59,9 @@ public class JwtService {
 
   public TokenPayloadDto verifyAccessToken(String accessToken) {
     try {
-    Claims claims = extractAllClaimsFromToken(accessToken, accessTokenSecret, accessTokenAlgorithm);
-    return getPayloadDto(claims);
+      Claims claims = extractAllClaimsFromToken(
+        accessToken, accessTokenSecret, accessTokenAlgorithm);
+      return getPayloadDto(claims);
     } catch (JwtException e) {
       throw new UnauthorizedException();
     }
@@ -69,8 +70,8 @@ public class JwtService {
   public TokenPayloadDto verifyRefreshToken(String refreshToken) {
     try {
       Claims claims = extractAllClaimsFromToken(refreshToken, refreshTokenSecret,
-      refreshTokenAlgorithm);
-    return getPayloadDto(claims);
+        refreshTokenAlgorithm);
+      return getPayloadDto(claims);
     } catch (JwtException e) {
       throw new UnauthorizedException();
     }

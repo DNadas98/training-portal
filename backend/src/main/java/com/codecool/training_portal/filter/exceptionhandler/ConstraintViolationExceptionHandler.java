@@ -1,4 +1,4 @@
-package com.codecool.training_portal.controller.exceptionhandler;
+package com.codecool.training_portal.filter.exceptionhandler;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
@@ -30,7 +30,6 @@ public class ConstraintViolationExceptionHandler {
    * Use this to customize error messages for any constraint violation<br/>
    *
    * @return A custom error message based on the related data field
-   * @TODO: Refactor this, appending cases to a switch does not seem very OOP
    */
   private String getConstraintErrorMessage(String errorMessage) {
     Pattern pattern = Pattern.compile("Detail: Key \\((.*?)\\)=\\((.*?)\\)");
@@ -40,12 +39,6 @@ public class ConstraintViolationExceptionHandler {
       String keyName = matcher.group(1);
       String keyValue = matcher.group(2);
       switch (keyName) {
-        case "email" -> {
-          return "The provided e-mail address is already registered";
-        }
-        case "username" -> {
-          return "The provided username is already taken";
-        }
         default -> {
           return "The requested " + keyName + ": " + keyValue + " already exists";
         }

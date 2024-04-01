@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.Length;
 import java.util.Set;
 
 public record QuestionnaireCreateRequestDto(
-  @NotNull @Length(min = 1,max = 100) String name,
+  @NotNull @Length(min = 1, max = 100) String name,
   @NotNull String description,
   @NotNull Set<@Valid QuestionCreateRequestDto> questions) {
 }

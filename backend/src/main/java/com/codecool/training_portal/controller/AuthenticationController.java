@@ -1,13 +1,10 @@
 package com.codecool.training_portal.controller;
 
 import com.codecool.training_portal.dto.auth.*;
-import com.codecool.training_portal.dto.verification.VerificationTokenDto;
 import com.codecool.training_portal.service.auth.AuthenticationService;
 import com.codecool.training_portal.service.auth.CookieService;
-import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.context.MessageSource;
@@ -15,10 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/auth")

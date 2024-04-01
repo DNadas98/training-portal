@@ -148,7 +148,7 @@ public class AuthenticationService {
     Optional<RegistrationToken> existingToken = registrationTokenDao.findByEmailOrUsername(
       registerRequest.email(), registerRequest.username());
     if (existingToken.isPresent()) {
-      throw new VerificationTokenAlreadyExistsException();
+      throw new UserAlreadyExistsException();
     }
   }
 

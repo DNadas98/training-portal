@@ -1,16 +1,16 @@
 package com.codecool.training_portal.service.converter;
 
 import com.codecool.training_portal.dto.group.project.questionnaire.*;
-import com.codecool.training_portal.model.group.project.questionnaire.Question;
 import com.codecool.training_portal.model.group.project.questionnaire.Questionnaire;
 import com.codecool.training_portal.model.group.project.questionnaire.QuestionnaireSubmission;
+import com.codecool.training_portal.model.group.project.questionnaire.SubmittedAnswer;
+import com.codecool.training_portal.model.group.project.questionnaire.SubmittedQuestion;
 import com.codecool.training_portal.service.datetime.DateTimeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,39 +18,25 @@ import java.util.stream.Collectors;
 public class QuestionnaireSubmissionConverter {
   private final DateTimeService dateTimeService;
 
+  @Transactional(readOnly = true)
   public QuestionnaireSubmissionResponseDto toQuestionnaireSubmissionResponseDto(
     QuestionnaireSubmission questionnaireSubmission, Questionnaire questionnaire) {
     return new QuestionnaireSubmissionResponseDto(questionnaireSubmission.getId(),
       questionnaire.getName(), questionnaire.getDescription(),
       questionnaireSubmission.getSubmittedQuestions().stream().map(
-        submittedQuestion -> new SubmittedQuestionResponseDto(submittedQuestion.getId(),
-          submittedQuestion.getText(), submittedQuestion.getType(),
-          submittedQuestion.getReceivedPoints(), submittedQuestion.getMaxPoints(),
-          submittedQuestion.getQuestionOrder(),
-          submittedQuestion.getSubmittedAnswers().stream().map(
-            submittedAnswer -> new SubmittedAnswerResponseDto(submittedAnswer.getId(),
-              submittedAnswer.getText(), submittedAnswer.getAnswerOrder(),
-              submittedAnswer.getStatus())
-          ).collect(Collectors.toList()))
+        this::toSubmittedQuestionResponseDto
       ).collect(Collectors.toList()), questionnaireSubmission.getReceivedPoints(),
       questionnaireSubmission.getMaxPoints(),
       dateTimeService.toDisplayedDate(questionnaireSubmission.getCreatedAt()));
   }
 
+  @Transactional(readOnly = true)
   public QuestionnaireSubmissionResponseEditorDto toQuestionnaireSubmissionResponseEditorDto(
     QuestionnaireSubmission questionnaireSubmission, Questionnaire questionnaire) {
     return new QuestionnaireSubmissionResponseEditorDto(questionnaireSubmission.getId(),
       questionnaire.getName(), questionnaire.getDescription(),
       questionnaireSubmission.getSubmittedQuestions().stream().map(
-        submittedQuestion -> new SubmittedQuestionResponseDto(submittedQuestion.getId(),
-          submittedQuestion.getText(), submittedQuestion.getType(),
-          submittedQuestion.getReceivedPoints(), submittedQuestion.getMaxPoints(),
-          submittedQuestion.getQuestionOrder(),
-          submittedQuestion.getSubmittedAnswers().stream().map(
-            submittedAnswer -> new SubmittedAnswerResponseDto(submittedAnswer.getId(),
-              submittedAnswer.getText(), submittedAnswer.getAnswerOrder(),
-              submittedAnswer.getStatus())
-          ).collect(Collectors.toList()))
+        this::toSubmittedQuestionResponseDto
       ).collect(Collectors.toList()), questionnaireSubmission.getReceivedPoints(),
       questionnaireSubmission.getMaxPoints(),
       dateTimeService.toDisplayedDate(questionnaireSubmission.getCreatedAt()),
@@ -84,5 +70,23 @@ public class QuestionnaireSubmissionConverter {
       dto.lastSubmissionReceivedPoints(),
       dto.userId(), dto.username()
     );
+  }
+
+  private SubmittedQuestionResponseDto toSubmittedQuestionResponseDto(
+    SubmittedQuestion submittedQuestion) {
+    return new SubmittedQuestionResponseDto(submittedQuestion.getId(),
+      submittedQuestion.getText(), submittedQuestion.getType(),
+      submittedQuestion.getReceivedPoints(), submittedQuestion.getMaxPoints(),
+      submittedQuestion.getQuestionOrder(),
+      submittedQuestion.getSubmittedAnswers().stream().map(
+        this::toSubmittedAnswerResponseDto
+      ).collect(Collectors.toList()));
+  }
+
+  private SubmittedAnswerResponseDto toSubmittedAnswerResponseDto(
+    SubmittedAnswer submittedAnswer) {
+    return new SubmittedAnswerResponseDto(submittedAnswer.getId(),
+      submittedAnswer.getText(), submittedAnswer.getAnswerOrder(),
+      submittedAnswer.getStatus());
   }
 }

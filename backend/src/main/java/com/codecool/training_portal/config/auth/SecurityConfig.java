@@ -36,7 +36,7 @@ public class SecurityConfig {
   public UserDetailsService userDetailsService(ApplicationUserDao applicationUserDao) {
     return username -> (UserDetails) applicationUserDao
       .findByEmail(username)
-      .orElseThrow(() -> new UnauthorizedException());
+      .orElseThrow(UnauthorizedException::new);
   }
 
   @Bean
@@ -66,8 +66,7 @@ public class SecurityConfig {
    * Spring Security Docs</a> <br>
    *
    * @param userGroupDao {@link UserGroupDao}
-   * @param projectDao {@link ProjectDao}
-   * @return
+   * @param projectDao   {@link ProjectDao}
    */
   @Bean
   public MethodSecurityExpressionHandler expressionHandler(

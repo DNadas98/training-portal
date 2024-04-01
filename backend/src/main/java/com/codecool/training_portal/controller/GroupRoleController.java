@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -30,8 +31,9 @@ public class GroupRoleController {
 
   @PostMapping("members")
   public ResponseEntity<?> addMember(
-    @PathVariable @Min(1) Long groupId, @RequestParam(name = "username") String username, Locale locale) {
-    String decodedUsername = URLDecoder.decode(username);
+    @PathVariable @Min(1) Long groupId, @RequestParam(name = "username") String username,
+    Locale locale) {
+    String decodedUsername = URLDecoder.decode(username, StandardCharsets.UTF_8);
     groupRoleService.addMember(groupId, decodedUsername);
     return ResponseEntity.status(HttpStatus.OK).body(
       Map.of(

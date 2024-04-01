@@ -19,41 +19,32 @@ import java.util.List;
 @EqualsAndHashCode
 @ToString
 public class Questionnaire {
+  @CreationTimestamp
+  Instant createdAt;
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-
   @Column(nullable = false, length = 100, unique = true)
   private String name;
-
   @Column(length = 10000, nullable = false)
   private String description;
-
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private QuestionnaireStatus status = QuestionnaireStatus.INACTIVE;
-
   @Column(nullable = false)
   private boolean activated = false;
-
   @OneToMany(mappedBy = "questionnaire", orphanRemoval = true, cascade = CascadeType.ALL,
     fetch = FetchType.LAZY)
   @OrderBy("questionOrder")
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
   private List<Question> questions = new ArrayList<>();
-
   private Integer maxPoints = 0;
-
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "project_id", nullable = false)
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
   private Project project;
-
-  @CreationTimestamp
-  Instant createdAt;
-
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "created_by_user_id", nullable = true)
   @EqualsAndHashCode.Exclude

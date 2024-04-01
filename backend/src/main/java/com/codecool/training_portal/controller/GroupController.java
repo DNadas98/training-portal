@@ -20,20 +20,20 @@ import java.util.Map;
 @RequestMapping("/api/v1/groups")
 @RequiredArgsConstructor
 public class GroupController {
-    private final GroupService groupService;
-    private final MessageSource messageSource;
+  private final GroupService groupService;
+  private final MessageSource messageSource;
 
-    @GetMapping()
-    public ResponseEntity<?> getAllGroups(
-            @RequestParam(name = "withUser") Boolean withUser) {
-        List<@Valid GroupResponsePublicDTO> groups;
-        if (withUser) {
-            groups = groupService.getGroupsWithUser();
-        } else {
-            groups = groupService.getGroupsWithoutUser();
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", groups));
+  @GetMapping()
+  public ResponseEntity<?> getAllGroups(
+    @RequestParam(name = "withUser") Boolean withUser) {
+    List<@Valid GroupResponsePublicDTO> groups;
+    if (withUser) {
+      groups = groupService.getGroupsWithUser();
+    } else {
+      groups = groupService.getGroupsWithoutUser();
     }
+    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", groups));
+  }
 
   @GetMapping("/{groupId}/details")
   public ResponseEntity<?> getGroupDetailsById(@PathVariable @Min(1) Long groupId) {
@@ -47,16 +47,16 @@ public class GroupController {
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", group));
   }
 
-    @PutMapping("/{groupId}")
-    public ResponseEntity<?> updateGroup(
-            @PathVariable @Min(1) Long groupId,
-            @RequestBody @Valid GroupUpdateRequestDto updateRequestDto, Locale locale) {
-        GroupResponsePrivateDTO groupResponseDetails = groupService.updateGroup(
-                updateRequestDto, groupId);
+  @PutMapping("/{groupId}")
+  public ResponseEntity<?> updateGroup(
+    @PathVariable @Min(1) Long groupId,
+    @RequestBody @Valid GroupUpdateRequestDto updateRequestDto, Locale locale) {
+    GroupResponsePrivateDTO groupResponseDetails = groupService.updateGroup(
+      updateRequestDto, groupId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(
-                Map.of("message",
-                        messageSource.getMessage("group.update.success",null,locale),
-                        "data", groupResponseDetails));
-    }
+    return ResponseEntity.status(HttpStatus.OK).body(
+      Map.of("message",
+        messageSource.getMessage("group.update.success", null, locale),
+        "data", groupResponseDetails));
+  }
 }

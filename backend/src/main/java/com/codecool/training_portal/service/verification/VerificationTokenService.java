@@ -3,7 +3,6 @@ package com.codecool.training_portal.service.verification;
 import com.codecool.training_portal.dto.verification.VerificationTokenDto;
 import com.codecool.training_portal.exception.auth.InvalidCredentialsException;
 import com.codecool.training_portal.exception.auth.UnauthorizedException;
-import com.codecool.training_portal.exception.verification.VerificationTokenDoesNotExistsException;
 import com.codecool.training_portal.model.verification.VerificationToken;
 import com.codecool.training_portal.model.verification.VerificationTokenDao;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,7 @@ public class VerificationTokenService {
 
   public VerificationToken getVerificationToken(VerificationTokenDto tokenDto) {
     VerificationToken token = verificationTokenDao.findById(tokenDto.id())
-      .orElseThrow(() -> new InvalidCredentialsException());
+      .orElseThrow(InvalidCredentialsException::new);
     return token;
   }
 

@@ -51,7 +51,8 @@ public class QuestionnaireService {
     Long groupId, Long projectId, Long questionnaireId) {
     Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndIdAndActiveStatus(
       groupId, projectId, questionnaireId).orElseThrow(QuestionnaireNotFoundException::new);
-    return questionnaireConverter.toQuestionnaireResponseDetailsDto(questionnaire);
+    return questionnaireConverter.toQuestionnaireResponseDetailsDto(
+      questionnaire);
   }
 
   @Transactional(readOnly = true)
@@ -78,7 +79,8 @@ public class QuestionnaireService {
   public QuestionnaireResponseEditorDetailsDto createQuestionnaire(
     Long groupId, Long projectId, QuestionnaireCreateRequestDto questionCreateRequestDto) {
     ApplicationUser user = userProvider.getAuthenticatedUser();
-    Project project = getProject(groupId, projectId);
+    Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
+      () -> new ProjectNotFoundException(projectId));
     Questionnaire questionnaire = createQuestionnaire(questionCreateRequestDto, project, user);
     questionnaireDao.save(questionnaire);
     return questionnaireConverter.toQuestionnaireResponseEditorDetailsDto(questionnaire);
@@ -91,13 +93,18 @@ public class QuestionnaireService {
     QuestionnaireUpdateRequestDto questionnaireUpdateRequestDto) {
     Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndId(
       groupId, projectId, questionnaireId).orElseThrow(QuestionnaireNotFoundException::new);
+
     questionnaire.setName(questionnaireUpdateRequestDto.name());
     questionnaire.setDescription(questionnaireUpdateRequestDto.description());
     questionnaire.setStatus(questionnaireUpdateRequestDto.status());
     questionnaire.removeAllQuestions();
     questionnaireUpdateRequestDto.questions().forEach(
-      questionDto -> createQuestion(questionDto, questionnaire));
+      questionDto -> {
+        Question question = createQuestion(questionDto, questionnaire);
+        questionnaire.addQuestion(question);
+      });
     ApplicationUser user = userProvider.getAuthenticatedUser();
+
     questionnaire.setUpdatedBy(user);
     if (questionnaireUpdateRequestDto.status() == QuestionnaireStatus.ACTIVE) {
       questionnaire.setActivated(true);
@@ -105,31 +112,6 @@ public class QuestionnaireService {
     questionnaire.setUpdatedAt(Instant.now());
     questionnaireDao.save(questionnaire);
     return questionnaireConverter.toQuestionnaireResponseEditorDetailsDto(questionnaire);
-  }
-
-  public Project getProject(Long groupId, Long projectId) {
-    return projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
-      () -> new ProjectNotFoundException(projectId));
-  }
-
-  public Questionnaire createQuestionnaire(
-    QuestionnaireCreateRequestDto dto, Project project, ApplicationUser user) {
-    Questionnaire questionnaire = new Questionnaire(dto.name(), dto.description(), project, user);
-    dto.questions().forEach(questionDto -> createQuestion(questionDto, questionnaire));
-    return questionnaire;
-  }
-
-  private void createQuestion(QuestionCreateRequestDto questionDto, Questionnaire questionnaire) {
-    Question question = new Question(
-      questionDto.text(), questionDto.type(), questionDto.order(), questionDto.points(),
-      questionnaire);
-    questionDto.answers().forEach(answerDto -> createAnswer(answerDto, question));
-    questionnaire.addQuestion(question);
-  }
-
-  private void createAnswer(AnswerCreateRequestDto answerDto, Question question) {
-    Answer answer = new Answer(answerDto.text(), answerDto.correct(), answerDto.order(), question);
-    question.addAnswer(answer);
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -142,5 +124,31 @@ public class QuestionnaireService {
       throw new QuestionnaireAlreadyActivatedException();
     }
     questionnaireDao.delete(questionnaire);
+  }
+
+  private Questionnaire createQuestionnaire(
+    QuestionnaireCreateRequestDto dto, Project project, ApplicationUser user) {
+    Questionnaire questionnaire = new Questionnaire(dto.name(), dto.description(), project, user);
+    dto.questions().forEach(questionDto -> {
+      Question question = createQuestion(questionDto, questionnaire);
+      questionnaire.addQuestion(question);
+    });
+    return questionnaire;
+  }
+
+  private Question createQuestion(
+    QuestionCreateRequestDto questionDto, Questionnaire questionnaire) {
+    Question question = new Question(
+      questionDto.text(), questionDto.type(), questionDto.order(), questionDto.points(),
+      questionnaire);
+    questionDto.answers().forEach(answerDto -> {
+      Answer answer = createAnswer(answerDto, question);
+      question.addAnswer(answer);
+    });
+    return question;
+  }
+
+  private Answer createAnswer(AnswerCreateRequestDto answerDto, Question question) {
+    return new Answer(answerDto.text(), answerDto.correct(), answerDto.order(), question);
   }
 }

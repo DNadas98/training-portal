@@ -23,38 +23,42 @@ import java.util.Map;
 @RequestMapping("/api/v1/user/")
 @RequiredArgsConstructor
 public class UserRequestController {
-    private final GroupRequestService groupRequestService;
-    private final ProjectRequestService projectRequestService;
-    private final MessageSource messageSource;
+  private final GroupRequestService groupRequestService;
+  private final ProjectRequestService projectRequestService;
+  private final MessageSource messageSource;
 
-    @GetMapping("/group-requests")
-    public ResponseEntity<?> getJoinRequestsOfUser() {
-        List<GroupJoinRequestResponseDto> joinRequests = groupRequestService.getOwnJoinRequests();
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", joinRequests));
-    }
+  @GetMapping("/group-requests")
+  public ResponseEntity<?> getJoinRequestsOfUser() {
+    List<GroupJoinRequestResponseDto> joinRequests = groupRequestService.getOwnJoinRequests();
+    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", joinRequests));
+  }
 
-    @DeleteMapping("/group-requests/{requestId}")
-    public ResponseEntity<?> deleteOwnJoinRequest(@PathVariable @Min(
-            1) Long requestId, Locale locale) {
-        groupRequestService.deleteOwnJoinRequestById(requestId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                Map.of("message",
-                        messageSource.getMessage("user.group_requests.delete.success", null, locale)));
-    }
+  @DeleteMapping("/group-requests/{requestId}")
+  public ResponseEntity<?> deleteOwnJoinRequest(
+    @PathVariable @Min(
+      1) Long requestId, Locale locale) {
+    groupRequestService.deleteOwnJoinRequestById(requestId);
+    return ResponseEntity.status(HttpStatus.CREATED).body(
+      Map.of(
+        "message",
+        messageSource.getMessage("user.group_requests.delete.success", null, locale)));
+  }
 
-    @GetMapping("/project-requests")
-    public ResponseEntity<?> getProjectJoinRequestOfUser() {
-        List<ProjectJoinRequestResponseDto> projectJoinRequests =
-                projectRequestService.getOwnJoinRequests();
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", projectJoinRequests));
-    }
+  @GetMapping("/project-requests")
+  public ResponseEntity<?> getProjectJoinRequestOfUser() {
+    List<ProjectJoinRequestResponseDto> projectJoinRequests =
+      projectRequestService.getOwnJoinRequests();
+    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", projectJoinRequests));
+  }
 
-    @DeleteMapping("/project-requests/{requestId}")
-    public ResponseEntity<?> deleteOwnProjectJoinRequest(@PathVariable @Min(
-            1) Long requestId, Locale locale) {
-        projectRequestService.deleteOwnJoinRequestById(requestId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                Map.of("message",
-                        messageSource.getMessage("user.project_requests.delete.success", null, locale)));
-    }
+  @DeleteMapping("/project-requests/{requestId}")
+  public ResponseEntity<?> deleteOwnProjectJoinRequest(
+    @PathVariable @Min(
+      1) Long requestId, Locale locale) {
+    projectRequestService.deleteOwnJoinRequestById(requestId);
+    return ResponseEntity.status(HttpStatus.CREATED).body(
+      Map.of(
+        "message",
+        messageSource.getMessage("user.project_requests.delete.success", null, locale)));
+  }
 }

@@ -88,7 +88,8 @@ public class GroupService {
     String detailedDescription = createRequestDto.detailedDescription();
     //TODO: sanitize detailedDescription HTML
     UserGroup userGroup = new UserGroup(
-      createRequestDto.name(), createRequestDto.description(),detailedDescription, applicationUser);
+      createRequestDto.name(), createRequestDto.description(), detailedDescription,
+      applicationUser);
     userGroup.addMember(applicationUser);
     userGroupDao.save(userGroup);
     return groupConverter.getGroupResponsePrivateDto(userGroup);

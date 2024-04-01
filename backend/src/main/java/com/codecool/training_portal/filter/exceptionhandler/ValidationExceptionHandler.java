@@ -1,4 +1,4 @@
-package com.codecool.training_portal.controller.exceptionhandler;
+package com.codecool.training_portal.filter.exceptionhandler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

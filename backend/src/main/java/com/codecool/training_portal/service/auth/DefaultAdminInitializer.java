@@ -39,9 +39,10 @@ public class DefaultAdminInitializer {
   @PostConstruct
   @Transactional(rollbackFor = Exception.class)
   public void createDefaultSystemAdministratorAccount() {
-    Optional<ApplicationUser> existingUser = applicationUserDao.findByEmail(email);
+    Optional<ApplicationUser> existingUser = applicationUserDao.findByGlobalRolesContaining(
+      GlobalRole.ADMIN);
     if (existingUser.isPresent()) {
-      logger.info("Default global administrator account already exists, skipping initialization");
+      logger.info("System administrator account already exists, skipping initialization");
       return;
     }
     RegisterRequestDto dto = new RegisterRequestDto(username, email, password);
@@ -57,6 +58,6 @@ public class DefaultAdminInitializer {
       hashedPassword);
     defaultAdminUser.addGlobalRole(GlobalRole.ADMIN);
     applicationUserDao.save(defaultAdminUser);
-    logger.info("Default global administrator account initialized successfully");
+    logger.info("Default system administrator account initialized successfully");
   }
 }

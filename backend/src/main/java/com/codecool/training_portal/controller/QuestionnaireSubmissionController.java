@@ -57,7 +57,8 @@ public class QuestionnaireSubmissionController {
     Optional<QuestionnaireSubmissionResponseDto> questionnaire = questionnaireSubmissionService
       .getMaxPointQuestionnaireSubmission(groupId, projectId, questionnaireId);
     if (questionnaire.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Max points submission not found"));
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+        Map.of("message", "Max points submission not found"));
     }
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", questionnaire.get()));
   }

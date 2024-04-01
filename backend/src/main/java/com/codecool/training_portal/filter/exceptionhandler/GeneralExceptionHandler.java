@@ -1,4 +1,4 @@
-package com.codecool.training_portal.controller.exceptionhandler;
+package com.codecool.training_portal.filter.exceptionhandler;
 
 import com.codecool.training_portal.exception.auth.*;
 import com.codecool.training_portal.exception.group.DuplicateGroupJoinRequestException;
