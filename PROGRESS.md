@@ -6,7 +6,9 @@ React and Material UI.
 #### Unless specified otherwise:
 
 - <strong><big> Backend implementation is already done </big></strong>
-- The endpoints are callable from the <a href="https://www.postman.com/cc-tasx/workspace/dnadas98-public/documentation/30693601-1e1610fc-717c-41b5-a3f8-d830165f4325"><strong>Postman collection »</strong></a>
+- The endpoints are callable from
+  the <a href="https://www.postman.com/cc-tasx/workspace/dnadas98-public/documentation/30693601-1e1610fc-717c-41b5-a3f8-d830165f4325"><strong>
+  Postman collection »</strong></a>
 - <strong><big> Frontend infrastructure, logic (contexts, authentication handling, data flow) is
   already
   done </big></strong>
@@ -20,7 +22,8 @@ React and Material UI.
 - [x] {`public`} sign in: socials (OAuth2)
 - [ ] {`public`} reset password with e-mail
   - Missing from the backend
-  - Could work like the existing solution for local registration verification (e.g PasswordResetToken from the abstract VerificationToken)
+  - Could work like the existing solution for local registration verification (e.g
+    PasswordResetToken from the abstract VerificationToken)
   - Also needs a redirect page on the frontend like registration verification and oauth2
 
 #### /user

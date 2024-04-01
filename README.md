@@ -65,7 +65,14 @@
 
 ## About The Project
 
-The Training Portal project is a comprehensive learning and examination platform for organizational training. It supports dynamic content management, allowing administrators to manage educational materials including texts and videos, alongside customizable exam forms with variable question types and answer options. Authenticated users can request to join companies, or request to add a new userGroup. The learning materials and tests are organized to projects inside the companies, allowing for simplified management of start and deadline dates, user access and various other properties. The system keeps track of user progress, allowing employees to keep track of their progress and also administrators to see the overall progress of a project.
+The Training Portal project is a comprehensive learning and examination platform for organizational
+training. It supports dynamic content management, allowing administrators to manage educational
+materials including texts and videos, alongside customizable exam forms with variable question types
+and answer options. Authenticated users can request to join companies, or request to add a new
+userGroup. The learning materials and tests are organized to projects inside the companies, allowing
+for simplified management of start and deadline dates, user access and various other properties. The
+system keeps track of user progress, allowing employees to keep track of their progress and also
+administrators to see the overall progress of a project.
 
 ## Tech Stack
 
@@ -150,7 +157,8 @@ The project uses Nginx as reverse-proxy and static file server.
 
 ### Authentication, authorization
 
-The application supports local sign-ups and sign-ins. The application requires email verification. Users must verify their email
+The application supports local sign-ups and sign-ins. The application requires email verification.
+Users must verify their email
 through a sent link to activate their accounts, ensuring authenticity and reducing unauthorized
 access.
 
@@ -175,7 +183,8 @@ dynamically determine access rights based on the request's context, targeted obj
 permissions. This system allows setting specific access rules for actions on entities like
 companies, projects, and tasks, based on the authenticated user's permissions.
 
-For instance, access to or modification of a userGroup, project, or task depends not only on a user's
+For instance, access to or modification of a userGroup, project, or task depends not only on a
+user's
 global role but also on permissions such as COMPANY_ADMIN, PROJECT_EDITOR, or
 TASK_ASSIGNED_EMPLOYEE, reflecting the user's specific relationship with the entity.
 
