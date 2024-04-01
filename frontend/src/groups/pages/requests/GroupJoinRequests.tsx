@@ -137,27 +137,27 @@ export default function GroupJoinRequests() {
                    placeholder={"Search By Username"}
                    onChange={handleJoinRequestSearch}/>
         {groupJoinRequestsLoading ? <LoadingSpinner/> : !joinRequestsFiltered?.length
-        ? <Typography variant={"body1"}>No pending group join requests were found.</Typography>
-        : <List>{joinRequestsFiltered.map(request => {
-          return <ListItem key={request.requestId}><Card elevation={10} sx={{width: "100%"}}>
-            <CardContent><Stack spacing={1}>
-              <Typography variant={"h6"}>{request.user?.username}</Typography>
-              <Typography>{request.status}</Typography>
-              <Stack direction={"row"} spacing={1}>
-                <Button variant={"contained"} onClick={async () => {
-                  await handleApproveClick(request.requestId)
-                }}>Approve
-                </Button>
-                <Button color={"error"} variant={"contained"} onClick={() => {
-                  handleDeclineClick(request.requestId);
-                }}>Decline
-                </Button>
-              </Stack>
-            </Stack></CardContent>
-          </Card> </ListItem>
-        })}
-        </List>
-      } </CardContent>
+          ? <Typography variant={"body1"}>No pending group join requests were found.</Typography>
+          : <List>{joinRequestsFiltered.map(request => {
+            return <ListItem key={request.requestId}><Card elevation={10} sx={{width: "100%"}}>
+              <CardContent><Stack spacing={1}>
+                <Typography variant={"h6"}>{request.user?.username}</Typography>
+                <Typography>{request.status}</Typography>
+                <Stack direction={"row"} spacing={1}>
+                  <Button variant={"contained"} onClick={async () => {
+                    await handleApproveClick(request.requestId)
+                  }}>Approve
+                  </Button>
+                  <Button color={"error"} variant={"contained"} onClick={() => {
+                    handleDeclineClick(request.requestId);
+                  }}>Decline
+                  </Button>
+                </Stack>
+              </Stack></CardContent>
+            </Card> </ListItem>
+          })}
+          </List>
+        } </CardContent>
       <CardActions>
         <Button onClick={() => {
           navigate(`/groups/${groupId}`)

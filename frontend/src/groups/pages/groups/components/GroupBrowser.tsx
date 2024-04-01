@@ -1,13 +1,5 @@
 import {GroupResponsePublicDto} from "../../../dto/GroupResponsePublicDto.ts";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  Grid, IconButton,
-  Stack,
-  TextField,
-  Tooltip
-} from "@mui/material";
+import {Card, CardContent, CardHeader, Grid, IconButton, Stack, TextField, Tooltip} from "@mui/material";
 import GroupList from "./GroupList.tsx";
 import {FormEvent} from "react";
 import AddIcon from "../../../../common/utils/components/AddIcon.tsx";

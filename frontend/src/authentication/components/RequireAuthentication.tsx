@@ -6,9 +6,7 @@ import {useEffect, useState} from "react";
 import useRefresh from "../hooks/useRefresh.ts";
 import LoadingSpinner from "../../common/utils/components/LoadingSpinner.tsx";
 import {useAuthentication} from "../hooks/useAuthentication.ts";
-import {
-  useNotification
-} from "../../common/notification/context/NotificationProvider.tsx";
+import {useNotification} from "../../common/notification/context/NotificationProvider.tsx";
 
 interface RequireAuthProps {
   allowedRoles: Array<GlobalRole>;

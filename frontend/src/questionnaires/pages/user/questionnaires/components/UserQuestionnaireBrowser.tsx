@@ -57,7 +57,7 @@ export default function UserQuestionnaireBrowser(props: UserQuestionnaireBrowser
                                    maxPoints={true}
             />
           </Stack>
-        </Grid>:<></>}
+        </Grid> : <></>}
     </Grid>
   );
 }

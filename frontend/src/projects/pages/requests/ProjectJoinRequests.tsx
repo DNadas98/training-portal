@@ -122,7 +122,7 @@ export default function ProjectJoinRequests() {
     );
   }, [projectJoinRequests, joinRequestsFilterValue]);
 
-    const handleJoinRequestSearch = (event: any) => {
+  const handleJoinRequestSearch = (event: any) => {
     setJoinRequestsFilterValue(event.target.value.toLowerCase().trim());
   };
 

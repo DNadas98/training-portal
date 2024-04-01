@@ -9,8 +9,8 @@ interface DeleteIconProps {
 export default function DeleteIcon({disabled}: DeleteIconProps) {
   return (
     <Avatar variant={"rounded"} sx={{
-      backgroundColor: disabled?"":"error.main",
-      color:"background.paper"
+      backgroundColor: disabled ? "" : "error.main",
+      color: "background.paper"
     }}>
       <ClearOutlined/>
     </Avatar>

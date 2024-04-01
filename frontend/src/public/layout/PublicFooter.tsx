@@ -1,7 +1,7 @@
 import {AppBar, Toolbar, Typography} from "@mui/material";
 import MenuSmall from "../../common/utils/components/MenuSmall.tsx";
 import siteConfig from "../../common/config/siteConfig.ts";
-import { publicMenuItems } from "../../common/menu/publicMenuItems.tsx";
+import {publicMenuItems} from "../../common/menu/publicMenuItems.tsx";
 import {MenuOutlined} from "@mui/icons-material";
 
 export default function PublicFooter() {

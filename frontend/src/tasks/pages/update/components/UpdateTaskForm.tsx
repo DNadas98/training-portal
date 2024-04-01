@@ -62,7 +62,8 @@ export default function UpdateTaskForm(props: UpdateTaskFormProps) {
                     <TaskDescriptionInput description={props.description}/>
                     <StartDateInput defaultValue={props.startDate}/>
                     <DeadlineInput defaultValue={props.deadline}/>
-                    <DifficultySelector defaultValue={props.difficulty} minDifficulty={props.minDifficulty} maxDifficulty={props.maxDifficulty}/>
+                    <DifficultySelector defaultValue={props.difficulty} minDifficulty={props.minDifficulty}
+                                        maxDifficulty={props.maxDifficulty}/>
                     <ImportanceSelector defaultValue={props.taskImportance} importances={props.importances}/>
                     <TaskStatusSelector defaultValue={props.taskStatus} statuses={props.statuses}/>
                     <Button type={"submit"}
