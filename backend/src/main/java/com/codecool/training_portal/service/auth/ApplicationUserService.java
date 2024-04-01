@@ -44,7 +44,7 @@ public class ApplicationUserService {
     return userConverter.toUserResponsePublicDtos(users);
   }
 
-  public UserResponsePrivateDto getApplicationUserById(Long userId) throws UnauthorizedException {
+  public UserResponsePrivateDto getApplicationUserById(Long userId) throws UserNotFoundException {
     ApplicationUser user = applicationUserDao.findById(userId).orElseThrow(
       () -> new UserNotFoundException(userId));
     return userConverter.toUserResponsePrivateDto(user);

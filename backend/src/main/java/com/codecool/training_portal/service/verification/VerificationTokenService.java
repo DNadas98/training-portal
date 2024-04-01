@@ -2,7 +2,6 @@ package com.codecool.training_portal.service.verification;
 
 import com.codecool.training_portal.dto.verification.VerificationTokenDto;
 import com.codecool.training_portal.exception.auth.InvalidCredentialsException;
-import com.codecool.training_portal.exception.auth.UnauthorizedException;
 import com.codecool.training_portal.model.verification.VerificationToken;
 import com.codecool.training_portal.model.verification.VerificationTokenDao;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +32,7 @@ public class VerificationTokenService {
     VerificationTokenDto verificationTokenDto, VerificationToken token) {
     if (!tokenCodeEncoder.matches(
       verificationTokenDto.verificationCode().toString(), token.getVerificationCodeHash())) {
-      throw new UnauthorizedException();
+      throw new InvalidCredentialsException();
     }
   }
 

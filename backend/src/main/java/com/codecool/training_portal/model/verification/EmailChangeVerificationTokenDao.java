@@ -13,6 +13,6 @@ public interface EmailChangeVerificationTokenDao
 
   @Query(
     "SELECT t FROM EmailChangeVerificationToken t WHERE t.newEmail = :newEmail OR t.userId = :userId")
-  Optional<RegistrationToken> findByNewEmailOrUserId(
+  Optional<EmailChangeVerificationToken> findByNewEmailOrUserId(
     @Param("newEmail") String newEmail, @Param("userId") Long userId);
 }
