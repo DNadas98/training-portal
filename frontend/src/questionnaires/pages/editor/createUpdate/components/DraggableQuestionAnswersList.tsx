@@ -71,7 +71,7 @@ export default function DraggableQuestionAnswersList(props: DraggableQuestionAns
                           </Stack>
                           : <Stack spacing={2} direction={"row"} alignItems={"center"}>
                             <Typography variant={"h6"}>
-                              {String.fromCharCode(answer.order + 64)}.
+                              {String.fromCharCode(answer.order + 64)}:
                             </Typography>
                             <TextField
                               type="text"

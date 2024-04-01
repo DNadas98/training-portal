@@ -94,7 +94,12 @@ export default function UserQuestionnaireSubmissionCard(props: UserQuestionnaire
                     )}
                   </Grid>
                   <Grid item xs={true}>
-                    <Typography variant={"body1"} gutterBottom>{answer.text}</Typography>
+                    <Stack spacing={0.5} direction={"row"}>
+                      <Typography variant={"body1"}>
+                        {String.fromCharCode(answer.order + 64)}:
+                      </Typography>
+                      <Typography variant={"body1"} gutterBottom>{answer.text}</Typography>
+                    </Stack>
                   </Grid>
                 </Grid>))}
             </Stack>

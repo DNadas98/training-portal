@@ -93,6 +93,16 @@ export default function SubmitQuestionnaire() {
     const defaultError = "Failed to submit questionnaire, please try again later! If the issue still persist, please contact the administrators!";
     try {
       setLoading(true);
+      if (formData.questions.some((question) => {
+        return questionnaire?.questions.filter(q=>q.id===question.questionId)[0]?.type === QuestionType.RADIO
+          && !question.checkedAnswers.length;
+      })) {
+        notification.openNotification({
+          type: "error", vertical: "top", horizontal: "center",
+          message: "Please ensure all questions with radio options are answered before proceeding."
+        });
+        return;
+      }
 
       const response = await authJsonFetch({
         path: `groups/${groupId}/projects/${projectId}/questionnaires/${questionnaireId}/submissions`,
@@ -200,7 +210,12 @@ export default function SubmitQuestionnaire() {
                         )}
                       </Grid>
                       <Grid item xs={true} textAlign={"left"}>
-                        <Typography variant={"body1"} gutterBottom>{answer.text}</Typography>
+                        <Stack spacing={0.5} direction={"row"}>
+                          <Typography variant={"body1"}>
+                            {String.fromCharCode(answer.order + 64)}:
+                          </Typography>
+                          <Typography variant={"body1"} gutterBottom>{answer.text}</Typography>
+                        </Stack>
                       </Grid>
                     </Grid>
                   })}
