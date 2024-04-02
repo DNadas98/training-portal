@@ -73,7 +73,7 @@ export default function SubmitQuestionnaire() {
         updatedAt: string
       }) | undefined = parseLocalStorageData(LOCAL_STORAGE_KEY);
       const serverUpdateTime = new Date(fetchedQuestionnaire.updatedAt);
-      if (parsedData && parsedData?.questionnaireId === fetchedQuestionnaire.id.toString() && parsedData.updatedAt
+      if (parsedData && parsedData?.questionnaireId.toString() === fetchedQuestionnaire.id.toString() && parsedData.updatedAt
         && new Date(parsedData.updatedAt) > serverUpdateTime) {
         setFormData(parsedData);
         const storeUpdateTimeString = getLocalizedDateTime(new Date(parsedData.updatedAt));
@@ -84,6 +84,7 @@ export default function SubmitQuestionnaire() {
           });
         }
       } else {
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
         setFormData({
           questionnaireId: response.data.id,
           questions: response.data.questions.map(question => ({
@@ -91,7 +92,6 @@ export default function SubmitQuestionnaire() {
             checkedAnswers: []
           }))
         });
-        localStorage.removeItem(LOCAL_STORAGE_KEY);
       }
       setQuestionnaireError(undefined);
     } catch (e) {
