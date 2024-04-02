@@ -2,6 +2,8 @@ package net.dnadas.training_portal.model.group.project.questionnaire;
 
 import net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionStatsInternalDto;
 import net.dnadas.training_portal.model.auth.ApplicationUser;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -18,8 +20,8 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
       "AND qs.user = :user " +
       "AND qs.maxPoints > qs.receivedPoints " +
       "ORDER BY qs.receivedPoints DESC")
-  List<QuestionnaireSubmission> findAllByGroupIdAndProjectIdAndQuestionnaireIdAndUserAndNotMaxPoint(
-    Long groupId, Long projectId, Long questionnaireId, ApplicationUser user);
+  Page<QuestionnaireSubmission> findAllByGroupIdAndProjectIdAndQuestionnaireIdAndUserAndNotMaxPoint(
+    Long groupId, Long projectId, Long questionnaireId, ApplicationUser user, Pageable pageable);
 
   @Query("SELECT qs FROM QuestionnaireSubmission qs " +
     "WHERE qs.questionnaire.project.userGroup.id = :groupId " +
@@ -37,8 +39,8 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
     "AND qs.user = :user " +
     "ORDER BY qs.receivedPoints DESC, " +
     "qs.createdAt DESC")
-  List<QuestionnaireSubmission> findAllByGroupIdAndProjectIdAndQuestionnaireIdAndUser(
-    Long groupId, Long projectId, Long questionnaireId, ApplicationUser user);
+  Page<QuestionnaireSubmission> findAllByGroupIdAndProjectIdAndQuestionnaireIdAndUser(
+    Long groupId, Long projectId, Long questionnaireId, ApplicationUser user, Pageable pageable);
 
   @Query("SELECT qs FROM QuestionnaireSubmission qs " +
     "WHERE qs.questionnaire.project.userGroup.id = :groupId " +

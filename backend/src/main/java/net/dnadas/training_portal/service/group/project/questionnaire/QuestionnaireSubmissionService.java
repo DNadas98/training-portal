@@ -11,6 +11,8 @@ import net.dnadas.training_portal.model.group.project.questionnaire.*;
 import net.dnadas.training_portal.service.auth.UserProvider;
 import net.dnadas.training_portal.service.converter.QuestionnaireSubmissionConverter;
 import net.dnadas.training_portal.service.group.project.ProjectService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,17 +33,17 @@ public class QuestionnaireSubmissionService {
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
-  public List<QuestionnaireSubmissionResponseDto> getOwnQuestionnaireSubmissions(
-    Long groupId, Long projectId, Long questionnaireId) {
+  public Page<QuestionnaireSubmissionResponseDto> getOwnQuestionnaireSubmissions(
+    Long groupId, Long projectId, Long questionnaireId, Pageable pageable) {
     ApplicationUser user = userProvider.getAuthenticatedUser();
-    List<QuestionnaireSubmission> questionnaireSubmissions;
+    Page<QuestionnaireSubmission> questionnaireSubmissions;
     questionnaireSubmissions =
       questionnaireSubmissionDao.findAllByGroupIdAndProjectIdAndQuestionnaireIdAndUserAndNotMaxPoint(
-        groupId, projectId, questionnaireId, user);
-    List<QuestionnaireSubmissionResponseDto> questionnaireSubmissionResponseDtos =
-      questionnaireSubmissions.stream().map(
+        groupId, projectId, questionnaireId, user, pageable);
+    Page<QuestionnaireSubmissionResponseDto> questionnaireSubmissionResponseDtos =
+      questionnaireSubmissions.map(
         questionnaireSubmission -> questionnaireSubmissionConverter.toQuestionnaireSubmissionResponseDto(
-          questionnaireSubmission, questionnaireSubmission.getQuestionnaire())).toList();
+          questionnaireSubmission, questionnaireSubmission.getQuestionnaire()));
     return questionnaireSubmissionResponseDtos;
   }
 
@@ -114,18 +116,18 @@ public class QuestionnaireSubmissionService {
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
-  public List<QuestionnaireSubmissionResponseEditorDto> getOwnQuestionnaireSubmissionsAsEditor(
-    Long groupId, Long projectId, Long questionnaireId) {
+  public Page<QuestionnaireSubmissionResponseEditorDto> getOwnQuestionnaireSubmissionsAsEditor(
+    Long groupId, Long projectId, Long questionnaireId, Pageable pageable) {
     ApplicationUser user = userProvider.getAuthenticatedUser();
-    List<QuestionnaireSubmission> questionnaireSubmissions;
+    Page<QuestionnaireSubmission> questionnaireSubmissions;
     questionnaireSubmissions =
       questionnaireSubmissionDao.findAllByGroupIdAndProjectIdAndQuestionnaireIdAndUser(
-        groupId, projectId, questionnaireId, user);
-    List<QuestionnaireSubmissionResponseEditorDto> responseDtos =
-      questionnaireSubmissions.stream().map(
+        groupId, projectId, questionnaireId, user, pageable);
+    Page<QuestionnaireSubmissionResponseEditorDto> responseDtos =
+      questionnaireSubmissions.map(
         questionnaireSubmission -> questionnaireSubmissionConverter
           .toQuestionnaireSubmissionResponseEditorDto(
-            questionnaireSubmission, questionnaireSubmission.getQuestionnaire())).toList();
+            questionnaireSubmission, questionnaireSubmission.getQuestionnaire()));
     return responseDtos;
   }
 
@@ -175,9 +177,10 @@ public class QuestionnaireSubmissionService {
     QuestionnaireSubmissionRequestDto submissionRequest, Questionnaire questionnaire) {
     List<Question> questions = questionnaire.getQuestions();
     if (submissionRequest.questions().stream().anyMatch(
-      submittedQuestion ->  questions.stream().filter(q -> submittedQuestion.questionId().equals(q.getId()))
+      submittedQuestion -> questions.stream().filter(
+          q -> submittedQuestion.questionId().equals(q.getId()))
         .findFirst().orElseThrow(QuestionnaireSubmissionFailedException::new).getType()
-        .equals(QuestionType.RADIO)&&submittedQuestion.checkedAnswers().size()!=1)) {
+        .equals(QuestionType.RADIO) && submittedQuestion.checkedAnswers().size() != 1)) {
       throw new QuestionnaireSubmissionFailedException();
     }
   }

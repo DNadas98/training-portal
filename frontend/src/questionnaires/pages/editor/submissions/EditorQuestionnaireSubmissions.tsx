@@ -1,16 +1,18 @@
 import {useEffect, useState} from "react";
 import LoadingSpinner from "../../../../common/utils/components/LoadingSpinner.tsx";
 import usePermissions from "../../../../authentication/hooks/usePermissions.ts";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useNotification} from "../../../../common/notification/context/NotificationProvider.tsx";
 import {isValidId} from "../../../../common/utils/isValidId.ts";
 import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
-import {Card, CardHeader, Grid, Stack} from "@mui/material";
+import {Card, CardContent, CardHeader, Grid, Stack, Typography} from "@mui/material";
 import EditorQuestionnaireSubmissionList from "./components/EditorQuestionnaireSubmissionList.tsx";
 import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
 import useAuthJsonFetch from "../../../../common/api/hooks/useAuthJsonFetch.tsx";
 import {QuestionnaireSubmissionResponseEditorDto} from "../../../dto/QuestionnaireSubmissionResponseEditorDto.ts";
 import {QuestionnaireResponseDto} from "../../../dto/QuestionnaireResponseDto.ts";
+import URLQueryPagination from "../../../../common/pagination/URLQueryPagination.tsx";
+import {ApiResponsePageableDto} from "../../../../common/api/dto/ApiResponsePageableDto.ts";
 
 export default function EditorQuestionnaireSubmissions() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -27,6 +29,12 @@ export default function EditorQuestionnaireSubmissions() {
   const projectId = useParams()?.projectId;
   const questionnaireId = useParams()?.questionnaireId;
 
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const [totalPages, setTotalPages] = useState(0);
+  const page = parseInt(searchParams.get('pag e') || '1', 10);
+  const size = parseInt(searchParams.get('size') || '10', 10);
+
   const loadQuestionnaireSubmissions = async () => {
     try {
       if (!isValidId(groupId) || !isValidId(projectId) || !isValidId(questionnaireId)) {
@@ -35,7 +43,8 @@ export default function EditorQuestionnaireSubmissions() {
       }
       setQuestionnaireSubmissionsLoading(true);
       const response = await authJsonFetch({
-        path: `groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}/submissions`
+        path:
+          `groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}/submissions?page=${page}&size=${size}`
       });
       if (!response?.status || response.status > 399 || !response?.data) {
         notification.openNotification({
@@ -45,7 +54,9 @@ export default function EditorQuestionnaireSubmissions() {
         setQuestionnaireSubmissions([]);
         return;
       }
-      setQuestionnaireSubmissions(response.data as QuestionnaireSubmissionResponseEditorDto[]);
+      const pageableResponse = response as unknown as ApiResponsePageableDto;
+      setQuestionnaireSubmissions(pageableResponse.data as QuestionnaireSubmissionResponseEditorDto[]);
+      setTotalPages(Number(pageableResponse.totalPages));
     } catch (e) {
       setQuestionnaireSubmissions([]);
     } finally {
@@ -142,7 +153,18 @@ export default function EditorQuestionnaireSubmissions() {
   return (
     <Grid container spacing={2} justifyContent={"center"} alignItems={"top"}>
       <Grid item xs={10} sm={10} md={9} lg={8}><Stack spacing={2}><Card>
-        <CardHeader title={questionnaire.name} sx={{textAlign: "center"}}/>
+        <CardContent>
+          <Grid container spacing={1} justifyContent={"space-between"} alignItems={"baseline"}>
+            <Grid item xs={12} md={true}>
+              <Typography variant={"h5"}>
+                {questionnaire.name}
+              </Typography>
+            </Grid>
+            {questionnaireSubmissions?.length ? <Grid item xs={12} md={"auto"}>
+              <URLQueryPagination totalPages={totalPages}/>
+            </Grid> : <></>}
+          </Grid>
+        </CardContent>
       </Card>
         {questionnaireSubmissions?.length
           ?

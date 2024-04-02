@@ -163,7 +163,7 @@ export default function SubmitQuestionnaire() {
         type: "success", vertical: "top", horizontal: "center", message: response.message
       });
       localStorage.removeItem(LOCAL_STORAGE_KEY);
-      navigate(`/groups/${groupId}/projects/${projectId}`);
+      navigate(-1);
     } catch (e) {
       notification.openNotification({
         type: "error", vertical: "top", horizontal: "center", message: defaultError
