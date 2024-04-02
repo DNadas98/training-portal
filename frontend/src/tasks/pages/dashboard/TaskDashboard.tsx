@@ -10,7 +10,7 @@ import {isValidId} from "../../../common/utils/isValidId.ts";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 
 export default function TaskDashboard() {
-  const {loading: permissionsLoading,projectPermissions, taskPermissions} = usePermissions();
+  const {loading: permissionsLoading, projectPermissions, taskPermissions} = usePermissions();
   const dialog = useDialog();
   const groupId = useParams()?.groupId;
   const projectId = useParams()?.projectId;
@@ -142,15 +142,15 @@ export default function TaskDashboard() {
       <br/>
       {(taskPermissions.includes(PermissionType.TASK_ASSIGNED_MEMBER))
         && <div>
-              <button onClick={() => {
-                navigate(`/groups/${groupId}/projects/${projectId}/tasks/${taskId}/update`);
-              }}>Update task details
-              </button>
-              <br/>
-              <button onClick={handleRemoveSelfClick}>Remove assignment to task</button>
-              <br/>
-              <button onClick={handleDeleteClick}>Remove task</button>
-          </div>
+          <button onClick={() => {
+            navigate(`/groups/${groupId}/projects/${projectId}/tasks/${taskId}/update`);
+          }}>Update task details
+          </button>
+          <br/>
+          <button onClick={handleRemoveSelfClick}>Remove assignment to task</button>
+          <br/>
+          <button onClick={handleDeleteClick}>Remove task</button>
+        </div>
       }
       <button
         onClick={() => navigate(`/groups/${groupId}/projects/${projectId}/tasks`)}>Back

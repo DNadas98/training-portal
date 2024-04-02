@@ -2,7 +2,7 @@ import {TextField} from "@mui/material";
 import useLocalized from "../../../common/localization/hooks/useLocalized.tsx";
 
 export default function EmailInput() {
-  const getLocalized=useLocalized();
+  const getLocalized = useLocalized();
   return (
     <TextField variant={"outlined"}
                color={"secondary"}

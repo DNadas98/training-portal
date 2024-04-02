@@ -7,8 +7,8 @@ import * as locales from '@mui/material/locale';
 import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import useLocaleContext from "../../localization/hooks/useLocaleContext.tsx";
-import {enGB, hu} from "date-fns/locale";
 import {Locale} from "date-fns"
+import {getDateFnsLocale} from "../../localization/utils/getDateFnsLocale.ts";
 
 interface AppThemeProviderProps {
   children: ReactNode;
@@ -54,12 +54,22 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
         },
         defaultProps: {variant: "standard"}
       },
+      MuiInputLabel: {
+        styleOverrides: {
+          root: {
+            color: "inherit",
+            "&.Mui-focused": {
+              color: "inherit"
+            }
+          }
+        }
+      },
       MuiCheckbox: {
         styleOverrides: {
           root: {
             color: "inherit",
             "&.Mui-checked": {
-              "color": "inherit",
+              "color": "inherit"
             }
           }
         }
@@ -77,16 +87,6 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
     }
   }), [paletteMode]);
 
-  const getDateFnsLocale = (locale): Locale => {
-    switch (locale.toString().substring(0, 2)) {
-      case "en":
-        return enGB;
-      case "hu":
-        return hu;
-      default:
-        return hu;
-    }
-  }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={getDateFnsLocale(locale) as Locale}>

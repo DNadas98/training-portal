@@ -90,7 +90,7 @@ export default function UpdateGroup() {
       const response = await updateGroup(requestDto);
 
       if (!response || response.error || response?.status > 399 || !response.message || !response.data) {
-        handleErrorNotification(response?.error??"Failed to update group");
+        handleErrorNotification(response?.error ?? "Failed to update group");
         return;
       }
       const addedGroup = response.data as GroupResponsePrivateDto;

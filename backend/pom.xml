@@ -9,7 +9,7 @@
     <version>3.2.0-SNAPSHOT</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
-  <groupId>com.codecool</groupId>
+  <groupId>net.dnadas</groupId>
   <artifactId>training_portal</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>training_portal</name>

@@ -34,31 +34,31 @@ export default function RichTextEditorUncontrolled(props: RichTextEditorUncontro
   return (
     <Grid container alignItems={"left"} justifyContent={"left"} textAlign={"left"}>
       <Grid item xs={12}>
-      <RichTextEditor ref={rteRef}
-                      extensions={extensions}
-                      content={content}
-                      editable={true}
-                      onUpdate={() => {
-                        if (rteRef?.current?.editor) {
-                          setContent(rteRef.current.editor.getHTML());
-                        }
-                      }}
-                      editorProps={{}}
-                      renderControls={() => <EditorMenuControls/>}
-                      RichTextFieldProps={{
-                        variant: "outlined",
-                        MenuBarProps: {
-                          hide: false,
-                        },
-                      }}>
-        {() => (
-          <>
-            <LinkBubbleMenu/>
-            <TableBubbleMenu/>
-          </>
-        )}
-      </RichTextEditor>
-      <input type="hidden" ref={hiddenInputRef} id={props.name} name={props.name} required/>
+        <RichTextEditor ref={rteRef}
+                        extensions={extensions}
+                        content={content}
+                        editable={true}
+                        onUpdate={() => {
+                          if (rteRef?.current?.editor) {
+                            setContent(rteRef.current.editor.getHTML());
+                          }
+                        }}
+                        editorProps={{}}
+                        renderControls={() => <EditorMenuControls/>}
+                        RichTextFieldProps={{
+                          variant: "outlined",
+                          MenuBarProps: {
+                            hide: false,
+                          },
+                        }}>
+          {() => (
+            <>
+              <LinkBubbleMenu/>
+              <TableBubbleMenu/>
+            </>
+          )}
+        </RichTextEditor>
+        <input type="hidden" ref={hiddenInputRef} id={props.name} name={props.name} required/>
       </Grid>
     </Grid>
   );

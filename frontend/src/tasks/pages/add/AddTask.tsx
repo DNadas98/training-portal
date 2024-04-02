@@ -9,6 +9,7 @@ import {TaskStatus} from "../../dto/TaskStatus.ts";
 import {Importance} from "../../dto/Importance.ts";
 import {TaskCreateRequestDto} from "../../dto/TaskCreateRequestDto.ts";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
+import useLocalizedSubmittedDate from "../../../common/localization/hooks/useLocalizedSubmittedDate.tsx";
 
 export default function AddTask() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -18,6 +19,7 @@ export default function AddTask() {
   const notification = useNotification();
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
+  const toSubmittedDate = useLocalizedSubmittedDate();
   const addTask = async (requestDto: TaskCreateRequestDto) => {
     return await authJsonFetch({
       path: `groups/${groupId}/projects/${projectId}/tasks`,
@@ -39,8 +41,8 @@ export default function AddTask() {
       const formData = new FormData(event.currentTarget);
       const name = formData.get('name') as string;
       const description = formData.get('description') as string;
-      const startDate = new Date(formData.get("startDate") as string).toISOString();
-      const deadline = new Date(formData.get("deadline") as string).toISOString();
+      const startDate = toSubmittedDate(formData.get("startDate") as string);
+      const deadline = toSubmittedDate(formData.get("deadline") as string);
       const importance = (formData.get("importance") as Importance);
       const taskStatus = (formData.get("taskStatus") as TaskStatus);
       const difficulty = Number(formData.get("difficulty"));

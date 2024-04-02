@@ -12,7 +12,7 @@ export const texts = {
       }
     },
     "pages": {
-      "sign_in":{
+      "sign_in": {
         "title": "Sign In",
         "submit_button": "Sign In",
         "forgot_password_button": "Forgot your password? Click Here!",
@@ -38,7 +38,7 @@ export const texts = {
       }
     },
     "pages": {
-      "sign_in":{
+      "sign_in": {
         "title": "Bejelentkezés",
         "submit_button": "Bejelentkezés",
         "forgot_password_button": "Elfelejtette a jelszavát? Kattintson ide!",

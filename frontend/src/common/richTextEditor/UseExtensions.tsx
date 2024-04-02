@@ -32,12 +32,7 @@ import {TextAlign} from "@tiptap/extension-text-align";
 import {TextStyle} from "@tiptap/extension-text-style";
 import {Underline} from "@tiptap/extension-underline";
 import {useMemo} from "react";
-import {
-  FontSize,
-  HeadingWithAnchor,
-  LinkBubbleMenuHandler,
-  TableImproved,
-} from "mui-tiptap";
+import {FontSize, HeadingWithAnchor, LinkBubbleMenuHandler, TableImproved,} from "mui-tiptap";
 
 export type UseExtensionsOptions = {
   placeholder?: string;

@@ -14,8 +14,10 @@ export default function EditorQuestionnaireSubmissionList(props: EditorQuestionn
       return <Card key={submission.id}>
         <UserQuestionnaireSubmissionCard submission={submission}/>
         <CardActions>
-          <Button onClick={()=>{props.onDeleteClick(submission.id)}}
-           color={"error"}>
+          <Button onClick={() => {
+            props.onDeleteClick(submission.id)
+          }}
+                  color={"error"}>
             Delete
           </Button>
         </CardActions>

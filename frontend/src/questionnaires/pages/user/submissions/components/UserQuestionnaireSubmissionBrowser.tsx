@@ -1,10 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  Grid,
-  Stack,
-} from "@mui/material";
+import {Card, CardContent, CardHeader, Grid, Stack,} from "@mui/material";
 import UserQuestionnaireSubmissionList from "./UserQuestionnaireSubmissionList.tsx";
 import {QuestionnaireSubmissionResponseDto} from "../../../../dto/QuestionnaireSubmissionResponseDto.ts";
 import UserQuestionnaireSubmissionCard from "./UserQuestionnaireSubmissionCard.tsx";

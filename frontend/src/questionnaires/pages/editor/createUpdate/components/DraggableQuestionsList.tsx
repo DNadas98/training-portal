@@ -60,7 +60,7 @@ export default function DraggableQuestionsList(props: DraggableQuestionsListProp
                                         variant={"contained"}
                                         color={"error"}
                                         sx={{width: "fit-content"}}
-                                        disabled={props.questions.length<2}
+                                        disabled={props.questions.length < 2}
                                         onClick={() => props.removeQuestion(qIndex)}>
                                   Delete
                                 </Button>
@@ -77,9 +77,9 @@ export default function DraggableQuestionsList(props: DraggableQuestionsListProp
                                                         value={question.text}
                                                         onChange={(currentValue: string) => props.handleQuestionChange(qIndex, "text", currentValue)}/>
                               <IconButton type="button"
-                                          disabled={props.questions.length<2}
+                                          disabled={props.questions.length < 2}
                                           onClick={() => props.removeQuestion(qIndex)}>
-                                <DeleteIcon disabled={props.questions.length<2}/>
+                                <DeleteIcon disabled={props.questions.length < 2}/>
                               </IconButton>
                             </Stack>}
                           <Grid container spacing={2}>

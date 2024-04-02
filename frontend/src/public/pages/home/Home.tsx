@@ -1,7 +1,19 @@
 import {useEffect, useState} from "react";
 import {
-  Avatar, Button, Card, CardActions, CardContent, Collapse, Grid, List, ListItem, ListItemIcon, ListItemText,
-  Stack, Typography, useTheme
+  Avatar,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Collapse,
+  Grid,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Stack,
+  Typography,
+  useTheme
 } from "@mui/material";
 import siteConfig from "../../../common/config/siteConfig.ts";
 import {AccountBoxOutlined, FactCheckOutlined, GroupAddOutlined,} from "@mui/icons-material";

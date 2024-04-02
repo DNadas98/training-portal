@@ -6,7 +6,7 @@ interface PasswordInputProps {
 }
 
 export default function PasswordInput({confirm}: PasswordInputProps) {
-  const getLocalized=useLocalized();
+  const getLocalized = useLocalized();
   return (
     <TextField variant={"outlined"}
                color={"secondary"}

@@ -4,5 +4,5 @@ import {AuthenticationContext} from "../context/AuthenticationProvider.tsx";
 
 
 export function useAuthentication(): IAuthenticationContext {
-    return useContext(AuthenticationContext);
+  return useContext(AuthenticationContext);
 }
