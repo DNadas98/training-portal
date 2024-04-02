@@ -40,7 +40,7 @@ public class EditorQuestionnaireSubmissionController {
     response.put("totalPages", submissions.getTotalPages());
     response.put("currentPage", submissions.getNumber() + 1);
     response.put("size", submissions.getSize());
-    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", response));
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
   @DeleteMapping("/{submissionId}")

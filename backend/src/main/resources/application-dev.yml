@@ -32,6 +32,6 @@ spring:
 
 logging:
   level:
-    root: info
-    org.springframework: info
+    root: warn
+    org.springframework: warn
     org.hibernate.sql: trace

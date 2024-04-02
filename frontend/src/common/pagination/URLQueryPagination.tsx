@@ -32,6 +32,7 @@ export default function URLQueryPagination(props: URLQueryPaginationProps) {
 
   const changeSize = (newSize) => {
     searchParams.set('size', newSize);
+    searchParams.set('page', "1");
     navigate(`?${searchParams.toString()}`,{replace:true});
     if (props.onSizeChange) {
       props.onSizeChange(page, newSize);
@@ -49,10 +50,9 @@ export default function URLQueryPagination(props: URLQueryPaginationProps) {
         <Select disabled={!size} value={size} label="Size" onChange={e => {
           changeSize(e.target.value);
         }}>
+          <MenuItem value={1}>1</MenuItem>
           <MenuItem value={5}>5</MenuItem>
           <MenuItem value={10}>10</MenuItem>
-          <MenuItem value={20}>20</MenuItem>
-          <MenuItem value={50}>50</MenuItem>
         </Select>
       </FormControl>
     </Box>

@@ -32,7 +32,7 @@ export default function EditorQuestionnaireSubmissions() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const [totalPages, setTotalPages] = useState(0);
-  const page = parseInt(searchParams.get('pag e') || '1', 10);
+  const page = parseInt(searchParams.get('page') || '1', 10);
   const size = parseInt(searchParams.get('size') || '10', 10);
 
   const loadQuestionnaireSubmissions = async () => {
