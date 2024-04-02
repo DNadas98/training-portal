@@ -68,8 +68,7 @@
 The Training Portal project is a comprehensive learning and examination platform for organizational
 training. It supports dynamic content management, allowing administrators to manage educational
 materials including texts and videos, alongside customizable exam forms with variable question types
-and answer options. Authenticated users can request to join companies, or request to add a new
-userGroup. The learning materials and tests are organized to projects inside the companies, allowing
+and answer options. The learning materials and tests are organized to projects inside the groups, allowing
 for simplified management of start and deadline dates, user access and various other properties. The
 system keeps track of user progress, allowing employees to keep track of their progress and also
 administrators to see the overall progress of a project.
@@ -151,7 +150,7 @@ The project uses Nginx as reverse-proxy and static file server.
 ### Configuration
 
 - ENVs: `.env` files in the root folder and in `frontend` folder
-- API configuration: `backend/src/main/resources/application.yml`
+- API configuration: `backend/src/main/resources/application-*.yml`
 - Frontend configuration: `frontend/vite.config.js`
 - Nginx reverse proxy configuration: `nginx/nginx.conf`
 
@@ -160,7 +159,8 @@ The project uses Nginx as reverse-proxy and static file server.
 The application supports local sign-ups and sign-ins. The application requires email verification.
 Users must verify their email
 through a sent link to activate their accounts, ensuring authenticity and reducing unauthorized
-access.
+access. Other account-related procedures, like username and password change, e-mail address change, 
+forgotten password are also securely implemented.
 
 The backend API uses JWTs (JSON Web Tokens) for authentication. After a successful login at the
 Login endpoint, the user receives a Bearer Token in the response body, and a Refresh Token
