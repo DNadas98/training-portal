@@ -100,7 +100,7 @@ export default function EditorQuestionnaireSubmissions() {
       setQuestionnaireSubmissionsLoading(true);
       const response = await authJsonFetch({
         path:
-          `groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}/submissions/${submissionId}`,
+          `groups/${groupId}/projects/${projectId}/questionnaires/${questionnaireId}/submissions/${submissionId}`,
         method: "DELETE"
       });
       if (!response?.status || response.status > 399 || !response?.message) {

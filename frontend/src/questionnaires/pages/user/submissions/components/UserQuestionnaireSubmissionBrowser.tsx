@@ -11,6 +11,8 @@ interface UserQuestionnaireSubmissionBrowserProps {
   totalPages: number,
   page: number,
   size: number
+
+  onDeleteClick(id): void;
 }
 
 export default function UserQuestionnaireSubmissionBrowser(props: UserQuestionnaireSubmissionBrowserProps) {
@@ -42,7 +44,7 @@ export default function UserQuestionnaireSubmissionBrowser(props: UserQuestionna
           </Card>
             <UserQuestionnaireSubmissionList questionnaireSubmissions={props.questionnaireSubmissions}
                                              maxPoints={false}
-            />
+                                             onDeleteClick={props.onDeleteClick}/>
           </Stack>
           : <Card>
             <CardHeader title={"No submissions were found for this questionnaire."}

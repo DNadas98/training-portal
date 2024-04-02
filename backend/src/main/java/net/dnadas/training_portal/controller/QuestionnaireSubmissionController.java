@@ -71,4 +71,15 @@ public class QuestionnaireSubmissionController {
     }
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", questionnaire.get()));
   }
+
+  @DeleteMapping("/{submissionId}")
+  public ResponseEntity<?> deleteQuestionnaireSubmission(
+    @PathVariable Long groupId, @PathVariable Long projectId, @PathVariable Long questionnaireId,
+    @PathVariable Long submissionId, Locale locale) {
+    questionnaireSubmissionService
+      .deleteQuestionnaireSubmission(groupId, projectId, questionnaireId, submissionId);
+    return ResponseEntity.status(HttpStatus.OK).body(Map.of(
+      "message",
+      messageSource.getMessage("questionnaire.submission.deleted.success", null, locale)));
+  }
 }

@@ -8,6 +8,7 @@ import UserQuestionnaireSubmissionBrowser from "./components/UserQuestionnaireSu
 import {QuestionnaireSubmissionResponseDto} from "../../../dto/QuestionnaireSubmissionResponseDto.ts";
 import useAuthJsonFetch from "../../../../common/api/hooks/useAuthJsonFetch.tsx";
 import {ApiResponsePageableDto} from "../../../../common/api/dto/ApiResponsePageableDto.ts";
+import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
 
 export default function UserQuestionnaireSubmissions() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -18,6 +19,7 @@ export default function UserQuestionnaireSubmissions() {
   const authJsonFetch = useAuthJsonFetch();
   const navigate = useNavigate();
   const notification = useNotification();
+  const dialog = useDialog();
 
   const groupId = useParams()?.groupId;
   const projectId = useParams()?.projectId;
@@ -102,12 +104,49 @@ export default function UserQuestionnaireSubmissions() {
     return <></>;
   }
 
+  async function deleteSubmission(submissionId: number) {
+    try {
+      setQuestionnaireSubmissionsLoading(true);
+      const response = await authJsonFetch({
+        path:
+          `groups/${groupId}/projects/${projectId}/questionnaires/${questionnaireId}/submissions/${submissionId}`,
+        method: "DELETE"
+      });
+      if (!response?.status || response.status > 399 || !response?.message) {
+        notification.openNotification({
+          type: "error", vertical: "top", horizontal: "center",
+          message: `${response?.error ?? "Failed to delete questionnaire submission"}`
+        });
+        return;
+      }
+      notification.openNotification({
+        type: "success", vertical: "top", horizontal: "center", message: response.message
+      });
+      await loadQuestionnaireSubmissions();
+    } catch (e) {
+      notification.openNotification({
+        type: "error", vertical: "top", horizontal: "center",
+        message: "Failed to delete questionnaire submission"
+      });
+      return;
+    } finally {
+      setQuestionnaireSubmissionsLoading(false);
+    }
+  }
+
+  const handleDeleteClick = (submissionId: number) => {
+    dialog.openDialog({
+      text: "Are you sure, you would like to delete this questionnaire submission?",
+      onConfirm: () => deleteSubmission(submissionId)
+    });
+  }
+
   return (
     <UserQuestionnaireSubmissionBrowser
       questionnaireSubmissions={questionnaireSubmissions}
       maxPointQuestionnaireSubmission={maxPointQuestionnaireSubmission}
       totalPages={totalPages}
       page={page} size={size}
-    />
+      onDeleteClick={handleDeleteClick}/>
   );
 }

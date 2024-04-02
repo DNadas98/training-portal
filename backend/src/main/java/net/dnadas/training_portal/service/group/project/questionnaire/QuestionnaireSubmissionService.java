@@ -161,7 +161,7 @@ public class QuestionnaireSubmissionService {
 
 
   @Transactional(rollbackFor = Exception.class)
-  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
   public void deleteQuestionnaireSubmission(
     Long groupId, Long projectId, Long questionnaireId, Long submissionId) {
     ApplicationUser user = userProvider.getAuthenticatedUser();
