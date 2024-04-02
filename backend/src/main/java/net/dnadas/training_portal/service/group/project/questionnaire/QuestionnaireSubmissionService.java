@@ -265,7 +265,6 @@ public class QuestionnaireSubmissionService {
         new SubmittedAnswer(answer.getText(), answer.getAnswerOrder(), answerStatus,
           newSubmittedQuestion));
       remainingAnswers.remove(answer);
-      return submittedAnswers;
     }
 
     for (Answer remainingAnswer : remainingAnswers) {
