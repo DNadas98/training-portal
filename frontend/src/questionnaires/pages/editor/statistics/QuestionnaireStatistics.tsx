@@ -28,6 +28,7 @@ import usePermissions from "../../../../authentication/hooks/usePermissions.ts";
 import useLocalizedDateTime from "../../../../common/localization/hooks/useLocalizedDateTime.tsx";
 import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
 import {QuestionnaireResponseDto} from "../../../dto/QuestionnaireResponseDto.ts";
+import RichTextDisplay from "../../../../common/richTextEditor/RichTextDisplay.tsx";
 
 export default function QuestionnaireStatistics() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -158,7 +159,7 @@ export default function QuestionnaireStatistics() {
           <Grid item xs={12}>
             <Stack spacing={1} sx={{marginBottom: 2}}>
               <Typography variant={"h6"}>{questionnaire.name}</Typography>
-              <Typography variant={"body1"}>{questionnaire.description}</Typography>
+              <RichTextDisplay content={questionnaire.description}/>
               <Button onClick={() => navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`)}
                       sx={{width: "fit-content"}} variant={"outlined"}>
                 Back to Questionnaires
