@@ -9,8 +9,6 @@ services:
       PGDATA: /data/postgres
     volumes:
       - db:/data/postgres
-    ports:
-      - "54321:5432"
     networks:
       - backend_network
     restart: always
@@ -24,7 +22,7 @@ services:
     container_name: backend
     build:
       context: ./backend
-      dockerfile: ./backend/Dockerfile
+      dockerfile: Dockerfile
     env_file:
       - ./.env
     depends_on:

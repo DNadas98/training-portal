@@ -11,6 +11,7 @@ import net.dnadas.training_portal.model.auth.ApplicationUserDao;
 import net.dnadas.training_portal.model.auth.GlobalRole;
 import net.dnadas.training_portal.model.verification.EmailChangeVerificationToken;
 import net.dnadas.training_portal.model.verification.EmailChangeVerificationTokenDao;
+import net.dnadas.training_portal.model.verification.RegistrationTokenDao;
 import net.dnadas.training_portal.service.converter.UserConverter;
 import net.dnadas.training_portal.service.email.EmailService;
 import net.dnadas.training_portal.service.email.EmailTemplateService;
@@ -33,6 +34,7 @@ public class ApplicationUserService {
   private final EmailService emailService;
   private final EmailTemplateService emailTemplateService;
   private final VerificationTokenService verificationTokenService;
+  private final RegistrationTokenDao registrationTokenDao;
 
   public UserResponsePrivateDto getOwnUserDetails() throws UnauthorizedException {
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
@@ -101,7 +103,7 @@ public class ApplicationUserService {
 
       verifyChangedEmail(updateDto, applicationUser);
       verifyEmailNotTaken(updateDto);
-      verifyTokenDoesNotExist(updateDto, applicationUser);
+      verifyTokenDoesNotExist(applicationUser);
 
       UUID verificationCode = UUID.randomUUID();
       EmailChangeVerificationToken savedVerificationToken = getEmailChangeVerificationToken(
@@ -143,16 +145,21 @@ public class ApplicationUserService {
     }
   }
 
-  private void verifyTokenDoesNotExist(
-    UserEmailUpdateDto updateDto, ApplicationUser applicationUser) {
-    emailChangeVerificationTokenDao.findByNewEmailOrUserId(
-      updateDto.email(), applicationUser.getId()).ifPresent(token -> {
+  private void verifyTokenDoesNotExist(ApplicationUser applicationUser) {
+    emailChangeVerificationTokenDao.findByUserId(
+      applicationUser.getId()).ifPresent(token -> {
       throw new VerificationTokenAlreadyExistsException();
     });
   }
 
   private void verifyEmailNotTaken(UserEmailUpdateDto updateDto) {
     applicationUserDao.findByEmail(updateDto.email()).ifPresent(user -> {
+      throw new UserAlreadyExistsException();
+    });
+    emailChangeVerificationTokenDao.findByNewEmail(updateDto.email()).ifPresent(token -> {
+      throw new UserAlreadyExistsException();
+    });
+    registrationTokenDao.findByEmail(updateDto.email()).ifPresent(token -> {
       throw new UserAlreadyExistsException();
     });
   }

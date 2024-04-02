@@ -6,12 +6,11 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface ApplicationUserDao extends JpaRepository<ApplicationUser, Long> {
   Optional<ApplicationUser> findByEmail(String email);
-
-  Optional<ApplicationUser> findByGlobalRolesContaining(GlobalRole globalRole);
 
   @Query("SELECT u FROM ApplicationUser u WHERE u.email = :email OR u. username = :username")
   Optional<ApplicationUser> findByEmailOrUsername(

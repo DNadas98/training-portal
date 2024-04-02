@@ -10,6 +10,7 @@ import net.dnadas.training_portal.model.auth.GlobalRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import org.springframework.validation.Validator;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -39,10 +41,10 @@ public class DefaultAdminInitializer {
   @PostConstruct
   @Transactional(rollbackFor = Exception.class)
   public void createDefaultSystemAdministratorAccount() {
-    Optional<ApplicationUser> existingUser = applicationUserDao.findByGlobalRolesContaining(
-      GlobalRole.ADMIN);
-    if (existingUser.isPresent()) {
-      logger.info("System administrator account already exists, skipping initialization");
+    Boolean adminExists = applicationUserDao.findAll(PageRequest.of(0, 1)).stream().findAny()
+      .isPresent();
+    if (adminExists) {
+      logger.info("User accounts already exist, skipping system administrator initialization");
       return;
     }
     RegisterRequestDto dto = new RegisterRequestDto(username, email, password);

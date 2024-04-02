@@ -12,10 +12,7 @@ import net.dnadas.training_portal.exception.auth.UserNotFoundException;
 import net.dnadas.training_portal.exception.verification.VerificationTokenAlreadyExistsException;
 import net.dnadas.training_portal.model.auth.ApplicationUser;
 import net.dnadas.training_portal.model.auth.ApplicationUserDao;
-import net.dnadas.training_portal.model.verification.PasswordResetVerificationToken;
-import net.dnadas.training_portal.model.verification.PasswordResetVerificationTokenDao;
-import net.dnadas.training_portal.model.verification.RegistrationToken;
-import net.dnadas.training_portal.model.verification.RegistrationTokenDao;
+import net.dnadas.training_portal.model.verification.*;
 import net.dnadas.training_portal.service.email.EmailService;
 import net.dnadas.training_portal.service.email.EmailTemplateService;
 import net.dnadas.training_portal.service.verification.VerificationTokenService;
@@ -41,6 +38,7 @@ public class AuthenticationService {
   private final EmailService emailService;
   private final EmailTemplateService emailTemplateService;
   private final PasswordResetVerificationTokenDao passwordResetVerificationTokenDao;
+  private final EmailChangeVerificationTokenDao emailChangeVerificationTokenDao;
 
   @Transactional(rollbackFor = Exception.class)
   public void sendRegistrationVerificationEmail(RegisterRequestDto registerRequest)
@@ -167,6 +165,9 @@ public class AuthenticationService {
     if (existingUser.isPresent()) {
       throw new UserAlreadyExistsException();
     }
+    emailChangeVerificationTokenDao.findByNewEmail(email).ifPresent(token -> {
+      throw new UserAlreadyExistsException();
+    });
   }
 
   private VerificationTokenDto saveRegistrationToken(

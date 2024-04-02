@@ -13,4 +13,6 @@ public interface RegistrationTokenDao extends JpaRepository<RegistrationToken, L
   @Query("SELECT rt FROM RegistrationToken rt WHERE rt.email = :email OR rt.username = :username")
   Optional<RegistrationToken> findByEmailOrUsername(
     @Param("email") String email, @Param("username") String username);
+
+  Optional<RegistrationToken> findByEmail(String email);
 }

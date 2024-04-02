@@ -12,6 +12,7 @@ import net.dnadas.training_portal.model.auth.ApplicationUser;
 import net.dnadas.training_portal.model.auth.ApplicationUserDao;
 import net.dnadas.training_portal.model.verification.EmailChangeVerificationToken;
 import net.dnadas.training_portal.model.verification.EmailChangeVerificationTokenDao;
+import net.dnadas.training_portal.model.verification.RegistrationTokenDao;
 import net.dnadas.training_portal.service.converter.UserConverter;
 import net.dnadas.training_portal.service.email.EmailService;
 import net.dnadas.training_portal.service.email.EmailTemplateService;
@@ -53,6 +54,9 @@ class ApplicationUserServiceTest {
   private EmailTemplateService emailTemplateService;
   @Mock
   private VerificationTokenService verificationTokenService;
+  @Mock
+  private RegistrationTokenDao registrationTokenDao;
+
   @InjectMocks
   private ApplicationUserService applicationUserService;
 
@@ -279,10 +283,10 @@ class ApplicationUserServiceTest {
     when(userProvider.getAuthenticatedUser()).thenReturn(authenticatedUser);
     when(passwordEncoder.matches(updateDto.password(), authenticatedUser.getPassword())).thenReturn(
       true);
+    when(registrationTokenDao.findByEmailOrUsername(anyString(), anyString())).thenReturn(Optional.empty());
     when(applicationUserDao.findByEmail(updateDto.email())).thenReturn(Optional.empty());
-    when(emailChangeVerificationTokenDao.findByNewEmailOrUserId(
-      updateDto.email(),
-      authenticatedUser.getId())).thenReturn(Optional.empty());
+    when(emailChangeVerificationTokenDao.findByNewEmail(updateDto.email())).thenReturn(Optional.empty());
+    when(emailChangeVerificationTokenDao.findByUserId(authenticatedUser.getId())).thenReturn(Optional.empty());
     when(emailChangeVerificationTokenDao.save(any(EmailChangeVerificationToken.class))).thenReturn(
       savedVerificationToken);
     doNothing().when(emailService).sendMailToUserAddress(emailRequestDto);
@@ -333,8 +337,11 @@ class ApplicationUserServiceTest {
     when(passwordEncoder.matches(updateDto.password(), authenticatedUser.getPassword())).thenReturn(
       true);
     when(applicationUserDao.findByEmail(updateDto.email())).thenReturn(Optional.empty());
-    when(emailChangeVerificationTokenDao.findByNewEmailOrUserId(
-      updateDto.email(),
+    when(emailChangeVerificationTokenDao.findByNewEmail(
+      updateDto.email())).thenReturn(Optional.empty());
+    when(registrationTokenDao.findByEmailOrUsername(anyString(), anyString()))
+      .thenReturn(Optional.empty());
+    when(emailChangeVerificationTokenDao.findByUserId(
       authenticatedUser.getId())).thenReturn(Optional.of(existingToken));
 
     assertThrows(

@@ -9,10 +9,7 @@ import net.dnadas.training_portal.exception.auth.InvalidCredentialsException;
 import net.dnadas.training_portal.exception.auth.UserAlreadyExistsException;
 import net.dnadas.training_portal.model.auth.ApplicationUser;
 import net.dnadas.training_portal.model.auth.ApplicationUserDao;
-import net.dnadas.training_portal.model.verification.PasswordResetVerificationToken;
-import net.dnadas.training_portal.model.verification.PasswordResetVerificationTokenDao;
-import net.dnadas.training_portal.model.verification.RegistrationToken;
-import net.dnadas.training_portal.model.verification.RegistrationTokenDao;
+import net.dnadas.training_portal.model.verification.*;
 import net.dnadas.training_portal.service.email.EmailService;
 import net.dnadas.training_portal.service.email.EmailTemplateService;
 import net.dnadas.training_portal.service.verification.VerificationTokenService;
@@ -56,6 +53,9 @@ class AuthenticationServiceTest {
   private EmailTemplateService emailTemplateService;
   @Mock
   private PasswordResetVerificationTokenDao passwordResetVerificationTokenDao;
+  @Mock
+  private EmailChangeVerificationTokenDao emailChangeVerificationTokenDao;
+
   @InjectMocks
   private AuthenticationService authenticationService;
 
@@ -100,6 +100,8 @@ class AuthenticationServiceTest {
         "hashedCode"));
     when(emailTemplateService.getRegistrationEmailDto(verificationTokenDto, registerRequest.email(),
       registerRequest.username())).thenReturn(emailRequestDto);
+    when(emailChangeVerificationTokenDao.findByNewEmail(registerRequest.email())).thenReturn(
+      Optional.empty());
 
     assertDoesNotThrow(
       () -> authenticationService.sendRegistrationVerificationEmail(registerRequest));
