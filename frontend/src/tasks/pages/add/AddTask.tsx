@@ -9,7 +9,7 @@ import {TaskStatus} from "../../dto/TaskStatus.ts";
 import {Importance} from "../../dto/Importance.ts";
 import {TaskCreateRequestDto} from "../../dto/TaskCreateRequestDto.ts";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
-import useSubmittedDate from "../../../common/dateTime/useSubmittedDate.tsx";
+import useLocalizedSubmittedDate from "../../../common/localization/hooks/useLocalizedSubmittedDate.tsx";
 
 export default function AddTask() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -19,7 +19,7 @@ export default function AddTask() {
   const notification = useNotification();
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
-  const toSubmittedDate = useSubmittedDate();
+  const toSubmittedDate = useLocalizedSubmittedDate();
   const addTask = async (requestDto: TaskCreateRequestDto) => {
     return await authJsonFetch({
       path: `groups/${groupId}/projects/${projectId}/tasks`,

@@ -1,8 +1,8 @@
-import useLocaleContext from "../localization/hooks/useLocaleContext.tsx";
+import useLocaleContext from "./useLocaleContext.tsx";
 import {formatISO, parse} from "date-fns";
-import {getDateFnsLocale} from "../localization/utils/getDateFnsLocale.ts";
+import {getDateFnsLocale} from "../utils/getDateFnsLocale.ts";
 
-export default function useSubmittedDate() {
+export default function useLocalizedSubmittedDate() {
   const {locale} = useLocaleContext()
 
   const toSubmittedDate = (dateString: string): string => {

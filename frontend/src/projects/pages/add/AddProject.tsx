@@ -8,7 +8,7 @@ import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx"
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import {PermissionType} from "../../../authentication/dto/PermissionType.ts";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
-import useSubmittedDate from "../../../common/dateTime/useSubmittedDate.tsx";
+import useLocalizedSubmittedDate from "../../../common/localization/hooks/useLocalizedSubmittedDate.tsx";
 
 export default function AddProject() {
   const {loading: permissionsLoading, groupPermissions} = usePermissions();
@@ -17,7 +17,7 @@ export default function AddProject() {
   const notification = useNotification();
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
-  const toSubmittedDate = useSubmittedDate();
+  const toSubmittedDate = useLocalizedSubmittedDate();
   const addProject = async (requestDto: ProjectCreateRequestDto) => {
     return await authJsonFetch({
       path: `groups/${groupId}/projects`, method: "POST", body: requestDto

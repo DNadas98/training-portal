@@ -12,7 +12,7 @@ import {TaskUpdateRequestDto} from "../../dto/TaskUpdateRequestDto.ts";
 import UpdateTaskForm from "./components/UpdateTaskForm.tsx";
 import {isValidId} from "../../../common/utils/isValidId.ts";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
-import useSubmittedDate from "../../../common/dateTime/useSubmittedDate.tsx";
+import useLocalizedSubmittedDate from "../../../common/localization/hooks/useLocalizedSubmittedDate.tsx";
 
 export default function UpdateTask() {
   const {loading: permissionsLoading, taskPermissions} = usePermissions();
@@ -25,7 +25,7 @@ export default function UpdateTask() {
   const [taskLoading, setTaskLoading] = useState(true);
   const [task, setTask] = useState<TaskResponseDto | undefined>(undefined);
   const [taskError, setTaskError] = useState<string | undefined>(undefined);
-  const toSubmittedDate = useSubmittedDate();
+  const toSubmittedDate = useLocalizedSubmittedDate();
 
   const handleError = (error?: string) => {
     const defaultError = "An unknown error has occurred, please try again later";
