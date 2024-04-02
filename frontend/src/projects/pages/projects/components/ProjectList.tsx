@@ -40,16 +40,15 @@ export default function ProjectList(props: ProjectListProps) {
                   ? <Button onClick={() => {
                     props.onActionButtonClick(project.projectId);
                   }} sx={{textTransform: "none", width: "fit-content"}}>
-                    <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                      <ForwardIcon/>
+                    <Stack direction={"row"} alignItems={"center"} spacing={0.5} textAlign={"left"}>
                       <Typography variant={"h6"} sx={{
                         wordBreak: "break-word",
                         paddingRight: 1,
-                        minWidth: "100%",
                         flexGrow: 1
                       }}>
                         {project.name}
                       </Typography>
+                      <ForwardIcon/>
                     </Stack>
                   </Button>
                   : <Typography variant={"h6"} sx={{

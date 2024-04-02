@@ -46,13 +46,13 @@ export default function UserQuestionnaireSubmissionBrowser(props: UserQuestionna
                                              maxPoints={false}
                                              onDeleteClick={props.onDeleteClick}/>
           </Stack>
-          : <Card>
+          : !props.maxPointQuestionnaireSubmission ? <Card>
             <CardHeader title={"No submissions were found for this questionnaire."}
                         sx={{textAlign: "center"}}/>
             <CardContent sx={{justifyContent: "center"}}>
               <BackButton text={"Back to questionnaires"}/>
             </CardContent>
-          </Card>}
+          </Card> : <></>}
       </Grid>
     </Grid>
   );
