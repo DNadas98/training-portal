@@ -8,6 +8,7 @@ import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx"
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import {PermissionType} from "../../../authentication/dto/PermissionType.ts";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
+import useSubmittedDate from "../../../common/dateTime/useSubmittedDate.tsx";
 
 export default function AddProject() {
   const {loading: permissionsLoading, groupPermissions} = usePermissions();
@@ -16,6 +17,7 @@ export default function AddProject() {
   const notification = useNotification();
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
+  const toSubmittedDate = useSubmittedDate();
   const addProject = async (requestDto: ProjectCreateRequestDto) => {
     return await authJsonFetch({
       path: `groups/${groupId}/projects`, method: "POST", body: requestDto
@@ -48,8 +50,8 @@ export default function AddProject() {
         return;
       }
 
-      const startDate = new Date(formData.get("startDate") as string).toISOString();
-      const deadline = new Date(formData.get("deadline") as string).toISOString();
+      const startDate = toSubmittedDate(formData.get("startDate") as string);
+      const deadline = toSubmittedDate(formData.get("deadline") as string);
 
       const requestDto: ProjectCreateRequestDto = {name, description, detailedDescription, startDate, deadline};
       const response = await addProject(requestDto);

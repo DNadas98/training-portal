@@ -10,6 +10,7 @@ import {PermissionType} from "../../../authentication/dto/PermissionType.ts";
 import UpdateProjectForm from "./components/UpdateProjectForm.tsx";
 import {isValidId} from "../../../common/utils/isValidId.ts";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
+import useSubmittedDate from "../../../common/dateTime/useSubmittedDate.tsx";
 
 export default function UpdateProject() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -21,6 +22,7 @@ export default function UpdateProject() {
   const [projectLoading, setProjectLoading] = useState(true);
   const [project, setProject] = useState<ProjectResponseDetailsDto | undefined>(undefined);
   const [projectErrorStatus, setProjectError] = useState<string | undefined>(undefined);
+  const toSubmittedDate = useSubmittedDate();
 
   const handleError = (error?: string) => {
     const defaultError = "An unknown error has occurred, please try again later";
@@ -94,8 +96,8 @@ export default function UpdateProject() {
         return;
       }
 
-      const startDate = new Date(formData.get("startDate") as string).toISOString();
-      const deadline = new Date(formData.get("deadline") as string).toISOString();
+      const startDate = toSubmittedDate(formData.get("startDate") as string);
+      const deadline = toSubmittedDate(formData.get("deadline") as string);
 
       const requestDto: ProjectUpdateRequestDto = {
         name, description, detailedDescription, startDate, deadline

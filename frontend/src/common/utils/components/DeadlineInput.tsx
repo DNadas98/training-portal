@@ -1,4 +1,4 @@
-import {plusHours} from "../../dateTime/dateTimeService.ts";
+import {plusHours} from "../../dateTime/plusHours.ts";
 import CustomDateTimeInput from "./CustomDateTimeInput.tsx";
 
 interface DeadlineInputProps {

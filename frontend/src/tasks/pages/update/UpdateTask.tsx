@@ -12,6 +12,7 @@ import {TaskUpdateRequestDto} from "../../dto/TaskUpdateRequestDto.ts";
 import UpdateTaskForm from "./components/UpdateTaskForm.tsx";
 import {isValidId} from "../../../common/utils/isValidId.ts";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
+import useSubmittedDate from "../../../common/dateTime/useSubmittedDate.tsx";
 
 export default function UpdateTask() {
   const {loading: permissionsLoading, taskPermissions} = usePermissions();
@@ -24,6 +25,7 @@ export default function UpdateTask() {
   const [taskLoading, setTaskLoading] = useState(true);
   const [task, setTask] = useState<TaskResponseDto | undefined>(undefined);
   const [taskError, setTaskError] = useState<string | undefined>(undefined);
+  const toSubmittedDate = useSubmittedDate();
 
   const handleError = (error?: string) => {
     const defaultError = "An unknown error has occurred, please try again later";
@@ -84,8 +86,8 @@ export default function UpdateTask() {
       const formData = new FormData(event.currentTarget);
       const name = formData.get('name') as string;
       const description = formData.get('description') as string;
-      const startDate = new Date(formData.get("startDate") as string).toISOString();
-      const deadline = new Date(formData.get("deadline") as string).toISOString();
+      const startDate = toSubmittedDate(formData.get("startDate") as string);
+      const deadline = toSubmittedDate(formData.get("deadline") as string);
       const importance = (formData.get("importance") as Importance);
       const taskStatus = (formData.get("taskStatus") as TaskStatus);
       const difficulty = Number(formData.get("difficulty"));
