@@ -1,0 +1,22 @@
+# JMeter generated Header file
+Accept	*/*
+Accept-Encoding	gzip, deflate, br, zstd
+Accept-Language	hu-HU
+Authorization	Bearer 
+Cache-Control	no-cache
+Connection	keep-alive
+Content-Length	452
+Content-Type	application/json
+Cookie	__stripe_mid=a2e9d6a5-6ae6-41e3-ab9b-fd8c6bf074ae259446
+DNT	1
+Host	localhost:4430
+Origin	https://localhost:4430
+Pragma	no-cache
+Referer	https://localhost:4430/groups/1/projects/1/questionnaires/1
+Sec-Fetch-Dest	empty
+Sec-Fetch-Mode	cors
+Sec-Fetch-Site	same-origin
+User-Agent	Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36
+sec-ch-ua	"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"
+sec-ch-ua-mobile	?0
+sec-ch-ua-platform	"Linux
