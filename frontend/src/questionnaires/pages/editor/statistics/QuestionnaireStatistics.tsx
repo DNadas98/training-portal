@@ -66,6 +66,7 @@ export default function QuestionnaireStatistics() {
           type: "error", vertical: "top", horizontal: "center",
           message: response?.error ?? "Failed to load questionnaire"
         });
+        return;
       }
       setQuestionnaire(response.data as QuestionnaireResponseDto);
     } catch (e) {
@@ -93,6 +94,7 @@ export default function QuestionnaireStatistics() {
           type: "error", vertical: "top", horizontal: "center",
           message: response?.error ?? "Failed to load questionnaire statistics"
         });
+        return;
       }
       setQuestionnaireStatistics(response.data as QuestionnaireSubmissionResponseAdminDto[]);
     } catch (e) {
