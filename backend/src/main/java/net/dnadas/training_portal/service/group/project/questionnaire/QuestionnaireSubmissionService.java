@@ -87,7 +87,7 @@ public class QuestionnaireSubmissionService {
 
     Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndId(groupId,
       projectId, questionnaireId).orElseThrow(QuestionnaireNotFoundException::new);
-    verifyAllRadioButtonQuestionIsAnswered(submissionRequest, questionnaire);
+    validateRadioButtonQuestions(submissionRequest, questionnaire);
 
     // Non-editors can only submit active questionnaires without existing max point submission
     // Editors still can not submit inactive questionnaires
@@ -171,14 +171,13 @@ public class QuestionnaireSubmissionService {
   }
 
 
-  private void verifyAllRadioButtonQuestionIsAnswered(
+  private void validateRadioButtonQuestions(
     QuestionnaireSubmissionRequestDto submissionRequest, Questionnaire questionnaire) {
     List<Question> questions = questionnaire.getQuestions();
     if (submissionRequest.questions().stream().anyMatch(
-      submittedQuestion -> submittedQuestion.checkedAnswers().isEmpty()
-        && questions.stream().filter(q -> submittedQuestion.questionId().equals(q.getId()))
+      submittedQuestion ->  questions.stream().filter(q -> submittedQuestion.questionId().equals(q.getId()))
         .findFirst().orElseThrow(QuestionnaireSubmissionFailedException::new).getType()
-        .equals(QuestionType.RADIO))) {
+        .equals(QuestionType.RADIO)&&submittedQuestion.checkedAnswers().size()!=1)) {
       throw new QuestionnaireSubmissionFailedException();
     }
   }
