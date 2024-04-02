@@ -200,7 +200,7 @@ export default function QuestionnaireEditor() {
     });
   };
 
-  const updateQuestionnaire = async (requestDto: QuestionnaireCreateRequestDto) => {
+  const updateQuestionnaire = async (requestDto: QuestionnaireUpdateRequestDto) => {
     return await authJsonFetch({
       path: `groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}`,
       method: "PUT",
@@ -218,19 +218,22 @@ export default function QuestionnaireEditor() {
     try {
       event.preventDefault();
       setLoading(true);
-      if (!name || !description || !status || !questions?.length) {
+      if (!name || !description || (questionnaireId && !status) || !questions?.length) {
         handleError("The received questionnaire is invalid.");
         return;
       }
-      const questionnaire: QuestionnaireUpdateRequestDto = {
-        name, description, status, questions
-      };
+
       let response: ApiResponseDto | void;
       if (!isUpdatePage) {
-        response = await addQuestionnaire(questionnaire);
+        response = await addQuestionnaire({
+          name, description, questions
+        });
       } else {
-        response = await updateQuestionnaire(questionnaire);
+        response = await updateQuestionnaire({
+          name, description, status: status, questions
+        });
       }
+
       if (!response || response.error || response?.status > 399 || !response.data) {
         handleError(response?.error ?? response?.message
           ?? "An unknown error has occurred, please try again later");

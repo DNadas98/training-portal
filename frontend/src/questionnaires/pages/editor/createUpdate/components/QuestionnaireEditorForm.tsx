@@ -54,7 +54,8 @@ export default function QuestionnaireEditorForm(props: QuestionnaireEditorFormPr
                   />
                   <RichTextEditorControlled id={"questionnaire-description"} value={props.description ?? ""}
                                             onChange={(currentValue: string) => props.setDescription(currentValue)}/>
-                  <Grid container spacing={2} alignItems={"center"}>
+                  {props.isUpdatePage
+                    ?<Grid container spacing={2} alignItems={"center"}>
                     <Grid item>
                       <Typography sx={{whiteSpace: "nowrap"}}>
                         Status:</Typography>
@@ -71,6 +72,7 @@ export default function QuestionnaireEditorForm(props: QuestionnaireEditorFormPr
                       </Select>
                     </Grid>
                   </Grid>
+                    :<></>}
                 </Stack>
               </CardContent>
             </Card>
