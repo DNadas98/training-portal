@@ -54,12 +54,22 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
         },
         defaultProps: {variant: "standard"}
       },
+      MuiInputLabel: {
+        styleOverrides: {
+          root: {
+            color: "inherit",
+            "&.Mui-focused": {
+              color: "inherit"
+            }
+          }
+        }
+      },
       MuiCheckbox: {
         styleOverrides: {
           root: {
             color: "inherit",
             "&.Mui-checked": {
-              "color": "inherit",
+              "color": "inherit"
             }
           }
         }

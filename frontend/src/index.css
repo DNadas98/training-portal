@@ -1,12 +1,21 @@
 /* apply background image */
 #root {
-    background-image: url("/background.svg");
-    background-repeat: no-repeat;
-    background-size: cover;
+  background-image: url("/background.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 /* set cursor of rich text editor to input cursor */
 
 .MuiTiptap-RichTextContent-editable:hover {
-    cursor: text;
+  cursor: text;
+}
+
+.MuiTiptap-MenuBar-root,
+.MuiTiptap-ControlledBubbleMenu-root,
+.MuiTiptap-MenuBar-root div,
+.MuiTiptap-FieldContainer-root .MuiPaper-root *,
+.MuiTiptap-ControlledBubbleMenu-root div {
+  color: black;
+  background-color: #D2EBFF;
 }
