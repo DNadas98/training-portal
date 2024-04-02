@@ -175,6 +175,18 @@ public class QuestionnaireSubmissionService {
     questionnaireSubmissionDao.delete(questionnaireSubmission);
   }
 
+  @Transactional(rollbackFor = Exception.class)
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
+  public void deleteQuestionnaireSubmissionAsEditor(
+    Long groupId, Long projectId, Long questionnaireId, Long submissionId) {
+    ApplicationUser user = userProvider.getAuthenticatedUser();
+    QuestionnaireSubmission questionnaireSubmission =
+      questionnaireSubmissionDao.findByGroupIdAndProjectIdAndQuestionnaireIdAndIdAndUser(
+        groupId, projectId, questionnaireId, submissionId, user).orElseThrow(
+        QuestionnaireSubmissionNotFoundException::new);
+    questionnaireSubmissionDao.delete(questionnaireSubmission);
+  }
+
 
   private void validateRadioButtonQuestions(
     QuestionnaireSubmissionRequestDto submissionRequest, Questionnaire questionnaire) {
