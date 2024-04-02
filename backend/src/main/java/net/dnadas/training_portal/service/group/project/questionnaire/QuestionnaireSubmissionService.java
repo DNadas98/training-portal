@@ -169,6 +169,9 @@ public class QuestionnaireSubmissionService {
       questionnaireSubmissionDao.findByGroupIdAndProjectIdAndQuestionnaireIdAndIdAndUser(
         groupId, projectId, questionnaireId, submissionId, user).orElseThrow(
         QuestionnaireSubmissionNotFoundException::new);
+    if (questionnaireSubmission.getReceivedPoints().equals(questionnaireSubmission.getMaxPoints())) {
+      throw new IllegalStateException();
+    }
     questionnaireSubmissionDao.delete(questionnaireSubmission);
   }
 
