@@ -66,6 +66,7 @@ export default function DraggableQuestionsList(props: DraggableQuestionsListProp
                                 </Button>
                               </Stack>
                               <RichTextEditorControlled id={qIndex}
+                                                        key={`rteditor-${qIndex}`}
                                                         value={question.text}
                                                         onChange={(currentValue: string) => props.handleQuestionChange(qIndex, "text", currentValue)}/>
                             </Stack>
@@ -74,6 +75,7 @@ export default function DraggableQuestionsList(props: DraggableQuestionsListProp
                                 {question.order}.
                               </Typography>
                               <RichTextEditorControlled id={qIndex}
+                                                        key={`rteditor-${qIndex}`}
                                                         value={question.text}
                                                         onChange={(currentValue: string) => props.handleQuestionChange(qIndex, "text", currentValue)}/>
                               <IconButton type="button"
