@@ -6,17 +6,15 @@
         <collectionProp name="Arguments.arguments"/>
       </elementProp>
       <stringProp name="TestPlan.user_define_classpath">/home/dani/dev/private/jobhunt/training-portal/jmeter</stringProp>
-      <boolProp name="TestPlan.functional_mode">false</boolProp>
-      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
     </TestPlan>
     <hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Submit Questionnaire Load Test">
-        <intProp name="ThreadGroup.num_threads">500</intProp>
+        <intProp name="ThreadGroup.num_threads">100</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <stringProp name="LoopController.loops">20</stringProp>
+          <stringProp name="LoopController.loops">1</stringProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </ThreadGroup>
@@ -25,6 +23,7 @@
           <stringProp name="HTTPSampler.domain">localhost</stringProp>
           <stringProp name="HTTPSampler.port">4430</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
           <stringProp name="HTTPSampler.path">/api/v1/groups/1/projects/1/questionnaires/1/submissions</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -38,67 +37,18 @@
   &quot;questionnaireId&quot;: 1,&#xd;
   &quot;questions&quot;: [&#xd;
     {&#xd;
-      &quot;questionId&quot;: 8,&#xd;
+      &quot;questionId&quot;: 1,&#xd;
       &quot;checkedAnswers&quot;: [&#xd;
         {&#xd;
-          &quot;answerId&quot;: 24&#xd;
+          &quot;answerId&quot;: 1&#xd;
         }&#xd;
       ]&#xd;
     },&#xd;
     {&#xd;
-      &quot;questionId&quot;: 11,&#xd;
+      &quot;questionId&quot;: 2,&#xd;
       &quot;checkedAnswers&quot;: [&#xd;
         {&#xd;
-          &quot;answerId&quot;: 32&#xd;
-        },&#xd;
-        {&#xd;
-          &quot;answerId&quot;: 34&#xd;
-        }&#xd;
-      ]&#xd;
-    },&#xd;
-    {&#xd;
-      &quot;questionId&quot;: 12,&#xd;
-      &quot;checkedAnswers&quot;: [&#xd;
-        {&#xd;
-          &quot;answerId&quot;: 38&#xd;
-        }&#xd;
-      ]&#xd;
-    },&#xd;
-    {&#xd;
-      &quot;questionId&quot;: 13,&#xd;
-      &quot;checkedAnswers&quot;: [&#xd;
-        {&#xd;
-          &quot;answerId&quot;: 41&#xd;
-        },&#xd;
-        {&#xd;
-          &quot;answerId&quot;: 39&#xd;
-        }&#xd;
-      ]&#xd;
-    },&#xd;
-    {&#xd;
-      &quot;questionId&quot;: 10,&#xd;
-      &quot;checkedAnswers&quot;: [&#xd;
-        {&#xd;
-          &quot;answerId&quot;: 31&#xd;
-        }&#xd;
-      ]&#xd;
-    },&#xd;
-    {&#xd;
-      &quot;questionId&quot;: 9,&#xd;
-      &quot;checkedAnswers&quot;: [&#xd;
-        {&#xd;
-          &quot;answerId&quot;: 27&#xd;
-        },&#xd;
-        {&#xd;
-          &quot;answerId&quot;: 28&#xd;
-        }&#xd;
-      ]&#xd;
-    },&#xd;
-    {&#xd;
-      &quot;questionId&quot;: 14,&#xd;
-      &quot;checkedAnswers&quot;: [&#xd;
-        {&#xd;
-          &quot;answerId&quot;: 43&#xd;
+          &quot;answerId&quot;: 6&#xd;
         }&#xd;
       ]&#xd;
     }&#xd;
@@ -142,7 +92,7 @@
               </elementProp>
               <elementProp name="Content-Type" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
-                <stringProp name="Header.value">application/json</stringProp>
+                <stringProp name="Header.value">application/json; </stringProp>
               </elementProp>
               <elementProp name="Cookie" elementType="Header">
                 <stringProp name="Header.name">Cookie</stringProp>
@@ -197,6 +147,7 @@
                 <stringProp name="Header.value">&quot;Linux</stringProp>
               </elementProp>
             </collectionProp>
+            <stringProp name="TestPlan.comments">In production, DO NOT SAVE AND UPLOAD AUTHORIZATION HEADER WITH INCLUDED BEARER TOKEN</stringProp>
           </HeaderManager>
           <hashTree/>
         </hashTree>
