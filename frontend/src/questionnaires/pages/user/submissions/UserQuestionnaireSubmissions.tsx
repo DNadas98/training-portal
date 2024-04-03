@@ -90,7 +90,6 @@ export default function UserQuestionnaireSubmissions() {
 
   useEffect(() => {
     loadQuestionnaireSubmissions();
-    console.log(page,size)
   }, [groupId, projectId, page, size]);
 
   if (permissionsLoading || questionnaireSubmissionsLoading || maxPointQuestionnaireSubmissionsLoading) {

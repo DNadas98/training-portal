@@ -92,8 +92,11 @@ export default function EditorQuestionnaireSubmissions() {
 
   useEffect(() => {
     loadQuestionnaire();
-    loadQuestionnaireSubmissions();
   }, [groupId, projectId]);
+
+  useEffect(() => {
+    loadQuestionnaireSubmissions();
+  }, [groupId, projectId, page, size]);
 
   const deleteSubmission = async (submissionId: number) => {
     try {
