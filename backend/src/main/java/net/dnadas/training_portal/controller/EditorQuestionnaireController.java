@@ -1,5 +1,6 @@
 package net.dnadas.training_portal.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireCreateRequestDto;
 import net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireResponseEditorDetailsDto;
@@ -43,7 +44,7 @@ public class EditorQuestionnaireController {
   @PostMapping
   public ResponseEntity<?> createQuestionnaire(
     @PathVariable Long groupId, @PathVariable Long projectId,
-    @RequestBody QuestionnaireCreateRequestDto questionnaireCreateRequestDto) {
+    @RequestBody @Valid QuestionnaireCreateRequestDto questionnaireCreateRequestDto) {
     QuestionnaireResponseEditorDetailsDto questionnaire = questionnaireService.createQuestionnaire(
       groupId, projectId, questionnaireCreateRequestDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("data", questionnaire));
@@ -52,7 +53,7 @@ public class EditorQuestionnaireController {
   @PutMapping("/{questionnaireId}")
   public ResponseEntity<?> updateQuestionnaire(
     @PathVariable Long groupId, @PathVariable Long projectId, @PathVariable Long questionnaireId,
-    @RequestBody QuestionnaireUpdateRequestDto QuestionnaireUpdateRequestDto) {
+    @RequestBody @Valid QuestionnaireUpdateRequestDto QuestionnaireUpdateRequestDto) {
     QuestionnaireResponseEditorDetailsDto questionnaire = questionnaireService.updateQuestionnaire(
       groupId, projectId, questionnaireId, QuestionnaireUpdateRequestDto);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", questionnaire));

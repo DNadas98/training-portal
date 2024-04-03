@@ -1,5 +1,6 @@
 package net.dnadas.training_portal.controller;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +44,7 @@ public class QuestionnaireSubmissionController {
   @PostMapping
   public ResponseEntity<?> submitQuestionnaire(
     @PathVariable Long groupId, @PathVariable Long projectId, @PathVariable Long questionnaireId,
-    @RequestBody QuestionnaireSubmissionRequestDto submissionRequest, Locale locale) {
+    @RequestBody @Valid QuestionnaireSubmissionRequestDto submissionRequest, Locale locale) {
     questionnaireSubmissionService.submitQuestionnaire(
       groupId, projectId, questionnaireId, submissionRequest);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of(
