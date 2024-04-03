@@ -46,6 +46,7 @@ export default function QuestionnaireEditorForm(props: QuestionnaireEditorFormPr
                   <TextField
                     required
                     autoFocus
+                    inputProps={{length: {min: 1, max: 100}}}
                     fullWidth
                     label="Questionnaire Name"
                     value={props.name}
@@ -55,24 +56,24 @@ export default function QuestionnaireEditorForm(props: QuestionnaireEditorFormPr
                   <RichTextEditorControlled id={"questionnaire-description"} value={props.description ?? ""}
                                             onChange={(currentValue: string) => props.setDescription(currentValue)}/>
                   {props.isUpdatePage
-                    ?<Grid container spacing={2} alignItems={"center"}>
-                    <Grid item>
-                      <Typography sx={{whiteSpace: "nowrap"}}>
-                        Status:</Typography>
+                    ? <Grid container spacing={2} alignItems={"center"}>
+                      <Grid item>
+                        <Typography sx={{whiteSpace: "nowrap"}}>
+                          Status:</Typography>
+                      </Grid>
+                      <Grid item>
+                        <Select
+                          value={props.status}
+                          required
+                          onChange={(e) => props.setStatus(e.target.value as QuestionnaireStatus)}
+                        >
+                          <MenuItem value={QuestionnaireStatus.INACTIVE}>Inactive</MenuItem>
+                          <MenuItem value={QuestionnaireStatus.TEST}>Test</MenuItem>
+                          <MenuItem value={QuestionnaireStatus.ACTIVE}>Active</MenuItem>
+                        </Select>
+                      </Grid>
                     </Grid>
-                    <Grid item>
-                      <Select
-                        value={props.status}
-                        required
-                        onChange={(e) => props.setStatus(e.target.value as QuestionnaireStatus)}
-                      >
-                        <MenuItem value={QuestionnaireStatus.INACTIVE}>Inactive</MenuItem>
-                        <MenuItem value={QuestionnaireStatus.TEST}>Test</MenuItem>
-                        <MenuItem value={QuestionnaireStatus.ACTIVE}>Active</MenuItem>
-                      </Select>
-                    </Grid>
-                  </Grid>
-                    :<></>}
+                    : <></>}
                 </Stack>
               </CardContent>
             </Card>

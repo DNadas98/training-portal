@@ -222,6 +222,10 @@ export default function QuestionnaireEditor() {
         handleError("The received questionnaire is invalid.");
         return;
       }
+      if (description.length > 3000) {
+        handleError("Please provide a shorter description");
+        return;
+      }
 
       let response: ApiResponseDto | void;
       if (!isUpdatePage) {

@@ -8,6 +8,6 @@ import java.util.Set;
 
 public record QuestionnaireCreateRequestDto(
   @NotNull @Length(min = 1, max = 100) String name,
-  @NotNull String description,
+  @NotNull @Length(min = 1, max = 3000) String description,
   @NotNull Set<@Valid QuestionCreateRequestDto> questions) {
 }

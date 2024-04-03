@@ -26,7 +26,7 @@ public class Questionnaire {
   private Long id;
   @Column(nullable = false, length = 100, unique = true)
   private String name;
-  @Column(length = 10000, nullable = false)
+  @Column(length = 3000, nullable = false)
   private String description;
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)

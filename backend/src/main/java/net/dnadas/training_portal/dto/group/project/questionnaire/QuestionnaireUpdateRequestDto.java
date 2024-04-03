@@ -8,7 +8,8 @@ import org.hibernate.validator.constraints.Length;
 import java.util.Set;
 
 public record QuestionnaireUpdateRequestDto(
-  @NotNull @Length(min = 1, max = 100) String name, @NotNull String description,
+  @NotNull @Length(min = 1, max = 100) String name,
+  @NotNull @Length(min = 1, max = 3000) String description,
   @NotNull QuestionnaireStatus status,
   @NotNull Set<@Valid QuestionCreateRequestDto> questions) {
 }
