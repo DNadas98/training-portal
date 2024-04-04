@@ -162,7 +162,7 @@ public class PopulateService {
       project, testUsers.get(0));
     for (int i = 0; i < 30; i++) {
       Question question = new Question(
-        EXAMPLE_DATA_POPULATED_MESSAGE, QuestionType.RADIO, 1, 1, questionnaire);
+        EXAMPLE_DATA_POPULATED_MESSAGE, QuestionType.RADIO, i+1, 1, questionnaire);
       Answer answer1 = new Answer("Test answer " + i + " - 1", true, 1, question);
       question.addAnswer(answer1);
       Answer answer2 = new Answer("Test answer " + i + " - 2", false, 2, question);
