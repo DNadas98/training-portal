@@ -1,7 +1,6 @@
 import {Box, Button, Card, CardContent, Grid, MenuItem, Select, Stack, TextField, Typography} from "@mui/material";
 import DraggableQuestionsList from "./DraggableQuestionsList.tsx";
-import AddIcon from "../../../../../common/utils/components/AddIcon.tsx";
-import {QuestionCreateRequestDto} from "../../../../dto/QuestionCreateRequestDto.ts";
+import {QuestionRequestDto} from "../../../../dto/QuestionRequestDto.ts";
 import {FormEventHandler, MouseEventHandler} from "react";
 import {QuestionnaireStatus} from "../../../../dto/QuestionnaireStatus.ts";
 import RichTextEditorControlled from "../../../../../common/richTextEditor/RichTextEditorControlled.tsx";
@@ -11,20 +10,13 @@ interface QuestionnaireEditorFormProps {
   setName: (name: string) => void,
   description: string | undefined,
   setDescription: (name: string) => void,
-  onDragEnd: (result: any) => void,
-  questions: QuestionCreateRequestDto[],
-  addQuestion: MouseEventHandler<HTMLButtonElement> | undefined,
-  handleQuestionChange: (qIndex: number, field: string, value: any) => void,
-  removeQuestion: (index: number) => void,
-  addAnswer: (index: number) => void,
-  handleAnswerChange: (qIndex: number, aIndex: number, field: string, vale: any) => void,
-  removeAnswer: (qIndex: number, aIndex: number) => void,
+  status: QuestionnaireStatus,
+  setStatus: (value: QuestionnaireStatus) => void,
+  questions: QuestionRequestDto[],
   handleSubmit: FormEventHandler<HTMLFormElement> | undefined,
   handleBackClick: MouseEventHandler<HTMLButtonElement> | undefined,
   isUpdatePage: boolean,
-  setHasUnsavedChanges: (value: (((prevState: boolean) => boolean) | boolean)) => void,
-  status: QuestionnaireStatus,
-  setStatus: (value: QuestionnaireStatus) => void
+  onUpdateQuestions(updatedQuestions: QuestionRequestDto[]): any,
 }
 
 export default function QuestionnaireEditorForm(props: QuestionnaireEditorFormProps) {
@@ -32,10 +24,7 @@ export default function QuestionnaireEditorForm(props: QuestionnaireEditorFormPr
     <Grid container spacing={2} justifyContent={"center"} alignItems={"top"}>
       <Grid item xs={10}>
         <Box component="form"
-             onSubmit={props.handleSubmit}
-             onChange={() => {
-               props.setHasUnsavedChanges(true)
-             }}>
+             onSubmit={props.handleSubmit}>
           <Stack spacing={1}>
             <Card variant={"outlined"} sx={{width: "100%"}}>
               <CardContent>
@@ -77,20 +66,8 @@ export default function QuestionnaireEditorForm(props: QuestionnaireEditorFormPr
                 </Stack>
               </CardContent>
             </Card>
-            <DraggableQuestionsList onDragEnd={props.onDragEnd}
-                                    questions={props.questions}
-                                    handleQuestionChange={props.handleQuestionChange}
-                                    removeQuestion={props.removeQuestion}
-                                    addAnswer={props.addAnswer}
-                                    handleAnswerChange={props.handleAnswerChange}
-                                    removeAnswer={props.removeAnswer}/>
-            <Card variant={"outlined"} sx={{width: "100%"}}>
-              <CardContent>
-                <Button startIcon={<AddIcon/>} onClick={props.addQuestion} fullWidth>
-                  Add New Question
-                </Button>
-              </CardContent>
-            </Card>
+            <DraggableQuestionsList questionsLength={props.questions.length} questions={props.questions}
+                                    onUpdateQuestions={props.onUpdateQuestions}/>
             <Card variant={"outlined"} sx={{width: "100%"}}>
               <CardContent>
                 <Grid container spacing={2}>

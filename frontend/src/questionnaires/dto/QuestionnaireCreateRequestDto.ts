@@ -1,7 +1,7 @@
-import {QuestionCreateRequestDto} from "./QuestionCreateRequestDto.ts";
+import {QuestionRequestDto} from "./QuestionRequestDto.ts";
 
 export interface QuestionnaireCreateRequestDto {
   name: string;
   description: string;
-  questions: QuestionCreateRequestDto[];
+  questions: QuestionRequestDto[];
 }

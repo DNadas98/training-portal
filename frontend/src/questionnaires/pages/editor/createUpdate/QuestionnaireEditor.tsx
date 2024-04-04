@@ -7,7 +7,7 @@ import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
 import {QuestionnaireCreateRequestDto} from "../../../dto/QuestionnaireCreateRequestDto.ts";
 import {QuestionnaireResponseEditorDetailsDto} from "../../../dto/QuestionnaireResponseEditorDetailsDto.ts";
 import {QuestionType} from "../../../dto/QuestionType.ts";
-import {QuestionCreateRequestDto} from "../../../dto/QuestionCreateRequestDto.ts";
+import {QuestionRequestDto} from "../../../dto/QuestionRequestDto.ts";
 import QuestionnaireEditorForm from "./components/QuestionnaireEditorForm.tsx";
 import {ApiResponseDto} from "../../../../common/api/dto/ApiResponseDto.ts";
 import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
@@ -15,34 +15,72 @@ import {QuestionnaireStatus} from "../../../dto/QuestionnaireStatus.ts";
 import {QuestionnaireUpdateRequestDto} from "../../../dto/QuestionnaireUpdateRequestDto.ts";
 import {isValidId} from "../../../../common/utils/isValidId.ts";
 import useAuthJsonFetch from "../../../../common/api/hooks/useAuthJsonFetch.tsx";
+import {v4 as uuidv4} from 'uuid';
+import {QuestionResponseEditorDto} from "../../../dto/QuestionResponseEditorDto.ts";
+import {AnswerResponseEditorDto} from "../../../dto/AnswerResponseEditorDto.ts";
+import {AnswerRequestDto} from "../../../dto/AnswerRequestDto.ts";
 
 export default function QuestionnaireEditor() {
-  const {loading: permissionsLoading, projectPermissions} = usePermissions();
-  const groupId = useParams()?.groupId;
-  const projectId = useParams()?.projectId;
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
   const navigate = useNavigate();
   const dialog = useDialog();
 
-  const getEmptyQuestion = (): QuestionCreateRequestDto => {
-    return {
-      text: "",
-      type: QuestionType.RADIO,
-      order: 1,
-      points: 1,
-      answers: [{text: "", correct: false, order: 1}]
-    };
-  };
-
+  const {loading: permissionsLoading, projectPermissions} = usePermissions();
+  const groupId = useParams()?.groupId;
+  const projectId = useParams()?.projectId;
   const questionnaireId = useParams()?.questionnaireId;
   const isUpdatePage = !!isValidId(questionnaireId);
+
   const [loading, setLoading] = useState<boolean>(isUpdatePage);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(true);
   const [name, setName] = useState<string | undefined>(undefined);
   const [description, setDescription] = useState<string | undefined>(undefined);
   const [status, setStatus] = useState<QuestionnaireStatus>(QuestionnaireStatus.INACTIVE);
-  const [questions, setQuestions] = useState<QuestionCreateRequestDto[]>([getEmptyQuestion()]);
+
+  const getNewAnswer = (): AnswerRequestDto => {
+    return {
+      tempId: uuidv4(),
+      text: '',
+      correct: false,
+      order: 1
+    }
+  }
+
+  const getNewQuestion = (): QuestionRequestDto => {
+    return {
+      tempId: uuidv4(),
+      text: '',
+      type: QuestionType.RADIO,
+      points: 1,
+      order: 1,
+      answers: [getNewAnswer()]
+    }
+  }
+
+  const toQuestionRequestDto = (responseDto: QuestionResponseEditorDto): QuestionRequestDto => {
+    const answerRequestDtos: AnswerRequestDto[] = responseDto.answers
+      /*.sort((a, b) => a.order - b.order)*/
+      .map(answer => toAnswerRequestDto(answer));
+    return {
+      tempId: uuidv4(),
+      order: responseDto.order,
+      text: responseDto.text,
+      type: responseDto.type,
+      points: responseDto.points,
+      answers: answerRequestDtos.length ? answerRequestDtos : [getNewAnswer()]
+    };
+  }
+
+  const toAnswerRequestDto = (responseDto: AnswerResponseEditorDto): AnswerRequestDto => {
+    return {tempId: uuidv4(), order: responseDto.order, text: responseDto.text, correct: responseDto.correct}
+  }
+
+  const [questions, setQuestions] = useState<QuestionRequestDto[]>([getNewQuestion()]);
+
+  const handleUpdateQuestions = (updatedQuestions: QuestionRequestDto[]) => {
+    setQuestions(updatedQuestions);
+  }
 
   async function loadQuestionnaire() {
     try {
@@ -58,7 +96,9 @@ export default function QuestionnaireEditor() {
       setName(questionnaire.name);
       setDescription(questionnaire.description);
       setStatus(questionnaire.status);
-      setQuestions(questionnaire.questions);
+      setQuestions(questionnaire.questions?.length
+        ? questionnaire.questions.map(question => toQuestionRequestDto(question))
+        : [getNewQuestion()]);
     } catch (e) {
       handleError("Failed to load questionnaire");
       navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`);
@@ -79,118 +119,6 @@ export default function QuestionnaireEditor() {
     }
   }, [isUpdatePage, groupId, projectId, questionnaireId]);
 
-  const handleQuestionChange = (index: number, field: string, value: any): void => {
-    const newQuestions = [...questions];
-    if (field === "type" && value === QuestionType.RADIO) {
-      let firstCorrectFound = false;
-      const answers = newQuestions[index].answers.map((answer) => {
-        if (answer.correct && !firstCorrectFound) {
-          firstCorrectFound = true;
-          return answer;
-        } else {
-          return {...answer, correct: false};
-        }
-      });
-      newQuestions[index] = {...newQuestions[index], answers, type: value};
-    } else if (field.startsWith("answers")) {
-      newQuestions[index].answers = value;
-    } else {
-      newQuestions[index][field] = value;
-    }
-    setQuestions(newQuestions);
-  };
-
-  const addQuestion = () => {
-    setQuestions([...questions, {...getEmptyQuestion(), order: questions.length + 1}]);
-  };
-
-  const removeQuestion = (index: number) => {
-    const newQuestions = questions.filter((_, i) => i !== index).map((q, i) => ({
-      ...q, order: i + 1
-    }));
-    setQuestions(newQuestions);
-  };
-
-  const addAnswer = (questionIndex: number) => {
-    const newQuestions = [...questions];
-    const answers = newQuestions[questionIndex].answers;
-    answers.push({text: "", correct: false, order: answers.length + 1});
-    newQuestions[questionIndex].answers = answers;
-    setQuestions(newQuestions);
-  };
-
-  const handleAnswerChange = (questionIndex: number, answerIndex: number, field: string, value: any) => {
-    const newQuestions = [...questions];
-    newQuestions[questionIndex].answers = newQuestions[questionIndex].answers.map((answer, i) => {
-      if (field === "correct" && value === true && newQuestions[questionIndex].type === QuestionType.RADIO) {
-        return i === answerIndex ? {...answer, correct: true} : {
-          ...answer, correct: false
-        };
-      } else {
-        return i === answerIndex ? {...answer, [field]: value} : answer;
-      }
-    });
-    setQuestions(newQuestions);
-  };
-
-  const removeAnswer = (questionIndex: number, answerIndex: number) => {
-    const newQuestions = [...questions];
-    newQuestions[questionIndex].answers = newQuestions[questionIndex].answers.filter((_, i) => i !== answerIndex)
-      .map((a, i) => ({...a, order: i + 1}));
-    setQuestions(newQuestions);
-  };
-
-  const onDragEnd = (result: any) => {
-    try {
-      const {source, destination, type} = result;
-      if (!destination) {
-        return;
-      }
-      if (type === "questions") {
-        handleQuestionDragEnd(source, destination);
-        setHasUnsavedChanges(true);
-      } else if (type.startsWith("answers")) {
-        handleAnswerDragEnd(source, destination);
-        setHasUnsavedChanges(true);
-      }
-      return;
-    } catch (e) {
-      return;
-    }
-  };
-
-  const handleQuestionDragEnd = (source: any, destination: any) => {
-    const reorderedQuestions = reorder(questions, source.index, destination.index);
-    setQuestions(reorderedQuestions.map((item, index) => ({
-      ...item,
-      order: index + 1
-    })));
-  };
-
-  const handleAnswerDragEnd = (source: any, destination: any) => {
-    const startQuestionIndex = parseInt(source.droppableId.split("-")[1], 10);
-    const endQuestionIndex = parseInt(destination.droppableId.split("-")[1], 10);
-    if (startQuestionIndex === endQuestionIndex) {
-      const newQuestions = Array.from(questions);
-      const reorderedAnswers = reorder(
-        newQuestions[startQuestionIndex].answers,
-        source.index,
-        destination.index
-      );
-      newQuestions[startQuestionIndex].answers = reorderedAnswers.map((item, index) => ({
-        ...item,
-        order: index + 1
-      }));
-      setQuestions(newQuestions);
-    }
-  };
-
-  const reorder = (list: any[], startIndex: number, endIndex: number) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-    return result;
-  };
 
   const addQuestionnaire = async (requestDto: QuestionnaireCreateRequestDto) => {
     return await authJsonFetch({
@@ -292,17 +220,9 @@ export default function QuestionnaireEditor() {
                              setDescription={setDescription}
                              status={(status)}
                              setStatus={setStatus}
-                             onDragEnd={onDragEnd}
                              questions={questions}
-                             addQuestion={addQuestion}
-                             handleQuestionChange={handleQuestionChange}
-                             removeQuestion={removeQuestion}
-                             addAnswer={addAnswer}
-                             handleAnswerChange={handleAnswerChange}
-                             removeAnswer={removeAnswer}
                              handleSubmit={handleSubmit}
                              handleBackClick={handleBackClick}
-                             setHasUnsavedChanges={setHasUnsavedChanges}
-    />
+                             onUpdateQuestions={handleUpdateQuestions}/>
   );
 }
