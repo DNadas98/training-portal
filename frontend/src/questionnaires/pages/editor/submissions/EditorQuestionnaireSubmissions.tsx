@@ -116,6 +116,7 @@ export default function EditorQuestionnaireSubmissions() {
       notification.openNotification({
         type: "success", vertical: "top", horizontal: "center", message: response.message
       });
+      searchParams.set("page", "1");
       await loadQuestionnaireSubmissions();
     } catch (e) {
       notification.openNotification({

@@ -50,11 +50,11 @@ export default function UserQuestionnaireSubmissions() {
         setQuestionnaireSubmissions([]);
         return;
       }
-      const pageableResponse= response as unknown as ApiResponsePageableDto;
+      const pageableResponse = response as unknown as ApiResponsePageableDto;
       setQuestionnaireSubmissions(pageableResponse.data as QuestionnaireSubmissionResponseDto[]);
-      const totalPageCount=Number(pageableResponse.totalPages);
+      const totalPageCount = Number(pageableResponse.totalPages);
       if (!isNaN(totalPageCount))
-      setTotalPages(totalPageCount);
+        setTotalPages(totalPageCount);
     } catch (e) {
       setQuestionnaireSubmissions([]);
     } finally {
@@ -121,6 +121,7 @@ export default function UserQuestionnaireSubmissions() {
       notification.openNotification({
         type: "success", vertical: "top", horizontal: "center", message: response.message
       });
+      searchParams.set("page", "1");
       await loadQuestionnaireSubmissions();
     } catch (e) {
       notification.openNotification({
