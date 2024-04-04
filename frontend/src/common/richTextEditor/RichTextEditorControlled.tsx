@@ -1,5 +1,5 @@
-import {Grid} from "@mui/material";
-import {useRef} from "react";
+import {debounce, Grid} from "@mui/material";
+import {useCallback, useEffect, useRef} from "react";
 import {LinkBubbleMenu, RichTextEditor, type RichTextEditorRef, TableBubbleMenu,} from "mui-tiptap";
 import EditorMenuControls from "./EditorMenuControls";
 import useExtensions from "./UseExtensions.tsx";
@@ -21,8 +21,24 @@ interface RichTextEditorControlledProps {
  * @see https://github.com/sjdemartini/mui-tiptap
  */
 export default function RichTextEditorControlled(props: RichTextEditorControlledProps) {
-  const extensions = useExtensions({});
   const rteRef = useRef<RichTextEditorRef>(null);
+  const extensions = useExtensions({});
+
+
+  const debouncedOnChange = useCallback(debounce((value) => {
+    props.onChange(value);
+  }, 250), [props.onChange]);
+
+  useEffect(() => {
+    return () => debouncedOnChange.clear();
+  }, [debouncedOnChange]);
+
+  const handleUpdate = useCallback(() => {
+    if (rteRef?.current?.editor) {
+      const currentValue = rteRef.current.editor.getHTML();
+      debouncedOnChange(currentValue);
+    }
+  }, [debouncedOnChange]);
 
   return (
     <Grid id={props.id} container alignItems={"left"} justifyContent={"left"} textAlign={"left"}>
@@ -31,12 +47,7 @@ export default function RichTextEditorControlled(props: RichTextEditorControlled
                         extensions={extensions}
                         content={props.value}
                         editable={true}
-                        onUpdate={() => {
-                          if (rteRef?.current?.editor) {
-                            const currentValue: string = rteRef.current.editor.getHTML();
-                            props.onChange(currentValue);
-                          }
-                        }}
+                        onUpdate={handleUpdate}
                         editorProps={{}}
                         renderControls={() => <EditorMenuControls/>}
                         RichTextFieldProps={{

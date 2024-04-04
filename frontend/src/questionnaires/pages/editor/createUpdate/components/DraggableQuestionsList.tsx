@@ -6,6 +6,7 @@ import {reorder} from "../../../../../common/utils/reorder.ts";
 import {v4 as uuidv4} from 'uuid';
 import {QuestionType} from "../../../../dto/QuestionType.ts";
 import AddIcon from "../../../../../common/utils/components/AddIcon.tsx";
+import {useCallback} from "react";
 
 interface DraggableQuestionsListProps {
   questionsLength: number;
@@ -14,16 +15,16 @@ interface DraggableQuestionsListProps {
 }
 
 export default function DraggableQuestionsList(props: DraggableQuestionsListProps) {
-  const handleOnDragEnd = (result) => {
+  const handleOnDragEnd = useCallback((result) => {
     if (!result.destination) {
       return;
     }
     const reorderedQuestions = reorder<QuestionRequestDto>(props.questions,
       result.source.index, result.destination.index);
     props.onUpdateQuestions(reorderedQuestions);
-  };
+  }, [props.questions, props.onUpdateQuestions]);
 
-  const handleAddQuestion = () => {
+  const handleAddQuestion = useCallback(() => {
     props.onUpdateQuestions([...props.questions, {
       tempId: uuidv4(),
       text: '',
@@ -37,18 +38,19 @@ export default function DraggableQuestionsList(props: DraggableQuestionsListProp
         order: 1
       }]
     }]);
-  }
+  }, [props.questions, props.onUpdateQuestions]);
 
-  const handleRemoveQuestion = (tempId: uuidv4) => {
+
+  const handleRemoveQuestion = useCallback((tempId: uuidv4) => {
     if (props.questions.length > 1) {
       const updatedQuestions = props.questions.filter(question => {
         return question.tempId !== tempId
       });
       props.onUpdateQuestions(updatedQuestions);
     }
-  };
+  }, [props.questions, props.onUpdateQuestions]);
 
-  const handleUpdateQuestion = (tempId: uuidv4, updatedProps: Partial<QuestionRequestDto>) => {
+  const handleUpdateQuestion = useCallback((tempId: uuidv4, updatedProps: Partial<QuestionRequestDto>) => {
     const updatedQuestions = props.questions.map(question => {
       if (question.tempId === tempId) {
         return {...question, ...updatedProps};
@@ -56,7 +58,7 @@ export default function DraggableQuestionsList(props: DraggableQuestionsListProp
       return question;
     });
     props.onUpdateQuestions(updatedQuestions);
-  }
+  }, [props.questions, props.onUpdateQuestions]);
 
   return (<>
     <DragDropContext onDragEnd={handleOnDragEnd}>

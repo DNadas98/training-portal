@@ -1,12 +1,21 @@
 import {
-  Button, Card, CardContent, Grid, IconButton, MenuItem, Select, Stack, TextField, Typography
+  Button,
+  Card,
+  CardContent,
+  Grid,
+  IconButton,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Typography
 } from "@mui/material";
 import RichTextEditorControlled from "../../../../../common/richTextEditor/RichTextEditorControlled.tsx";
 import DeleteIcon from "../../../../../common/utils/components/DeleteIcon.tsx";
 import {QuestionType} from "../../../../dto/QuestionType.ts";
 import DraggableAnswersList from "./DraggableAnswersList.tsx";
 import IsSmallScreen from "../../../../../common/utils/IsSmallScreen.tsx";
-import {memo, useState} from "react";
+import {memo, useCallback, useState} from "react";
 import {QuestionRequestDto} from "../../../../dto/QuestionRequestDto.ts";
 import {AnswerRequestDto} from "../../../../dto/AnswerRequestDto.ts";
 import {v4 as uuidv4} from "uuid";
@@ -25,12 +34,13 @@ const QuestionItem = memo((props: QuestionItemProps) => {
   const [points, setPoints] = useState<number>(props.question.points ?? 1);
   const [answers, setAnswers] = useState<AnswerRequestDto[]>(props.question.answers);
 
-  const handleTextChange = (changedText: string) => {
+  const handleTextChange = useCallback((changedText: string) => {
     setText(changedText);
     props.onQuestionUpdate(props.question.tempId, {text: changedText});
-  }
+  }, [props.question.tempId, props.onQuestionUpdate]);
 
-  const handleTypeChange = (event) => {
+
+  const handleTypeChange = useCallback((event) => {
     const changedType = event.target.value;
     setType(changedType);
     if (changedType === !QuestionType.RADIO) {
@@ -47,22 +57,22 @@ const QuestionItem = memo((props: QuestionItemProps) => {
       setAnswers(updatedAnswers);
       props.onQuestionUpdate(props.question.tempId, {type: changedType, answers: updatedAnswers});
     }
-  }
+  }, [props.question.tempId, props.onQuestionUpdate, answers]);
 
-  const handlePointsChange = (event) => {
+  const handlePointsChange = useCallback((event) => {
     const changedPoints = event.target.value;
     setPoints(changedPoints);
     props.onQuestionUpdate(props.question.tempId, {points: changedPoints});
-  }
+  }, [props.question.tempId, props.onQuestionUpdate]);
 
-  const handleUpdateAnswers = (updatedAnswers: AnswerRequestDto[]) => {
+  const handleUpdateAnswers = useCallback((updatedAnswers: AnswerRequestDto[]) => {
     setAnswers(updatedAnswers);
     props.onQuestionUpdate(props.question.tempId, {answers: updatedAnswers});
-  }
+  }, [props.question.tempId, props.onQuestionUpdate]);
 
-  const handleRemoveQuestion = () => {
+  const handleRemoveQuestion = useCallback(() => {
     props.onRemoveQuestion(props.question.tempId);
-  }
+  }, [props.question.tempId, props.onRemoveQuestion]);
 
   return (
     <Card variant={"outlined"} sx={{width: "100%"}}>

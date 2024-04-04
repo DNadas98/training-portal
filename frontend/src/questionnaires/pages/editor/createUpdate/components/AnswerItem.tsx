@@ -1,10 +1,21 @@
-import {Button, Card, CardContent, Checkbox, IconButton, Radio, Stack, TextField, Typography} from "@mui/material";
+import {
+  Button,
+  Card,
+  CardContent,
+  Checkbox,
+  debounce,
+  IconButton,
+  Radio,
+  Stack,
+  TextField,
+  Typography
+} from "@mui/material";
 import DeleteIcon from "../../../../../common/utils/components/DeleteIcon.tsx";
 import {QuestionType} from "../../../../dto/QuestionType.ts";
 import IsSmallScreen from "../../../../../common/utils/IsSmallScreen.tsx";
 import {v4 as uuidv4} from 'uuid';
 import {AnswerRequestDto} from "../../../../dto/AnswerRequestDto.ts";
-import {memo, useState} from "react";
+import {memo, useCallback, useState} from "react";
 
 interface AnswerItemProps {
   questionType: QuestionType,
@@ -19,20 +30,24 @@ const AnswerItem = memo((props: AnswerItemProps) => {
   const isSmallScreen = IsSmallScreen();
   const [text, setText] = useState<string>(props.answer?.text ?? "");
 
-  const handleTextChange = (event) => {
-    const changedText = event.target.value;
-    setText(changedText);
+  const handleTextChange = useCallback(debounce((changedText) => {
     props.onAnswerUpdate(props.answer.tempId, {text: changedText});
-  }
+  }, 300), [props.onAnswerUpdate, props.answer.tempId]);
 
-  const handleCorrectnessChange = (event) => {
+  const onTextChange = useCallback((event) => {
+    const newText = event.target.value;
+    setText(newText);
+    handleTextChange(newText);
+  }, [handleTextChange]);
+
+  const handleCorrectnessChange = useCallback((event) => {
     const changedCorrectness = event.target.checked;
     props.onAnswerUpdate(props.answer.tempId, {correct: changedCorrectness});
-  }
+  }, [props.onAnswerUpdate, props.answer.tempId]);
 
-  const handleRemoveAnswer = () => {
+  const handleRemoveAnswer = useCallback(() => {
     props.onRemoveAnswer(props.answer.tempId);
-  }
+  }, [props.onRemoveAnswer, props.answer.tempId]);
 
   return (
     <Card raised sx={{width: "100%"}}>
@@ -51,7 +66,7 @@ const AnswerItem = memo((props: AnswerItemProps) => {
                   maxLength: 100
                 }}
                 value={text}
-                onChange={handleTextChange}
+                onChange={onTextChange}
                 fullWidth
               />
               <Button type="button"
@@ -78,7 +93,7 @@ const AnswerItem = memo((props: AnswerItemProps) => {
                   maxLength: 100
                 }}
                 value={text}
-                onChange={handleTextChange}
+                onChange={onTextChange}
                 fullWidth
               />
               <IconButton type="button"

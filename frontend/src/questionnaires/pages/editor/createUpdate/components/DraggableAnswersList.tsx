@@ -6,6 +6,7 @@ import {v4 as uuidv4} from 'uuid';
 import {reorder} from "../../../../../common/utils/reorder.ts";
 import {AnswerRequestDto} from "../../../../dto/AnswerRequestDto.ts";
 import AddIcon from "../../../../../common/utils/components/AddIcon.tsx";
+import {useCallback} from "react";
 
 interface DraggableAnswersListProps {
   questionType: QuestionType,
@@ -18,31 +19,32 @@ interface DraggableAnswersListProps {
 
 const DraggableAnswersList = (props: DraggableAnswersListProps) => {
 
-  const handleOnDragEnd = (result) => {
+
+  const handleOnDragEnd = useCallback((result) => {
     if (!result.destination) {
       return;
     }
     const reorderedAnswers = reorder<AnswerRequestDto>(props.answers, result.source.index, result.destination.index);
     props.onUpdateAnswers(reorderedAnswers);
-  };
+  }, [props.answers, props.onUpdateAnswers]);
 
-  const handleAddAnswer = () => {
+  const handleAddAnswer = useCallback(() => {
     props.onUpdateAnswers([...props.answers, {
       tempId: uuidv4(),
       text: '',
       correct: false,
       order: props.answers.length + 1
     }]);
-  }
+  }, [props.answers, props.onUpdateAnswers]);
 
-  const handleRemoveAnswer = (tempId: uuidv4) => {
+  const handleRemoveAnswer = useCallback((tempId) => {
     if (props.answers.length > 1) {
       const updatedAnswers = props.answers.filter(answer => answer.tempId !== tempId);
       props.onUpdateAnswers(updatedAnswers);
     }
-  };
+  }, [props.answers, props.onUpdateAnswers]);
 
-  const handleUpdateAnswer = (tempId: uuidv4, updatedProps: Partial<AnswerRequestDto>) => {
+  const handleUpdateAnswer = useCallback((tempId, updatedProps) => {
     let updatedAnswers;
     if (updatedProps.correct && props.questionType === QuestionType.RADIO) {
       updatedAnswers = props.answers.map(answer =>
@@ -54,7 +56,7 @@ const DraggableAnswersList = (props: DraggableAnswersListProps) => {
       );
     }
     props.onUpdateAnswers(updatedAnswers);
-  };
+  }, [props.answers, props.onUpdateAnswers, props.questionType]);
 
   return (
     <>

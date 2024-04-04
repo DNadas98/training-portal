@@ -38,44 +38,6 @@ export default function QuestionnaireEditor() {
   const [description, setDescription] = useState<string | undefined>(undefined);
   const [status, setStatus] = useState<QuestionnaireStatus>(QuestionnaireStatus.INACTIVE);
 
-  const getNewAnswer = (): AnswerRequestDto => {
-    return {
-      tempId: uuidv4(),
-      text: '',
-      correct: false,
-      order: 1
-    }
-  }
-
-  const getNewQuestion = (): QuestionRequestDto => {
-    return {
-      tempId: uuidv4(),
-      text: '',
-      type: QuestionType.RADIO,
-      points: 1,
-      order: 1,
-      answers: [getNewAnswer()]
-    }
-  }
-
-  const toQuestionRequestDto = (responseDto: QuestionResponseEditorDto): QuestionRequestDto => {
-    const answerRequestDtos: AnswerRequestDto[] = responseDto.answers
-      /*.sort((a, b) => a.order - b.order)*/
-      .map(answer => toAnswerRequestDto(answer));
-    return {
-      tempId: uuidv4(),
-      order: responseDto.order,
-      text: responseDto.text,
-      type: responseDto.type,
-      points: responseDto.points,
-      answers: answerRequestDtos.length ? answerRequestDtos : [getNewAnswer()]
-    };
-  }
-
-  const toAnswerRequestDto = (responseDto: AnswerResponseEditorDto): AnswerRequestDto => {
-    return {tempId: uuidv4(), order: responseDto.order, text: responseDto.text, correct: responseDto.correct}
-  }
-
   const [questions, setQuestions] = useState<QuestionRequestDto[]>([getNewQuestion()]);
 
   const handleUpdateQuestions = (updatedQuestions: QuestionRequestDto[]) => {
@@ -225,4 +187,43 @@ export default function QuestionnaireEditor() {
                              handleBackClick={handleBackClick}
                              onUpdateQuestions={handleUpdateQuestions}/>
   );
+}
+
+
+function getNewAnswer(): AnswerRequestDto {
+  return {
+    tempId: uuidv4(),
+    text: '',
+    correct: false,
+    order: 1
+  }
+}
+
+function getNewQuestion(): QuestionRequestDto {
+  return {
+    tempId: uuidv4(),
+    text: '',
+    type: QuestionType.RADIO,
+    points: 1,
+    order: 1,
+    answers: [getNewAnswer()]
+  }
+}
+
+function toQuestionRequestDto(responseDto: QuestionResponseEditorDto): QuestionRequestDto {
+  const answerRequestDtos: AnswerRequestDto[] = responseDto.answers
+    /*.sort((a, b) => a.order - b.order)*/
+    .map(answer => toAnswerRequestDto(answer));
+  return {
+    tempId: uuidv4(),
+    order: responseDto.order,
+    text: responseDto.text,
+    type: responseDto.type,
+    points: responseDto.points,
+    answers: answerRequestDtos.length ? answerRequestDtos : [getNewAnswer()]
+  };
+}
+
+function toAnswerRequestDto(responseDto: AnswerResponseEditorDto): AnswerRequestDto {
+  return {tempId: uuidv4(), order: responseDto.order, text: responseDto.text, correct: responseDto.correct}
 }
