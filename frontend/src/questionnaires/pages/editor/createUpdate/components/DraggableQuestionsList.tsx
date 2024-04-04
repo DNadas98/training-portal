@@ -2,7 +2,7 @@ import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import {Button, Card, CardContent, List, ListItem,} from "@mui/material";
 import {QuestionRequestDto} from "../../../../dto/QuestionRequestDto.ts";
 import QuestionItem from "./QuestionItem.tsx";
-import {reorder} from "../../../../../common/utils/reorder.ts";
+import {reorder, reorderAfterDelete} from "../../../../../common/utils/reorder.ts";
 import {v4 as uuidv4} from 'uuid';
 import {QuestionType} from "../../../../dto/QuestionType.ts";
 import AddIcon from "../../../../../common/utils/components/AddIcon.tsx";
@@ -43,9 +43,7 @@ export default function DraggableQuestionsList(props: DraggableQuestionsListProp
 
   const handleRemoveQuestion = useCallback((tempId: uuidv4) => {
     if (props.questions.length > 1) {
-      const updatedQuestions = props.questions.filter(question => {
-        return question.tempId !== tempId
-      });
+      const updatedQuestions = reorderAfterDelete(props.questions, tempId);
       props.onUpdateQuestions(updatedQuestions);
     }
   }, [props.questions, props.onUpdateQuestions]);

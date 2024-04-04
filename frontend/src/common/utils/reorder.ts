@@ -7,3 +7,20 @@ export const reorder = <T extends { order: number }>(list: T[], startIndex: numb
   });
   return result;
 };
+
+export const reorderAfterDelete = <T extends { order: number, tempId: any }>(list: T[], tempId: any) => {
+  let isRemoved = false;
+  const result = list.reduce((acc: T[], current: T) => {
+    if (current.tempId !== tempId) {
+      if (isRemoved) {
+        acc.push({...current, order: current.order - 1});
+      } else {
+        acc.push(current);
+      }
+    } else {
+      isRemoved = true;
+    }
+    return acc;
+  }, []);
+  return result;
+}

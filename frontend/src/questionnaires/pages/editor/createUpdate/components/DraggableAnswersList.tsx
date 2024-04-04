@@ -3,7 +3,7 @@ import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import {QuestionType} from "../../../../dto/QuestionType.ts";
 import AnswerItem from "./AnswerItem.tsx";
 import {v4 as uuidv4} from 'uuid';
-import {reorder} from "../../../../../common/utils/reorder.ts";
+import {reorder, reorderAfterDelete} from "../../../../../common/utils/reorder.ts";
 import {AnswerRequestDto} from "../../../../dto/AnswerRequestDto.ts";
 import AddIcon from "../../../../../common/utils/components/AddIcon.tsx";
 import {useCallback} from "react";
@@ -39,7 +39,7 @@ const DraggableAnswersList = (props: DraggableAnswersListProps) => {
 
   const handleRemoveAnswer = useCallback((tempId) => {
     if (props.answers.length > 1) {
-      const updatedAnswers = props.answers.filter(answer => answer.tempId !== tempId);
+      const updatedAnswers = reorderAfterDelete(props.answers, tempId);
       props.onUpdateAnswers(updatedAnswers);
     }
   }, [props.answers, props.onUpdateAnswers]);

@@ -75,7 +75,7 @@ const QuestionItem = memo((props: QuestionItemProps) => {
   }, [props.question.tempId, props.onRemoveQuestion]);
 
   return (
-    <Card variant={"outlined"} sx={{width: "100%"}}>
+    <Card variant={"outlined"} sx={{minWidth: "100%"}}>
       <CardContent>
         <Stack spacing={2}>
           {isSmallScreen
