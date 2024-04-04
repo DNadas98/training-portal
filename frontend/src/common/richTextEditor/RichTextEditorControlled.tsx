@@ -27,7 +27,7 @@ export default function RichTextEditorControlled(props: RichTextEditorControlled
 
   const debouncedOnChange = useCallback(debounce((value) => {
     props.onChange(value);
-  }, 250), [props.onChange]);
+  }, 600), [props.onChange]);
 
   useEffect(() => {
     return () => debouncedOnChange.clear();

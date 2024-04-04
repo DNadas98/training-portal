@@ -41,6 +41,82 @@ public class PopulateService {
   private final TaskDao taskDao;
   private final QuestionnaireDao questionnaireDao;
 
+  private final static String EXAMPLE_DATA_POPULATED_MESSAGE = "<code>\n" +
+    "export default function QuestionnaireEditor(){\n" +
+    "  const authJsonFetch = useAuthJsonFetch();\n" +
+    "  const notification = useNotification();\n" +
+    "  const navigate = useNavigate();\n" +
+    "  const dialog = useDialog();\n" +
+    "\n" +
+    "  const {loading: permissionsLoading, projectPermissions} = usePermissions();\n" +
+    "  const groupId = useParams()?.groupId;\n" +
+    "  const projectId = useParams()?.projectId;\n" +
+    "  const questionnaireId = useParams()?.questionnaireId;\n" +
+    "  const isUpdatePage = !!isValidId(questionnaireId);\n" +
+    "\n" +
+    "  const [loading, setLoading] = useState<boolean>(isUpdatePage);\n" +
+    "  const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(true);\n" +
+    "  const [name, setName] = useState<string | undefined>(undefined);\n" +
+    "  const [description, setDescription] = useState<string | undefined>(undefined);\n" +
+    "  const [status, setStatus] = useState<QuestionnaireStatus>(QuestionnaireStatus.INACTIVE);\n" +
+    "\n" +
+    "  const [questions, setQuestions] = useState<QuestionRequestDto[]>([getNewQuestion()]);\n" +
+    "\n" +
+    "  const handleUpdateQuestions = (updatedQuestions: QuestionRequestDto[]) => {\n" +
+    "    setQuestions(updatedQuestions);\n" +
+    "  }\n" +
+    "\n" +
+    "  async function loadQuestionnaire() {\n" +
+    "    try {\n" +
+    "      const response = await authJsonFetch({\n" +
+    "        path: `groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}`\n" +
+    "      });\n" +
+    "      if (!response?.status || response.status > 399 || !response?.data) {\n" +
+    "        handleError(response?.error ?? response?.message ?? \"Failed to load questionnaire\");\n" +
+    "        navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`);\n" +
+    "        return;\n" +
+    "      }\n" +
+    "      const questionnaire = response.data as QuestionnaireResponseEditorDetailsDto;\n" +
+    "      setName(questionnaire.name);\n" +
+    "      setDescription(questionnaire.description);\n" +
+    "      setStatus(questionnaire.status);\n" +
+    "      setQuestions(questionnaire.questions?.length\n" +
+    "        ? questionnaire.questions.map(question => toQuestionRequestDto(question))\n" +
+    "        : [getNewQuestion()]);\n" +
+    "    } catch (e) {\n" +
+    "      handleError(\"Failed to load questionnaire\");\n" +
+    "      navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`);\n" +
+    "    } finally {\n" +
+    "      setLoading(false);\n" +
+    "      setHasUnsavedChanges(false);\n" +
+    "    }\n" +
+    "  }\n" +
+    "\n" +
+    "  useEffect(() => {\n" +
+    "    if (!isValidId(groupId) || !isValidId(projectId)) {\n" +
+    "      handleError(\"Invalid group or project identifier\");\n" +
+    "      navigate(\"/groups\");\n" +
+    "      return;\n" +
+    "    }\n" +
+    "    if (isUpdatePage) {\n" +
+    "      loadQuestionnaire().then();\n" +
+    "    }\n" +
+    "  }, [isUpdatePage, groupId, projectId, questionnaireId]);\n" +
+    "export default function QuestionnaireEditor() {\n" +
+    "  const authJsonFetch = useAuthJsonFetch();\n" +
+    "  const notification = useNotification();\n" +
+    "  const navigate = useNavigate();\n" +
+    "  const dialog = useDialog();\n" +
+    "\n" +
+    "  const {loading: permissionsLoading, projectPermissions} = usePermissions();\n" +
+    "  const groupId = useParams()?.groupId;\n" +
+    "  const projectId = useParams()?.projectId;\n" +
+    "  const questionnaireId = useParams()?.questionnaireId;\n" +
+    "  const isUpdatePage = !!isValidId(questionnaireId);\n" +
+    "\n" +
+    "  const [loading, setLoading] = useState<boolean>(isUpdatePage);\n" +
+    "</code>";
+
   @PostConstruct
   @Transactional(rollbackFor = Exception.class)
   public void populate() {
@@ -82,26 +158,19 @@ public class PopulateService {
 
   private Questionnaire createQuestionnaire(Project project, List<ApplicationUser> testUsers) {
     Questionnaire questionnaire = new Questionnaire("Test questionnaire 1",
-      "Test questionnaire 1 description",
+      EXAMPLE_DATA_POPULATED_MESSAGE,
       project, testUsers.get(0));
-    Question question1 = new Question("Test question 1", QuestionType.RADIO, 1, 1, questionnaire);
-    Answer answer1 = new Answer("Test answer 1", true, 1, question1);
-    question1.addAnswer(answer1);
-    Answer answer2 = new Answer("Test answer 2", false, 2, question1);
-    question1.addAnswer(answer2);
-    Answer answer3 = new Answer("Test answer 3", false, 3, question1);
-    question1.addAnswer(answer3);
-    questionnaire.addQuestion(question1);
-
-    Question question2 = new Question(
-      "Test question 2", QuestionType.CHECKBOX, 2, 2, questionnaire);
-    Answer answer4 = new Answer("Test answer 4", true, 1, question2);
-    question2.addAnswer(answer4);
-    Answer answer5 = new Answer("Test answer 5", false, 2, question2);
-    question2.addAnswer(answer5);
-    Answer answer6 = new Answer("Test answer 6", true, 3, question2);
-    question2.addAnswer(answer6);
-    questionnaire.addQuestion(question2);
+    for (int i = 0; i < 30; i++) {
+      Question question = new Question(
+        EXAMPLE_DATA_POPULATED_MESSAGE, QuestionType.RADIO, 1, 1, questionnaire);
+      Answer answer1 = new Answer("Test answer " + i + " - 1", true, 1, question);
+      question.addAnswer(answer1);
+      Answer answer2 = new Answer("Test answer " + i + " - 2", false, 2, question);
+      question.addAnswer(answer2);
+      Answer answer3 = new Answer("Test answer " + i + " - 3", false, 3, question);
+      question.addAnswer(answer3);
+      questionnaire.addQuestion(question);
+    }
     return questionnaire;
   }
 

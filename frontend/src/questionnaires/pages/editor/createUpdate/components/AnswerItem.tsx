@@ -32,7 +32,7 @@ const AnswerItem = memo((props: AnswerItemProps) => {
 
   const handleTextChange = useCallback(debounce((changedText) => {
     props.onAnswerUpdate(props.answer.tempId, {text: changedText});
-  }, 300), [props.onAnswerUpdate, props.answer.tempId]);
+  }, 600), [props.onAnswerUpdate, props.answer.tempId]);
 
   const onTextChange = useCallback((event) => {
     const newText = event.target.value;
