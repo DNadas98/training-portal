@@ -34,4 +34,3 @@ spring:
 logging:
   level:
     root: warn
-    org.hibernate.sql: trace

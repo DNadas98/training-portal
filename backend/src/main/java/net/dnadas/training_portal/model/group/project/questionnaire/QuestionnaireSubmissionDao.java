@@ -43,8 +43,8 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
     Long groupId, Long projectId, Long questionnaireId, ApplicationUser user, Pageable pageable);
 
   @Query("SELECT qs FROM QuestionnaireSubmission qs " +
-    "INNER JOIN qs.submittedQuestions sq ON qs.id = sq.questionnaireSubmission.id "+
-    "INNER JOIN sq.submittedAnswers sa ON sa.submittedQuestion.id = sq.id "+
+    "INNER JOIN qs.submittedQuestions sq ON qs.id = sq.questionnaireSubmission.id " +
+    "INNER JOIN sq.submittedAnswers sa ON sa.submittedQuestion.id = sq.id " +
     "WHERE qs.questionnaire.project.userGroup.id = :groupId " +
     "AND qs.questionnaire.project.id = :projectId " +
     "AND qs.questionnaire.id = :questionnaireId " +
@@ -67,12 +67,12 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
     "SELECT DISTINCT new net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionStatsInternalDto(" +
       "q.name, " +
       "qs.maxPoints, " +
-      "(SELECT sqs.id FROM QuestionnaireSubmission sqs WHERE sqs.questionnaire.id = q.id AND sqs.status = :status AND sqs.user.id = u.id ORDER BY sqs.receivedPoints DESC, sqs.createdAt DESC LIMIT 1), " +
-      "(SELECT sqs.createdAt FROM QuestionnaireSubmission sqs WHERE sqs.questionnaire.id = q.id AND sqs.status = :status AND sqs.user.id = u.id ORDER BY sqs.receivedPoints DESC, sqs.createdAt DESC LIMIT 1), " +
-      "(SELECT sqs.receivedPoints FROM QuestionnaireSubmission sqs WHERE sqs.questionnaire.id = q.id AND sqs.status = :status AND sqs.user.id = u.id ORDER BY sqs.receivedPoints DESC, sqs.createdAt DESC LIMIT 1), " +
-      "(SELECT lqs.id FROM QuestionnaireSubmission lqs WHERE lqs.questionnaire.id = q.id AND lqs.status = :status AND lqs.user.id = u.id ORDER BY lqs.createdAt DESC  LIMIT 1), " +
-      "(SELECT lqs.createdAt FROM QuestionnaireSubmission lqs WHERE lqs.questionnaire.id = q.id AND lqs.status = :status AND lqs.user.id = u.id ORDER BY lqs.createdAt DESC  LIMIT 1), " +
-      "(SELECT lqs.receivedPoints FROM QuestionnaireSubmission lqs WHERE lqs.questionnaire.id = q.id AND lqs.status = :status AND lqs.user.id = u.id ORDER BY lqs.createdAt DESC  LIMIT 1), " +
+      "(SELECT maxqs.id FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
+      "(SELECT maxqs.createdAt FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
+      "(SELECT maxqs.receivedPoints FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
+      "(SELECT lastqs.id FROM QuestionnaireSubmission lastqs WHERE lastqs.questionnaire.id = q.id AND lastqs.status = :status AND lastqs.user.id = u.id ORDER BY lastqs.createdAt DESC  LIMIT 1), " +
+      "(SELECT lastqs.createdAt FROM QuestionnaireSubmission lastqs WHERE lastqs.questionnaire.id = q.id AND lastqs.status = :status AND lastqs.user.id = u.id ORDER BY lastqs.createdAt DESC  LIMIT 1), " +
+      "(SELECT lastqs.receivedPoints FROM QuestionnaireSubmission lastqs WHERE lastqs.questionnaire.id = q.id AND lastqs.status = :status AND lastqs.user.id = u.id ORDER BY lastqs.createdAt DESC  LIMIT 1), " +
       "u.id, u.username) " +
       "FROM QuestionnaireSubmission qs " +
       "JOIN qs.questionnaire q " +
@@ -86,40 +86,20 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
 
   @Query(
     "SELECT DISTINCT new net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionStatsInternalDto(" +
-      "q.name, " +
-      "qs.maxPoints, " +
-      "(SELECT sqs.id FROM QuestionnaireSubmission sqs WHERE sqs.questionnaire.id = q.id AND sqs.status =  'ACTIVE' AND sqs.user.id = u.id ORDER BY sqs.receivedPoints DESC, sqs.createdAt DESC LIMIT 1), " +
-      "(SELECT sqs.createdAt FROM QuestionnaireSubmission sqs WHERE sqs.questionnaire.id = q.id AND sqs.status = 'ACTIVE' AND sqs.user.id = u.id ORDER BY sqs.receivedPoints DESC, sqs.createdAt DESC LIMIT 1), " +
-      "(SELECT sqs.receivedPoints FROM QuestionnaireSubmission sqs WHERE sqs.questionnaire.id = q.id AND sqs.status =  'ACTIVE' AND sqs.user.id = u.id ORDER BY sqs.receivedPoints DESC, sqs.createdAt DESC LIMIT 1), " +
-      "(SELECT lqs.id FROM QuestionnaireSubmission lqs WHERE lqs.questionnaire.id = q.id AND lqs.status =  'ACTIVE' AND lqs.user.id = u.id ORDER BY lqs.createdAt DESC  LIMIT 1), " +
-      "(SELECT lqs.createdAt FROM QuestionnaireSubmission lqs WHERE lqs.questionnaire.id = q.id AND lqs.status =  'ACTIVE' AND lqs.user.id = u.id ORDER BY lqs.createdAt DESC  LIMIT 1), " +
-      "(SELECT lqs.receivedPoints FROM QuestionnaireSubmission lqs WHERE lqs.questionnaire.id = q.id AND lqs.status =  'ACTIVE' AND lqs.user.id = u.id ORDER BY lqs.createdAt DESC  LIMIT 1), " +
+      "q.name, q.maxPoints, " +
+      "(SELECT maxqs.id FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
+      "(SELECT maxqs.createdAt FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
+      "(SELECT maxqs.receivedPoints FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
+      "(SELECT lastqs.id FROM QuestionnaireSubmission lastqs WHERE lastqs.questionnaire.id = q.id AND lastqs.status = :status AND lastqs.user.id = u.id ORDER BY lastqs.createdAt DESC  LIMIT 1), " +
+      "(SELECT lastqs.createdAt FROM QuestionnaireSubmission lastqs WHERE lastqs.questionnaire.id = q.id AND lastqs.status = :status AND lastqs.user.id = u.id ORDER BY lastqs.createdAt DESC  LIMIT 1), " +
+      "(SELECT lastqs.receivedPoints FROM QuestionnaireSubmission lastqs WHERE lastqs.questionnaire.id = q.id AND lastqs.status = :status AND lastqs.user.id = u.id ORDER BY lastqs.createdAt DESC  LIMIT 1), " +
       "u.id, u.username) " +
-      "FROM QuestionnaireSubmission qs " +
-      "JOIN qs.questionnaire q " +
-      "JOIN qs.user u " +
-      "WHERE q.project.userGroup.id = :groupId " +
-      "AND q.project.id = :projectId " +
-      "AND q.id = :questionnaireId " +
-      "AND u MEMBER OF q.project.assignedMembers " +
-      "ORDER BY u.username ASC")
-  List<QuestionnaireSubmissionStatsInternalDto> getActiveQuestionnaireSubmissionStatistics(
-    Long groupId, Long projectId, Long questionnaireId);
-
-  @Query(
-    "SELECT am FROM Questionnaire q" +
-      " JOIN q.project p" +
-      " JOIN p.assignedMembers am " +
-      "WHERE q.id = :questionnaireId " +
-      "AND p.id = :projectId " +
+      "FROM Project p " +
+      "JOIN p.assignedMembers u " +
+      "LEFT JOIN Questionnaire q ON q.id = :questionnaireId " +
+      "WHERE p.id = :projectId " +
       "AND p.userGroup.id = :groupId " +
-      "AND NOT EXISTS (" +
-      "SELECT qs FROM QuestionnaireSubmission qs " +
-      "WHERE qs.user.id = am.id " +
-      "AND qs.status = :status " +
-      "AND qs.questionnaire.id = q.id) " +
-      "ORDER BY am.username ASC"
-  )
-  List<ApplicationUser> findMembersWithoutSubmissionsForQuestionnaire(
+      "ORDER BY u.username ASC")
+  List<QuestionnaireSubmissionStatsInternalDto> getQuestionnaireSubmissionStatisticsWithNonSubmittersByStatus(
     Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status);
 }

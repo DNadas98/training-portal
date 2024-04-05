@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -79,7 +78,6 @@ public class QuestionnaireSubmissionConverter {
 
   private SubmittedQuestionResponseDto toSubmittedQuestionResponseDto(
     SubmittedQuestion submittedQuestion) {
-    //TODO: view instead of .get xyz ( = n+1 select problem)
     return new SubmittedQuestionResponseDto(submittedQuestion.getId(),
       submittedQuestion.getText(), submittedQuestion.getType(),
       submittedQuestion.getReceivedPoints(), submittedQuestion.getMaxPoints(),
