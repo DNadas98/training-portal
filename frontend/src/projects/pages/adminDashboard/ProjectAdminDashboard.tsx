@@ -172,7 +172,7 @@ export default function ProjectAdminDashboard() {
 
   function handleDeleteClick() {
     dialog.openDialog({
-      text: "Do you really wish to remove all project data, including all questionnaires and questionnaire submissions? This action is irreversible.",
+      content: "Do you really wish to remove all project data, including all questionnaires and questionnaire submissions? This action is irreversible.",
       confirmText: "Yes, delete this project", onConfirm: deleteProject
     });
   }
@@ -229,7 +229,7 @@ export default function ProjectAdminDashboard() {
 
   function handleMemberRemoveClick(userId: number, username: string) {
     dialog.openDialog({
-      text: `Do you really want to remove user ${username} from the list of assigned members?
+      content: `Do you really want to remove user ${username} from the list of assigned members?
       \nOnly system administrators will be able to reverse this action.`,
       onConfirm: () => removePermission(userId, PermissionType.PROJECT_ASSIGNED_MEMBER)
     });
@@ -237,14 +237,14 @@ export default function ProjectAdminDashboard() {
 
   function handleEditorRemoveClick(userId: number, username: string) {
     dialog.openDialog({
-      text: `Do you really want to revoke editor permission from user ${username}?`,
+      content: `Do you really want to revoke editor permission from user ${username}?`,
       onConfirm: () => removePermission(userId, PermissionType.PROJECT_EDITOR)
     });
   }
 
   function handleAdminRemoveClick(userId: number, username: string) {
     dialog.openDialog({
-      text: `Do you really want to revoke admin permission from user ${username}?`,
+      content: `Do you really want to revoke admin permission from user ${username}?`,
       onConfirm: () => removePermission(userId, PermissionType.PROJECT_ADMIN)
     });
   }

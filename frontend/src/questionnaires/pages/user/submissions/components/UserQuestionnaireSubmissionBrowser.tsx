@@ -1,7 +1,7 @@
 import {Card, CardContent, CardHeader, Grid, Stack, Typography,} from "@mui/material";
 import UserQuestionnaireSubmissionList from "./UserQuestionnaireSubmissionList.tsx";
 import {QuestionnaireSubmissionResponseDto} from "../../../../dto/QuestionnaireSubmissionResponseDto.ts";
-import UserQuestionnaireSubmissionCard from "./UserQuestionnaireSubmissionCard.tsx";
+import QuestionnaireSubmissionCard from "./QuestionnaireSubmissionCard.tsx";
 import BackButton from "../../../../../common/utils/components/BackButton.tsx";
 import URLQueryPagination from "../../../../../common/pagination/URLQueryPagination.tsx";
 
@@ -10,9 +10,12 @@ interface UserQuestionnaireSubmissionBrowserProps {
   maxPointQuestionnaireSubmission: QuestionnaireSubmissionResponseDto | undefined,
   totalPages: number,
   page: number,
-  size: number
+  size: number,
 
-  onDeleteClick(id): void;
+  onDeleteClick(id): void,
+
+  onQuestionnaireSubmissionSelectClick: (id: number) => Promise<void>,
+  selectedQuestionnaireSubmissionLoading: boolean
 }
 
 export default function UserQuestionnaireSubmissionBrowser(props: UserQuestionnaireSubmissionBrowserProps) {
@@ -23,7 +26,7 @@ export default function UserQuestionnaireSubmissionBrowser(props: UserQuestionna
           <Card>
             <CardHeader title={`${props.maxPointQuestionnaireSubmission.name} - Max Points`}
                         sx={{textAlign: "center"}}/>
-            <UserQuestionnaireSubmissionCard submission={props.maxPointQuestionnaireSubmission}/>
+            <QuestionnaireSubmissionCard submission={props.maxPointQuestionnaireSubmission}/>
           </Card>
         </Stack> </Grid> : <></>}
       <Grid item xs={10} sm={10} md={9} lg={8}>
@@ -43,6 +46,8 @@ export default function UserQuestionnaireSubmissionBrowser(props: UserQuestionna
             </CardContent>
           </Card>
             <UserQuestionnaireSubmissionList questionnaireSubmissions={props.questionnaireSubmissions}
+                                             onSelectClick={props.onQuestionnaireSubmissionSelectClick}
+                                             selectedQuestionnaireSubmissionLoading={props.selectedQuestionnaireSubmissionLoading}
                                              maxPoints={false}
                                              onDeleteClick={props.onDeleteClick}/>
           </Stack>

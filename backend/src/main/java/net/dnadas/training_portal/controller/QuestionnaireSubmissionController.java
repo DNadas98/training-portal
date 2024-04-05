@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionRequestDto;
+import net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionResponseDetailsDto;
 import net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionResponseDto;
 import net.dnadas.training_portal.service.group.project.questionnaire.QuestionnaireSubmissionService;
 import org.springframework.context.MessageSource;
@@ -56,9 +57,9 @@ public class QuestionnaireSubmissionController {
   public ResponseEntity<?> getQuestionnaireSubmission(
     @PathVariable Long groupId, @PathVariable Long projectId, @PathVariable Long questionnaireId,
     @PathVariable Long submissionId) {
-    QuestionnaireSubmissionResponseDto questionnaire = questionnaireSubmissionService
+    QuestionnaireSubmissionResponseDetailsDto submission = questionnaireSubmissionService
       .getOwnQuestionnaireSubmission(groupId, projectId, questionnaireId, submissionId);
-    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", questionnaire));
+    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", submission));
   }
 
   @GetMapping("/maxPoints")

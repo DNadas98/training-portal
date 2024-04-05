@@ -116,7 +116,7 @@ export default function UserJoinRequests() {
 
   function handleGroupJoinRequestDeleteClick(requestId: number) {
     dialog.openDialog({
-      text: "Do you really wish to delete this group join request?",
+      content: "Do you really wish to delete this group join request?",
       onConfirm: async () => {
         await deleteGroupJoinRequest(requestId);
       }
@@ -125,7 +125,7 @@ export default function UserJoinRequests() {
 
   function handleProjectJoinRequestDeleteClick(requestId: number) {
     dialog.openDialog({
-      text: "Do you really wish to delete this project join request?",
+      content: "Do you really wish to delete this project join request?",
       onConfirm: async () => {
         await deleteProjectJoinRequest(requestId);
       }

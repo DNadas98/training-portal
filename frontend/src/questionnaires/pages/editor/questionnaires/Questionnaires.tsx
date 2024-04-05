@@ -112,7 +112,7 @@ export default function Questionnaires() {
 
   const handleDeleteClick = (questionnaireId: number) => {
     dialog.openDialog({
-      text: "Do you really wish to remove the selected questionnaire?",
+      content: "Do you really wish to remove the selected questionnaire?",
       confirmText: "Yes, delete this questionnaire", onConfirm: () => {
         deleteQuestionnaire(questionnaireId);
       }

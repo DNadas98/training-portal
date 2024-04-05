@@ -38,25 +38,27 @@ public class QuestionnaireSubmissionService {
     ApplicationUser user = userProvider.getAuthenticatedUser();
     Page<QuestionnaireSubmission> questionnaireSubmissions;
     questionnaireSubmissions =
-      questionnaireSubmissionDao.findAllByGroupIdAndProjectIdAndQuestionnaireIdAndUserAndNotMaxPoint(
+      questionnaireSubmissionDao
+        .findAllByGroupIdAndProjectIdAndQuestionnaireIdAndUserAndNotMaxPoint(
         groupId, projectId, questionnaireId, user, pageable);
     Page<QuestionnaireSubmissionResponseDto> questionnaireSubmissionResponseDtos =
       questionnaireSubmissions.map(
-        questionnaireSubmission -> questionnaireSubmissionConverter.toQuestionnaireSubmissionResponseDto(
+        questionnaireSubmission -> questionnaireSubmissionConverter
+          .toQuestionnaireSubmissionResponseDto(
           questionnaireSubmission, questionnaireSubmission.getQuestionnaire()));
     return questionnaireSubmissionResponseDtos;
   }
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
-  public QuestionnaireSubmissionResponseDto getOwnQuestionnaireSubmission(
+  public QuestionnaireSubmissionResponseDetailsDto getOwnQuestionnaireSubmission(
     Long groupId, Long projectId, Long questionnaireId, Long submissionId) {
     ApplicationUser user = userProvider.getAuthenticatedUser();
     QuestionnaireSubmission questionnaireSubmission =
       questionnaireSubmissionDao.findByGroupIdAndProjectIdAndQuestionnaireIdAndIdAndUser(groupId,
         projectId, questionnaireId, submissionId, user).orElseThrow(
         QuestionnaireSubmissionNotFoundException::new);
-    return questionnaireSubmissionConverter.toQuestionnaireSubmissionResponseDto(
+    return questionnaireSubmissionConverter.toQuestionnaireSubmissionResponseDetailsDto(
       questionnaireSubmission, questionnaireSubmission.getQuestionnaire());
   }
 

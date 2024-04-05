@@ -98,7 +98,7 @@ export default function ProjectJoinRequests() {
 
   function handleDeclineClick(requestId: number) {
     dialog.openDialog({
-      text: "Do you really wish to decline this project join request?",
+      content: "Do you really wish to decline this project join request?",
       onConfirm: async () => {
         await handleJoinRequest(requestId, RequestStatus.DECLINED);
       }

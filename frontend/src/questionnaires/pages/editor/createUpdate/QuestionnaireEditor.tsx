@@ -154,7 +154,7 @@ export default function QuestionnaireEditor() {
   const handleBackClick = () => {
     if (hasUnsavedChanges) {
       dialog.openDialog({
-        text: "Are you sure, you would like to leave the questionnaire editor without saving?",
+        content: "Are you sure, you would like to leave the questionnaire editor without saving?",
         confirmText: "Yes, go back",
         cancelText: "No, stay here",
         onConfirm: () => navigateBack()

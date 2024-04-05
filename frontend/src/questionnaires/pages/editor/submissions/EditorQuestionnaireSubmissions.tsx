@@ -6,13 +6,15 @@ import {useNotification} from "../../../../common/notification/context/Notificat
 import {isValidId} from "../../../../common/utils/isValidId.ts";
 import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
 import {Card, CardContent, CardHeader, Grid, Stack, Typography} from "@mui/material";
-import EditorQuestionnaireSubmissionList from "./components/EditorQuestionnaireSubmissionList.tsx";
 import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
 import useAuthJsonFetch from "../../../../common/api/hooks/useAuthJsonFetch.tsx";
 import {QuestionnaireSubmissionResponseEditorDto} from "../../../dto/QuestionnaireSubmissionResponseEditorDto.ts";
 import {QuestionnaireResponseDto} from "../../../dto/QuestionnaireResponseDto.ts";
 import URLQueryPagination from "../../../../common/pagination/URLQueryPagination.tsx";
 import {ApiResponsePageableDto} from "../../../../common/api/dto/ApiResponsePageableDto.ts";
+import UserQuestionnaireSubmissionList from "../../user/submissions/components/UserQuestionnaireSubmissionList.tsx";
+import QuestionnaireSubmissionDetails from "../../user/submissions/components/QuestionnaireSubmissionDetails.tsx";
+import {QuestionnaireSubmissionResponseDetailsDto} from "../../../dto/QuestionnaireSubmissionResponseDetailsDto.ts";
 
 export default function EditorQuestionnaireSubmissions() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -20,6 +22,7 @@ export default function EditorQuestionnaireSubmissions() {
   const [questionnaireSubmissions, setQuestionnaireSubmissions] = useState<QuestionnaireSubmissionResponseEditorDto[]>([]);
   const [questionnaire, setQuestionnaire] = useState<QuestionnaireResponseDto | undefined>(undefined);
   const [questionnaireLoading, setQuestionnaireLoading] = useState<boolean>(true);
+  const [selectedQuestionnaireSubmissionLoading, setSelectedQuestionnaireSubmissionLoading] = useState<boolean>(false);
   const authJsonFetch = useAuthJsonFetch();
   const navigate = useNavigate();
   const notification = useNotification();
@@ -90,6 +93,38 @@ export default function EditorQuestionnaireSubmissions() {
     }
   };
 
+  const handleQuestionnaireSubmissionSelect = async (id: number) => {
+    try {
+      if (!isValidId(groupId) || !isValidId(projectId) || !isValidId(questionnaireId)) {
+        return;
+      }
+      setSelectedQuestionnaireSubmissionLoading(true);
+      const response = await authJsonFetch({
+        path: `groups/${groupId}/projects/${projectId}/questionnaires/${questionnaireId}/submissions/${id}`
+      });
+      if (!response?.status || response.status > 399 || !response?.data) {
+        notification.openNotification({
+          type: "error", vertical: "top", horizontal: "center", message:
+            response?.error ?? "Failed to load selected questionnaire submission"
+        });
+        return;
+      }
+      dialog.openDialog({
+        content: <QuestionnaireSubmissionDetails
+          submission={response.data as QuestionnaireSubmissionResponseDetailsDto}/>,
+        onConfirm: () => {
+        }, confirmText: "Close", oneActionOnly: true, blockScreen: true
+      });
+    } catch (e) {
+      notification.openNotification({
+        type: "error", vertical: "top", horizontal: "center", message:
+          "Failed to load selected questionnaire submission"
+      });
+    } finally {
+      setSelectedQuestionnaireSubmissionLoading(false);
+    }
+  }
+
   useEffect(() => {
     loadQuestionnaire();
   }, [groupId, projectId]);
@@ -131,7 +166,7 @@ export default function EditorQuestionnaireSubmissions() {
 
   const handleDeleteClick = (submissionId: number) => {
     dialog.openDialog({
-      text: "Are you sure, you would like to delete this questionnaire submission?",
+      content: "Are you sure, you would like to delete this questionnaire submission?",
       onConfirm: () => deleteSubmission(submissionId)
     });
   }
@@ -172,10 +207,11 @@ export default function EditorQuestionnaireSubmissions() {
       </Card>
         {questionnaireSubmissions?.length
           ?
-          <EditorQuestionnaireSubmissionList questionnaireSubmissions={questionnaireSubmissions}
+          <UserQuestionnaireSubmissionList questionnaireSubmissions={questionnaireSubmissions}
                                              maxPoints={false}
                                              onDeleteClick={handleDeleteClick}
-          />
+           onSelectClick={handleQuestionnaireSubmissionSelect}
+           selectedQuestionnaireSubmissionLoading={selectedQuestionnaireSubmissionLoading}/>
           : <Card>
             <CardHeader title={"No submissions were found for this questionnaire."}
                         sx={{textAlign: "center"}}/>

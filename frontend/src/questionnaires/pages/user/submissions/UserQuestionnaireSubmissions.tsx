@@ -9,6 +9,8 @@ import {QuestionnaireSubmissionResponseDto} from "../../../dto/QuestionnaireSubm
 import useAuthJsonFetch from "../../../../common/api/hooks/useAuthJsonFetch.tsx";
 import {ApiResponsePageableDto} from "../../../../common/api/dto/ApiResponsePageableDto.ts";
 import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
+import QuestionnaireSubmissionDetails from "./components/QuestionnaireSubmissionDetails.tsx";
+import {QuestionnaireSubmissionResponseDetailsDto} from "../../../dto/QuestionnaireSubmissionResponseDetailsDto.ts";
 
 export default function UserQuestionnaireSubmissions() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -16,6 +18,7 @@ export default function UserQuestionnaireSubmissions() {
   const [maxPointQuestionnaireSubmissionsLoading, setMaxPointQuestionnaireSubmissionsLoading] = useState<boolean>(true);
   const [questionnaireSubmissions, setQuestionnaireSubmissions] = useState<QuestionnaireSubmissionResponseDto[]>([]);
   const [maxPointQuestionnaireSubmission, setMaxPointQuestionnaireSubmission] = useState<QuestionnaireSubmissionResponseDto | undefined>(undefined);
+  const [selectedQuestionnaireSubmissionLoading, setSelectedQuestionnaireSubmissionLoading] = useState<boolean>(false);
   const authJsonFetch = useAuthJsonFetch();
   const navigate = useNavigate();
   const notification = useNotification();
@@ -62,9 +65,9 @@ export default function UserQuestionnaireSubmissions() {
     }
   };
 
-  const loadMaxPointQuestionnaires = async () => {
+  const loadMaxPointQuestionnaire = async () => {
     try {
-      if (!isValidId(groupId) || !isValidId(projectId)) {
+      if (!isValidId(groupId) || !isValidId(projectId) || !isValidId(questionnaireId)) {
         setMaxPointQuestionnaireSubmission(undefined);
         return;
       }
@@ -84,8 +87,40 @@ export default function UserQuestionnaireSubmissions() {
     }
   };
 
+  const handleQuestionnaireSubmissionSelect = async (id: number) => {
+    try {
+      if (!isValidId(groupId) || !isValidId(projectId) || !isValidId(questionnaireId)) {
+        return;
+      }
+      setSelectedQuestionnaireSubmissionLoading(true);
+      const response = await authJsonFetch({
+        path: `groups/${groupId}/projects/${projectId}/questionnaires/${questionnaireId}/submissions/${id}`
+      });
+      if (!response?.status || response.status > 399 || !response?.data) {
+        notification.openNotification({
+          type: "error", vertical: "top", horizontal: "center", message:
+            response?.error ?? "Failed to load selected questionnaire submission"
+        });
+        return;
+      }
+      dialog.openDialog({
+        content: <QuestionnaireSubmissionDetails
+          submission={response.data as QuestionnaireSubmissionResponseDetailsDto}/>,
+        onConfirm: () => {
+        }, confirmText: "Close", oneActionOnly: true, blockScreen: true
+      });
+    } catch (e) {
+      notification.openNotification({
+        type: "error", vertical: "top", horizontal: "center", message:
+          "Failed to load selected questionnaire submission"
+      });
+    } finally {
+      setSelectedQuestionnaireSubmissionLoading(false);
+    }
+  }
+
   useEffect(() => {
-    loadMaxPointQuestionnaires();
+    loadMaxPointQuestionnaire();
   }, [groupId, projectId]);
 
   useEffect(() => {
@@ -136,7 +171,7 @@ export default function UserQuestionnaireSubmissions() {
 
   const handleDeleteClick = (submissionId: number) => {
     dialog.openDialog({
-      text: "Are you sure, you would like to delete this questionnaire submission?",
+      content: "Are you sure, you would like to delete this questionnaire submission?",
       onConfirm: () => deleteSubmission(submissionId)
     });
   }
@@ -144,6 +179,8 @@ export default function UserQuestionnaireSubmissions() {
   return (
     <UserQuestionnaireSubmissionBrowser
       questionnaireSubmissions={questionnaireSubmissions}
+      onQuestionnaireSubmissionSelectClick={handleQuestionnaireSubmissionSelect}
+      selectedQuestionnaireSubmissionLoading={selectedQuestionnaireSubmissionLoading}
       maxPointQuestionnaireSubmission={maxPointQuestionnaireSubmission}
       totalPages={totalPages}
       page={page} size={size}

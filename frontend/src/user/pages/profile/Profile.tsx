@@ -50,7 +50,7 @@ export default function Profile() {
 
   function openDeleteApplicationUserDialog() {
     return dialog.openDialog({
-      text: "Do you really wish to erase all your user data permanently?",
+      content: "Do you really wish to erase all your user data permanently?",
       onConfirm: deleteApplicationUser
     })
   }

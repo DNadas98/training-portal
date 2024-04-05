@@ -98,7 +98,7 @@ export default function GroupDashboard() {
 
   function handleDeleteGroupClick() {
     dialog.openDialog({
-      text: "Are you sure you would like to delete this group, along with all group data?",
+      content: "Are you sure you would like to delete this group, along with all group data?",
       confirmText: "Yes, delete the group", onConfirm: () => deleteGroup()
     });
   }

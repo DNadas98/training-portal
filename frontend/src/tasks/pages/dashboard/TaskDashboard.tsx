@@ -94,7 +94,7 @@ export default function TaskDashboard() {
 
   function handleDeleteClick() {
     dialog.openDialog({
-      text: "Do you really wish to remove all task data?",
+      content: "Do you really wish to remove all task data?",
       confirmText: "Yes, delete this task", onConfirm: deleteTask
     });
   }
@@ -117,7 +117,7 @@ export default function TaskDashboard() {
 
   function handleRemoveSelfClick() {
     dialog.openDialog({
-      text: "Do you really want to remove your assignment to this task?",
+      content: "Do you really want to remove your assignment to this task?",
       onConfirm: removeSelfFromTask
     });
   }

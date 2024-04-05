@@ -1,41 +1,49 @@
 import {Button, Card, CardActions, CardContent, Typography} from "@mui/material";
 import {QuestionnaireSubmissionResponseDto} from "../../../../dto/QuestionnaireSubmissionResponseDto.ts";
-import UserQuestionnaireSubmissionCard from "./UserQuestionnaireSubmissionCard.tsx";
+import QuestionnaireSubmissionCard from "./QuestionnaireSubmissionCard.tsx";
 
 interface UserQuestionnaireSubmissionListProps {
   maxPoints: boolean,
-  questionnaireSubmissions: QuestionnaireSubmissionResponseDto[]
+  questionnaireSubmissions: QuestionnaireSubmissionResponseDto[],
 
-  onDeleteClick(id): void;
+  onDeleteClick(id): void,
+
+  onSelectClick: (id: number) => Promise<void>,
+  selectedQuestionnaireSubmissionLoading: boolean
 }
 
 export default function UserQuestionnaireSubmissionList(props: UserQuestionnaireSubmissionListProps) {
-  return props.questionnaireSubmissions?.length > 0
-    ? props.questionnaireSubmissions.map((submission) => {
-      return <Card key={submission.id}>
-        <UserQuestionnaireSubmissionCard submission={submission}/>
-        <CardActions>
-          <Button onClick={() => {
-            props.onDeleteClick(submission.id)
-          }}
-                  color={"error"}>
-            Delete
-          </Button>
-        </CardActions>
-      </Card>;
-    })
-    : <Card>
-      <CardContent>
-        {props.maxPoints
-          ? <Typography>
-            {"You haven't submitted a questionnaire with maximum points for this project yet."}
-          </Typography>
-          : <Typography>
-          </Typography>
-        }
-
-      </CardContent>
-    </Card>;
-
-
+  return(<>
+    {props.questionnaireSubmissions?.length > 0
+      ? props.questionnaireSubmissions.map((submission) => {
+        return <Card key={submission.id}>
+          <QuestionnaireSubmissionCard submission={submission}/>
+          <CardActions>
+            <Button onClick={() => {
+              props.onSelectClick(submission.id)
+            }}
+                    disabled={props.selectedQuestionnaireSubmissionLoading}>
+              View Details
+            </Button>
+            <Button onClick={() => {
+              props.onDeleteClick(submission.id)
+            }}
+                    color={"error"}>
+              Delete
+            </Button>
+          </CardActions>
+        </Card>;
+      })
+      : <Card>
+        <CardContent>
+          {props.maxPoints
+            ? <Typography>
+              {"You haven't submitted a questionnaire with maximum points for this project yet."}
+            </Typography>
+            : <Typography>
+            </Typography>
+          }
+        </CardContent>
+      </Card>}
+  </>);
 }

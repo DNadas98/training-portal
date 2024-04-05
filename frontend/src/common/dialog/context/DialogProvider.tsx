@@ -1,5 +1,5 @@
 import React, {createContext, ReactNode, useContext, useState} from "react";
-import {Button, Dialog, DialogActions, DialogContent, DialogContentText} from "@mui/material";
+import {Button, Dialog, DialogActions, DialogContent} from "@mui/material";
 import {DialogStateDto} from "../dto/DialogStateDto.ts";
 import IsSmallScreen from "../../utils/IsSmallScreen.tsx";
 
@@ -24,24 +24,25 @@ interface DialogProviderProps {
 export const DialogProvider = ({children}: DialogProviderProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const initialState: DialogStateDto = {
-    text: "",
+    content: "",
     confirmText: "Confirm",
     cancelText: "Cancel",
     onConfirm: () => {
     },
-    blockScreen: false
+    blockScreen: false,
+    oneActionOnly: false
   }
   const [dialogState, setDialogState] = useState<DialogStateDto>({...initialState});
   const isSmallScreen = IsSmallScreen();
 
   const openDialog = (newDialogState: DialogStateDto) => {
     setDialogState({
-      text: newDialogState.text,
+      content: newDialogState.content,
       confirmText: newDialogState.confirmText ?? "Confirm",
       cancelText: newDialogState.cancelText ?? "Cancel",
       onConfirm: newDialogState.onConfirm,
-      blockScreen: newDialogState.blockScreen === true
-
+      blockScreen: newDialogState.blockScreen === true,
+      oneActionOnly: newDialogState.oneActionOnly === true
     });
     setIsOpen(true);
   };
@@ -61,20 +62,20 @@ export const DialogProvider = ({children}: DialogProviderProps) => {
       <Dialog
         open={isOpen}
         onClose={handleClose}
-        fullScreen={isSmallScreen}
+        fullScreen={dialogState.blockScreen||isSmallScreen}
       >
         <DialogContent>
-          <DialogContentText>
-            {dialogState.text}
-          </DialogContentText>
+          {dialogState.content}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleConfirm} autoFocus sx={{padding: 2}}>
             {dialogState.confirmText}
           </Button>
-          <Button onClick={handleClose} sx={{margin: 2}}>
-            {dialogState.cancelText}
-          </Button>
+          {!dialogState.oneActionOnly
+            ? <Button onClick={handleClose} sx={{margin: 2}}>
+              {dialogState.cancelText}
+            </Button>
+            : <></>}
         </DialogActions>
       </Dialog>
     </DialogContext.Provider>

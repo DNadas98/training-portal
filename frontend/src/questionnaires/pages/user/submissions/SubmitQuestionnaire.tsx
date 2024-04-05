@@ -175,7 +175,7 @@ export default function SubmitQuestionnaire() {
 
   function handleExitClick() {
     dialog.openDialog({
-      text: "Are you sure you would like to exit without completing the questionnaire? You will have to start again next time.",
+      content: "Are you sure you would like to exit without completing the questionnaire? You will have to start again next time.",
       confirmText: "Yes, exit without saving",
       cancelText: "No, continue the questionnaire",
       onConfirm: () => {
