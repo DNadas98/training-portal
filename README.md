@@ -73,6 +73,18 @@ for simplified management of start and deadline dates, user access and various o
 system keeps track of user progress, allowing employees to keep track of their progress and also
 administrators to see the overall progress of a project.
 
+#### Features
+- Secure account handling with e-mail verified registration and password reset, and update options for account details
+- Comprehensive access control with global roles and various group and project level permissions and join request system to groups and projects.
+- Questionnaire / test system for projects
+  - Dynamic editor that uses drag-and-drop components for questions and answers, and what-you-see-is-what-you-get rich-text editors for text inputs.
+  - A test submission page for project members, where they can fill out active questionnaires
+- Fully responsible design using Material UI components
+- Localization of texts, dates, inputs and notifications (hungarian texts  are work in progress)
+- Pagination, sort and search features, ligh-dark mode
+- A project administrator permission manager page and a questionnaire submission statistics page.
+- Group permission manager, system administrator user and group manager pages are work in progress.
+
 ## Tech Stack
 
 ### Frontend
@@ -120,8 +132,6 @@ The project uses Nginx as reverse-proxy and static file server.
   - The frontend project is set up using [Vite JS](https://vitejs.dev/)
 
 ### Setup & Run
-
-- <strong>If no real SSL certs are supplied, run the project in development mode</strong>
 
 - Copy `env.txt` template and rename to `.env`, modify values (see details in the
   template)
@@ -205,10 +215,31 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 ## Images
 
-The frontend is still work in progress.
-The project uses Material UI.
+The project uses Material UI. Light / Dark mode and localization features are also implemented,the hungarian text for the pages is currently in progress.
 
-[View all images](https://github.com/DNadas98/training-portal/tree/master/images)
+[View all screenshots](https://github.com/DNadas98/training-portal/tree/master/screenshots)
+
+#### Sign-In Page (text localized already)
+<img src="https://raw.githubusercontent.com/DNadas98/training-portal/master/screenshots/Screenshot_20240404_144302.png" alt=""/>
+
+#### User Profile Page
+<img src="https://raw.githubusercontent.com/DNadas98/training-portal/master/screenshots/Screenshot_20240404_144621.png" alt=""/><br/>
+<img src="https://github.com/DNadas98/training-portal/blob/master/screenshots/Screenshot_20240404_145640.png" alt=""/><br/>
+
+#### Group and Project Management Pages
+<img src="https://raw.githubusercontent.com/DNadas98/training-portal/master/screenshots/Screenshot_20240404_144424.png" alt=""/><br/>
+<img src="https://raw.githubusercontent.com/DNadas98/training-portal/master/screenshots/Screenshot_20240404_144540.png" alt=""/><br/>
+<img src="https://raw.githubusercontent.com/DNadas98/training-portal/master/screenshots/Screenshot_20240404_145953.png" alt=""/><br/>
+<img src="https://raw.githubusercontent.com/DNadas98/training-portal/master/screenshots/Screenshot_20240404_150032.png" alt=""/><br/>
+
+#### Questionnaire Editor Pages (With drag-and-drop feature)
+<img src="https://raw.githubusercontent.com/DNadas98/training-portal/master/screenshots/Screenshot_20240404_144713.png" alt=""/><br/>
+<img src="https://github.com/DNadas98/training-portal/blob/master/screenshots/Screenshot_20240404_145013.png" alt=""/><br/>
+
+#### Questionnaire Pages for Users (with LocalStorage caching)
+<img src="https://raw.githubusercontent.com/DNadas98/training-portal/master/screenshots/Screenshot_20240404_145149.png" alt=""/><br/>
+<img src="https://github.com/DNadas98/training-portal/blob/master/screenshots/Screenshot_20240404_145236.png" alt=""/><br/>
+<img src="https://raw.githubusercontent.com/DNadas98/training-portal/master/screenshots/Screenshot_20240404_145349.png" alt=""/><br/>
 
 ## Contact
 
