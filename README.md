@@ -133,8 +133,6 @@ The project uses Nginx as reverse-proxy and static file server.
 
 ### Setup & Run
 
-- <strong>If no real SSL certs are supplied, run the project in development mode</strong>
-
 - Copy `env.txt` template and rename to `.env`, modify values (see details in the
   template)
 - Copy `frontend/env.txt` template and rename to `.env`, values can be left as is, this one contains
