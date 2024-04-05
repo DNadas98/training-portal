@@ -41,12 +41,8 @@ public class QuestionnaireSubmissionConverter {
   @Transactional(readOnly = true)
   public QuestionnaireSubmissionResponseEditorDto toQuestionnaireSubmissionResponseEditorDto(
     QuestionnaireSubmission questionnaireSubmission, Questionnaire questionnaire) {
-    //TODO: view instead of .get xyz ( = n+1 select problem)
     return new QuestionnaireSubmissionResponseEditorDto(questionnaireSubmission.getId(),
-      questionnaire.getName(), questionnaire.getDescription(),
-      questionnaireSubmission.getSubmittedQuestions().stream().map(
-        this::toSubmittedQuestionResponseDto
-      ).collect(Collectors.toList()), questionnaireSubmission.getReceivedPoints(),
+      questionnaire.getName(), questionnaire.getDescription(), questionnaireSubmission.getReceivedPoints(),
       questionnaireSubmission.getMaxPoints(),
       dateTimeService.toDisplayedDate(questionnaireSubmission.getCreatedAt()),
       questionnaireSubmission.getStatus());

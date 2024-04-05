@@ -1,4 +1,4 @@
-import {Card, CardContent, CardHeader, Grid, Stack, Typography,} from "@mui/material";
+import {Button, Card, CardActions, CardContent, CardHeader, Grid, Stack, Typography,} from "@mui/material";
 import UserQuestionnaireSubmissionList from "./UserQuestionnaireSubmissionList.tsx";
 import {QuestionnaireSubmissionResponseDto} from "../../../../dto/QuestionnaireSubmissionResponseDto.ts";
 import QuestionnaireSubmissionCard from "./QuestionnaireSubmissionCard.tsx";
@@ -27,6 +27,14 @@ export default function UserQuestionnaireSubmissionBrowser(props: UserQuestionna
             <CardHeader title={`${props.maxPointQuestionnaireSubmission.name} - Max Points`}
                         sx={{textAlign: "center"}}/>
             <QuestionnaireSubmissionCard submission={props.maxPointQuestionnaireSubmission}/>
+            <CardActions>
+              <Button onClick={() => {
+                props.onQuestionnaireSubmissionSelectClick(props.maxPointQuestionnaireSubmission.id)
+              }}
+                      disabled={props.selectedQuestionnaireSubmissionLoading}>
+                View Details
+              </Button>
+            </CardActions>
           </Card>
         </Stack> </Grid> : <></>}
       <Grid item xs={10} sm={10} md={9} lg={8}>

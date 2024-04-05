@@ -71,7 +71,9 @@ export default function GroupLayout() {
         display: "flex",
         flexDirection: "column"
       }}>
-        <Outlet/>
+        <Box maxWidth={1300} alignSelf={"center"} justifySelf={"center"} width={"100%"}>
+          <Outlet/>
+        </Box>
       </Box>
       <UserFooter/>
     </Box>

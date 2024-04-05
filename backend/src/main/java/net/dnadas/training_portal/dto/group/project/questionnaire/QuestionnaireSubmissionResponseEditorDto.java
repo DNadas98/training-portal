@@ -5,6 +5,6 @@ import net.dnadas.training_portal.model.group.project.questionnaire.Questionnair
 import java.util.List;
 
 public record QuestionnaireSubmissionResponseEditorDto(
-  Long id, String name, String description, List<SubmittedQuestionResponseDto> questions,
-  Integer receivedPoints, Integer maxPoints, String createdAt, QuestionnaireStatus status) {
+  Long id, String name, String description, Integer receivedPoints, Integer maxPoints,
+  String createdAt, QuestionnaireStatus status) {
 }

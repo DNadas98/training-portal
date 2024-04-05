@@ -43,6 +43,17 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
     Long groupId, Long projectId, Long questionnaireId, ApplicationUser user, Pageable pageable);
 
   @Query("SELECT qs FROM QuestionnaireSubmission qs " +
+    "INNER JOIN qs.submittedQuestions sq ON qs.id = sq.questionnaireSubmission.id "+
+    "INNER JOIN sq.submittedAnswers sa ON sa.submittedQuestion.id = sq.id "+
+    "WHERE qs.questionnaire.project.userGroup.id = :groupId " +
+    "AND qs.questionnaire.project.id = :projectId " +
+    "AND qs.questionnaire.id = :questionnaireId " +
+    "AND qs.id = :submissionId " +
+    "AND qs.user = :user")
+  Optional<QuestionnaireSubmission> findByGroupIdAndProjectIdAndQuestionnaireIdAndIdAndUserWithQuestions(
+    Long groupId, Long projectId, Long questionnaireId, Long submissionId, ApplicationUser user);
+
+  @Query("SELECT qs FROM QuestionnaireSubmission qs " +
     "WHERE qs.questionnaire.project.userGroup.id = :groupId " +
     "AND qs.questionnaire.project.id = :projectId " +
     "AND qs.questionnaire.id = :questionnaireId " +

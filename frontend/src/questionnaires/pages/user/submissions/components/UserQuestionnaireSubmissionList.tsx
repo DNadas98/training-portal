@@ -38,9 +38,10 @@ export default function UserQuestionnaireSubmissionList(props: UserQuestionnaire
         <CardContent>
           {props.maxPoints
             ? <Typography>
-              {"You haven't submitted a questionnaire with maximum points for this project yet."}
+              {"You haven't achieved maximum points on this questionnaire yet."}
             </Typography>
             : <Typography>
+              {"You haven't submitted this questionnaire yet."}
             </Typography>
           }
         </CardContent>

@@ -31,7 +31,6 @@ public class QuestionnaireSubmissionService {
   private final UserProvider userProvider;
   private final ProjectService projectService;
 
-  @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
   public Page<QuestionnaireSubmissionResponseDto> getOwnQuestionnaireSubmissions(
     Long groupId, Long projectId, Long questionnaireId, Pageable pageable) {
@@ -55,7 +54,7 @@ public class QuestionnaireSubmissionService {
     Long groupId, Long projectId, Long questionnaireId, Long submissionId) {
     ApplicationUser user = userProvider.getAuthenticatedUser();
     QuestionnaireSubmission questionnaireSubmission =
-      questionnaireSubmissionDao.findByGroupIdAndProjectIdAndQuestionnaireIdAndIdAndUser(groupId,
+      questionnaireSubmissionDao.findByGroupIdAndProjectIdAndQuestionnaireIdAndIdAndUserWithQuestions(groupId,
         projectId, questionnaireId, submissionId, user).orElseThrow(
         QuestionnaireSubmissionNotFoundException::new);
     return questionnaireSubmissionConverter.toQuestionnaireSubmissionResponseDetailsDto(
