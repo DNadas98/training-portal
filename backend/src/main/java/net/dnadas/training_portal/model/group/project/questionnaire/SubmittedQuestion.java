@@ -43,7 +43,7 @@ public class SubmittedQuestion {
   private QuestionnaireSubmission questionnaireSubmission;
 
   @OneToMany(mappedBy = "submittedQuestion", orphanRemoval = true, cascade = CascadeType.ALL,
-    fetch = FetchType.LAZY)
+    fetch = FetchType.EAGER)
   @OrderBy("answerOrder")
   @EqualsAndHashCode.Exclude
   @ToString.Exclude

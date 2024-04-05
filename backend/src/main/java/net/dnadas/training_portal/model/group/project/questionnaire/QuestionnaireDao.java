@@ -10,11 +10,20 @@ import java.util.Optional;
 public interface QuestionnaireDao extends JpaRepository<Questionnaire, Long> {
 
   @Query("SELECT q FROM Questionnaire q " +
+    "INNER JOIN FETCH q.questions " +
     "WHERE q.project.userGroup.id = :groupId " +
     "AND q.project.id = :projectId " +
     "AND q.id = :id " +
     "AND q.status = 'ACTIVE'")
-  Optional<Questionnaire> findByGroupIdAndProjectIdAndIdAndActiveStatus(
+  Optional<Questionnaire> findByGroupIdAndProjectIdAndIdAndActiveStatusWithQuestions(
+    Long groupId, Long projectId, Long id);
+
+  @Query("SELECT q FROM Questionnaire q " +
+    "INNER JOIN FETCH q.questions " +
+    "WHERE q.project.userGroup.id = :groupId " +
+    "AND q.project.id = :projectId " +
+    "AND q.id = :id")
+  Optional<Questionnaire> findByGroupIdAndProjectIdAndIdWithQuestions(
     Long groupId, Long projectId, Long id);
 
   @Query("SELECT q FROM Questionnaire q " +

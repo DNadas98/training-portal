@@ -49,7 +49,7 @@ public class QuestionnaireService {
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
   public QuestionnaireResponseDetailsDto getQuestionnaire(
     Long groupId, Long projectId, Long questionnaireId) {
-    Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndIdAndActiveStatus(
+    Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndIdAndActiveStatusWithQuestions(
       groupId, projectId, questionnaireId).orElseThrow(QuestionnaireNotFoundException::new);
     return questionnaireConverter.toQuestionnaireResponseDetailsDto(
       questionnaire);
@@ -68,9 +68,8 @@ public class QuestionnaireService {
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
   public QuestionnaireResponseEditorDetailsDto getEditorQuestionnaire(
     Long groupId, Long projectId, Long questionnaireId) {
-    Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndId(
-      groupId,
-      projectId, questionnaireId).orElseThrow(QuestionnaireNotFoundException::new);
+    Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndIdWithQuestions(
+      groupId, projectId, questionnaireId).orElseThrow(QuestionnaireNotFoundException::new);
     return questionnaireConverter.toQuestionnaireResponseEditorDetailsDto(questionnaire);
   }
 

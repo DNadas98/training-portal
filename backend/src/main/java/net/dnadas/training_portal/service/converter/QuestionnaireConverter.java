@@ -44,7 +44,6 @@ public class QuestionnaireConverter {
       Collectors.toList());
   }
 
-  @Transactional(readOnly = true)
   public QuestionnaireResponseEditorDetailsDto toQuestionnaireResponseEditorDetailsDto(
     Questionnaire questionnaire) {
     List<QuestionResponseEditorDto> questions = questionnaire.getQuestions().stream()

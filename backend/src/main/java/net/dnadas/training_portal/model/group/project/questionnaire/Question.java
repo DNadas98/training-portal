@@ -39,7 +39,7 @@ public class Question {
   private Questionnaire questionnaire;
 
   @OneToMany(mappedBy = "question", orphanRemoval = true, cascade = CascadeType.ALL,
-    fetch = FetchType.LAZY)
+    fetch = FetchType.EAGER)
   @OrderBy("answerOrder")
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
