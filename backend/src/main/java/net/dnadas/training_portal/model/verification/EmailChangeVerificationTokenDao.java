@@ -12,7 +12,7 @@ public interface EmailChangeVerificationTokenDao
   extends JpaRepository<EmailChangeVerificationToken, Long> {
 
   @Query(
-    "SELECT t FROM EmailChangeVerificationToken t WHERE t.newEmail = :newEmail OR t.userId = :userId")
+    "SELECT t FROM EmailChangeVerificationToken t WHERE t.newEmail = :newEmail")
   Optional<EmailChangeVerificationToken> findByNewEmail(@Param("newEmail") String newEmail);
 
   Optional<EmailChangeVerificationToken> findByUserId(@Param("userId") Long userId);
