@@ -15,7 +15,7 @@ import DraggableQuestionsList from "./DraggableQuestionsList.tsx";
 import {QuestionRequestDto} from "../../../../dto/QuestionRequestDto.ts";
 import {FormEventHandler, MouseEventHandler, useCallback, useState} from "react";
 import {QuestionnaireStatus} from "../../../../dto/QuestionnaireStatus.ts";
-import RichTextEditorControlled from "../../../../../common/richTextEditor/RichTextEditorControlled.tsx";
+import RichTextDynamicEditor from "../../../../../common/richTextEditor/RichTextDynamicEditor.tsx";
 
 interface QuestionnaireEditorFormProps {
   onStatusChange(newStatus: QuestionnaireStatus): void;
@@ -70,7 +70,7 @@ export default function QuestionnaireEditorForm(props: QuestionnaireEditorFormPr
                     variant={"outlined"}
                     onChange={handleNameUpdate}
                   />
-                  <RichTextEditorControlled id={"questionnaire-description"} value={props.description ?? ""}
+                  <RichTextDynamicEditor id={"questionnaire-description"} value={props.description ?? ""}
                                             onChange={(currentValue: string) => props.setDescription(currentValue)}/>
                   {props.isUpdatePage
                     ? <Grid container spacing={2} alignItems={"center"}>
