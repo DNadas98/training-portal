@@ -10,7 +10,6 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import RichTextEditorControlled from "../../../../../common/richTextEditor/RichTextEditorControlled.tsx";
 import DeleteIcon from "../../../../../common/utils/components/DeleteIcon.tsx";
 import {QuestionType} from "../../../../dto/QuestionType.ts";
 import DraggableAnswersList from "./DraggableAnswersList.tsx";
@@ -19,6 +18,7 @@ import {memo, useCallback, useState} from "react";
 import {QuestionRequestDto} from "../../../../dto/QuestionRequestDto.ts";
 import {AnswerRequestDto} from "../../../../dto/AnswerRequestDto.ts";
 import {v4 as uuidv4} from "uuid";
+import RichTextDynamicEditor from "../../../../../common/richTextEditor/RichTextDynamicEditor.tsx";
 
 interface QuestionItemProps {
   question: QuestionRequestDto;
@@ -95,7 +95,7 @@ const QuestionItem = memo((props: QuestionItemProps) => {
                   Delete
                 </Button>
               </Stack>
-              <RichTextEditorControlled id={props.question.tempId}
+              <RichTextDynamicEditor id={props.question.tempId}
                                         key={`rteditor-${props.question.tempId}`}
                                         value={text}
                                         onChange={handleTextChange}/>
@@ -104,7 +104,7 @@ const QuestionItem = memo((props: QuestionItemProps) => {
               <Typography variant={"h5"}>
                 {props.question.order}.
               </Typography>
-              <RichTextEditorControlled id={props.question.tempId}
+              <RichTextDynamicEditor id={props.question.tempId}
                                         key={`rteditor-${props.question.tempId}`}
                                         value={props.question.text}
                                         onChange={handleTextChange}/>
