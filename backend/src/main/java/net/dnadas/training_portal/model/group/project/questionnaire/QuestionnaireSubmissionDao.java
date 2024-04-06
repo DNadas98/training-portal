@@ -65,8 +65,7 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
 
   @Query(
     "SELECT DISTINCT new net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionStatsInternalDto(" +
-      "q.name, " +
-      "qs.maxPoints, " +
+      "q.name, q.maxPoints, " +
       "(SELECT maxqs.id FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
       "(SELECT maxqs.createdAt FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
       "(SELECT maxqs.receivedPoints FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
@@ -74,12 +73,12 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
       "(SELECT lastqs.createdAt FROM QuestionnaireSubmission lastqs WHERE lastqs.questionnaire.id = q.id AND lastqs.status = :status AND lastqs.user.id = u.id ORDER BY lastqs.createdAt DESC  LIMIT 1), " +
       "(SELECT lastqs.receivedPoints FROM QuestionnaireSubmission lastqs WHERE lastqs.questionnaire.id = q.id AND lastqs.status = :status AND lastqs.user.id = u.id ORDER BY lastqs.createdAt DESC  LIMIT 1), " +
       "u.id, u.username) " +
-      "FROM QuestionnaireSubmission qs " +
-      "JOIN qs.questionnaire q " +
-      "JOIN qs.user u " +
-      "WHERE q.project.userGroup.id = :groupId " +
-      "AND q.project.id = :projectId " +
-      "AND q.id = :questionnaireId " +
+      "FROM Project p " +
+      "INNER JOIN Questionnaire q ON q.id = :questionnaireId " +
+      "INNER JOIN QuestionnaireSubmission qs ON qs.questionnaire.id = :questionnaireId "+
+      "RIGHT JOIN qs.user u " +
+      "WHERE p.id = :projectId " +
+      "AND p.userGroup.id = :groupId " +
       "ORDER BY u.username ASC")
   List<QuestionnaireSubmissionStatsInternalDto> getQuestionnaireSubmissionStatisticsByStatus(
     Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status);
@@ -96,7 +95,7 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
       "u.id, u.username) " +
       "FROM Project p " +
       "JOIN p.assignedMembers u " +
-      "LEFT JOIN Questionnaire q ON q.id = :questionnaireId " +
+      "INNER JOIN Questionnaire q ON q.id = :questionnaireId " +
       "WHERE p.id = :projectId " +
       "AND p.userGroup.id = :groupId " +
       "ORDER BY u.username ASC")

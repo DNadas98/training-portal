@@ -137,9 +137,9 @@ public class QuestionnaireSubmissionService {
   public List<QuestionnaireSubmissionStatsAdminDto> getQuestionnaireSubmissionStatistics(
     Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status) {
     if (!status.equals(QuestionnaireStatus.ACTIVE)) {
-      return getNonActiveQuestionnaireStatistics(groupId, projectId, questionnaireId, status);
+      return getStatisticsByStatus(groupId, projectId, questionnaireId, status);
     }
-    return getAllProjectMemberQuestionnaireStatistics(groupId, projectId, questionnaireId, status);
+    return getStatisticsWithNonSubmittersByStatus(groupId, projectId, questionnaireId, status);
   }
 
 
@@ -276,7 +276,7 @@ public class QuestionnaireSubmissionService {
     return submittedAnswers;
   }
 
-  private List<QuestionnaireSubmissionStatsAdminDto> getNonActiveQuestionnaireStatistics(
+  private List<QuestionnaireSubmissionStatsAdminDto> getStatisticsByStatus(
     Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status) {
     List<QuestionnaireSubmissionStatsInternalDto> questionnaireStats = questionnaireSubmissionDao
       .getQuestionnaireSubmissionStatisticsByStatus(groupId, projectId, questionnaireId, status);
@@ -287,7 +287,7 @@ public class QuestionnaireSubmissionService {
       questionnaireSubmissionConverter::toQuestionnaireSubmissionStatsAdminDto).toList();
   }
 
-  private List<QuestionnaireSubmissionStatsAdminDto> getAllProjectMemberQuestionnaireStatistics(
+  private List<QuestionnaireSubmissionStatsAdminDto> getStatisticsWithNonSubmittersByStatus(
     Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status) {
     List<QuestionnaireSubmissionStatsInternalDto> questionnaireStats =
       questionnaireSubmissionDao.getQuestionnaireSubmissionStatisticsWithNonSubmittersByStatus(
