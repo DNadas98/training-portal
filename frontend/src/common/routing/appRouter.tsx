@@ -38,8 +38,9 @@ import EmailChangeVerificationRedirect from "../../authentication/pages/redirect
 import PasswordReset from "../../authentication/pages/passwordReset/PasswordReset.tsx";
 import PasswordResetVerificationRedirect
   from "../../authentication/pages/redirect/PasswordResetVerificationRedirect.tsx";
-import ProjectAdminDashboard from "../../projects/pages/adminDashboard/ProjectAdminDashboard.tsx";
 import QuestionnaireStatistics from "../../questionnaires/pages/editor/statistics/QuestionnaireStatistics.tsx";
+import PermissionProvider from "../../authentication/context/PermissionProvider.tsx";
+import ProjectAssignedMembers from "../../projects/pages/members/ProjectAssignedMembers.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -96,93 +97,97 @@ const appRouter = createBrowserRouter([
     errorElement: <ErrorPage/>,
     children: [
       {
-        element: <GroupLayout/>,
+        element: <PermissionProvider/>,
         children: [
           {
-            path: "", element: <Groups/>
-          },
-          {
-            path: "create", element: <AddGroup/>
-          },
-          {
-            path: ":groupId", element: <GroupDashboard/>
-          },
-          {
-            path: ":groupId/update", element: <UpdateGroup/>
-          },
-          {
-            path: ":groupId/requests", element: <GroupJoinRequests/>
-          },
-          {
-            path: ":groupId/projects", element: <Projects/>
-          },
-          {
-            path: ":groupId/projects/create", element: <AddProject/>
-          },
-          {
-            path: ":groupId/projects/:projectId", element: <ProjectDashboard/>
-          },
-          {
-            path: ":groupId/projects/:projectId/admin", element: <ProjectAdminDashboard/>
-          },
-          {
-            path: ":groupId/projects/:projectId/update", element: <UpdateProject/>
-          },
-          {
-            path: ":groupId/projects/:projectId/requests",
-            element: <ProjectJoinRequests/>
-          },
-          /*{
-            path: ":groupId/projects/:projectId/tasks", element: <Tasks/>
-          },
-          {
-            path: ":groupId/projects/:projectId/tasks/create", element: <AddTask/>
-          },
-          {
-            path: ":groupId/projects/:projectId/tasks/:taskId",
-            element: <TaskDashboard/>
-          },
-          {
-            path: ":groupId/projects/:projectId/tasks/:taskId/update",
-            element: <UpdateTask/>
-          },*/
-          {
-            path: ":groupId/projects/:projectId/questionnaires", element: <UserQuestionnaires/>
-          },
-          {
-            path: ":groupId/projects/:projectId/questionnaires/:questionnaireId",
-            element: <SubmitQuestionnaire/>,
-          },
-          {
-            path: ":groupId/projects/:projectId/questionnaires/:questionnaireId/submissions",
-            element: <UserQuestionnaireSubmissions/>,
-          },
-          {
-            path: ":groupId/projects/:projectId/editor/questionnaires", element: <Questionnaires/>
-          },
-          {
-            path: ":groupId/projects/:projectId/editor/questionnaires/:questionnaireId/statistics",
-            element: <QuestionnaireStatistics/>,
-          },
-          {
-            path: ":groupId/projects/:projectId/editor/questionnaires/:questionnaireId/tests/new",
-            element: <SubmitQuestionnaire/>,
-          },
-          {
-            path: ":groupId/projects/:projectId/editor/questionnaires/:questionnaireId/tests",
-            element: <EditorQuestionnaireSubmissions/>,
-          },
-          {
-            path: ":groupId/projects/:projectId/editor/questionnaires/create", element: <QuestionnaireEditor/>,
-          },
-          {
-            path: ":groupId/projects/:projectId/editor/questionnaires/:questionnaireId/update",
-            element: <QuestionnaireEditor/>,
-          },
-          {
-            path: "*", element: <NotFound/>
-          }
-        ]
+            element: <GroupLayout/>,
+            children: [
+              {
+                path: "", element: <Groups/>
+              },
+              {
+                path: "create", element: <AddGroup/>
+              },
+              {
+                path: ":groupId", element: <GroupDashboard/>
+              },
+              {
+                path: ":groupId/update", element: <UpdateGroup/>
+              },
+              {
+                path: ":groupId/requests", element: <GroupJoinRequests/>
+              },
+              {
+                path: ":groupId/projects", element: <Projects/>
+              },
+              {
+                path: ":groupId/projects/create", element: <AddProject/>
+              },
+              {
+                path: ":groupId/projects/:projectId", element: <ProjectDashboard/>
+              },
+              {
+                path: ":groupId/projects/:projectId/members", element: <ProjectAssignedMembers/>
+              },
+              {
+                path: ":groupId/projects/:projectId/update", element: <UpdateProject/>
+              },
+              {
+                path: ":groupId/projects/:projectId/requests",
+                element: <ProjectJoinRequests/>
+              },
+              /*{
+                path: ":groupId/projects/:projectId/tasks", element: <Tasks/>
+              },
+              {
+                path: ":groupId/projects/:projectId/tasks/create", element: <AddTask/>
+              },
+              {
+                path: ":groupId/projects/:projectId/tasks/:taskId",
+                element: <TaskDashboard/>
+              },
+              {
+                path: ":groupId/projects/:projectId/tasks/:taskId/update",
+                element: <UpdateTask/>
+              },*/
+              {
+                path: ":groupId/projects/:projectId/questionnaires", element: <UserQuestionnaires/>
+              },
+              {
+                path: ":groupId/projects/:projectId/questionnaires/:questionnaireId",
+                element: <SubmitQuestionnaire/>,
+              },
+              {
+                path: ":groupId/projects/:projectId/questionnaires/:questionnaireId/submissions",
+                element: <UserQuestionnaireSubmissions/>,
+              },
+              {
+                path: ":groupId/projects/:projectId/editor/questionnaires", element: <Questionnaires/>
+              },
+              {
+                path: ":groupId/projects/:projectId/editor/questionnaires/:questionnaireId/statistics",
+                element: <QuestionnaireStatistics/>,
+              },
+              {
+                path: ":groupId/projects/:projectId/editor/questionnaires/:questionnaireId/tests/new",
+                element: <SubmitQuestionnaire/>,
+              },
+              {
+                path: ":groupId/projects/:projectId/editor/questionnaires/:questionnaireId/tests",
+                element: <EditorQuestionnaireSubmissions/>,
+              },
+              {
+                path: ":groupId/projects/:projectId/editor/questionnaires/create", element: <QuestionnaireEditor/>,
+              },
+              {
+                path: ":groupId/projects/:projectId/editor/questionnaires/:questionnaireId/update",
+                element: <QuestionnaireEditor/>,
+              },
+              {
+                path: "*", element: <NotFound/>
+              }
+            ]
+          }]
       }
     ]
   }

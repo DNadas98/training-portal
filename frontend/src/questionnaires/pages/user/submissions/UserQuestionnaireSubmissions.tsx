@@ -31,8 +31,8 @@ export default function UserQuestionnaireSubmissions() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const [totalPages, setTotalPages] = useState(1);
-  const page = parseInt(searchParams.get('page') || '1', 10);
-  const size = parseInt(searchParams.get('size') || '10', 10);
+  const page = searchParams.get('page') || '1';
+  const size = searchParams.get('size') || '10';
 
   const loadQuestionnaireSubmissions = async () => {
     try {
@@ -157,7 +157,7 @@ export default function UserQuestionnaireSubmissions() {
         type: "success", vertical: "top", horizontal: "center", message: response.message
       });
       searchParams.set("page", "1");
-      await loadQuestionnaireSubmissions();
+      navigate({search: searchParams.toString()});
     } catch (e) {
       notification.openNotification({
         type: "error", vertical: "top", horizontal: "center",

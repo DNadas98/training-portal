@@ -33,7 +33,7 @@ export default function UpdateProjectForm(props: UpdateProjectFormProps) {
               <DomainOutlined/>
             </Avatar>
             <Typography variant="h5" gutterBottom>
-              Update project details
+              Update Project Details
             </Typography>
           </Stack>
           <CardContent sx={{justifyContent: "center", textAlign: "center"}}>
@@ -54,7 +54,7 @@ export default function UpdateProjectForm(props: UpdateProjectFormProps) {
                     <DeadlineInput defaultValue={props.deadline}/>
                     <Button type={"submit"}
                             variant={"contained"}>
-                      Update project details
+                      Save
                     </Button>
                   </Stack>
                 </form>

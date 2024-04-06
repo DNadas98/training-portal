@@ -152,7 +152,7 @@ export default function EditorQuestionnaireSubmissions() {
         type: "success", vertical: "top", horizontal: "center", message: response.message
       });
       searchParams.set("page", "1");
-      await loadQuestionnaireSubmissions();
+      navigate({search: searchParams.toString()});
     } catch (e) {
       notification.openNotification({
         type: "error", vertical: "top", horizontal: "center",

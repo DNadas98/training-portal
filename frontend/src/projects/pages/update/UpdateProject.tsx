@@ -112,7 +112,7 @@ export default function UpdateProject() {
         type: "success", vertical: "top", horizontal: "center",
         message: response.message ?? "Project details updated successfully"
       });
-      navigate(`/groups/${groupId}/projects/${projectId}/admin`);
+      navigate(`/groups/${groupId}/projects/${projectId}`);
     } catch (e) {
       handleErrorNotification("Failed to update project");
     } finally {

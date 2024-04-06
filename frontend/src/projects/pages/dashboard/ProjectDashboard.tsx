@@ -10,6 +10,7 @@ import {Button, Card, CardActions, CardContent, CardHeader, Grid, Stack, Typogra
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 import useLocalizedDateTime from "../../../common/localization/hooks/useLocalizedDateTime.tsx";
 import RichTextDisplay from "../../../common/richTextEditor/RichTextDisplay.tsx";
+import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 
 export default function ProjectDashboard() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -22,6 +23,7 @@ export default function ProjectDashboard() {
   const notification = useNotification();
   const navigate = useNavigate();
   const getLocalizedDateTime = useLocalizedDateTime();
+  const dialog = useDialog();
 
   function handleErrorNotification(message?: string) {
     notification.openNotification({
@@ -64,8 +66,8 @@ export default function ProjectDashboard() {
     loadProject().then();
   }, []);
 
-  function handleAdminDashboardClick() {
-    navigate(`/groups/${groupId}/projects/${projectId}/admin`);
+  function handleAssignedMembersClick() {
+    navigate(`/groups/${groupId}/projects/${projectId}/members`);
   }
 
   /*function handleTasksClick() {
@@ -78,6 +80,46 @@ export default function ProjectDashboard() {
 
   function handleUserQuestionnairesClick() {
     navigate(`/groups/${groupId}/projects/${projectId}/questionnaires`);
+  }
+
+
+  async function deleteProject() {
+    try {
+      setProjectLoading(true);
+      if (!isValidId(groupId) || !isValidId(projectId)) {
+        setProjectError("The provided group or project ID is invalid");
+        setProjectLoading(false);
+        return;
+      }
+      const response = await authJsonFetch({
+        path: `groups/${groupId}/projects/${projectId}`, method: "DELETE"
+      });
+      if (!response?.status || response.status > 404 || !response?.message) {
+        return handleErrorNotification(response?.error ?? "Failed to remove project data");
+      }
+
+      setProject(undefined);
+      notification.openNotification({
+        type: "success", vertical: "top", horizontal: "center",
+        message: response.message ?? "All project data has been removed successfully"
+      });
+      navigate(`/groups/${groupId}`, {replace: true});
+    } catch (e) {
+      handleErrorNotification("Failed to remove project data");
+    } finally {
+      setProjectLoading(false);
+    }
+  }
+
+  function handleDeleteClick() {
+    dialog.openDialog({
+      content: "Do you really wish to remove all project data, including all questionnaires and questionnaire submissions? This action is irreversible.",
+      confirmText: "Yes, delete this project", onConfirm: deleteProject
+    });
+  }
+
+  function handleJoinRequestClick() {
+    navigate(`/groups/${groupId}/projects/${projectId}/requests`);
   }
 
   if (permissionsLoading || projectLoading) {
@@ -128,9 +170,22 @@ export default function ProjectDashboard() {
       }
       {(projectPermissions.includes(PermissionType.PROJECT_ADMIN))
         && <Grid item xs={10}><Card><CardActions>
-          <Button sx={{width: "fit-content"}} onClick={handleAdminDashboardClick}>
-            View admin dashboard
-          </Button>
+          <Stack spacing={0.5}>
+            <Button sx={{width: "fit-content"}} onClick={handleJoinRequestClick}>
+              View Join Requests
+            </Button>
+            <Button sx={{width: "fit-content"}} onClick={handleAssignedMembersClick}>
+              View Assigned Members
+            </Button>
+            <Button sx={{width: "fit-content"}} onClick={() => {
+              navigate(`/groups/${groupId}/projects/${projectId}/update`);
+            }}>
+              Update Project Details
+            </Button>
+            <Button sx={{width: "fit-content"}} onClick={handleDeleteClick}>
+              Remove Project
+            </Button>
+          </Stack>
         </CardActions></Card></Grid>
       }
     </Grid>

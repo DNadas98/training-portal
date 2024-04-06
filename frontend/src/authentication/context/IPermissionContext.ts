@@ -1,6 +1,6 @@
 import {PermissionType} from "../dto/PermissionType.ts";
 
-export interface IPermissionState {
+export interface IPermissionContext {
   loading: boolean;
   groupPermissions: PermissionType[];
   projectPermissions: PermissionType[];

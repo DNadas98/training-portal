@@ -12,10 +12,15 @@ import LocaleMenu from "../../common/localization/components/LocaleMenu.tsx";
 import IsSmallScreen from "../../common/utils/IsSmallScreen.tsx";
 import useLocalizedDate from "../../common/localization/hooks/useLocalizedDate.tsx";
 import {ProjectResponsePublicDto} from "../../projects/dto/ProjectResponsePublicDto.ts";
+import {PermissionType} from "../../authentication/dto/PermissionType.ts";
+import {IMenuItem} from "../../common/menu/IMenuItem.ts";
 
 interface GroupHeaderProps {
   group: undefined | GroupResponsePublicDto,
-  project: ProjectResponsePublicDto | undefined
+  project: ProjectResponsePublicDto | undefined,
+  permissionsLoading: boolean,
+  groupPermissions: PermissionType[],
+  projectPermissions: PermissionType[]
 }
 
 export default function GroupHeader(props: GroupHeaderProps) {
@@ -23,6 +28,55 @@ export default function GroupHeader(props: GroupHeaderProps) {
   const isSmallScreen = IsSmallScreen();
   const authentication = useAuthentication();
   const getLocalizedDate = useLocalizedDate();
+
+  function getGroupMenuItems() {
+    const items: IMenuItem[] = [{path: `/groups/${props?.group?.groupId}`, title: "Group Dashboard"},
+      {path: `/groups/${props?.group?.groupId}/projects`, title: "Projects"}];
+    if (props.groupPermissions.includes(PermissionType.GROUP_EDITOR)) {
+      items.push({
+        path: `/groups/${props?.group?.groupId}/update`, title: "Update Details"
+      })
+    }
+    if (props.groupPermissions.includes(PermissionType.GROUP_ADMIN)) {
+      items.push({
+        path: `/groups/${props?.group?.groupId}/requests`, title: "Join Requests"
+      })
+    }
+    return items;
+  }
+
+  function getProjectMenuItems() {
+    const items: IMenuItem[] = [{
+      path: `/groups/${props?.group?.groupId}/projects/${props?.project?.projectId}`,
+      title: "Project Dashboard"
+    }];
+    if (props.projectPermissions.includes(PermissionType.PROJECT_EDITOR)) {
+      items.push({
+        path: `/groups/${props?.group?.groupId}/projects/${props?.project?.projectId}/editor/questionnaires`,
+        title: "All Questionnaires"
+      });
+    } else if (props.projectPermissions.includes(PermissionType.PROJECT_ASSIGNED_MEMBER)) {
+      items.push({
+        path: `/groups/${props?.group?.groupId}/projects/${props?.project?.projectId}/questionnaires`,
+        title: "Active Questionnaires"
+      });
+    }
+    if (props.projectPermissions.includes(PermissionType.PROJECT_ADMIN)) {
+      items.push({
+        path: `/groups/${props?.group?.groupId}/projects/${props?.project?.projectId}/requests`,
+        title: "Join Requests"
+      });
+      items.push({
+        path: `/groups/${props?.group?.groupId}/projects/${props?.project?.projectId}/members`,
+        title: "Assigned Members"
+      });
+      items.push({
+        path: `/groups/${props?.group?.groupId}/projects/${props?.project?.projectId}/update`,
+        title: "Update Details"
+      });
+    }
+    return items;
+  }
 
   return (
     <AppBar position="static" sx={{marginBottom: 4}}>
@@ -49,12 +103,12 @@ export default function GroupHeader(props: GroupHeaderProps) {
                      spacing={1}
                      flexWrap={"wrap"}
                      flexGrow={1}>
-                {props.group?.name
-                  ? <MenuSmall title={props.group.name}
-                               items={[{path: `/groups/${props.group.groupId}`, title: "Group Dashboard"},
-                                 {path: `/groups/${props.group.groupId}/projects`, title: "Projects"},
-                               ]}/>
-                  : <></>
+                {props.permissionsLoading
+                  ? <></>
+                  : props.group?.name
+                    ? <MenuSmall title={props.group.name}
+                                 items={getGroupMenuItems()}/>
+                    : <></>
                 }
                 {props.project?.name
                   ? <>
@@ -63,12 +117,7 @@ export default function GroupHeader(props: GroupHeaderProps) {
                     </Typography>
                     <MenuSmall
                       title={props.project.name}
-                      items={[
-                        {
-                          path: `/groups/${props.group.groupId}/projects/${props.project.projectId}`,
-                          title: "Project Dashboard"
-                        }
-                      ]}/>
+                      items={getProjectMenuItems()}/>
                     <Typography variant={"body2"}>
                       ( {getLocalizedDate(props.project.startDate)} - {getLocalizedDate(props.project.deadline)} )
                     </Typography>

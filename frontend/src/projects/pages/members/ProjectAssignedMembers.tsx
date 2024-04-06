@@ -17,7 +17,6 @@ import {
   Grid,
   MenuItem,
   Select,
-  Stack,
   TextField,
   Tooltip,
   Typography
@@ -34,7 +33,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
 
-export default function ProjectAdminDashboard() {
+export default function ProjectAssignedMembers() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
   const dialog = useDialog();
   const groupId = useParams()?.groupId;
@@ -141,45 +140,6 @@ export default function ProjectAdminDashboard() {
   const handleUserSearch = (event: any) => {
     setUsersFilterValue(event.target.value.toLowerCase().trim());
   };
-
-  async function deleteProject() {
-    try {
-      setProjectLoading(true);
-      if (!isValidId(groupId) || !isValidId(projectId)) {
-        setProjectError("The provided group or project ID is invalid");
-        setProjectLoading(false);
-        return;
-      }
-      const response = await authJsonFetch({
-        path: `groups/${groupId}/projects/${projectId}`, method: "DELETE"
-      });
-      if (!response?.status || response.status > 404 || !response?.message) {
-        return handleErrorNotification(response?.error ?? "Failed to remove project data");
-      }
-
-      setProject(undefined);
-      notification.openNotification({
-        type: "success", vertical: "top", horizontal: "center",
-        message: response.message ?? "All project data has been removed successfully"
-      });
-      navigate(`/groups/${groupId}`, {replace: true});
-    } catch (e) {
-      handleErrorNotification("Failed to remove project data");
-    } finally {
-      setProjectLoading(false);
-    }
-  }
-
-  function handleDeleteClick() {
-    dialog.openDialog({
-      content: "Do you really wish to remove all project data, including all questionnaires and questionnaire submissions? This action is irreversible.",
-      confirmText: "Yes, delete this project", onConfirm: deleteProject
-    });
-  }
-
-  function handleJoinRequestClick() {
-    navigate(`/groups/${groupId}/projects/${projectId}/requests`);
-  }
 
   async function removePermission(userId: number, permissionType: PermissionType) {
     try {
@@ -293,22 +253,9 @@ export default function ProjectAdminDashboard() {
           </Typography>
         </CardContent>
         <CardActions>
-          <Stack spacing={0.5}>
-            <Button sx={{width: "fit-content"}} onClick={() => navigate(`/groups/${groupId}/projects/${projectId}`)}>
-              Back to project
-            </Button>
-            <Button sx={{width: "fit-content"}} onClick={handleJoinRequestClick}>
-              View project join requests
-            </Button>
-            <Button sx={{width: "fit-content"}} onClick={() => {
-              navigate(`/groups/${groupId}/projects/${projectId}/update`);
-            }}>
-              Update project details
-            </Button>
-            <Button sx={{width: "fit-content"}} onClick={handleDeleteClick}>
-              Remove project
-            </Button>
-          </Stack>
+          <Button sx={{width: "fit-content"}} onClick={() => navigate(`/groups/${groupId}/projects/${projectId}`)}>
+            Back to project
+          </Button>
         </CardActions>
       </Card> </Grid>
       <Grid item xs={10}><Card>
