@@ -12,6 +12,7 @@ import net.dnadas.training_portal.service.auth.UserProvider;
 import net.dnadas.training_portal.service.converter.QuestionnaireSubmissionConverter;
 import net.dnadas.training_portal.service.group.project.ProjectService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -39,12 +40,12 @@ public class QuestionnaireSubmissionService {
     questionnaireSubmissions =
       questionnaireSubmissionDao
         .findAllByGroupIdAndProjectIdAndQuestionnaireIdAndUserAndNotMaxPoint(
-        groupId, projectId, questionnaireId, user, pageable);
+          groupId, projectId, questionnaireId, user, pageable);
     Page<QuestionnaireSubmissionResponseDto> questionnaireSubmissionResponseDtos =
       questionnaireSubmissions.map(
         questionnaireSubmission -> questionnaireSubmissionConverter
           .toQuestionnaireSubmissionResponseDto(
-          questionnaireSubmission, questionnaireSubmission.getQuestionnaire()));
+            questionnaireSubmission, questionnaireSubmission.getQuestionnaire()));
     return questionnaireSubmissionResponseDtos;
   }
 
@@ -54,7 +55,8 @@ public class QuestionnaireSubmissionService {
     Long groupId, Long projectId, Long questionnaireId, Long submissionId) {
     ApplicationUser user = userProvider.getAuthenticatedUser();
     QuestionnaireSubmission questionnaireSubmission =
-      questionnaireSubmissionDao.findByGroupIdAndProjectIdAndQuestionnaireIdAndIdAndUserWithQuestions(groupId,
+      questionnaireSubmissionDao.findByGroupIdAndProjectIdAndQuestionnaireIdAndIdAndUserWithQuestions(
+        groupId,
         projectId, questionnaireId, submissionId, user).orElseThrow(
         QuestionnaireSubmissionNotFoundException::new);
     return questionnaireSubmissionConverter.toQuestionnaireSubmissionResponseDetailsDto(
@@ -134,12 +136,12 @@ public class QuestionnaireSubmissionService {
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ADMIN')")
-  public List<QuestionnaireSubmissionStatsAdminDto> getQuestionnaireSubmissionStatistics(
-    Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status) {
+  public Page<QuestionnaireSubmissionStatsAdminDto> getQuestionnaireSubmissionStatistics(
+    Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status, Pageable pageable,String searchInput) {
     if (!status.equals(QuestionnaireStatus.ACTIVE)) {
-      return getStatisticsByStatus(groupId, projectId, questionnaireId, status);
+      return getStatisticsByStatus(groupId, projectId, questionnaireId, status,pageable,searchInput);
     }
-    return getStatisticsWithNonSubmittersByStatus(groupId, projectId, questionnaireId, status);
+    return getStatisticsWithNonSubmittersByStatus(groupId, projectId, questionnaireId, status,pageable,searchInput);
   }
 
 
@@ -152,7 +154,8 @@ public class QuestionnaireSubmissionService {
       questionnaireSubmissionDao.findByGroupIdAndProjectIdAndQuestionnaireIdAndIdAndUser(
         groupId, projectId, questionnaireId, submissionId, user).orElseThrow(
         QuestionnaireSubmissionNotFoundException::new);
-    if (questionnaireSubmission.getReceivedPoints().equals(questionnaireSubmission.getMaxPoints())) {
+    if (questionnaireSubmission.getReceivedPoints().equals(
+      questionnaireSubmission.getMaxPoints())) {
       throw new IllegalStateException();
     }
     questionnaireSubmissionDao.delete(questionnaireSubmission);
@@ -276,25 +279,25 @@ public class QuestionnaireSubmissionService {
     return submittedAnswers;
   }
 
-  private List<QuestionnaireSubmissionStatsAdminDto> getStatisticsByStatus(
-    Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status) {
-    List<QuestionnaireSubmissionStatsInternalDto> questionnaireStats = questionnaireSubmissionDao
-      .getQuestionnaireSubmissionStatisticsByStatus(groupId, projectId, questionnaireId, status);
-    if (questionnaireStats.isEmpty()) {
-      return new ArrayList<>();
-    }
-    return questionnaireStats.stream().filter(dto -> dto.lastSubmissionCreatedAt() != null).map(
-      questionnaireSubmissionConverter::toQuestionnaireSubmissionStatsAdminDto).toList();
+  private Page<QuestionnaireSubmissionStatsAdminDto> getStatisticsByStatus(
+    Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status,
+    Pageable pageable, String searchInput) {
+    Page<QuestionnaireSubmissionStatsInternalDto> questionnaireStats = questionnaireSubmissionDao
+      .getQuestionnaireSubmissionStatisticsByStatus(groupId, projectId, questionnaireId, status,
+        pageable, searchInput);
+    return questionnaireStats.map(
+      questionnaireSubmissionConverter::toQuestionnaireSubmissionStatsAdminDto);
   }
 
-  private List<QuestionnaireSubmissionStatsAdminDto> getStatisticsWithNonSubmittersByStatus(
-    Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status) {
-    List<QuestionnaireSubmissionStatsInternalDto> questionnaireStats =
+  private Page<QuestionnaireSubmissionStatsAdminDto> getStatisticsWithNonSubmittersByStatus(
+    Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status,
+    Pageable pageable, String searchInput) {
+    Page<QuestionnaireSubmissionStatsInternalDto> questionnaireStats =
       questionnaireSubmissionDao.getQuestionnaireSubmissionStatisticsWithNonSubmittersByStatus(
-        groupId, projectId, questionnaireId, status);
-    List<QuestionnaireSubmissionStatsAdminDto> responseDtos =
-      questionnaireStats.stream().map(
-        questionnaireSubmissionConverter::toQuestionnaireSubmissionStatsAdminDto).toList();
+        groupId, projectId, questionnaireId, status, pageable, searchInput);
+    Page<QuestionnaireSubmissionStatsAdminDto> responseDtos =
+      questionnaireStats.map(
+        questionnaireSubmissionConverter::toQuestionnaireSubmissionStatsAdminDto);
     return responseDtos;
   }
 }
