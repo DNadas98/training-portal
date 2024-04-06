@@ -81,7 +81,8 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
         "WHERE p.id = :projectId " +
         "AND p.userGroup.id = :groupId " +
         "AND u.username LIKE %:searchValue% " +
-        "AND EXISTS (SELECT qs2 FROM QuestionnaireSubmission qs2 WHERE qs2.questionnaire.id = q.id AND qs2.user.id = u.id AND qs2.status = :status) " +
+        "AND EXISTS (SELECT qs2 FROM QuestionnaireSubmission qs2 WHERE qs2.questionnaire.id = q.id AND qs2.user.id = u.id " +
+        "AND qs2.status = :status) " +
         "ORDER BY u.username ASC",
     countQuery = "SELECT COUNT(DISTINCT u.id) " +
       "FROM Project p " +
@@ -114,11 +115,17 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
         "WHERE p.id = :projectId " +
         "AND p.userGroup.id = :groupId " +
         "AND LOWER(u.username) LIKE %:searchValue% " +
+        "AND p NOT MEMBER OF u.editorProjects " +
+        "AND p NOT MEMBER OF u.adminProjects " +
+        "AND p NOT MEMBER OF u.coordinatorProjects " +
         "ORDER BY u.username ASC",
     countQuery = "SELECT COUNT(DISTINCT u.id) " +
       "FROM Project p " +
       "INNER JOIN p.assignedMembers u ON LOWER(u.username) LIKE %:searchValue% " +
-      "WHERE p.id = :projectId AND p.userGroup.id = :groupId",
+      "WHERE p.id = :projectId AND p.userGroup.id = :groupId " +
+      "AND p NOT MEMBER OF u.editorProjects " +
+      "AND p NOT MEMBER OF u.adminProjects " +
+      "AND p NOT MEMBER OF u.coordinatorProjects",
     nativeQuery = false)
   Page<QuestionnaireSubmissionStatsInternalDto> getQuestionnaireSubmissionStatisticsWithNonSubmittersByStatus(
     Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status,
