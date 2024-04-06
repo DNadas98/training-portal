@@ -20,7 +20,7 @@ export default function URLQueryPagination(props: URLQueryPaginationProps) {
     searchParams.set('page', page.toString());
     searchParams.set("size", size.toString());
     navigate(`?${searchParams.toString()}`,{replace:true});
-  }, []);
+  }, [page, size]);
 
   const changePage = (_event, value) => {
     searchParams.set('page', value);
@@ -35,7 +35,7 @@ export default function URLQueryPagination(props: URLQueryPaginationProps) {
     searchParams.set('page', "1");
     navigate(`?${searchParams.toString()}`,{replace:true});
     if (props.onSizeChange) {
-      props.onSizeChange(page, newSize);
+      props.onSizeChange(1, newSize);
     }
   };
 

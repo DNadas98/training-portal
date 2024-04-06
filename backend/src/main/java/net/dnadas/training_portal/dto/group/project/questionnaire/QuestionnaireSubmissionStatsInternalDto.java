@@ -7,5 +7,5 @@ public record QuestionnaireSubmissionStatsInternalDto(
   Instant maxPointSubmissionCreatedAt,
   Integer maxPointSubmissionReceivedPoints, Long lastSubmissionId, Instant lastSubmissionCreatedAt,
   Integer lastSubmissionReceivedPoints,
-  Long userId, String username) {
+  Long userId, String username, Long submissionCount) {
 }

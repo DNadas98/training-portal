@@ -19,5 +19,5 @@ public record QuestionnaireSubmissionStatsAdminDto(
   String maxPointSubmissionCreatedAt,
   Integer maxPointSubmissionReceivedPoints, Long lastSubmissionId, String lastSubmissionCreatedAt,
   Integer lastSubmissionReceivedPoints,
-  Long userId, String username) {
+  Long userId, String username, Long submissionCount) {
 }

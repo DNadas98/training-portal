@@ -1,11 +1,11 @@
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {QuestionnaireSubmissionResponseAdminDto} from "../../../dto/QuestionnaireSubmissionResponseAdminDto.ts";
 import {QuestionnaireStatus} from "../../../dto/QuestionnaireStatus.ts";
 import {
   Button,
   Card,
   CardContent,
-  CardHeader,
+  CardHeader, debounce,
   Grid,
   MenuItem,
   Select,
@@ -23,12 +23,14 @@ import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import useAuthJsonFetch from "../../../../common/api/hooks/useAuthJsonFetch.tsx";
 import {useNotification} from "../../../../common/notification/context/NotificationProvider.tsx";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import usePermissions from "../../../../authentication/hooks/usePermissions.ts";
 import useLocalizedDateTime from "../../../../common/localization/hooks/useLocalizedDateTime.tsx";
 import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
 import {QuestionnaireResponseDto} from "../../../dto/QuestionnaireResponseDto.ts";
 import RichTextDisplay from "../../../../common/richTextEditor/RichTextDisplay.tsx";
+import URLQueryPagination from "../../../../common/pagination/URLQueryPagination.tsx";
+import {ApiResponsePageableDto} from "../../../../common/api/dto/ApiResponsePageableDto.ts";
 
 export default function QuestionnaireStatistics() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -45,6 +47,14 @@ export default function QuestionnaireStatistics() {
   const groupId = useParams()?.groupId;
   const projectId = useParams()?.projectId;
   const questionnaireId = useParams()?.questionnaireId;
+
+
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const [totalPages, setTotalPages] = useState(1);
+  const page = parseInt(searchParams.get('page') || '1', 10);
+  const size = parseInt(searchParams.get('size') || '10', 10);
+  const [usernameSearchValue, setUsernameSearchValue] = useState<string>("");
 
   function handleErrorNotification(message: string) {
     notification.openNotification({
@@ -80,12 +90,13 @@ export default function QuestionnaireStatistics() {
     }
   }
 
-  async function loadQuestionnaireStatistics() {
+  async function loadQuestionnaireStatistics(search: string, currentPage: number, currentSize: number, currentStatus) {
     try {
       setQuestionnaireStatisticsLoading(true);
+      const usernameSearchEncoded = encodeURIComponent(search ?? "");
       const response = await authJsonFetch({
         path:
-          `groups/${groupId}/projects/${projectId}/admin/questionnaires/${questionnaireId}/submissions/stats?status=${displayedQuestionnaireStatus}`
+          `groups/${groupId}/projects/${projectId}/admin/questionnaires/${questionnaireId}/submissions/stats?status=${currentStatus}&page=${currentPage}&size=${currentSize}&search=${usernameSearchEncoded}`
         , method: "GET"
       });
       if (!response || !response?.status || !response.data || response.status > 399) {
@@ -96,7 +107,10 @@ export default function QuestionnaireStatistics() {
         });
         return;
       }
-      setQuestionnaireStatistics(response.data as QuestionnaireSubmissionResponseAdminDto[]);
+      const pageableResponse = response as unknown as ApiResponsePageableDto;
+      setQuestionnaireStatistics(pageableResponse.data as QuestionnaireSubmissionResponseAdminDto[]);
+      const newTotalPages = Number(pageableResponse.totalPages);
+      setTotalPages((newTotalPages && newTotalPages > 0) ? newTotalPages : 1);
     } catch (e) {
       setQuestionnaireStatistics([]);
       notification.openNotification({
@@ -108,28 +122,24 @@ export default function QuestionnaireStatistics() {
     }
   }
 
+  const reloadStatisticsDebouncedRef = useRef<(searchValue: string, currentPage: number, currentSize: number, currentStatus) => void>();
+
   useEffect(() => {
-    loadQuestionnaire()
+    reloadStatisticsDebouncedRef.current = debounce((searchValue, currentPage, currentSize, currentStatus) => {
+      loadQuestionnaireStatistics(searchValue, currentPage, currentSize, currentStatus);
+    }, 300);
+
+    loadQuestionnaire();
   }, []);
 
-  useEffect(() => {
-    loadQuestionnaireStatistics()
-  }, [displayedQuestionnaireStatus]);
-
-
-  const [statisticsFilterValue, setStatisticsFilterValue] = useState<string>("");
-  const statisticsFiltered = useMemo(() => {
-    if (!questionnaireStatistics?.length) {
-      return [];
-    }
-    return questionnaireStatistics.filter(stat => {
-        return stat.username.toLowerCase().includes(statisticsFilterValue)
-      }
-    );
-  }, [questionnaireStatistics, statisticsFilterValue]);
   const handleStatisticsSearch = (event: any) => {
-    setStatisticsFilterValue(event.target.value.toLowerCase().trim());
+    const searchValue = event.target.value.toLowerCase().trim();
+    setUsernameSearchValue(searchValue);
   };
+
+  useEffect(() => {
+    reloadStatisticsDebouncedRef.current?.(usernameSearchValue, page, size, displayedQuestionnaireStatus);
+  }, [page, size, usernameSearchValue, displayedQuestionnaireStatus]);
 
   const hasValidSubmission = (stat: QuestionnaireSubmissionResponseAdminDto) => {
     return stat.maxPointSubmissionId !== null && stat.maxPointSubmissionId !== undefined &&
@@ -140,7 +150,7 @@ export default function QuestionnaireStatistics() {
       stat.lastSubmissionReceivedPoints !== null && stat.lastSubmissionReceivedPoints !== undefined;
   }
 
-  if (permissionsLoading || questionnaireLoading || questionnaireStatisticsLoading) {
+  if (permissionsLoading || questionnaireLoading) {
     return <LoadingSpinner/>;
   } else if ((!projectPermissions?.length) || !projectPermissions.includes(PermissionType.PROJECT_ADMIN)) {
     handleErrorNotification("Access Denied: Insufficient permissions");
@@ -155,54 +165,61 @@ export default function QuestionnaireStatistics() {
   return (
     <Grid container justifyContent={"center"} alignItems={"center"}><Grid item xs={11}><Card>
       <CardHeader title={"Questionnaire Statistics"}/>
-      <CardContent>{questionnaireStatisticsLoading
-        ? <LoadingSpinner/>
-        : <Grid container>
-          <Grid item xs={12}>
-            <Stack spacing={1} sx={{marginBottom: 2}}>
-              <Typography variant={"h6"}>{questionnaire.name}</Typography>
-              <RichTextDisplay content={questionnaire.description}/>
-              <Button onClick={() => navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`)}
-                      sx={{width: "fit-content"}} variant={"outlined"}>
-                Back to Questionnaires
-              </Button>
-            </Stack>
+      <CardContent><Grid container>
+        <Grid item xs={12}>
+          <Stack spacing={1} sx={{marginBottom: 2}}>
+            <Typography variant={"h6"}>{questionnaire.name}</Typography>
+            <RichTextDisplay content={questionnaire.description}/>
+            <Button onClick={() => navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`)}
+                    sx={{width: "fit-content"}} variant={"outlined"}>
+              Back to Questionnaires
+            </Button>
+          </Stack>
+        </Grid>
+        <Grid item xs={12}><Grid container spacing={1}>
+          <Grid item xs={12} sm={true}>
+            <TextField type={"search"}
+                       placeholder={"Search by username"}
+                       fullWidth
+                       onChange={handleStatisticsSearch}/>
           </Grid>
-          <Grid item xs={12}><Grid container spacing={1}>
-            <Grid item xs={12} sm={true}>
-              <TextField type={"search"}
-                         placeholder={"Search by username"}
-                         fullWidth
-                         onChange={handleStatisticsSearch}/>
-            </Grid>
-            <Grid item xs={12} sm={"auto"}>
-              <Select value={displayedQuestionnaireStatus} onChange={(event: any) => {
-                setDisplayedQuestionnaireStatus(event.target.value);
-              }}
-                      sx={{minWidth: 150}}>
-                <MenuItem value={QuestionnaireStatus.ACTIVE}><Typography>
-                  Active
-                </Typography></MenuItem>
-                <MenuItem value={QuestionnaireStatus.TEST}><Typography>
-                  Test
-                </Typography></MenuItem>
-              </Select>
-            </Grid>
-          </Grid></Grid>
-          <Grid item xs={12}><TableContainer component={Paper}>
-            <Table sx={{minWidth: 500}}>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Username</TableCell>
-                  <TableCell>Max Date</TableCell>
-                  <TableCell>Max Points</TableCell>
-                  <TableCell>Last Date</TableCell>
-                  <TableCell>Last Points</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {statisticsFiltered?.length
-                  ? statisticsFiltered.map((stat) => (
+          <Grid item xs={12} sm={"auto"}>
+            <Select value={displayedQuestionnaireStatus} onChange={(event: any) => {
+              setDisplayedQuestionnaireStatus(event.target.value);
+            }}
+                    sx={{minWidth: 150}}>
+              <MenuItem value={QuestionnaireStatus.ACTIVE}><Typography>
+                Active
+              </Typography></MenuItem>
+              <MenuItem value={QuestionnaireStatus.TEST}><Typography>
+                Test
+              </Typography></MenuItem>
+            </Select>
+          </Grid>
+          <Grid item xs={12} sm={"auto"}>
+            <URLQueryPagination totalPages={totalPages} defaultPage={1}/>
+          </Grid>
+        </Grid></Grid>
+        <Grid item xs={12}><TableContainer component={Paper}>
+          <Table sx={{minWidth: 500}}>
+            <TableHead>
+              <TableRow>
+                <TableCell>Username</TableCell>
+                <TableCell>Max Date</TableCell>
+                <TableCell>Max Points</TableCell>
+                <TableCell>Last Date</TableCell>
+                <TableCell>Last Points</TableCell>
+                <TableCell>Past Submissions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {questionnaireStatisticsLoading
+                ? <TableRow
+                  sx={{'&:last-child td, &:last-child th': {border: 0}}}
+                >
+                  <TableCell><LoadingSpinner/></TableCell></TableRow>
+                : questionnaireStatistics?.length
+                  ? questionnaireStatistics.map((stat) => (
                     <TableRow
                       key={`${stat.userId}-${stat.lastSubmissionId}-${stat.maxPointSubmissionId}`}
                       sx={{'&:last-child td, &:last-child th': {border: 0}}}
@@ -214,6 +231,7 @@ export default function QuestionnaireStatistics() {
                           <TableCell>{stat.maxPointSubmissionReceivedPoints} / {stat.questionnaireMaxPoints}</TableCell>
                           <TableCell>{getLocalizedDateTime(new Date(stat.lastSubmissionCreatedAt as string))}</TableCell>
                           <TableCell>{stat.lastSubmissionReceivedPoints} / {stat.questionnaireMaxPoints}</TableCell>
+                          <TableCell>{stat.submissionCount}</TableCell>
                         </>
                         : <TableCell>No questionnaire submissions found</TableCell>}
                     </TableRow>
@@ -221,11 +239,10 @@ export default function QuestionnaireStatistics() {
                   : <TableRow>
                     <TableCell>No filled out questionnaires were found</TableCell>
                   </TableRow>}
-              </TableBody>
-            </Table>
-          </TableContainer></Grid>
-        </Grid>
-      }</CardContent>
+            </TableBody>
+          </Table>
+        </TableContainer></Grid>
+      </Grid></CardContent>
     </Card></Grid></Grid>
   );
 }

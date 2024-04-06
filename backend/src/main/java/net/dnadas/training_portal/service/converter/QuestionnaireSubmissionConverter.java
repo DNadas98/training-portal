@@ -31,7 +31,8 @@ public class QuestionnaireSubmissionConverter {
     QuestionnaireSubmission questionnaireSubmission, Questionnaire questionnaire) {
     return new QuestionnaireSubmissionResponseDetailsDto(questionnaireSubmission.getId(),
       questionnaire.getName(), questionnaire.getDescription(),
-      questionnaireSubmission.getSubmittedQuestions().stream().map(this::toSubmittedQuestionResponseDto).toList(),
+      questionnaireSubmission.getSubmittedQuestions().stream()
+        .map(this::toSubmittedQuestionResponseDto).toList(),
       questionnaireSubmission.getReceivedPoints(),
       questionnaireSubmission.getMaxPoints(),
       dateTimeService.toDisplayedDate(questionnaireSubmission.getCreatedAt()));
@@ -41,7 +42,8 @@ public class QuestionnaireSubmissionConverter {
   public QuestionnaireSubmissionResponseEditorDto toQuestionnaireSubmissionResponseEditorDto(
     QuestionnaireSubmission questionnaireSubmission, Questionnaire questionnaire) {
     return new QuestionnaireSubmissionResponseEditorDto(questionnaireSubmission.getId(),
-      questionnaire.getName(), questionnaire.getDescription(), questionnaireSubmission.getReceivedPoints(),
+      questionnaire.getName(), questionnaire.getDescription(),
+      questionnaireSubmission.getReceivedPoints(),
       questionnaireSubmission.getMaxPoints(),
       dateTimeService.toDisplayedDate(questionnaireSubmission.getCreatedAt()),
       questionnaireSubmission.getStatus());
@@ -72,8 +74,7 @@ public class QuestionnaireSubmissionConverter {
       dto.lastSubmissionId(),
       lastSubmissionCreatedAtResult,
       dto.lastSubmissionReceivedPoints(),
-      dto.userId(), dto.username()
-    );
+      dto.userId(), dto.username(), dto.submissionCount());
   }
 
   private SubmittedQuestionResponseDto toSubmittedQuestionResponseDto(

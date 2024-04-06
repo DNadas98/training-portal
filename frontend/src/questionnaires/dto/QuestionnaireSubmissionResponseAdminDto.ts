@@ -9,4 +9,5 @@ export interface QuestionnaireSubmissionResponseAdminDto {
   lastSubmissionReceivedPoints: number;
   userId: number;
   username: string;
+  submissionCount: number;
 }
