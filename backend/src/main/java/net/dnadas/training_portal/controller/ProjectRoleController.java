@@ -85,6 +85,36 @@ public class ProjectRoleController {
         messageSource.getMessage("project.editors.remove.success", null, locale)));
   }
 
+  @GetMapping("coordinators")
+  public ResponseEntity<?> getCoordinators(
+    @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId) {
+    List<UserResponseWithPermissionsDto> coordinators = projectAdminService.getCoordinators(
+      groupId, projectId);
+    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", coordinators));
+  }
+
+  @PostMapping("coordinators")
+  public ResponseEntity<?> addCoordinator(
+    @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId,
+    @RequestParam(name = "userId") @Min(1) Long userId, Locale locale) {
+    projectAdminService.addCoordinator(groupId, projectId, userId);
+    return ResponseEntity.status(HttpStatus.OK).body(
+      Map.of(
+        "message",
+        messageSource.getMessage("project.coordinators.add.success", null, locale)));
+  }
+
+  @DeleteMapping("coordinators/{userId}")
+  public ResponseEntity<?> deleteCoordinator(
+    @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId,
+    @PathVariable @Min(1) Long userId, Locale locale) {
+    projectAdminService.removeCoordinator(groupId, projectId, userId);
+    return ResponseEntity.status(HttpStatus.OK).body(
+      Map.of(
+        "message",
+        messageSource.getMessage("project.coordinators.remove.success", null, locale)));
+  }
+
   @GetMapping("admins")
   public ResponseEntity<?> getAdmins(
     @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId) {

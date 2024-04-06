@@ -3,7 +3,7 @@ package net.dnadas.training_portal.controller;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.dto.user.UserResponsePublicDto;
-import net.dnadas.training_portal.service.group.GroupRoleService;
+import net.dnadas.training_portal.service.group.GroupAdminService;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +20,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/groups/{groupId}")
 public class GroupRoleController {
-  private final GroupRoleService groupRoleService;
+  private final GroupAdminService groupAdminService;
   private final MessageSource messageSource;
 
   @GetMapping("members")
   public ResponseEntity<?> getMembers(@PathVariable @Min(1) Long groupId) {
-    List<UserResponsePublicDto> members = groupRoleService.getMembers(groupId);
+    List<UserResponsePublicDto> members = groupAdminService.getMembers(groupId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", members));
   }
 
@@ -34,7 +34,7 @@ public class GroupRoleController {
     @PathVariable @Min(1) Long groupId, @RequestParam(name = "username") String username,
     Locale locale) {
     String decodedUsername = URLDecoder.decode(username, StandardCharsets.UTF_8);
-    groupRoleService.addMember(groupId, decodedUsername);
+    groupAdminService.addMember(groupId, decodedUsername);
     return ResponseEntity.status(HttpStatus.OK).body(
       Map.of(
         "message",
@@ -44,7 +44,7 @@ public class GroupRoleController {
   @DeleteMapping("members/{userId}")
   public ResponseEntity<?> removeMember(
     @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long userId, Locale locale) {
-    groupRoleService.removeMember(groupId, userId);
+    groupAdminService.removeMember(groupId, userId);
     return ResponseEntity.status(HttpStatus.OK).body(
       Map.of(
         "message",
@@ -53,7 +53,7 @@ public class GroupRoleController {
 
   @GetMapping("editors")
   public ResponseEntity<?> getEditors(@PathVariable @Min(1) Long groupId) {
-    List<UserResponsePublicDto> editors = groupRoleService.getEditors(groupId);
+    List<UserResponsePublicDto> editors = groupAdminService.getEditors(groupId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", editors));
   }
 
@@ -61,7 +61,7 @@ public class GroupRoleController {
   public ResponseEntity<?> addEditor(
     @PathVariable @Min(1) Long groupId, @RequestParam(name = "userId") @Min(1) Long userId,
     Locale locale) {
-    groupRoleService.addEditor(groupId, userId);
+    groupAdminService.addEditor(groupId, userId);
     return ResponseEntity.status(HttpStatus.OK).body(
       Map.of(
         "message",
@@ -71,7 +71,7 @@ public class GroupRoleController {
   @DeleteMapping("editors/{userId}")
   public ResponseEntity<?> removeEditor(
     @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long userId, Locale locale) {
-    groupRoleService.removeEditor(groupId, userId);
+    groupAdminService.removeEditor(groupId, userId);
     return ResponseEntity.status(HttpStatus.OK).body(
       Map.of(
         "message",
@@ -80,7 +80,7 @@ public class GroupRoleController {
 
   @GetMapping("admins")
   public ResponseEntity<?> getAdmins(@PathVariable @Min(1) Long groupId) {
-    List<UserResponsePublicDto> admins = groupRoleService.getAdmins(groupId);
+    List<UserResponsePublicDto> admins = groupAdminService.getAdmins(groupId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", admins));
   }
 
@@ -88,7 +88,7 @@ public class GroupRoleController {
   public ResponseEntity<?> addAdmin(
     @PathVariable @Min(1) Long groupId, @RequestParam(name = "userId") @Min(1) Long userId,
     Locale locale) {
-    groupRoleService.addAdmin(groupId, userId);
+    groupAdminService.addAdmin(groupId, userId);
     return ResponseEntity.status(HttpStatus.OK).body(
       Map.of(
         "message",

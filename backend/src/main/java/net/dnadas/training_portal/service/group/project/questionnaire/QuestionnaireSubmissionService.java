@@ -12,7 +12,6 @@ import net.dnadas.training_portal.service.auth.UserProvider;
 import net.dnadas.training_portal.service.converter.QuestionnaireSubmissionConverter;
 import net.dnadas.training_portal.service.group.project.ProjectService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -135,13 +134,16 @@ public class QuestionnaireSubmissionService {
   }
 
   @Transactional(readOnly = true)
-  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ADMIN')")
-  public Page<QuestionnaireSubmissionStatsAdminDto> getQuestionnaireSubmissionStatistics(
-    Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status, Pageable pageable,String searchInput) {
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_COORDINATOR')")
+  public Page<QuestionnaireSubmissionStatsResponseDto> getQuestionnaireSubmissionStatistics(
+    Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status,
+    Pageable pageable, String searchInput) {
     if (!status.equals(QuestionnaireStatus.ACTIVE)) {
-      return getStatisticsByStatus(groupId, projectId, questionnaireId, status,pageable,searchInput);
+      return getStatisticsByStatus(groupId, projectId, questionnaireId, status, pageable,
+        searchInput);
     }
-    return getStatisticsWithNonSubmittersByStatus(groupId, projectId, questionnaireId, status,pageable,searchInput);
+    return getStatisticsWithNonSubmittersByStatus(groupId, projectId, questionnaireId, status,
+      pageable, searchInput);
   }
 
 
@@ -279,7 +281,7 @@ public class QuestionnaireSubmissionService {
     return submittedAnswers;
   }
 
-  private Page<QuestionnaireSubmissionStatsAdminDto> getStatisticsByStatus(
+  private Page<QuestionnaireSubmissionStatsResponseDto> getStatisticsByStatus(
     Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status,
     Pageable pageable, String searchInput) {
     Page<QuestionnaireSubmissionStatsInternalDto> questionnaireStats = questionnaireSubmissionDao
@@ -289,13 +291,13 @@ public class QuestionnaireSubmissionService {
       questionnaireSubmissionConverter::toQuestionnaireSubmissionStatsAdminDto);
   }
 
-  private Page<QuestionnaireSubmissionStatsAdminDto> getStatisticsWithNonSubmittersByStatus(
+  private Page<QuestionnaireSubmissionStatsResponseDto> getStatisticsWithNonSubmittersByStatus(
     Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status,
     Pageable pageable, String searchInput) {
     Page<QuestionnaireSubmissionStatsInternalDto> questionnaireStats =
       questionnaireSubmissionDao.getQuestionnaireSubmissionStatisticsWithNonSubmittersByStatus(
         groupId, projectId, questionnaireId, status, pageable, searchInput);
-    Page<QuestionnaireSubmissionStatsAdminDto> responseDtos =
+    Page<QuestionnaireSubmissionStatsResponseDto> responseDtos =
       questionnaireStats.map(
         questionnaireSubmissionConverter::toQuestionnaireSubmissionStatsAdminDto);
     return responseDtos;

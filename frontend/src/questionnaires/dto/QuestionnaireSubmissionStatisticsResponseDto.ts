@@ -1,4 +1,4 @@
-export interface QuestionnaireSubmissionResponseAdminDto {
+export interface QuestionnaireSubmissionStatisticsResponseDto {
   questionnaireName: string;
   questionnaireMaxPoints: number;
   maxPointSubmissionId: number;

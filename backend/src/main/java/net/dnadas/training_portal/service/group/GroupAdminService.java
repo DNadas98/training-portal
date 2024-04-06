@@ -24,7 +24,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class GroupRoleService {
+public class GroupAdminService {
   private final UserGroupDao userGroupDao;
   private final ApplicationUserDao applicationUserDao;
   private final UserConverter userConverter;

@@ -50,15 +50,22 @@ export default function GroupHeader(props: GroupHeaderProps) {
       path: `/groups/${props?.group?.groupId}/projects/${props?.project?.projectId}`,
       title: "Project Dashboard"
     }];
+    if (props.projectPermissions.includes(PermissionType.PROJECT_ASSIGNED_MEMBER)) {
+      items.push({
+        path: `/groups/${props?.group?.groupId}/projects/${props?.project?.projectId}/questionnaires`,
+        title: "View Active Questionnaires"
+      });
+    }
     if (props.projectPermissions.includes(PermissionType.PROJECT_EDITOR)) {
       items.push({
         path: `/groups/${props?.group?.groupId}/projects/${props?.project?.projectId}/editor/questionnaires`,
-        title: "All Questionnaires"
+        title: "Edit Questionnaires"
       });
-    } else if (props.projectPermissions.includes(PermissionType.PROJECT_ASSIGNED_MEMBER)) {
+    }
+    if (props.projectPermissions.includes(PermissionType.PROJECT_COORDINATOR)) {
       items.push({
-        path: `/groups/${props?.group?.groupId}/projects/${props?.project?.projectId}/questionnaires`,
-        title: "Active Questionnaires"
+        path: `/groups/${props?.group?.groupId}/projects/${props?.project?.projectId}/coordinator/questionnaires`,
+        title: "View Questionnaire Statistics"
       });
     }
     if (props.projectPermissions.includes(PermissionType.PROJECT_ADMIN)) {

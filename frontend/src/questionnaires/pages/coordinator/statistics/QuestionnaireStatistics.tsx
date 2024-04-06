@@ -1,11 +1,14 @@
 import {useEffect, useRef, useState} from "react";
-import {QuestionnaireSubmissionResponseAdminDto} from "../../../dto/QuestionnaireSubmissionResponseAdminDto.ts";
+import {
+  QuestionnaireSubmissionStatisticsResponseDto
+} from "../../../dto/QuestionnaireSubmissionStatisticsResponseDto.ts";
 import {QuestionnaireStatus} from "../../../dto/QuestionnaireStatus.ts";
 import {
   Button,
   Card,
   CardContent,
-  CardHeader, debounce,
+  CardHeader,
+  debounce,
   Grid,
   MenuItem,
   Select,
@@ -27,19 +30,19 @@ import {useLocation, useNavigate, useParams} from "react-router-dom";
 import usePermissions from "../../../../authentication/hooks/usePermissions.ts";
 import useLocalizedDateTime from "../../../../common/localization/hooks/useLocalizedDateTime.tsx";
 import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
-import {QuestionnaireResponseDto} from "../../../dto/QuestionnaireResponseDto.ts";
 import RichTextDisplay from "../../../../common/richTextEditor/RichTextDisplay.tsx";
 import URLQueryPagination from "../../../../common/pagination/URLQueryPagination.tsx";
 import {ApiResponsePageableDto} from "../../../../common/api/dto/ApiResponsePageableDto.ts";
+import {QuestionnaireResponseEditorDto} from "../../../dto/QuestionnaireResponseEditorDto.ts";
 
 export default function QuestionnaireStatistics() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
   const authJsonFetch = useAuthJsonFetch();
   const navigate = useNavigate();
   const notification = useNotification();
-  const [questionnaire, setQuestionnaire] = useState<QuestionnaireResponseDto | undefined>(undefined);
+  const [questionnaire, setQuestionnaire] = useState<QuestionnaireResponseEditorDto | undefined>(undefined);
   const [questionnaireLoading, setQuestionnaireLoading] = useState<boolean>(true);
-  const [questionnaireStatistics, setQuestionnaireStatistics] = useState<QuestionnaireSubmissionResponseAdminDto[]>([]);
+  const [questionnaireStatistics, setQuestionnaireStatistics] = useState<QuestionnaireSubmissionStatisticsResponseDto[]>([]);
   const [questionnaireStatisticsLoading, setQuestionnaireStatisticsLoading] = useState<boolean>(true)
   const [displayedQuestionnaireStatus, setDisplayedQuestionnaireStatus] = useState<QuestionnaireStatus>(QuestionnaireStatus.ACTIVE);
   const getLocalizedDateTime = useLocalizedDateTime();
@@ -67,7 +70,7 @@ export default function QuestionnaireStatistics() {
       setQuestionnaireLoading(true);
       const response = await authJsonFetch({
         path:
-          `groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}`
+          `groups/${groupId}/projects/${projectId}/coordinator/questionnaires/${questionnaireId}`
         , method: "GET"
       });
       if (!response || !response?.status || !response.data || response.status > 399) {
@@ -78,7 +81,7 @@ export default function QuestionnaireStatistics() {
         });
         return;
       }
-      setQuestionnaire(response.data as QuestionnaireResponseDto);
+      setQuestionnaire(response.data as QuestionnaireResponseEditorDto);
     } catch (e) {
       setQuestionnaire(undefined)
       notification.openNotification({
@@ -96,7 +99,7 @@ export default function QuestionnaireStatistics() {
       const usernameSearchEncoded = encodeURIComponent(search ?? "");
       const response = await authJsonFetch({
         path:
-          `groups/${groupId}/projects/${projectId}/admin/questionnaires/${questionnaireId}/submissions/stats?status=${currentStatus}&page=${currentPage}&size=${currentSize}&search=${usernameSearchEncoded}`
+          `groups/${groupId}/projects/${projectId}/coordinator/questionnaires/${questionnaireId}/submissions/stats?status=${currentStatus}&page=${currentPage}&size=${currentSize}&search=${usernameSearchEncoded}`
         , method: "GET"
       });
       if (!response || !response?.status || !response.data || response.status > 399) {
@@ -108,7 +111,7 @@ export default function QuestionnaireStatistics() {
         return;
       }
       const pageableResponse = response as unknown as ApiResponsePageableDto;
-      setQuestionnaireStatistics(pageableResponse.data as QuestionnaireSubmissionResponseAdminDto[]);
+      setQuestionnaireStatistics(pageableResponse.data as QuestionnaireSubmissionStatisticsResponseDto[]);
       const newTotalPages = Number(pageableResponse.totalPages);
       setTotalPages((newTotalPages && newTotalPages > 0) ? newTotalPages : 1);
     } catch (e) {
@@ -141,7 +144,7 @@ export default function QuestionnaireStatistics() {
     reloadStatisticsDebouncedRef.current?.(usernameSearchValue, page, size, displayedQuestionnaireStatus);
   }, [page, size, usernameSearchValue, displayedQuestionnaireStatus]);
 
-  const hasValidSubmission = (stat: QuestionnaireSubmissionResponseAdminDto) => {
+  const hasValidSubmission = (stat: QuestionnaireSubmissionStatisticsResponseDto) => {
     return stat.maxPointSubmissionId !== null && stat.maxPointSubmissionId !== undefined &&
       stat.maxPointSubmissionCreatedAt !== null && stat.maxPointSubmissionCreatedAt !== undefined &&
       stat.maxPointSubmissionReceivedPoints !== null && stat.maxPointSubmissionReceivedPoints !== undefined &&
@@ -152,7 +155,7 @@ export default function QuestionnaireStatistics() {
 
   if (permissionsLoading || questionnaireLoading) {
     return <LoadingSpinner/>;
-  } else if ((!projectPermissions?.length) || !projectPermissions.includes(PermissionType.PROJECT_ADMIN)) {
+  } else if ((!projectPermissions?.length) || !projectPermissions.includes(PermissionType.PROJECT_COORDINATOR)) {
     handleErrorNotification("Access Denied: Insufficient permissions");
     navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`, {replace: true});
     return <></>;
@@ -170,11 +173,41 @@ export default function QuestionnaireStatistics() {
           <Stack spacing={1} sx={{marginBottom: 2}}>
             <Typography variant={"h6"}>{questionnaire.name}</Typography>
             <RichTextDisplay content={questionnaire.description}/>
-            <Button onClick={() => navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`)}
-                    sx={{width: "fit-content"}} variant={"outlined"}>
-              Back to Questionnaires
-            </Button>
           </Stack>
+        </Grid>
+        <Grid item xs={12} mb={2}>
+          <Grid container spacing={2} alignItems={"center"} justifyContent={"space-between"}>
+            <Grid item xs={12} md={"auto"}>
+              <Typography variant={"body2"}>
+                Created
+                By {questionnaire.createdBy.username} at {getLocalizedDateTime(new Date(questionnaire.createdAt))}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={"auto"}>
+              <Typography variant={"body2"}>
+                Last Updated
+                By {questionnaire.updatedBy.username} at {getLocalizedDateTime(new Date(questionnaire.updatedAt))}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={"auto"}>
+              <Typography variant={"body2"}>
+                Current Status: {questionnaire.status}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={"auto"}>
+              <Typography variant={"body2"}>
+                Max Points: {questionnaire.maxPoints}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item xs={12} mb={2}>
+          <Button onClick={() => {
+            navigate(-1)
+          }}
+                  sx={{width: "fit-content"}} variant={"outlined"}>
+            Back
+          </Button>
         </Grid>
         <Grid item xs={12}><Grid container spacing={1}>
           <Grid item xs={12} sm={true}>

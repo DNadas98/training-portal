@@ -70,6 +70,10 @@ export default function ProjectDashboard() {
     navigate(`/groups/${groupId}/projects/${projectId}/members`);
   }
 
+  function handleCoordinatorQuestionnairesClick() {
+    navigate(`/groups/${groupId}/projects/${projectId}/coordinator/questionnaires`);
+  }
+
   /*function handleTasksClick() {
     navigate(`/groups/${groupId}/projects/${projectId}/tasks`);
   }*/
@@ -155,39 +159,55 @@ export default function ProjectDashboard() {
           </Button>
         </Stack></CardActions>
       </Card> </Grid>
-      {(projectPermissions.includes(PermissionType.PROJECT_EDITOR))
-        && <Grid item xs={10}><Card>
-          <CardHeader title={"Project Editor Actions"} titleTypographyProps={{variant: "h6"}}/>
-          <CardActions> <Stack spacing={0.5}>
-            <Button sx={{width: "fit-content"}} onClick={handleEditorQuestionnairesClick}>
-              View all questionnaires
-            </Button>
-            {/* <Button sx={{width: "fit-content"}} onClick={handleTasksClick}>
+      <Grid item xs={10}>
+        <Grid container spacing={2} alignItems={"stretch"} justifyContent={"space-between"}>
+          {(projectPermissions.includes(PermissionType.PROJECT_EDITOR))
+            && <Grid item xs={12} md={true}><Card sx={{minHeight: "100%", minWidth: "100%"}}>
+              <CardHeader title={"Editor Actions"} titleTypographyProps={{variant: "h6"}}/>
+              <CardActions> <Stack spacing={0.5}>
+                <Button sx={{width: "fit-content"}} onClick={handleEditorQuestionnairesClick}>
+                  Edit questionnaires
+                </Button>
+                {/* <Button sx={{width: "fit-content"}} onClick={handleTasksClick}>
               View tasks
             </Button>*/}
-          </Stack></CardActions>
-        </Card> </Grid>
-      }
-      {(projectPermissions.includes(PermissionType.PROJECT_ADMIN))
-        && <Grid item xs={10}><Card><CardActions>
-          <Stack spacing={0.5}>
-            <Button sx={{width: "fit-content"}} onClick={handleJoinRequestClick}>
-              View Join Requests
-            </Button>
-            <Button sx={{width: "fit-content"}} onClick={handleAssignedMembersClick}>
-              View Assigned Members
-            </Button>
-            <Button sx={{width: "fit-content"}} onClick={() => {
-              navigate(`/groups/${groupId}/projects/${projectId}/update`);
-            }}>
-              Update Project Details
-            </Button>
-            <Button sx={{width: "fit-content"}} onClick={handleDeleteClick}>
-              Remove Project
-            </Button>
-          </Stack>
-        </CardActions></Card></Grid>
-      }
+              </Stack></CardActions>
+            </Card> </Grid>
+          }
+          {(projectPermissions.includes(PermissionType.PROJECT_COORDINATOR))
+            && <Grid item xs={12} md={true}><Card sx={{minHeight: "100%", minWidth: "100%"}}>
+              <CardHeader title={"Coordinator Actions"} titleTypographyProps={{variant: "h6"}}/>
+              <CardActions> <Stack spacing={0.5}>
+                <Button sx={{width: "fit-content", textAlign: "left"}} onClick={handleCoordinatorQuestionnairesClick}>
+                  View questionnaire Statistics
+                </Button>
+              </Stack></CardActions>
+            </Card> </Grid>
+          }
+          {(projectPermissions.includes(PermissionType.PROJECT_ADMIN))
+            && <Grid item xs={12} md={true}><Card sx={{minHeight: "100%", minWidth: "100%"}}>
+              <CardHeader title={"Administrator Actions"} titleTypographyProps={{variant: "h6"}}/>
+              <CardActions>
+                <Stack spacing={0.5}>
+                  <Button sx={{width: "fit-content"}} onClick={handleJoinRequestClick}>
+                    View Join Requests
+                  </Button>
+                  <Button sx={{width: "fit-content"}} onClick={handleAssignedMembersClick}>
+                    View Assigned Members
+                  </Button>
+                  <Button sx={{width: "fit-content"}} onClick={() => {
+                    navigate(`/groups/${groupId}/projects/${projectId}/update`);
+                  }}>
+                    Update Project Details
+                  </Button>
+                  <Button sx={{width: "fit-content"}} onClick={handleDeleteClick}>
+                    Remove Project
+                  </Button>
+                </Stack>
+              </CardActions></Card></Grid>
+          }
+        </Grid>
+      </Grid>
     </Grid>
   );
 }

@@ -32,15 +32,6 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class PopulateService {
-  private final ApplicationUserDao applicationUserDao;
-  private final PasswordEncoder passwordEncoder;
-  private final UserGroupDao userGroupDao;
-  private final UserGroupJoinRequestDao userGroupJoinRequestDao;
-  private final ProjectDao projectDao;
-  private final ProjectJoinRequestDao projectJoinRequestDao;
-  private final TaskDao taskDao;
-  private final QuestionnaireDao questionnaireDao;
-
   private final static String EXAMPLE_DATA_POPULATED_MESSAGE = "" +
     "<pre><code>" +
     " _____ _____ _____ _____ <br/>" +
@@ -50,6 +41,14 @@ public class PopulateService {
     "  | | | |___/\\__/ / | |  <br/>" + // Escaped the backslashes before / and |
     "  \\_/ \\____/\\____/  \\_/  " + // Escaped all backslashes
     "</code></pre>";
+  private final ApplicationUserDao applicationUserDao;
+  private final PasswordEncoder passwordEncoder;
+  private final UserGroupDao userGroupDao;
+  private final UserGroupJoinRequestDao userGroupJoinRequestDao;
+  private final ProjectDao projectDao;
+  private final ProjectJoinRequestDao projectJoinRequestDao;
+  private final TaskDao taskDao;
+  private final QuestionnaireDao questionnaireDao;
 
   @PostConstruct
   @Transactional(rollbackFor = Exception.class)

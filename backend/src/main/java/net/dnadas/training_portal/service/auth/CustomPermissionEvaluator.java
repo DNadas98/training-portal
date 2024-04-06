@@ -140,6 +140,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     Long userId, Project project, PermissionType permissionType) {
     return switch (permissionType) {
       case PROJECT_ADMIN -> hasProjectAdminAccess(userId, project);
+      case PROJECT_COORDINATOR -> hasProjectCoordinatorAccess(userId, project);
       case PROJECT_EDITOR -> hasProjectEditorAccess(userId, project);
       case PROJECT_ASSIGNED_MEMBER -> hasProjectAssignedMemberAccess(userId, project);
       default -> false;
@@ -187,6 +188,15 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
       applicationUser.getAdminProjects().contains(project) || hasGroupAdminAccess(
       userId,
       project.getUserGroup());
+  }
+
+  @Transactional(readOnly = true)
+  public boolean hasProjectCoordinatorAccess(Long userId, Project project) {
+    ApplicationUser applicationUser = applicationUserDao.findByIdAndFetchCoordinatorProjects(userId)
+      .orElseThrow(UserNotFoundException::new);
+    return applicationUser.getGlobalRoles().contains(GlobalRole.ADMIN)
+      || hasProjectAdminAccess(userId, project)
+      || applicationUser.getCoordinatorProjects().contains(project);
   }
 
   @Transactional(readOnly = true)

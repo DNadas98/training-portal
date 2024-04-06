@@ -125,31 +125,34 @@ export default function GroupDashboard() {
           <Button onClick={handleProjectsClick}>View projects</Button>
         </CardActions>
       </Card></Grid>
-      {(groupPermissions.includes(PermissionType.GROUP_EDITOR))
-        && <Grid item xs={10}><Card>
-          <CardHeader title={"Group Editor Actions"} titleTypographyProps={{variant: "h6"}}/>
-          <CardActions>
-            <Button onClick={() => {
-              navigate(`/groups/${groupId}/update`)
-            }}>Update group details
-            </Button>
-          </CardActions>
-        </Card></Grid>
-      }
-      {(groupPermissions.includes(PermissionType.GROUP_ADMIN))
-        &&
-        <Grid item xs={10}><Card>
-          <CardHeader title={"Group Administrator Actions"} titleTypographyProps={{variant: "h6"}}/>
-          <CardActions>
-            <Stack spacing={2}>
-              <Button onClick={handleJoinRequestClick}>View group join requests</Button>
-              {!authentication.getRoles().includes(GlobalRole.ADMIN) ? <></> :
-                <Button sx={{width: "fit-content"}} onClick={handleDeleteGroupClick}>Delete Group</Button>
-              }
-            </Stack>
-          </CardActions>
-        </Card></Grid>
-      }
+      <Grid item xs={10}>
+        <Grid container justifyContent={"space-between"} alignItems={"stretch"} spacing={2}>
+          {(groupPermissions.includes(PermissionType.GROUP_EDITOR))
+            && <Grid item xs={12} md={true}><Card sx={{minHeight: "100%"}}>
+              <CardHeader title={"Group Editor Actions"} titleTypographyProps={{variant: "h6"}}/>
+              <CardActions>
+                <Button onClick={() => {
+                  navigate(`/groups/${groupId}/update`)
+                }}>Update group details
+                </Button>
+              </CardActions>
+            </Card></Grid>
+          }
+          {(groupPermissions.includes(PermissionType.GROUP_ADMIN))
+            && <Grid item xs={12} md={true}><Card sx={{minHeight: "100%"}}>
+              <CardHeader title={"Group Administrator Actions"} titleTypographyProps={{variant: "h6"}}/>
+              <CardActions>
+                <Stack spacing={2}>
+                  <Button onClick={handleJoinRequestClick}>View group join requests</Button>
+                  {!authentication.getRoles().includes(GlobalRole.ADMIN) ? <></> :
+                    <Button sx={{width: "fit-content"}} onClick={handleDeleteGroupClick}>Delete Group</Button>
+                  }
+                </Stack>
+              </CardActions>
+            </Card></Grid>
+          }
+        </Grid>
+      </Grid>
     </Grid>
   )
 }

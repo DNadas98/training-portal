@@ -73,6 +73,14 @@ public class Project {
   private List<ApplicationUser> admins = new ArrayList<>();
 
   @ManyToMany
+  @JoinTable(name = "project_coordinators", joinColumns = @JoinColumn(name = "project_id"),
+    inverseJoinColumns = @JoinColumn(name = "user_id"))
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
+  @OrderBy("username ASC")
+  private List<ApplicationUser> coordinators = new ArrayList<>();
+
+  @ManyToMany
   @JoinTable(name = "project_editors", joinColumns = @JoinColumn(name = "project_id"),
     inverseJoinColumns = @JoinColumn(name = "user_id"))
   @EqualsAndHashCode.Exclude
@@ -149,6 +157,20 @@ public class Project {
     this.editors.remove(applicationUser);
   }
 
+  public List<ApplicationUser> getCoordinators() {
+    return List.copyOf(coordinators);
+  }
+
+  public void addCoordinator(ApplicationUser applicationUser) {
+    if (!coordinators.contains(applicationUser)) {
+      coordinators.add(applicationUser);
+    }
+  }
+
+  public void removeCoordinator(ApplicationUser applicationUser) {
+    this.coordinators.remove(applicationUser);
+  }
+
   public List<ApplicationUser> getAssignedMembers() {
     return List.copyOf(assignedMembers);
   }
@@ -168,6 +190,9 @@ public class Project {
     this.assignedMembers.remove(applicationUser);
     if (this.editors.contains(applicationUser)) {
       this.editors.remove(applicationUser);
+    }
+    if (this.coordinators.contains(applicationUser)) {
+      this.coordinators.remove(applicationUser);
     }
     if (this.admins.contains(applicationUser)) {
       this.admins.remove(applicationUser);

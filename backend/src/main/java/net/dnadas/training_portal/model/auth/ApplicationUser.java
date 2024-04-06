@@ -68,6 +68,10 @@ public class ApplicationUser implements UserDetails {
   @OrderBy("startDate ASC, name ASC")
   private List<Project> adminProjects = new ArrayList<>();
 
+  @ManyToMany(mappedBy = "coordinators", fetch = FetchType.LAZY)
+  @OrderBy("startDate ASC, name ASC")
+  private List<Project> coordinatorProjects = new ArrayList<>();
+
   @ManyToMany(mappedBy = "editors", fetch = FetchType.LAZY)
   @OrderBy("startDate ASC, name ASC")
   private List<Project> editorProjects = new ArrayList<>();
@@ -75,6 +79,7 @@ public class ApplicationUser implements UserDetails {
   @ManyToMany(mappedBy = "assignedMembers", fetch = FetchType.LAZY)
   @OrderBy("startDate ASC, name ASC")
   private List<Project> assignedProjects = new ArrayList<>();
+
 
   @ManyToMany(mappedBy = "assignedMembers", fetch = FetchType.LAZY)
   @OrderBy("startDate ASC, name ASC")

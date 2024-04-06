@@ -38,9 +38,11 @@ import EmailChangeVerificationRedirect from "../../authentication/pages/redirect
 import PasswordReset from "../../authentication/pages/passwordReset/PasswordReset.tsx";
 import PasswordResetVerificationRedirect
   from "../../authentication/pages/redirect/PasswordResetVerificationRedirect.tsx";
-import QuestionnaireStatistics from "../../questionnaires/pages/editor/statistics/QuestionnaireStatistics.tsx";
+import QuestionnaireStatistics from "../../questionnaires/pages/coordinator/statistics/QuestionnaireStatistics.tsx";
 import PermissionProvider from "../../authentication/context/PermissionProvider.tsx";
 import ProjectAssignedMembers from "../../projects/pages/members/ProjectAssignedMembers.tsx";
+import CoordinatorQuestionnaires
+  from "../../questionnaires/pages/coordinator/questionnaires/CoordinatorQuestionnaires.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -136,20 +138,6 @@ const appRouter = createBrowserRouter([
                 path: ":groupId/projects/:projectId/requests",
                 element: <ProjectJoinRequests/>
               },
-              /*{
-                path: ":groupId/projects/:projectId/tasks", element: <Tasks/>
-              },
-              {
-                path: ":groupId/projects/:projectId/tasks/create", element: <AddTask/>
-              },
-              {
-                path: ":groupId/projects/:projectId/tasks/:taskId",
-                element: <TaskDashboard/>
-              },
-              {
-                path: ":groupId/projects/:projectId/tasks/:taskId/update",
-                element: <UpdateTask/>
-              },*/
               {
                 path: ":groupId/projects/:projectId/questionnaires", element: <UserQuestionnaires/>
               },
@@ -163,10 +151,6 @@ const appRouter = createBrowserRouter([
               },
               {
                 path: ":groupId/projects/:projectId/editor/questionnaires", element: <Questionnaires/>
-              },
-              {
-                path: ":groupId/projects/:projectId/editor/questionnaires/:questionnaireId/statistics",
-                element: <QuestionnaireStatistics/>,
               },
               {
                 path: ":groupId/projects/:projectId/editor/questionnaires/:questionnaireId/tests/new",
@@ -183,6 +167,28 @@ const appRouter = createBrowserRouter([
                 path: ":groupId/projects/:projectId/editor/questionnaires/:questionnaireId/update",
                 element: <QuestionnaireEditor/>,
               },
+              {
+                path: ":groupId/projects/:projectId/coordinator/questionnaires",
+                element: <CoordinatorQuestionnaires/>,
+              },
+              {
+                path: ":groupId/projects/:projectId/coordinator/questionnaires/:questionnaireId/statistics",
+                element: <QuestionnaireStatistics/>,
+              },
+              /*{
+                path: ":groupId/projects/:projectId/tasks", element: <Tasks/>
+              },
+              {
+                path: ":groupId/projects/:projectId/tasks/create", element: <AddTask/>
+              },
+              {
+                path: ":groupId/projects/:projectId/tasks/:taskId",
+                element: <TaskDashboard/>
+              },
+              {
+                path: ":groupId/projects/:projectId/tasks/:taskId/update",
+                element: <UpdateTask/>
+              },*/
               {
                 path: "*", element: <NotFound/>
               }

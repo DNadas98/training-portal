@@ -36,6 +36,8 @@ public class ProjectAdminService {
     List<UserResponseWithPermissionsDto>
       userResponseWithPermissionsDtos = new ArrayList<>();
     List<ApplicationUser> editors = project.getEditors();
+
+    List<ApplicationUser> coordinators = project.getCoordinators();
     List<ApplicationUser> admins = project.getAdmins();
     UserGroup group = project.getUserGroup();
 
@@ -47,6 +49,9 @@ public class ProjectAdminService {
       permissions.add(PermissionType.PROJECT_ASSIGNED_MEMBER);
       if (editors.contains(applicationUser)) {
         permissions.add(PermissionType.PROJECT_EDITOR);
+      }
+      if (coordinators.contains(applicationUser)) {
+        permissions.add(PermissionType.PROJECT_COORDINATOR);
       }
       if (admins.contains(applicationUser)) {
         permissions.add(PermissionType.PROJECT_ADMIN);
@@ -71,7 +76,8 @@ public class ProjectAdminService {
     List<ApplicationUser> projectEditors = project.getEditors();
     List<UserResponseWithPermissionsDto>
       userResponseWithPermissionsDtos = new ArrayList<>();
-    List<ApplicationUser> projectAdmins = project.getAdmins();
+    List<ApplicationUser> coordinators = project.getCoordinators();
+    List<ApplicationUser> admins = project.getAdmins();
 
     UserGroup group = project.getUserGroup();
     List<ApplicationUser> groupEditors = group.getEditors();
@@ -87,8 +93,48 @@ public class ProjectAdminService {
       if (groupAdmins.contains(applicationUser)) {
         permissions.add(PermissionType.GROUP_ADMIN);
       }
-      if (projectAdmins.contains(applicationUser)) {
+      if (coordinators.contains(applicationUser)) {
+        permissions.add(PermissionType.PROJECT_COORDINATOR);
+      }
+      if (admins.contains(applicationUser)) {
         permissions.add(PermissionType.PROJECT_ADMIN);
+      }
+      userResponseWithPermissionsDtos.add(
+        userConverter.toUserResponseWithPermissionsDto(applicationUser, permissions));
+    }
+    return userResponseWithPermissionsDtos;
+  }
+
+  @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ADMIN')")
+  public List<UserResponseWithPermissionsDto> getCoordinators(Long groupId, Long projectId) {
+    Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
+      () -> new ProjectNotFoundException(projectId));
+    List<ApplicationUser> admins = project.getAdmins();
+    List<ApplicationUser> coordinators = project.getCoordinators();
+    List<ApplicationUser> editors = project.getEditors();
+    List<UserResponseWithPermissionsDto>
+      userResponseWithPermissionsDtos = new ArrayList<>();
+
+    UserGroup group = project.getUserGroup();
+    List<ApplicationUser> groupEditors = group.getEditors();
+    List<ApplicationUser> groupAdmins = group.getAdmins();
+
+    for (ApplicationUser applicationUser : coordinators) {
+      List<PermissionType> permissions = new ArrayList<>();
+      permissions.add(PermissionType.PROJECT_ASSIGNED_MEMBER);
+      permissions.add(PermissionType.PROJECT_COORDINATOR);
+      if (admins.contains(applicationUser)) {
+        permissions.add(PermissionType.PROJECT_ADMIN);
+      }
+      if (editors.contains(applicationUser)) {
+        permissions.add(PermissionType.PROJECT_EDITOR);
+      }
+      if (groupEditors.contains(applicationUser)) {
+        permissions.add(PermissionType.GROUP_EDITOR);
+      }
+      if (groupAdmins.contains(applicationUser)) {
+        permissions.add(PermissionType.GROUP_ADMIN);
       }
       userResponseWithPermissionsDtos.add(
         userConverter.toUserResponseWithPermissionsDto(applicationUser, permissions));
@@ -102,6 +148,7 @@ public class ProjectAdminService {
     Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
     List<ApplicationUser> admins = project.getAdmins();
+    List<ApplicationUser> coordinators = project.getCoordinators();
     List<ApplicationUser> editors = project.getEditors();
     List<UserResponseWithPermissionsDto>
       userResponseWithPermissionsDtos = new ArrayList<>();
@@ -116,6 +163,9 @@ public class ProjectAdminService {
       permissions.add(PermissionType.PROJECT_ADMIN);
       if (editors.contains(applicationUser)) {
         permissions.add(PermissionType.PROJECT_EDITOR);
+      }
+      if (coordinators.contains(applicationUser)) {
+        permissions.add(PermissionType.PROJECT_COORDINATOR);
       }
       if (groupEditors.contains(applicationUser)) {
         permissions.add(PermissionType.GROUP_EDITOR);
@@ -174,6 +224,31 @@ public class ProjectAdminService {
     UserGroup group = project.getUserGroup();
     verifyNoGroupLevelRoles(group, applicationUser);
     project.removeEditor(applicationUser);
+    projectDao.save(project);
+  }
+
+
+  @Transactional(rollbackFor = Exception.class)
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ADMIN')")
+  public void addCoordinator(Long groupId, Long projectId, Long userId) {
+    Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
+      () -> new ProjectNotFoundException(projectId));
+    ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
+      () -> new UserNotFoundException(userId));
+    project.addCoordinator(applicationUser);
+    projectDao.save(project);
+  }
+
+  @Transactional(rollbackFor = Exception.class)
+  @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_ADMIN')")
+  public void removeCoordinator(Long groupId, Long projectId, Long userId) {
+    Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
+      () -> new ProjectNotFoundException(projectId));
+    ApplicationUser applicationUser = applicationUserDao.findById(userId).orElseThrow(
+      () -> new UserNotFoundException(userId));
+    UserGroup group = project.getUserGroup();
+    verifyNoGroupLevelAdminRole(group, applicationUser);
+    project.removeCoordinator(applicationUser);
     projectDao.save(project);
   }
 

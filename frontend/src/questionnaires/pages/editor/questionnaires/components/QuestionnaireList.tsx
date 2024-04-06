@@ -8,7 +8,6 @@ import {
   CardContent,
   Divider,
   Grid,
-  Stack,
   Typography
 } from "@mui/material";
 import ExpandIcon from "../../../../../common/utils/components/ExpandIcon.tsx";
@@ -75,8 +74,8 @@ export default function QuestionnaireList(props: QuestionnaireListProps) {
               <Typography>Status: {questionnaire.status}</Typography>
             </AccordionDetails>
             <AccordionActions>
-              <Stack spacing={2} width={"100%"}>
-                <Stack spacing={2} direction={"row"} width={"100%"}>
+              <Grid container spacing={1} width={"100%"}>
+                <Grid item xs={12} md={6}>
                   <Button sx={{textTransform: "none"}}
                           fullWidth
                           variant={"contained"}
@@ -85,6 +84,8 @@ export default function QuestionnaireList(props: QuestionnaireListProps) {
                           }}>
                     Edit
                   </Button>
+                </Grid>
+                <Grid item xs={12} md={6}>
                   <Button sx={{textTransform: "none", color: "white"}}
                           fullWidth
                           variant={"contained"}
@@ -94,37 +95,32 @@ export default function QuestionnaireList(props: QuestionnaireListProps) {
                           }}>
                     Delete
                   </Button>
-                </Stack>
+                </Grid>
                 {questionnaire.status !== QuestionnaireStatus.INACTIVE
-                  ? <Stack spacing={2} direction={"row"} width={"100%"}>
-                    <Button sx={{textTransform: "none"}}
-                            fullWidth
-                            variant={"outlined"}
-                            onClick={() => {
-                              props.onTestClick(questionnaire.id);
-                            }}>
-                      Test
-                    </Button>
-                    <Button sx={{textTransform: "none"}}
-                            fullWidth
-                            variant={"outlined"}
-                            onClick={() => {
-                              props.onViewTestsClick(questionnaire.id);
-                            }}>
-                      View Tests
-                    </Button>
-                  </Stack>
+                  ? <>
+                    <Grid item xs={12} md={6}>
+                      <Button sx={{textTransform: "none"}}
+                              fullWidth
+                              variant={"outlined"}
+                              onClick={() => {
+                                props.onTestClick(questionnaire.id);
+                              }}>
+                        Fill Out Questionnaire
+                      </Button>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <Button sx={{textTransform: "none"}}
+                              fullWidth
+                              variant={"outlined"}
+                              onClick={() => {
+                                props.onViewTestsClick(questionnaire.id);
+                              }}>
+                        View Past Submissions
+                      </Button>
+                    </Grid>
+                  </>
                   : <></>}
-                {props.isAdmin && <Button sx={{textTransform: "none"}}
-                                          fullWidth
-                                          variant={"text"}
-                                          onClick={() => {
-                                            props.handleStatisticClick(questionnaire.id);
-                                          }}>
-                  Statistics
-                </Button>
-                }
-              </Stack>
+              </Grid>
             </AccordionActions>
           </Accordion>
         </Card>;
@@ -136,6 +132,4 @@ export default function QuestionnaireList(props: QuestionnaireListProps) {
           </Typography>
         </CardContent>
       </Card>;
-
-
 }

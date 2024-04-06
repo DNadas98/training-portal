@@ -49,7 +49,7 @@ public class QuestionnaireSubmissionConverter {
       questionnaireSubmission.getStatus());
   }
 
-  public QuestionnaireSubmissionStatsAdminDto toQuestionnaireSubmissionStatsAdminDto(
+  public QuestionnaireSubmissionStatsResponseDto toQuestionnaireSubmissionStatsAdminDto(
     QuestionnaireSubmissionStatsInternalDto dto) {
     Instant maxPointSubmissionCreatedAt = dto.maxPointSubmissionCreatedAt();
     String maxPointSubmissionCreatedAtResult;
@@ -67,7 +67,7 @@ public class QuestionnaireSubmissionConverter {
       lastSubmissionCreatedAtResult = dateTimeService.toDisplayedDate(
         dto.lastSubmissionCreatedAt());
     }
-    return new QuestionnaireSubmissionStatsAdminDto(
+    return new QuestionnaireSubmissionStatsResponseDto(
       dto.questionnaireName(), dto.questionnaireMaxPoints(), dto.maxPointSubmissionId(),
       maxPointSubmissionCreatedAtResult,
       dto.maxPointSubmissionReceivedPoints(),

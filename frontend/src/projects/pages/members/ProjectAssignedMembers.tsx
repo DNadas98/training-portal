@@ -91,6 +91,8 @@ export default function ProjectAssignedMembers() {
     switch (permissionType) {
       case PermissionType.PROJECT_EDITOR:
         return `${basePath}/editors`;
+      case PermissionType.PROJECT_COORDINATOR:
+        return `${basePath}/coordinators`;
       case PermissionType.PROJECT_ADMIN:
         return `${basePath}/admins`;
       default:
@@ -107,12 +109,12 @@ export default function ProjectAssignedMembers() {
       });
       if (!response?.status || response.status > 404 || !response?.data) {
         setDisplayedUsers([]);
-        return handleErrorNotification(response?.error ?? "Failed to load assigned members list");
+        return handleErrorNotification(response?.error ?? "Failed to load members list");
       }
       setDisplayedUsers(response.data);
     } catch (e) {
       setDisplayedUsers([]);
-      handleErrorNotification("Failed to load assigned members list");
+      handleErrorNotification("Failed to load members list");
     } finally {
       setDisplayedUsersLoading(false);
     }
@@ -202,6 +204,13 @@ export default function ProjectAssignedMembers() {
     });
   }
 
+  function handleCoordinatorRemoveClick(userId: number, username: string) {
+    dialog.openDialog({
+      content: `Do you really want to revoke coordinator permission from user ${username}?`,
+      onConfirm: () => removePermission(userId, PermissionType.PROJECT_COORDINATOR)
+    });
+  }
+
   function handleAdminRemoveClick(userId: number, username: string) {
     dialog.openDialog({
       content: `Do you really want to revoke admin permission from user ${username}?`,
@@ -221,6 +230,9 @@ export default function ProjectAssignedMembers() {
   }
   const isProjectEditor = (permissions: PermissionType[]) => {
     return permissions.includes(PermissionType.PROJECT_EDITOR);
+  }
+  const isProjectCoordinator = (permissions: PermissionType[]) => {
+    return permissions.includes(PermissionType.PROJECT_COORDINATOR);
   }
   const isProjectAdmin = (permissions: PermissionType[]) => {
     return permissions.includes(PermissionType.PROJECT_ADMIN);
@@ -283,6 +295,9 @@ export default function ProjectAssignedMembers() {
                       <MenuItem value={PermissionType.PROJECT_EDITOR}><Typography>
                         Editors
                       </Typography></MenuItem>
+                      <MenuItem value={PermissionType.PROJECT_COORDINATOR}><Typography>
+                        Coordinators
+                      </Typography></MenuItem>
                       <MenuItem value={PermissionType.PROJECT_ADMIN}><Typography>
                         Admins
                       </Typography></MenuItem>
@@ -298,6 +313,7 @@ export default function ProjectAssignedMembers() {
                         <TableCell>Username</TableCell>
                         <TableCell align="right">Member</TableCell>
                         <TableCell align="right">Editor</TableCell>
+                        <TableCell align="right">Coordinator</TableCell>
                         <TableCell align="right">Admin</TableCell>
                       </TableRow>
                     </TableHead>
@@ -319,7 +335,7 @@ export default function ProjectAssignedMembers() {
                               ? "Group editors or admins can not be removed from assigned members"
                               : "Remove assigned member from project"} arrow>
                               <Checkbox
-                                disabled={isGroupAdminOrEditor(user.permissions)}
+                                disabled={isAssignedToProject(user.permissions) && isGroupAdminOrEditor(user.permissions)}
                                 checked={isAssignedToProject(user.permissions)}
                                 onChange={(e) => {
                                   if (!e.target.checked) {
@@ -332,9 +348,9 @@ export default function ProjectAssignedMembers() {
                           <TableCell align="right" component="th" scope="row">
                             <Tooltip title={isGroupAdminOrEditor(user.permissions)
                               ? "Editor role of group editors or administrators can not be revoked"
-                              : "Revoke editor role of member"} arrow>
+                              : "Set editor role of member"} arrow>
                               <Checkbox
-                                disabled={isGroupAdminOrEditor(user.permissions)}
+                                disabled={isProjectEditor(user.permissions) && isGroupAdminOrEditor(user.permissions)}
                                 checked={isProjectEditor(user.permissions)}
                                 onChange={(e) => {
                                   if (e.target.checked) {
@@ -348,10 +364,27 @@ export default function ProjectAssignedMembers() {
                           </TableCell>
                           <TableCell align="right" component="th" scope="row">
                             <Tooltip title={isGroupAdmin(user.permissions)
-                              ? "Admin role of group administrators can not be revoked"
-                              : "Revoke admin role of member"} arrow>
+                              ? "Coordinator role of group administrators can not be revoked"
+                              : "Set coordinator role of member"} arrow>
                               <Checkbox
-                                disabled={isGroupAdmin(user.permissions)}
+                                disabled={isProjectCoordinator(user.permissions) && isGroupAdmin(user.permissions)}
+                                checked={isProjectCoordinator(user.permissions)}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    addPermission(user.userId, PermissionType.PROJECT_COORDINATOR);
+                                  } else {
+                                    handleCoordinatorRemoveClick(user.userId, user.username);
+                                  }
+                                }}
+                              />
+                            </Tooltip>
+                          </TableCell>
+                          <TableCell align="right" component="th" scope="row">
+                            <Tooltip title={isGroupAdmin(user.permissions)
+                              ? "Admin role of group administrators can not be revoked"
+                              : "Set admin role of member"} arrow>
+                              <Checkbox
+                                disabled={isProjectAdmin(user.permissions) && isGroupAdmin(user.permissions)}
                                 checked={isProjectAdmin(user.permissions)}
                                 onChange={(e) => {
                                   if (e.target.checked) {

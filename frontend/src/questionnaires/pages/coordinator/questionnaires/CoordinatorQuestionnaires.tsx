@@ -4,20 +4,18 @@ import usePermissions from "../../../../authentication/hooks/usePermissions.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
 import {useNotification} from "../../../../common/notification/context/NotificationProvider.tsx";
-import QuestionnaireBrowser from "./components/QuestionnaireBrowser.tsx";
-import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
 import {QuestionnaireResponseEditorDto} from "../../../dto/QuestionnaireResponseEditorDto.ts";
 import {isValidId} from "../../../../common/utils/isValidId.ts";
 import useAuthJsonFetch from "../../../../common/api/hooks/useAuthJsonFetch.tsx";
+import CoordinatorQuestionnaireBrowser from "./components/CoordinatorQuestionnaireBrowser.tsx";
 
-export default function Questionnaires() {
+export default function CoordinatorQuestionnaires() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
   const [loading, setLoading] = useState<boolean>(true);
   const [questionnaires, setQuestionnaires] = useState<QuestionnaireResponseEditorDto[]>([]);
   const authJsonFetch = useAuthJsonFetch();
   const navigate = useNavigate();
   const notification = useNotification();
-  const dialog = useDialog();
 
   const groupId = useParams()?.groupId;
   const projectId = useParams()?.projectId;
@@ -29,7 +27,7 @@ export default function Questionnaires() {
         return;
       }
       const response = await authJsonFetch({
-        path: `groups/${groupId}/projects/${projectId}/editor/questionnaires`
+        path: `groups/${groupId}/projects/${projectId}/coordinator/questionnaires`
       });
       if (!response?.status || response.status > 399 || !response?.data) {
         notification.openNotification({
@@ -57,21 +55,6 @@ export default function Questionnaires() {
     loadQuestionnaires().then();
   }, [groupId, projectId]);
 
-  const handleAddQuestionnaire = () => {
-    navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires/create`);
-  };
-
-  const handleEditQuestionnaire = (questionnaireId: number) => {
-    navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}/update`);
-  };
-
-  const handleTestQuestionnaire = (questionnaireId: number) => {
-    navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}/tests/new`);
-  };
-
-  const handleViewTests = (questionnaireId: number) => {
-    navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}/tests`);
-  };
   const [questionnairesFilterValue, setQuestionnairesFilterValue] = useState<string>("");
 
   const questionnairesFiltered = useMemo(() => {
@@ -85,47 +68,13 @@ export default function Questionnaires() {
     setQuestionnairesFilterValue(event.target.value.toLowerCase().trim());
   };
 
-  const deleteQuestionnaire = async (questionnaireId: number) => {
-    try {
-      setLoading(true);
-      const response = await authJsonFetch({
-        path: `groups/${groupId}/projects/${projectId}/editor/questionnaires/${questionnaireId}`,
-        method: "DELETE"
-      });
-      if (!response?.status || response.status > 399) {
-        notification.openNotification({
-          type: "error", vertical: "top", horizontal: "center",
-          message: `${response?.error ?? "Failed to delete questionnaire"}`
-        });
-        return;
-      }
-      await loadQuestionnaires();
-    } catch (e) {
-      notification.openNotification({
-        type: "error", vertical: "top", horizontal: "center",
-        message: "Failed to delete questionnaire"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDeleteClick = (questionnaireId: number) => {
-    dialog.openDialog({
-      content: "Do you really wish to remove the selected questionnaire?",
-      confirmText: "Yes, delete this questionnaire", onConfirm: () => {
-        deleteQuestionnaire(questionnaireId);
-      }
-    });
-  };
-
   const handleStatisticClick = (questionnaireId: number) => {
     navigate(`/groups/${groupId}/projects/${projectId}/coordinator/questionnaires/${questionnaireId}/statistics`);
   };
 
   if (loading || permissionsLoading) {
     return <LoadingSpinner/>;
-  } else if (!projectPermissions.includes(PermissionType.PROJECT_EDITOR)) {
+  } else if (!projectPermissions.includes(PermissionType.PROJECT_COORDINATOR)) {
     notification.openNotification({
       type: "error", vertical: "top", horizontal: "center",
       message: "Access Denied: Insufficient permissions"
@@ -135,15 +84,9 @@ export default function Questionnaires() {
   }
 
   return (
-    <QuestionnaireBrowser questionnairesLoading={loading}
-                          questionnaires={questionnairesFiltered}
-                          handleQuestionnaireSearch={handleQuestionnairesSearch}
-                          onAddClick={handleAddQuestionnaire}
-                          onTestClick={handleTestQuestionnaire}
-                          onEditClick={handleEditQuestionnaire}
-                          onDeleteClick={handleDeleteClick}
-                          onViewTestsClick={handleViewTests}
-                          handleStatisticClick={handleStatisticClick}
-                          isAdmin={projectPermissions.includes(PermissionType.PROJECT_ADMIN)}/>
+    <CoordinatorQuestionnaireBrowser questionnairesLoading={loading}
+                                     questionnaires={questionnairesFiltered}
+                                     handleQuestionnaireSearch={handleQuestionnairesSearch}
+                                     handleStatisticClick={handleStatisticClick}/>
   );
 }

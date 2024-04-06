@@ -6,7 +6,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-import java.util.Set;
 
 @Repository
 public interface ApplicationUserDao extends JpaRepository<ApplicationUser, Long> {
@@ -27,6 +26,9 @@ public interface ApplicationUserDao extends JpaRepository<ApplicationUser, Long>
 
   @Query("SELECT u FROM ApplicationUser u LEFT JOIN FETCH u.adminProjects WHERE u.id = :id")
   Optional<ApplicationUser> findByIdAndFetchAdminProjects(@Param("id") Long id);
+
+  @Query("SELECT u FROM ApplicationUser u LEFT JOIN FETCH u.coordinatorProjects WHERE u.id = :id")
+  Optional<ApplicationUser> findByIdAndFetchCoordinatorProjects(@Param("id") Long id);
 
   @Query("SELECT u FROM ApplicationUser u LEFT JOIN FETCH u.editorProjects WHERE u.id = :id")
   Optional<ApplicationUser> findByIdAndFetchEditorProjects(@Param("id") Long id);

@@ -283,10 +283,13 @@ class ApplicationUserServiceTest {
     when(userProvider.getAuthenticatedUser()).thenReturn(authenticatedUser);
     when(passwordEncoder.matches(updateDto.password(), authenticatedUser.getPassword())).thenReturn(
       true);
-    when(registrationTokenDao.findByEmailOrUsername(anyString(), anyString())).thenReturn(Optional.empty());
+    when(registrationTokenDao.findByEmailOrUsername(anyString(), anyString())).thenReturn(
+      Optional.empty());
     when(applicationUserDao.findByEmail(updateDto.email())).thenReturn(Optional.empty());
-    when(emailChangeVerificationTokenDao.findByNewEmail(updateDto.email())).thenReturn(Optional.empty());
-    when(emailChangeVerificationTokenDao.findByUserId(authenticatedUser.getId())).thenReturn(Optional.empty());
+    when(emailChangeVerificationTokenDao.findByNewEmail(updateDto.email())).thenReturn(
+      Optional.empty());
+    when(emailChangeVerificationTokenDao.findByUserId(authenticatedUser.getId())).thenReturn(
+      Optional.empty());
     when(emailChangeVerificationTokenDao.save(any(EmailChangeVerificationToken.class))).thenReturn(
       savedVerificationToken);
     doNothing().when(emailService).sendMailToUserAddress(emailRequestDto);

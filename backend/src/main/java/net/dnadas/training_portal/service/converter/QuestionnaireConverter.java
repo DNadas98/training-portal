@@ -50,7 +50,7 @@ public class QuestionnaireConverter {
       questions);
   }
 
-  private QuestionnaireResponseEditorDto toQuestionnaireResponseEditorDto(
+  public QuestionnaireResponseEditorDto toQuestionnaireResponseEditorDto(
     Questionnaire questionnaire) {
     final UserResponsePublicDto createdByDto;
     final UserResponsePublicDto updatedByDto;

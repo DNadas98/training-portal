@@ -28,7 +28,7 @@ import java.util.Optional;
 public class GroupRequestService {
   private final UserGroupDao userGroupDao;
   private final UserGroupJoinRequestDao requestDao;
-  private final GroupRoleService groupRoleService;
+  private final GroupAdminService groupAdminService;
   private final UserProvider userProvider;
   private final GroupConverter groupConverter;
 
@@ -86,7 +86,7 @@ public class GroupRequestService {
     request.setStatus(updateDto.status());
     request.setUpdatedAt(Instant.now());
     if (request.getStatus().equals(RequestStatus.APPROVED)) {
-      groupRoleService.addMember(groupId, request.getApplicationUser().getActualUsername());
+      groupAdminService.addMember(groupId, request.getApplicationUser().getActualUsername());
       requestDao.delete(request);
     } else {
       requestDao.save(request);

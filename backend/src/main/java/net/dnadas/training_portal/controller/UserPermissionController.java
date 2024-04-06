@@ -3,7 +3,7 @@ package net.dnadas.training_portal.controller;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.model.auth.PermissionType;
-import net.dnadas.training_portal.service.group.GroupRoleService;
+import net.dnadas.training_portal.service.group.GroupAdminService;
 import net.dnadas.training_portal.service.group.project.ProjectService;
 import net.dnadas.training_portal.service.group.project.task.TaskRoleService;
 import org.springframework.http.HttpStatus;
@@ -20,13 +20,13 @@ import java.util.Set;
 @RequestMapping("/api/v1/user/permissions")
 @RequiredArgsConstructor
 public class UserPermissionController {
-  private final GroupRoleService groupRoleService;
+  private final GroupAdminService groupAdminService;
   private final ProjectService projectService;
   private final TaskRoleService taskRoleService;
 
   @GetMapping("/groups/{groupId}")
   public ResponseEntity<?> getOwnPermissionsForGroup(@PathVariable @Min(1) Long groupId) {
-    Set<PermissionType> permissions = groupRoleService.getUserPermissionsForGroup(groupId);
+    Set<PermissionType> permissions = groupAdminService.getUserPermissionsForGroup(groupId);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", permissions));
   }
 

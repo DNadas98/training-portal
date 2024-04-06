@@ -161,13 +161,16 @@ public class ProjectService {
 
     if (user.getGlobalRoles().contains(GlobalRole.ADMIN)) {
       return Set.of(PermissionType.PROJECT_ASSIGNED_MEMBER, PermissionType.PROJECT_EDITOR,
-        PermissionType.PROJECT_ADMIN);
+        PermissionType.PROJECT_COORDINATOR, PermissionType.PROJECT_ADMIN);
     }
 
     Set<PermissionType> permissions = new HashSet<>();
     permissions.add(PermissionType.PROJECT_ASSIGNED_MEMBER);
     if (customPermissionEvaluator.hasProjectEditorAccess(user.getId(), project)) {
       permissions.add(PermissionType.PROJECT_EDITOR);
+    }
+    if (customPermissionEvaluator.hasProjectCoordinatorAccess(user.getId(), project)) {
+      permissions.add(PermissionType.PROJECT_COORDINATOR);
     }
     if (customPermissionEvaluator.hasProjectAdminAccess(user.getId(), project)) {
       permissions.add(PermissionType.PROJECT_ADMIN);

@@ -66,6 +66,24 @@ public class QuestionnaireService {
   }
 
   @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_COORDINATOR')")
+  public List<QuestionnaireResponseEditorDto> getCoordinatorQuestionnaires(
+    Long groupId, Long projectId) {
+    List<Questionnaire> questionnaires = questionnaireDao.findAllByGroupIdAndProjectId(
+      groupId, projectId);
+    return questionnaireConverter.toQuestionnaireResponseEditorDtos(questionnaires);
+  }
+
+  @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_COORDINATOR')")
+  public QuestionnaireResponseEditorDto getCoordinatorQuestionnaire(
+    Long groupId, Long projectId, Long questionnaireId) {
+    Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndId(
+      groupId, projectId, questionnaireId).orElseThrow(QuestionnaireNotFoundException::new);
+    return questionnaireConverter.toQuestionnaireResponseEditorDto(questionnaire);
+  }
+
+  @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_EDITOR')")
   public QuestionnaireResponseEditorDetailsDto getEditorQuestionnaire(
     Long groupId, Long projectId, Long questionnaireId) {

@@ -14,7 +14,7 @@ package net.dnadas.training_portal.dto.group.project.questionnaire;
  * @param userId
  * @param username
  */
-public record QuestionnaireSubmissionStatsAdminDto(
+public record QuestionnaireSubmissionStatsResponseDto(
   String questionnaireName, Integer questionnaireMaxPoints, Long maxPointSubmissionId,
   String maxPointSubmissionCreatedAt,
   Integer maxPointSubmissionReceivedPoints, Long lastSubmissionId, String lastSubmissionCreatedAt,

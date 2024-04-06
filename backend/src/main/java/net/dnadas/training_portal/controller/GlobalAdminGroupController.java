@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.dto.group.GroupCreateRequestDto;
 import net.dnadas.training_portal.dto.group.GroupResponsePrivateDTO;
 import net.dnadas.training_portal.dto.group.GroupResponsePublicDTO;
-import net.dnadas.training_portal.service.group.GroupRoleService;
+import net.dnadas.training_portal.service.group.GroupAdminService;
 import net.dnadas.training_portal.service.group.GroupService;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -23,7 +23,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class GlobalAdminGroupController {
   private final GroupService groupService;
-  private final GroupRoleService groupRoleService;
+  private final GroupAdminService groupAdminService;
   private final MessageSource messageSource;
 
   @GetMapping
@@ -46,7 +46,7 @@ public class GlobalAdminGroupController {
   @DeleteMapping("/{groupId}/admins/{userId}")
   public ResponseEntity<?> removeAdmin(
     @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long userId, Locale locale) {
-    groupRoleService.removeAdmin(groupId, userId);
+    groupAdminService.removeAdmin(groupId, userId);
     return ResponseEntity.status(HttpStatus.OK).body(
       Map.of(
         "message",
