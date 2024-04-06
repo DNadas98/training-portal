@@ -93,12 +93,12 @@ public class QuestionnaireSubmissionService {
       projectId, questionnaireId).orElseThrow(QuestionnaireNotFoundException::new);
     validateRadioButtonQuestions(submissionRequest, questionnaire);
 
-    // Non-editors can only submit active questionnaires without existing max point submission
-    // Editors still can not submit inactive questionnaires
     if (!projectService.getUserPermissionsForProject(groupId, projectId).contains(
       PermissionType.PROJECT_EDITOR)) {
-      verifyActiveAndWithoutMaxPointSubmission(groupId, projectId, questionnaire, user);
+      // Non-editors can only submit active questionnaires, with submission count below 10, without existing max point submission
+      verifySubmittableByMember(groupId, projectId, questionnaire, user);
     } else if (questionnaire.getStatus().equals(QuestionnaireStatus.INACTIVE)) {
+      // Editors still can not submit inactive questionnaires
       throw new QuestionnaireSubmissionFailedException();
     }
 
@@ -188,10 +188,16 @@ public class QuestionnaireSubmissionService {
     }
   }
 
-  private void verifyActiveAndWithoutMaxPointSubmission(
+  private void verifySubmittableByMember(
     Long groupId, Long projectId, Questionnaire questionnaire,
     ApplicationUser user) {
     if (!questionnaire.getStatus().equals(QuestionnaireStatus.ACTIVE)) {
+      throw new QuestionnaireSubmissionFailedException();
+    }
+    Long submissionCount =
+      questionnaireSubmissionDao.countByGroupIdAndProjectIdAndQuestionnaireIdAndUser(
+        groupId, projectId, questionnaire.getId(), user);
+    if (submissionCount >= 10) {
       throw new QuestionnaireSubmissionFailedException();
     }
     Optional<QuestionnaireSubmission> maxPointSubmission =

@@ -123,4 +123,12 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
   Page<QuestionnaireSubmissionStatsInternalDto> getQuestionnaireSubmissionStatisticsWithNonSubmittersByStatus(
     Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status,
     Pageable pageable, String searchValue);
+
+  @Query("SELECT COUNT(DISTINCT qs) FROM QuestionnaireSubmission qs " +
+    "WHERE qs.questionnaire.project.userGroup.id = :groupId " +
+    "AND qs.questionnaire.project.id = :projectId " +
+    "AND qs.questionnaire.id = :id " +
+    "AND qs.user = :user")
+  Long countByGroupIdAndProjectIdAndQuestionnaireIdAndUser(
+    Long groupId, Long projectId, Long id, ApplicationUser user);
 }
