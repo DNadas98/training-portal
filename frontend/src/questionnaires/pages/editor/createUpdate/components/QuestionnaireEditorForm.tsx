@@ -1,11 +1,27 @@
-import {Box, Button, Card, CardContent, Grid, MenuItem, Select, Stack, TextField, Typography} from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  debounce,
+  Grid,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Typography
+} from "@mui/material";
 import DraggableQuestionsList from "./DraggableQuestionsList.tsx";
 import {QuestionRequestDto} from "../../../../dto/QuestionRequestDto.ts";
-import {FormEventHandler, MouseEventHandler} from "react";
+import {FormEventHandler, MouseEventHandler, useCallback, useState} from "react";
 import {QuestionnaireStatus} from "../../../../dto/QuestionnaireStatus.ts";
 import RichTextEditorControlled from "../../../../../common/richTextEditor/RichTextEditorControlled.tsx";
 
 interface QuestionnaireEditorFormProps {
+  onStatusChange(newStatus: QuestionnaireStatus): void;
+
+  onNameChange(newName: string): void;
+
   name: string | undefined,
   setName: (name: string) => void,
   description: string | undefined,
@@ -16,10 +32,22 @@ interface QuestionnaireEditorFormProps {
   handleSubmit: FormEventHandler<HTMLFormElement> | undefined,
   handleBackClick: MouseEventHandler<HTMLButtonElement> | undefined,
   isUpdatePage: boolean,
+
   onUpdateQuestions(updatedQuestions: QuestionRequestDto[]): any,
 }
 
 export default function QuestionnaireEditorForm(props: QuestionnaireEditorFormProps) {
+  const [currentName, setCurrentName] = useState<string>(props.name ?? "");
+
+  const onNameUpdate = debounce((changedName) => {
+    props.setName(changedName)
+  }, 100);
+
+  const handleNameUpdate = useCallback((event) => {
+    const newName = event.target.value;
+    setCurrentName(newName);
+    onNameUpdate(newName);
+  }, [onNameUpdate]);
   return (
     <Grid container spacing={2} justifyContent={"center"} alignItems={"top"}>
       <Grid item xs={10}>
@@ -38,9 +66,9 @@ export default function QuestionnaireEditorForm(props: QuestionnaireEditorFormPr
                     inputProps={{length: {min: 1, max: 100}}}
                     fullWidth
                     label="Questionnaire Name"
-                    value={props.name}
+                    value={currentName}
                     variant={"outlined"}
-                    onChange={(e) => props.setName(e.target.value)}
+                    onChange={handleNameUpdate}
                   />
                   <RichTextEditorControlled id={"questionnaire-description"} value={props.description ?? ""}
                                             onChange={(currentValue: string) => props.setDescription(currentValue)}/>
@@ -54,7 +82,7 @@ export default function QuestionnaireEditorForm(props: QuestionnaireEditorFormPr
                         <Select
                           value={props.status}
                           required
-                          onChange={(e) => props.setStatus(e.target.value as QuestionnaireStatus)}
+                          onChange={(e) => props.onStatusChange(e.target.value as QuestionnaireStatus)}
                         >
                           <MenuItem value={QuestionnaireStatus.INACTIVE}>Inactive</MenuItem>
                           <MenuItem value={QuestionnaireStatus.TEST}>Test</MenuItem>

@@ -44,6 +44,13 @@ export default function QuestionnaireEditor() {
     setQuestions(updatedQuestions);
   }
 
+  const handleStatusChange =(newStatus)=> setStatus(newStatus);
+
+  const handleNameChange = (newName:string) => {
+    console.log(newName)
+    setName(newName);
+  };
+
   async function loadQuestionnaire() {
     try {
       const response = await authJsonFetch({
@@ -174,6 +181,7 @@ export default function QuestionnaireEditor() {
     navigate(`/groups`, {replace: true});
     return <></>;
   }
+
   return (
     <QuestionnaireEditorForm isUpdatePage={isUpdatePage}
                              name={name}
@@ -185,7 +193,9 @@ export default function QuestionnaireEditor() {
                              questions={questions}
                              handleSubmit={handleSubmit}
                              handleBackClick={handleBackClick}
-                             onUpdateQuestions={handleUpdateQuestions}/>
+                             onUpdateQuestions={handleUpdateQuestions}
+                             onStatusChange={handleStatusChange}
+                             onNameChange={handleNameChange}/>
   );
 }
 
