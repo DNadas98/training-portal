@@ -20,9 +20,9 @@ public class QuestionnaireController {
   @GetMapping
   public ResponseEntity<?> getQuestionnaires(
     @PathVariable Long groupId, @PathVariable Long projectId,
-    @RequestParam(required = false) String withMaxPoints) {
+    @RequestParam(required = false) Boolean maxPoints) {
     List<QuestionnaireResponseDto> questionnaires = questionnaireService.getActiveQuestionnaires(
-      groupId, projectId, withMaxPoints != null && withMaxPoints.equals("true"));
+      groupId, projectId, maxPoints);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", questionnaires));
   }
 

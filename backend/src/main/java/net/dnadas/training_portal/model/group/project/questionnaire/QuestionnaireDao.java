@@ -1,5 +1,6 @@
 package net.dnadas.training_portal.model.group.project.questionnaire;
 
+import net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireResponseDto;
 import net.dnadas.training_portal.model.auth.ApplicationUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -32,16 +33,38 @@ public interface QuestionnaireDao extends JpaRepository<Questionnaire, Long> {
     "AND q.id = :id")
   Optional<Questionnaire> findByGroupIdAndProjectIdAndId(Long groupId, Long projectId, Long id);
 
-  @Query("SELECT q FROM Questionnaire q " +
-    "WHERE q.project.userGroup.id = :groupId " +
-    "AND q.project.id = :projectId " +
-    "AND q.status = 'ACTIVE' " +
-    "AND NOT EXISTS (SELECT qs FROM QuestionnaireSubmission qs " +
-    "WHERE qs.questionnaire = q " +
-    "AND qs.user = :user " +
-    "AND qs.maxPoints = qs.receivedPoints) " +
-    "ORDER BY q.createdAt DESC")
-  List<Questionnaire> findAllByGroupIdAndProjectIdAndActiveStatusAndNoMaxPointSubmission(
+  @Query(
+    "SELECT DISTINCT new net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireResponseDto(" +
+      "q.id, q.name, q.description, q.maxPoints, COUNT(DISTINCT qs.id)) " +
+      "FROM Questionnaire q " +
+      "LEFT JOIN QuestionnaireSubmission qs " +
+      "ON qs.questionnaire = q " +
+      "AND qs.user = :user " +
+      "WHERE q.project.userGroup.id = :groupId " +
+      "AND q.project.id = :projectId " +
+      "AND q.status = 'ACTIVE' " +
+      "AND NOT EXISTS (SELECT 1 FROM QuestionnaireSubmission qs2 " +
+      "WHERE qs2.questionnaire = q AND qs2.receivedPoints = qs2.maxPoints AND qs2.user = :user)" +
+      "GROUP BY q.id " +
+      "ORDER BY q.name DESC")
+  List<QuestionnaireResponseDto> findAllByGroupIdAndProjectIdAndActiveStatusAndNoMaxPointSubmission(
+    Long groupId, Long projectId, ApplicationUser user);
+
+  @Query(
+    "SELECT DISTINCT new net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireResponseDto(" +
+      "q.id, q.name, q.description, q.maxPoints, COUNT(DISTINCT qs.id)) " +
+      "FROM Questionnaire q " +
+      "LEFT JOIN QuestionnaireSubmission qs " +
+      "ON qs.questionnaire = q " +
+      "AND qs.user = :user " +
+      "AND qs.receivedPoints = qs.maxPoints " +
+      "WHERE q.project.userGroup.id = :groupId " +
+      "AND q.project.id = :projectId " +
+      "AND q.status = 'ACTIVE' " +
+      "GROUP BY q.id " +
+      "HAVING COUNT(DISTINCT qs.id) > 0 " +
+      "ORDER BY q.name DESC")
+  List<QuestionnaireResponseDto> findAllByGroupIdAndProjectIdAndActiveStatusAndMaxPointSubmission(
     Long groupId, Long projectId, ApplicationUser user);
 
   @Query("SELECT q FROM Questionnaire q " +

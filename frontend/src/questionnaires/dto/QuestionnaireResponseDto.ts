@@ -3,4 +3,5 @@ export interface QuestionnaireResponseDto {
   name: string;
   description: string;
   maxPoints: number;
+  submissionCount?: number;
 }

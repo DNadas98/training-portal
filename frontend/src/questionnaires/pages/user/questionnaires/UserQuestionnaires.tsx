@@ -29,7 +29,7 @@ export default function UserQuestionnaires() {
       }
       setQuestionnairesLoading(true);
       const response = await authJsonFetch({
-        path: `groups/${groupId}/projects/${projectId}/questionnaires?withMaxPoints=false`
+        path: `groups/${groupId}/projects/${projectId}/questionnaires?maxPoints=false`
       });
       if (!response?.status || response.status > 399 || !response?.data) {
         notification.openNotification({
@@ -55,7 +55,7 @@ export default function UserQuestionnaires() {
       }
       setMaxPointQuestionnairesLoading(true);
       const response = await authJsonFetch({
-        path: `groups/${groupId}/projects/${projectId}/questionnaires?withMaxPoints=true`
+        path: `groups/${groupId}/projects/${projectId}/questionnaires?maxPoints=true`
       });
       if (!response?.status || response.status > 399 || !response?.data) {
         notification.openNotification({

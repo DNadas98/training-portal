@@ -30,27 +30,28 @@ public class QuestionnaireService {
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
   public List<QuestionnaireResponseDto> getActiveQuestionnaires(
-    Long groupId, Long projectId, Boolean withMaxPoints) {
+    Long groupId, Long projectId, Boolean maxPoints) {
     ApplicationUser user = userProvider.getAuthenticatedUser();
-    List<Questionnaire> questionnaires;
-    if (withMaxPoints) {
+    List<QuestionnaireResponseDto> questionnaires;
+    if (maxPoints) {
       questionnaires =
-        questionnaireDao.findAllByGroupIdAndProjectIdAndMaxPointSubmissionExists(
+        questionnaireDao.findAllByGroupIdAndProjectIdAndActiveStatusAndMaxPointSubmission(
           groupId, projectId, user);
     } else {
       questionnaires =
         questionnaireDao.findAllByGroupIdAndProjectIdAndActiveStatusAndNoMaxPointSubmission(
           groupId, projectId, user);
     }
-    return questionnaireConverter.toQuestionnaireResponseDtos(questionnaires);
+    return questionnaires;
   }
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
   public QuestionnaireResponseDetailsDto getQuestionnaire(
     Long groupId, Long projectId, Long questionnaireId) {
-    Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndIdAndActiveStatusWithQuestions(
-      groupId, projectId, questionnaireId).orElseThrow(QuestionnaireNotFoundException::new);
+    Questionnaire questionnaire =
+      questionnaireDao.findByGroupIdAndProjectIdAndIdAndActiveStatusWithQuestions(
+        groupId, projectId, questionnaireId).orElseThrow(QuestionnaireNotFoundException::new);
     return questionnaireConverter.toQuestionnaireResponseDetailsDto(
       questionnaire);
   }

@@ -20,13 +20,6 @@ public class QuestionnaireConverter {
   private final UserConverter userConverter;
   private final DateTimeService dateTimeService;
 
-  public List<QuestionnaireResponseDto> toQuestionnaireResponseDtos(
-    List<Questionnaire> questionnaires) {
-    return questionnaires.stream().map(
-      questionnaire -> new QuestionnaireResponseDto(questionnaire.getId(), questionnaire.getName(),
-        questionnaire.getDescription(), questionnaire.getMaxPoints())).collect(Collectors.toList());
-  }
-
   @Transactional(readOnly = true)
   public QuestionnaireResponseDetailsDto toQuestionnaireResponseDetailsDto(
     Questionnaire questionnaire) {

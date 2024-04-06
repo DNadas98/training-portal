@@ -24,7 +24,7 @@ interface UserQuestionnaireListProps {
 }
 
 export default function UserQuestionnaireList(props: UserQuestionnaireListProps) {
-
+  const MAX_SUBMISSION_COUNT = 10
   return props.loading
     ? <LoadingSpinner/>
     : props.questionnaires?.length > 0
@@ -48,12 +48,18 @@ export default function UserQuestionnaireList(props: UserQuestionnaireListProps)
                     wordBreak: "break-word",
                     paddingRight: 1
                   }}>
-                    Max Points: {questionnaire.maxPoints}
+                    Past Submissions: {questionnaire.submissionCount}
                   </Typography>
                 </Grid>
               </Grid>
             </AccordionSummary>
             <AccordionDetails>
+              <Typography variant={"body1"} sx={{
+                wordBreak: "break-word",
+                paddingRight: 1
+              }}>
+                Max Points: {questionnaire.maxPoints}
+              </Typography>
               <RichTextDisplay content={questionnaire.description}/>
             </AccordionDetails>
             <AccordionActions>
@@ -64,11 +70,12 @@ export default function UserQuestionnaireList(props: UserQuestionnaireListProps)
                   View past submissions
                 </Button>
                 : <Stack spacing={0.5} width={"100%"}>
-                  <Button sx={{width: "fit-content", textAlign: "left"}} onClick={() => {
-                    props.handleFillOutClick(questionnaire.id);
-                  }}>
-                    Fill out this questionnaire
-                  </Button>
+                  {Number(questionnaire.submissionCount) < MAX_SUBMISSION_COUNT ?
+                    <Button sx={{width: "fit-content", textAlign: "left"}} onClick={() => {
+                      props.handleFillOutClick(questionnaire.id);
+                    }}>
+                      Fill out this questionnaire
+                    </Button> : <></>}
                   <Button sx={{width: "fit-content"}} onClick={() => {
                     props.handlePastSubmissionsClick(questionnaire.id);
                   }}>
@@ -86,7 +93,7 @@ export default function UserQuestionnaireList(props: UserQuestionnaireListProps)
               {"You haven't submitted a questionnaire with maximum points for this project yet."}
             </Typography>
             : <Typography>
-              {"There are no active questionnaires available for this project right now."}
+              {"There are no submittable questionnaires available for this project right now."}
             </Typography>
           }
 
