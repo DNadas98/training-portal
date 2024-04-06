@@ -30,6 +30,7 @@ public class QuestionnaireSubmissionService {
   private final QuestionnaireSubmissionConverter questionnaireSubmissionConverter;
   private final UserProvider userProvider;
   private final ProjectService projectService;
+  private static final int MAX_MEMBER_QUESTIONNAIRE_SUBMISSION_COUNT = 10;
 
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
   public Page<QuestionnaireSubmissionResponseDto> getOwnQuestionnaireSubmissions(
@@ -197,7 +198,7 @@ public class QuestionnaireSubmissionService {
     Long submissionCount =
       questionnaireSubmissionDao.countByGroupIdAndProjectIdAndQuestionnaireIdAndUser(
         groupId, projectId, questionnaire.getId(), user);
-    if (submissionCount >= 10) {
+    if (submissionCount >= MAX_MEMBER_QUESTIONNAIRE_SUBMISSION_COUNT) {
       throw new QuestionnaireSubmissionFailedException();
     }
     Optional<QuestionnaireSubmission> maxPointSubmission =
