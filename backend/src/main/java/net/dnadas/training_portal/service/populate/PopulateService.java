@@ -45,7 +45,7 @@ public class PopulateService {
   private final static int QUESTIONNAIRE_ANSWERS_COUNT = 4;
   private final static int TEST_MEMBERS_COUNT = 500;
   private final static int MEMBER_SUBMISSIONS_COUNT = 10;
-  private final static int TEST_EDITORS_COUNT = 500;
+  private final static int TEST_EDITORS_COUNT = 10;
   private final static int EDITOR_SUBMISSIONS_COUNT = 20;
   // ------------------------------------------------------------------------------------------------
   private final ApplicationUserDao applicationUserDao;
@@ -66,6 +66,7 @@ public class PopulateService {
       log.warn("Database has already been populated with example data");
       return;
     }
+    log.warn("Database population with example data is in progress...");
 
     List<ApplicationUser> testUsers = createApplicationUsers(TEST_MEMBERS_COUNT);
     List<ApplicationUser> testEditors = createEditors(TEST_EDITORS_COUNT);
