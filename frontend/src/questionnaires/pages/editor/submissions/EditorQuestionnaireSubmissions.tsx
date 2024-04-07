@@ -5,7 +5,7 @@ import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useNotification} from "../../../../common/notification/context/NotificationProvider.tsx";
 import {isValidId} from "../../../../common/utils/isValidId.ts";
 import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
-import {Card, CardContent, CardHeader, Grid, Stack, Typography} from "@mui/material";
+import {Button, Card, CardActions, CardContent, CardHeader, Grid, Stack, Typography} from "@mui/material";
 import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
 import useAuthJsonFetch from "../../../../common/api/hooks/useAuthJsonFetch.tsx";
 import {QuestionnaireSubmissionResponseEditorDto} from "../../../dto/QuestionnaireSubmissionResponseEditorDto.ts";
@@ -153,6 +153,7 @@ export default function EditorQuestionnaireSubmissions() {
       });
       searchParams.set("page", "1");
       navigate({search: searchParams.toString()});
+      loadQuestionnaireSubmissions();
     } catch (e) {
       notification.openNotification({
         type: "error", vertical: "top", horizontal: "center",
@@ -189,6 +190,10 @@ export default function EditorQuestionnaireSubmissions() {
     return <></>;
   }
 
+  function handleBackClick(): void {
+        navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`)
+    }
+
   return (
     <Grid container spacing={2} justifyContent={"center"} alignItems={"top"}>
       <Grid item xs={10} sm={10} md={9} lg={8}><Stack spacing={2}><Card>
@@ -216,6 +221,11 @@ export default function EditorQuestionnaireSubmissions() {
             <CardHeader title={"No submissions were found for this questionnaire."}
                         sx={{textAlign: "center"}}/>
           </Card>}
+        <Card><CardActions>
+          <Button sx={{width: "fit-content"}} onClick={handleBackClick}>
+            Back To Questionnaires
+          </Button>
+        </CardActions></Card>
       </Stack>
       </Grid>
     </Grid>
