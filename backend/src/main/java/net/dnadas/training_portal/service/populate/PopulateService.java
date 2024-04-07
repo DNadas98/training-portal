@@ -63,7 +63,7 @@ public class PopulateService {
     defaultAdminInitializer.createDefaultSystemAdministratorAccount();
 
     if (applicationUserDao.count() > 1) {
-      log.info("Database has already been populated with example data");
+      log.warn("Database has already been populated with example data");
       return;
     }
 
@@ -101,7 +101,7 @@ public class PopulateService {
 
     populateEditorQuestionnaireSubmissions(testEditors, questionnaire);
 
-    log.info("Database has been populated with example data successfully");
+    log.warn("Database has been populated with example data successfully");
   }
 
   private void populateEditorQuestionnaireSubmissions(

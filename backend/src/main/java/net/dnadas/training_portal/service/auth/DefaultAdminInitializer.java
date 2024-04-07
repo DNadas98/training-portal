@@ -1,6 +1,5 @@
 package net.dnadas.training_portal.service.auth;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.dto.auth.RegisterRequestDto;
 import net.dnadas.training_portal.exception.validation.CustomValidationException;
@@ -41,7 +40,7 @@ public class DefaultAdminInitializer {
     Boolean adminExists = applicationUserDao.findAll(PageRequest.of(0, 1)).stream().findAny()
       .isPresent();
     if (adminExists) {
-      logger.info("User accounts already exist, skipping system administrator initialization");
+      logger.warn("User accounts already exist, skipping system administrator initialization");
       return;
     }
     RegisterRequestDto dto = new RegisterRequestDto(username, email, password);
@@ -57,6 +56,6 @@ public class DefaultAdminInitializer {
       hashedPassword);
     defaultAdminUser.addGlobalRole(GlobalRole.ADMIN);
     applicationUserDao.save(defaultAdminUser);
-    logger.info("Default system administrator account initialized successfully");
+    logger.warn("Default system administrator account initialized successfully");
   }
 }
