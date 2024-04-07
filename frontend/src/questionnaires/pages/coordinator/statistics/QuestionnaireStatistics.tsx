@@ -114,6 +114,11 @@ export default function QuestionnaireStatistics() {
       setQuestionnaireStatistics(pageableResponse.data as QuestionnaireSubmissionStatisticsResponseDto[]);
       const newTotalPages = Number(pageableResponse.totalPages);
       setTotalPages((newTotalPages && newTotalPages > 0) ? newTotalPages : 1);
+      const newPage = pageableResponse.currentPage;
+      const newSize=pageableResponse.size;
+      searchParams.set("page", `${newPage}`);
+      searchParams.set("size", `${newSize}`);
+      navigate(`?${searchParams.toString()}`, { replace: true });
     } catch (e) {
       setQuestionnaireStatistics([]);
       notification.openNotification({
@@ -133,16 +138,28 @@ export default function QuestionnaireStatistics() {
     }, 300);
 
     loadQuestionnaire();
+    loadQuestionnaireStatistics(usernameSearchValue,page,size,displayedQuestionnaireStatus);
   }, []);
 
   const handleStatisticsSearch = (event: any) => {
     const searchValue = event.target.value.toLowerCase().trim();
     setUsernameSearchValue(searchValue);
+    reloadStatisticsDebouncedRef.current?.(searchValue, 1, size, displayedQuestionnaireStatus);
   };
 
-  useEffect(() => {
-    reloadStatisticsDebouncedRef.current?.(usernameSearchValue, page, size, displayedQuestionnaireStatus);
-  }, [page, size, usernameSearchValue, displayedQuestionnaireStatus]);
+  const handleSetStatus = (event: any) => {
+    const newStatus = event.target.value;
+    setDisplayedQuestionnaireStatus(newStatus);
+    reloadStatisticsDebouncedRef.current?.(usernameSearchValue, 1, size, newStatus);
+  }
+
+  function handleSizeChange(newPage: number, newSize: number): void {
+    reloadStatisticsDebouncedRef.current?.(usernameSearchValue, newPage, newSize, displayedQuestionnaireStatus);
+  }
+
+  function handlePageChange(newPage: number): void {
+    reloadStatisticsDebouncedRef.current?.(usernameSearchValue, newPage, size, displayedQuestionnaireStatus);
+  }
 
   const hasValidSubmission = (stat: QuestionnaireSubmissionStatisticsResponseDto) => {
     return stat.maxPointSubmissionId !== null && stat.maxPointSubmissionId !== undefined &&
@@ -217,9 +234,7 @@ export default function QuestionnaireStatistics() {
                        onChange={handleStatisticsSearch}/>
           </Grid>
           <Grid item xs={12} sm={"auto"}>
-            <Select value={displayedQuestionnaireStatus} onChange={(event: any) => {
-              setDisplayedQuestionnaireStatus(event.target.value);
-            }}
+            <Select value={displayedQuestionnaireStatus} onChange={handleSetStatus}
                     sx={{minWidth: 150}}>
               <MenuItem value={QuestionnaireStatus.ACTIVE}><Typography>
                 Active
@@ -230,7 +245,9 @@ export default function QuestionnaireStatistics() {
             </Select>
           </Grid>
           <Grid item xs={12} sm={"auto"}>
-            <URLQueryPagination totalPages={totalPages} defaultPage={1}/>
+            <URLQueryPagination totalPages={totalPages} defaultPage={1}
+            onPageChange={handlePageChange}
+            onSizeChange={handleSizeChange}/>
           </Grid>
         </Grid></Grid>
         <Grid item xs={12}><TableContainer component={Paper}>

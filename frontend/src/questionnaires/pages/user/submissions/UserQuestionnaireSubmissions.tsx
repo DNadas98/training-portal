@@ -127,16 +127,7 @@ export default function UserQuestionnaireSubmissions() {
     loadQuestionnaireSubmissions();
   }, [groupId, projectId, page, size]);
 
-  if (permissionsLoading || questionnaireSubmissionsLoading || maxPointQuestionnaireSubmissionsLoading) {
-    return <LoadingSpinner/>;
-  } else if (!projectPermissions.length) {
-    notification.openNotification({
-      type: "error", vertical: "top", horizontal: "center",
-      message: "Access Denied: Insufficient permissions"
-    });
-    navigate(`/groups/${groupId}/projects`);
-    return <></>;
-  }
+
 
   async function deleteSubmission(submissionId: number) {
     try {
@@ -174,6 +165,17 @@ export default function UserQuestionnaireSubmissions() {
       content: "Are you sure, you would like to delete this questionnaire submission?",
       onConfirm: () => deleteSubmission(submissionId)
     });
+  }
+
+  if (permissionsLoading || questionnaireSubmissionsLoading || maxPointQuestionnaireSubmissionsLoading) {
+    return <LoadingSpinner/>;
+  } else if (!projectPermissions.length) {
+    notification.openNotification({
+      type: "error", vertical: "top", horizontal: "center",
+      message: "Access Denied: Insufficient permissions"
+    });
+    navigate(`/groups/${groupId}/projects`);
+    return <></>;
   }
 
   return (

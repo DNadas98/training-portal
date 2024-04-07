@@ -12,7 +12,7 @@ spring:
       hibernate:
         format_sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   mail:
     host: ${BACKEND_SMTP_HOST}
     port: ${BACKEND_SMTP_PORT}
