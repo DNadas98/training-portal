@@ -15,6 +15,8 @@ import net.dnadas.training_portal.model.request.ProjectJoinRequestDao;
 import net.dnadas.training_portal.model.request.RequestStatus;
 import net.dnadas.training_portal.service.auth.UserProvider;
 import net.dnadas.training_portal.service.converter.ProjectConverter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,14 +70,13 @@ public class ProjectRequestService {
 
   @Transactional
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ADMIN')")
-  public List<ProjectJoinRequestResponseDto> getJoinRequestsOfProject(
-    Long groupId, Long projectId) {
-    Project project = projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
+  public Page<ProjectJoinRequestResponseDto> getJoinRequestsOfProject(
+    Long groupId, Long projectId, String search, Pageable pageable) {
+    projectDao.findByIdAndGroupId(projectId, groupId).orElseThrow(
       () -> new ProjectNotFoundException(projectId));
-    List<ProjectJoinRequest> requests = requestDao.findByProjectAndStatus(
-      project,
-      RequestStatus.PENDING);
-    return projectConverter.getProjectJoinRequestResponseDtos(requests);
+    Page<ProjectJoinRequest> requests = requestDao.findByProjectAndStatus(groupId, projectId,
+      RequestStatus.PENDING, search, pageable);
+    return requests.map(projectConverter::getProjectJoinRequestResponseDto);
   }
 
   @Transactional(rollbackFor = Exception.class)

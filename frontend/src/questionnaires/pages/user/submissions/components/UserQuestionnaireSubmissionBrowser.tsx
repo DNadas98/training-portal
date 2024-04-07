@@ -4,6 +4,7 @@ import {QuestionnaireSubmissionResponseDto} from "../../../../dto/QuestionnaireS
 import QuestionnaireSubmissionCard from "./QuestionnaireSubmissionCard.tsx";
 import BackButton from "../../../../../common/utils/components/BackButton.tsx";
 import URLQueryPagination from "../../../../../common/pagination/URLQueryPagination.tsx";
+import {MouseEventHandler} from "react";
 
 interface UserQuestionnaireSubmissionBrowserProps {
   questionnaireSubmissions: QuestionnaireSubmissionResponseDto[],
@@ -15,7 +16,8 @@ interface UserQuestionnaireSubmissionBrowserProps {
   onDeleteClick(id): void,
 
   onQuestionnaireSubmissionSelectClick: (id: number) => Promise<void>,
-  selectedQuestionnaireSubmissionLoading: boolean
+  selectedQuestionnaireSubmissionLoading: boolean,
+  handleBackClick: MouseEventHandler<HTMLAnchorElement> | undefined | MouseEventHandler<HTMLButtonElement>
 }
 
 export default function UserQuestionnaireSubmissionBrowser(props: UserQuestionnaireSubmissionBrowserProps) {
@@ -58,6 +60,11 @@ export default function UserQuestionnaireSubmissionBrowser(props: UserQuestionna
                                              selectedQuestionnaireSubmissionLoading={props.selectedQuestionnaireSubmissionLoading}
                                              maxPoints={false}
                                              onDeleteClick={props.onDeleteClick}/>
+            <Card><CardActions>
+              <Button sx={{width: "fit-content"}} onClick={props.handleBackClick}>
+                Back To Questionnaires
+              </Button>
+            </CardActions></Card>
           </Stack>
           : !props.maxPointQuestionnaireSubmission ? <Card>
             <CardHeader title={"No submissions were found for this questionnaire."}

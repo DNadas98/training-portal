@@ -65,7 +65,7 @@ export default function AddGroup() {
   };
 
   if (!authentication.getRoles()?.includes(GlobalRole.ADMIN)) {
-    navigate(-1);
+    navigate("/groups");
     notification.openNotification({
       type: "error", vertical: "top", horizontal: "center",
       message: "Access Denied: Insufficient Permissions"

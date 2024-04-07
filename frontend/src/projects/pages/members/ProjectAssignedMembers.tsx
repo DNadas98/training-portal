@@ -1,5 +1,5 @@
-import {useNavigate, useParams} from "react-router-dom";
-import {useEffect, useMemo, useState} from "react";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {useEffect, useRef, useState} from "react";
 import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
@@ -14,6 +14,7 @@ import {
   CardContent,
   CardHeader,
   Checkbox,
+  debounce,
   Grid,
   MenuItem,
   Select,
@@ -31,6 +32,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import {ApiResponsePageableDto} from "../../../common/api/dto/ApiResponsePageableDto.ts";
+import URLQueryPagination from "../../../common/pagination/URLQueryPagination.tsx";
 
 
 export default function ProjectAssignedMembers() {
@@ -48,6 +51,15 @@ export default function ProjectAssignedMembers() {
   const [displayedUsers, setDisplayedUsers] = useState<UserResponseWithPermissionsDto[]>([]);
   const [displayedUsersLoading, setDisplayedUsersLoading] = useState<boolean>(true);
   const [displayedPermissionType, setDisplayedPermissionType] = useState<PermissionType>(PermissionType.PROJECT_ASSIGNED_MEMBER)
+  const [permissionChangeLoading, setPermissionChangeLoading] = useState<boolean>(false);
+
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const [totalPages, setTotalPages] = useState(1);
+  const page = parseInt(searchParams.get('page') || '1', 10);
+  const size = parseInt(searchParams.get('size') || '10', 10);
+  const [usernameSearchValue, setUsernameSearchValue] = useState<string>("");
+
 
   function handleErrorNotification(message?: string) {
     notification.openNotification({
@@ -86,7 +98,7 @@ export default function ProjectAssignedMembers() {
     }
   }
 
-  function getPathByPermissionType(permissionType: PermissionType = displayedPermissionType) {
+  function getPathByPermissionType(permissionType: PermissionType) {
     const basePath = `groups/${groupId}/projects/${projectId}`
     switch (permissionType) {
       case PermissionType.PROJECT_EDITOR:
@@ -100,18 +112,26 @@ export default function ProjectAssignedMembers() {
     }
   }
 
-  async function loadUsers() {
+  async function loadUsers(searchValue: string, currentPage: number, currentSize: number, currentPermissionType: PermissionType) {
     try {
       setDisplayedUsersLoading(true);
-      const path = getPathByPermissionType();
+      const path = getPathByPermissionType(currentPermissionType);
       const response = await authJsonFetch({
-        path: path, method: "GET"
+        path: `${path}?page=${currentPage}&size=${currentSize}&search=${searchValue}`, method: "GET"
       });
       if (!response?.status || response.status > 404 || !response?.data) {
         setDisplayedUsers([]);
         return handleErrorNotification(response?.error ?? "Failed to load members list");
       }
+      const pageableResponse = response as unknown as ApiResponsePageableDto;
       setDisplayedUsers(response.data);
+      const newTotalPages = Number(pageableResponse.totalPages);
+      setTotalPages((newTotalPages && newTotalPages > 0) ? newTotalPages : 1);
+      const newPage = pageableResponse.currentPage;
+      const newSize = pageableResponse.size;
+      searchParams.set("page", `${newPage}`);
+      searchParams.set("size", `${newSize}`);
+      navigate(`?${searchParams.toString()}`, {replace: true});
     } catch (e) {
       setDisplayedUsers([]);
       handleErrorNotification("Failed to load members list");
@@ -120,32 +140,39 @@ export default function ProjectAssignedMembers() {
     }
   }
 
+  const reloadUsersDebounced = useRef<(searchValue: string, currentPage: number, currentSize: number, currentPermissionType: PermissionType) => void>();
+
   useEffect(() => {
-    loadProject()
+    reloadUsersDebounced.current = debounce((searchValue, currentPage, currentSize, currentPermissionType) => {
+      loadUsers(searchValue, currentPage, currentSize, currentPermissionType);
+    }, 300);
+    loadProject();
+    loadUsers(usernameSearchValue, page, size, displayedPermissionType);
   }, []);
 
-  useEffect(() => {
-    loadUsers()
-  }, [displayedPermissionType]);
-
-  const [usersFilterValue, setUsersFilterValue] = useState<string>("");
-  const displayedUsersFiltered = useMemo(() => {
-    if (!displayedUsers?.length) {
-      return [];
-    }
-    return displayedUsers.filter(user => {
-        return user.username.toLowerCase().includes(usersFilterValue)
-      }
-    );
-  }, [displayedUsers, usersFilterValue]);
-
   const handleUserSearch = (event: any) => {
-    setUsersFilterValue(event.target.value.toLowerCase().trim());
+    const newSearchValue = event.target.value.toLowerCase().trim();
+    setUsernameSearchValue(newSearchValue);
+    reloadUsersDebounced.current?.(newSearchValue, 1, size, displayedPermissionType);
   };
+
+  const handleDisplayedPermissionTypeChange = (event: any) => {
+    const newPermissionType = event.target.value;
+    setDisplayedPermissionType(newPermissionType);
+    reloadUsersDebounced.current?.(usernameSearchValue, 1, size, newPermissionType);
+  }
+
+  function handleSizeChange(newPage: number, newSize: number): void {
+    reloadUsersDebounced.current?.(usernameSearchValue, newPage, newSize, displayedPermissionType);
+  }
+
+  function handlePageChange(newPage: number): void {
+    reloadUsersDebounced.current?.(usernameSearchValue, newPage, size, displayedPermissionType);
+  }
 
   async function removePermission(userId: number, permissionType: PermissionType) {
     try {
-      setDisplayedUsersLoading(true);
+      setPermissionChangeLoading(true);
       const path = getPathByPermissionType(permissionType);
       const response = await authJsonFetch({
         path: `${path}/${userId}`, method: "DELETE"
@@ -157,18 +184,18 @@ export default function ProjectAssignedMembers() {
       notification.openNotification({
         type: "success", vertical: "top", horizontal: "center", message: response.message
       })
-      loadUsers();
+      reloadUsersDebounced.current?.(usernameSearchValue, page, size, displayedPermissionType);
     } catch (e) {
       setDisplayedUsers([]);
       handleErrorNotification("Failed to revoke permission");
     } finally {
-      setDisplayedUsersLoading(false);
+      setPermissionChangeLoading(false);
     }
   }
 
   async function addPermission(userId: number, permissionType: PermissionType) {
     try {
-      setDisplayedUsersLoading(true);
+      setPermissionChangeLoading(true);
       const path = getPathByPermissionType(permissionType);
       const response = await authJsonFetch({
         path: `${path}?userId=${userId}`, method: "POST"
@@ -179,13 +206,13 @@ export default function ProjectAssignedMembers() {
       }
       notification.openNotification({
         type: "success", vertical: "top", horizontal: "center", message: response.message
-      })
-      loadUsers();
+      });
+      reloadUsersDebounced.current?.(usernameSearchValue, page, size, displayedPermissionType);
     } catch (e) {
       setDisplayedUsers([]);
       handleErrorNotification("Failed to add permission");
     } finally {
-      setDisplayedUsersLoading(false);
+      setPermissionChangeLoading(false);
     }
   }
 
@@ -278,16 +305,21 @@ export default function ProjectAssignedMembers() {
             : <Grid container>
               <Grid item xs={12}>
                 <Grid container spacing={1}>
-                  <Grid item xs={12} sm={true}>
-                    <TextField type={"search"}
-                               placeholder={"Search by username"}
-                               fullWidth
-                               onChange={handleUserSearch}/>
+                  <Grid container spacing={2} alignItems={"center"} justifyContent={"center"}>
+                    <Grid item xs={12} md={true}>
+                      <TextField type={"search"}
+                                 placeholder={"Search by username"}
+                                 fullWidth
+                                 value={usernameSearchValue}
+                                 onChange={handleUserSearch}/>
+                    </Grid>
+                    <Grid item xs={12} md={"auto"}>
+                      <URLQueryPagination totalPages={totalPages} defaultPage={1} onPageChange={handlePageChange}
+                                          onSizeChange={handleSizeChange}/>
+                    </Grid>
                   </Grid>
                   <Grid item xs={12} sm={"auto"}>
-                    <Select value={displayedPermissionType} onChange={(event: any) => {
-                      setDisplayedPermissionType(event.target.value);
-                    }}
+                    <Select value={displayedPermissionType} onChange={handleDisplayedPermissionTypeChange}
                             sx={{minWidth: 150}}>
                       <MenuItem value={PermissionType.PROJECT_ASSIGNED_MEMBER}><Typography>
                         All Members
@@ -318,7 +350,7 @@ export default function ProjectAssignedMembers() {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {displayedUsersFiltered.map((user) => (
+                      {displayedUsers.map((user) => (
                         <TableRow
                           key={user.userId}
                           sx={{'&:last-child td, &:last-child th': {border: 0}}}
@@ -335,7 +367,7 @@ export default function ProjectAssignedMembers() {
                               ? "Group editors or admins can not be removed from assigned members"
                               : "Remove assigned member from project"} arrow>
                               <Checkbox
-                                disabled={isAssignedToProject(user.permissions) && isGroupAdminOrEditor(user.permissions)}
+                                disabled={permissionChangeLoading || isAssignedToProject(user.permissions) && isGroupAdminOrEditor(user.permissions)}
                                 checked={isAssignedToProject(user.permissions)}
                                 onChange={(e) => {
                                   if (!e.target.checked) {
@@ -350,7 +382,7 @@ export default function ProjectAssignedMembers() {
                               ? "Editor role of group editors or administrators can not be revoked"
                               : "Set editor role of member"} arrow>
                               <Checkbox
-                                disabled={isProjectEditor(user.permissions) && isGroupAdminOrEditor(user.permissions)}
+                                disabled={permissionChangeLoading || isProjectEditor(user.permissions) && isGroupAdminOrEditor(user.permissions)}
                                 checked={isProjectEditor(user.permissions)}
                                 onChange={(e) => {
                                   if (e.target.checked) {
@@ -367,7 +399,7 @@ export default function ProjectAssignedMembers() {
                               ? "Coordinator role of group administrators can not be revoked"
                               : "Set coordinator role of member"} arrow>
                               <Checkbox
-                                disabled={isProjectCoordinator(user.permissions) && isGroupAdmin(user.permissions)}
+                                disabled={permissionChangeLoading || isProjectCoordinator(user.permissions) && isGroupAdmin(user.permissions)}
                                 checked={isProjectCoordinator(user.permissions)}
                                 onChange={(e) => {
                                   if (e.target.checked) {
@@ -384,7 +416,7 @@ export default function ProjectAssignedMembers() {
                               ? "Admin role of group administrators can not be revoked"
                               : "Set admin role of member"} arrow>
                               <Checkbox
-                                disabled={isProjectAdmin(user.permissions) && isGroupAdmin(user.permissions)}
+                                disabled={permissionChangeLoading || isProjectAdmin(user.permissions) && isGroupAdmin(user.permissions)}
                                 checked={isProjectAdmin(user.permissions)}
                                 onChange={(e) => {
                                   if (e.target.checked) {

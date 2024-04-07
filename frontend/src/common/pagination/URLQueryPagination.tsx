@@ -17,9 +17,9 @@ export default function URLQueryPagination(props: URLQueryPaginationProps) {
   const size = parseInt(searchParams.get('size') || '10', 10);
 
   useEffect(() => {
-    searchParams.set('page', page.toString());
-    searchParams.set("size", size.toString());
-    navigate(`?${searchParams.toString()}`,{replace:true});
+    searchParams.set('page', !isNaN(page) ? page.toString() : "1");
+    searchParams.set("size", !isNaN(size) ? size.toString() : "10");
+    navigate(`?${searchParams.toString()}`, {replace: true});
   }, [page, size]);
 
   const changePage = (_event, value) => {
@@ -33,7 +33,7 @@ export default function URLQueryPagination(props: URLQueryPaginationProps) {
   const changeSize = (newSize) => {
     searchParams.set('size', newSize);
     searchParams.set('page', "1");
-    navigate(`?${searchParams.toString()}`,{replace:true});
+    navigate(`?${searchParams.toString()}`, {replace: true});
     if (props.onSizeChange) {
       props.onSizeChange(1, newSize);
     }
@@ -41,12 +41,12 @@ export default function URLQueryPagination(props: URLQueryPaginationProps) {
 
   return (
     <Box display="flex" justifyContent="left" alignItems="baseline" gap={2}>
-      <Pagination disabled={!props.totalPages||props.totalPages<2}
+      <Pagination disabled={!props.totalPages || props.totalPages < 2}
                   variant={"text"} shape={"rounded"}
-                  count={props.totalPages??1}
+                  count={props.totalPages ?? 1}
                   page={page} onChange={changePage}/>
       <FormControl size="small">
-        <InputLabel>Size</InputLabel>
+        <InputLabel sx={{minWidth: "fit-content"}}>Size</InputLabel>
         <Select disabled={!size} value={size} label="Size" onChange={e => {
           changeSize(e.target.value);
         }}>

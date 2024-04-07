@@ -15,6 +15,8 @@ import net.dnadas.training_portal.model.request.UserGroupJoinRequest;
 import net.dnadas.training_portal.model.request.UserGroupJoinRequestDao;
 import net.dnadas.training_portal.service.auth.UserProvider;
 import net.dnadas.training_portal.service.converter.GroupConverter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,13 +70,13 @@ public class GroupRequestService {
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_ADMIN')")
-  public List<GroupJoinRequestResponseDto> getJoinRequestsOfGroup(Long groupId) {
-    UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
-      () -> new GroupNotFoundException(groupId));
-    List<UserGroupJoinRequest> requests = requestDao.findByUserGroupAndStatus(
-      userGroup,
-      RequestStatus.PENDING);
-    return groupConverter.getGroupJoinRequestResponseDtos(requests);
+  public Page<GroupJoinRequestResponseDto> getJoinRequestsOfGroup(
+    Long groupId, String search, Pageable pageable) {
+    userGroupDao.findById(groupId).orElseThrow(() -> new GroupNotFoundException(groupId));
+    Page<UserGroupJoinRequest> requests = requestDao.findByUserGroupAndStatus(
+      groupId,
+      RequestStatus.PENDING, pageable, search);
+    return requests.map(groupConverter::getGroupJoinRequestResponseDto);
   }
 
   @Transactional(rollbackFor = Exception.class)

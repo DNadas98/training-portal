@@ -128,7 +128,6 @@ export default function UserQuestionnaireSubmissions() {
   }, [groupId, projectId, page, size]);
 
 
-
   async function deleteSubmission(submissionId: number) {
     try {
       setQuestionnaireSubmissionsLoading(true);
@@ -149,6 +148,7 @@ export default function UserQuestionnaireSubmissions() {
       });
       searchParams.set("page", "1");
       navigate({search: searchParams.toString()});
+      loadQuestionnaireSubmissions();
     } catch (e) {
       notification.openNotification({
         type: "error", vertical: "top", horizontal: "center",
@@ -186,6 +186,7 @@ export default function UserQuestionnaireSubmissions() {
       maxPointQuestionnaireSubmission={maxPointQuestionnaireSubmission}
       totalPages={totalPages}
       page={page} size={size}
-      onDeleteClick={handleDeleteClick}/>
+      onDeleteClick={handleDeleteClick}
+      handleBackClick={() => navigate(`/groups/${groupId}/projects/${projectId}/questionnaires`)}/>
   );
 }

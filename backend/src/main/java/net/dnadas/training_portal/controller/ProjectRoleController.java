@@ -1,17 +1,20 @@
 package net.dnadas.training_portal.controller;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.dto.user.UserResponseWithPermissionsDto;
 import net.dnadas.training_portal.service.group.project.ProjectAdminService;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -26,10 +29,18 @@ public class ProjectRoleController {
 
   @GetMapping("members")
   public ResponseEntity<?> getMembers(
-    @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId) {
-    List<UserResponseWithPermissionsDto> members = projectAdminService.getAssignedMembers(
-      groupId, projectId);
-    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", members));
+    @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId,
+    @RequestParam @Min(1) int page,
+    @RequestParam @Min(1) @Max(50) int size, @RequestParam(required = false) String search) {
+    Page<UserResponseWithPermissionsDto> members = projectAdminService.getAssignedMembers(
+      groupId, projectId, PageRequest.of(page - 1, size), search);
+    Map<String, Object> response = new HashMap<>();
+    response.put("data", members.getContent());
+    response.put("totalPages", members.getTotalPages());
+    response.put("currentPage", members.getNumber() + 1);
+    response.put("totalItems", members.getTotalElements());
+    response.put("size", members.getSize());
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
   @PostMapping("members")
@@ -57,10 +68,18 @@ public class ProjectRoleController {
 
   @GetMapping("editors")
   public ResponseEntity<?> getEditors(
-    @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId) {
-    List<UserResponseWithPermissionsDto> editors = projectAdminService.getEditors(
-      groupId, projectId);
-    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", editors));
+    @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId,
+    @RequestParam @Min(1) int page,
+    @RequestParam @Min(1) @Max(50) int size, @RequestParam(required = false) String search) {
+    Page<UserResponseWithPermissionsDto> editors = projectAdminService.getEditors(
+      groupId, projectId, PageRequest.of(page - 1, size), search);
+    Map<String, Object> response = new HashMap<>();
+    response.put("data", editors.getContent());
+    response.put("totalPages", editors.getTotalPages());
+    response.put("currentPage", editors.getNumber() + 1);
+    response.put("totalItems", editors.getTotalElements());
+    response.put("size", editors.getSize());
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
   @PostMapping("editors")
@@ -87,10 +106,18 @@ public class ProjectRoleController {
 
   @GetMapping("coordinators")
   public ResponseEntity<?> getCoordinators(
-    @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId) {
-    List<UserResponseWithPermissionsDto> coordinators = projectAdminService.getCoordinators(
-      groupId, projectId);
-    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", coordinators));
+    @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId,
+    @RequestParam @Min(1) int page,
+    @RequestParam @Min(1) @Max(50) int size, @RequestParam(required = false) String search) {
+    Page<UserResponseWithPermissionsDto> coordinators = projectAdminService.getCoordinators(
+      groupId, projectId, PageRequest.of(page - 1, size), search);
+    Map<String, Object> response = new HashMap<>();
+    response.put("data", coordinators.getContent());
+    response.put("totalPages", coordinators.getTotalPages());
+    response.put("currentPage", coordinators.getNumber() + 1);
+    response.put("totalItems", coordinators.getTotalElements());
+    response.put("size", coordinators.getSize());
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
   @PostMapping("coordinators")
@@ -115,11 +142,21 @@ public class ProjectRoleController {
         messageSource.getMessage("project.coordinators.remove.success", null, locale)));
   }
 
+
   @GetMapping("admins")
   public ResponseEntity<?> getAdmins(
-    @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId) {
-    List<UserResponseWithPermissionsDto> admins = projectAdminService.getAdmins(groupId, projectId);
-    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", admins));
+    @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId,
+    @RequestParam @Min(1) int page,
+    @RequestParam @Min(1) @Max(50) int size, @RequestParam(required = false) String search) {
+    Page<UserResponseWithPermissionsDto> admins = projectAdminService.getAdmins(
+      groupId, projectId, PageRequest.of(page - 1, size), search);
+    Map<String, Object> response = new HashMap<>();
+    response.put("data", admins.getContent());
+    response.put("totalPages", admins.getTotalPages());
+    response.put("currentPage", admins.getNumber() + 1);
+    response.put("totalItems", admins.getTotalElements());
+    response.put("size", admins.getSize());
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 
   @PostMapping("admins")

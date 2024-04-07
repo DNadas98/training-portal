@@ -1,7 +1,7 @@
 import usePermissions from "../../../authentication/hooks/usePermissions.ts";
 import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
-import {useNavigate, useParams} from "react-router-dom";
-import {useEffect, useMemo, useState} from "react";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {useEffect, useRef, useState} from "react";
 import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
 import {GroupJoinRequestResponseDto} from "../../dto/requests/GroupJoinRequestResponseDto.ts";
 import {RequestStatus} from "../../dto/RequestStatus.ts";
@@ -13,6 +13,7 @@ import {
   CardActions,
   CardContent,
   CardHeader,
+  debounce,
   Grid,
   List,
   ListItem,
@@ -21,6 +22,8 @@ import {
   Typography
 } from "@mui/material";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
+import {ApiResponsePageableDto} from "../../../common/api/dto/ApiResponsePageableDto.ts";
+import URLQueryPagination from "../../../common/pagination/URLQueryPagination.tsx";
 
 export default function GroupJoinRequests() {
   const {loading, groupPermissions} = usePermissions();
@@ -33,6 +36,13 @@ export default function GroupJoinRequests() {
   const notification = useNotification();
   const navigate = useNavigate();
 
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const [totalPages, setTotalPages] = useState(1);
+  const page = parseInt(searchParams.get('page') || '1', 10);
+  const size = parseInt(searchParams.get('size') || '10', 10);
+  const [usernameSearchValue, setUsernameSearchValue] = useState<string>("");
+
   function handleErrorNotification(message: string) {
     notification.openNotification({
       type: "error", vertical: "top", horizontal: "center",
@@ -40,7 +50,7 @@ export default function GroupJoinRequests() {
     });
   }
 
-  async function loadGroupJoinRequests() {
+  async function loadGroupJoinRequests(searchValue: string, currentPage: number, currentSize: number) {
     const defaultError = `Failed to load group join requests`;
     try {
       setGroupJoinRequestsLoading(true);
@@ -49,13 +59,21 @@ export default function GroupJoinRequests() {
         return;
       }
       const response = await authJsonFetch({
-        path: `groups/${groupId}/requests`
+        path: `groups/${groupId}/requests?page=${currentPage}&size=${currentSize}&search=${searchValue}`
       });
       if (!response?.status || response.status > 404 || !response?.data) {
         setGroupJoinRequestError(response?.error ?? defaultError);
         return;
       }
-      setGroupJoinRequests(response.data as GroupJoinRequestResponseDto[]);
+      const pageableResponse = response as unknown as ApiResponsePageableDto;
+      setGroupJoinRequests(pageableResponse.data as GroupJoinRequestResponseDto[]);
+      const newTotalPages = Number(pageableResponse.totalPages);
+      setTotalPages((newTotalPages && newTotalPages > 0) ? newTotalPages : 1);
+      const newPage = pageableResponse.currentPage;
+      const newSize = pageableResponse.size;
+      searchParams.set("page", `${newPage}`);
+      searchParams.set("size", `${newSize}`);
+      navigate(`?${searchParams.toString()}`, {replace: true});
     } catch (e) {
       setGroupJoinRequests([]);
       setGroupJoinRequestError(defaultError);
@@ -64,8 +82,13 @@ export default function GroupJoinRequests() {
     }
   }
 
+  const reloadRequestsDebounced = useRef<(searchValue: string, currentPage: number, currentSize: number) => void>();
+
   useEffect(() => {
-    loadGroupJoinRequests().then();
+    reloadRequestsDebounced.current = debounce((searchValue, currentPage, currentSize) => {
+      loadGroupJoinRequests(searchValue, currentPage, currentSize);
+    }, 300);
+    loadGroupJoinRequests(usernameSearchValue, page, size);
   }, []);
 
   async function handleJoinRequest(requestId: number, status: RequestStatus) {
@@ -84,7 +107,7 @@ export default function GroupJoinRequests() {
         type: "success", vertical: "top", horizontal: "center",
         message: response.message ?? `The status of the selected join request has been updated successfully`
       });
-      await loadGroupJoinRequests();
+      await loadGroupJoinRequests(usernameSearchValue, page, size);
     } catch (e) {
       handleErrorNotification(defaultError);
     } finally {
@@ -105,23 +128,21 @@ export default function GroupJoinRequests() {
     await handleJoinRequest(requestId, RequestStatus.APPROVED);
   }
 
-  const [joinRequestsFilterValue, setJoinRequestsFilterValue] = useState<string>("");
-
-  const joinRequestsFiltered = useMemo(() => {
-    if (!groupJoinRequests?.length) {
-      return [];
-    }
-    return groupJoinRequests.filter(request => {
-        return request.user.username.toLowerCase().includes(joinRequestsFilterValue)
-      }
-    );
-  }, [groupJoinRequests, joinRequestsFilterValue]);
-
   const handleJoinRequestSearch = (event: any) => {
-    setJoinRequestsFilterValue(event.target.value.toLowerCase().trim());
+    const newSearchValue = event.target.value.toLowerCase().trim();
+    setUsernameSearchValue(newSearchValue);
+    reloadRequestsDebounced.current?.(newSearchValue, 1, size);
   };
 
-  if (loading || groupJoinRequestsLoading) {
+  function handleSizeChange(newPage: number, newSize: number): void {
+    reloadRequestsDebounced.current?.(usernameSearchValue, newPage, newSize);
+  }
+
+  function handlePageChange(newPage: number): void {
+    reloadRequestsDebounced.current?.(usernameSearchValue, newPage, size);
+  }
+
+  if (loading) {
     return <LoadingSpinner/>;
   } else if (!groupPermissions?.length || groupJoinRequestError) {
     handleErrorNotification(groupJoinRequestError ?? "Access Denied: Insufficient permissions");
@@ -132,13 +153,21 @@ export default function GroupJoinRequests() {
     <Card elevation={10}>
       <CardHeader title={"Group Join Requests"} titleTypographyProps={{variant: "h5"}}/>
       <CardContent>
-        <TextField sx={{width: "100%", padding: 2}} type={"text"} variant={"standard"}
-                   value={joinRequestsFilterValue}
-                   placeholder={"Search By Username"}
-                   onChange={handleJoinRequestSearch}/>
-        {groupJoinRequestsLoading ? <LoadingSpinner/> : !joinRequestsFiltered?.length
+        <Grid container spacing={2} alignItems={"center"} justifyContent={"center"}>
+          <Grid item xs={12} md={true}>
+            <TextField sx={{width: "100%", padding: 2}} type={"text"} variant={"standard"}
+                       value={usernameSearchValue}
+                       placeholder={"Search By Username"}
+                       onChange={handleJoinRequestSearch}/>
+          </Grid>
+          <Grid item xs={12} md={"auto"}>
+            <URLQueryPagination totalPages={totalPages} defaultPage={1} onPageChange={handlePageChange}
+                                onSizeChange={handleSizeChange}/>
+          </Grid>
+        </Grid>
+        {groupJoinRequestsLoading ? <LoadingSpinner/> : !groupJoinRequests?.length
           ? <Typography variant={"body1"}>No pending group join requests were found.</Typography>
-          : <List>{joinRequestsFiltered.map(request => {
+          : <List>{groupJoinRequests.map(request => {
             return <ListItem key={request.requestId}><Card elevation={10} sx={{width: "100%"}}>
               <CardContent><Stack spacing={1}>
                 <Typography variant={"h6"}>{request.user?.username}</Typography>

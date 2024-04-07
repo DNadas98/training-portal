@@ -270,14 +270,18 @@ export default function SubmitQuestionnaire() {
               </Card>
             )
           })}
-          <Card> <CardActions><Stack spacing={2}>
-            <Button sx={{width: "fit-content"}} variant={"contained"} type={"submit"}>
-              Submit questionnaire
-            </Button>
-            <Button sx={{width: "fit-content"}} variant={"outlined"} onClick={handleExitClick}>
-              Exit without saving
-            </Button>
-          </Stack> </CardActions> </Card>
+          <Card> <CardActions><Grid container spacing={2}>
+            <Grid item xs={12} md={"auto"}>
+              <Button sx={{width: "fit-content"}} variant={"contained"} type={"submit"}>
+                Submit questionnaire
+              </Button>
+            </Grid>
+            <Grid item xs={12} md={"auto"}>
+              <Button sx={{width: "fit-content"}} variant={"outlined"} onClick={handleExitClick}>
+                Exit without saving
+              </Button>
+            </Grid>
+          </Grid> </CardActions> </Card>
         </Stack>
       </Box>
     </Grid>

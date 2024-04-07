@@ -178,7 +178,7 @@ export default function QuestionnaireStatistics() {
     return <></>;
   } else if (!questionnaire) {
     handleErrorNotification("Failed to load questionnaire");
-    navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`, {replace: true});
+    navigate(`/groups/${groupId}/projects/${projectId}/coordinator/questionnaires`, {replace: true});
     return <></>;
   }
 
@@ -220,10 +220,10 @@ export default function QuestionnaireStatistics() {
         </Grid>
         <Grid item xs={12} mb={2}>
           <Button onClick={() => {
-            navigate(-1)
+            navigate(`/groups/${groupId}/projects/${projectId}/coordinator/questionnaires`);
           }}
                   sx={{width: "fit-content"}} variant={"outlined"}>
-            Back
+            Back To Questionnaires
           </Button>
         </Grid>
         <Grid item xs={12}><Grid container spacing={1}>
