@@ -9,11 +9,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
+        format_sql: false
   mail:
     host: ${BACKEND_SMTP_HOST}
     port: ${BACKEND_SMTP_PORT}

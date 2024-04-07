@@ -36,7 +36,6 @@ public class DefaultAdminInitializer {
   @Value("${BACKEND_DEFAULT_ADMIN_PASSWORD}")
   private String password;
 
-  @PostConstruct
   @Transactional(rollbackFor = Exception.class)
   public void createDefaultSystemAdministratorAccount() {
     Boolean adminExists = applicationUserDao.findAll(PageRequest.of(0, 1)).stream().findAny()

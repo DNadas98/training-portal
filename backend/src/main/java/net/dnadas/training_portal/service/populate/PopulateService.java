@@ -16,6 +16,7 @@ import net.dnadas.training_portal.model.group.project.task.TaskDao;
 import net.dnadas.training_portal.model.group.project.task.TaskStatus;
 import net.dnadas.training_portal.model.request.ProjectJoinRequestDao;
 import net.dnadas.training_portal.model.request.UserGroupJoinRequestDao;
+import net.dnadas.training_portal.service.auth.DefaultAdminInitializer;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,11 +27,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-@Profile("dev")
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class PopulateService {
+  // ------------------------------------------------------------------------------------------------
   private final static String EXAMPLE_DATA_POPULATED_MESSAGE = "" +
     "<pre><code>" +
     " _____ _____ _____ _____ <br/>" +
@@ -40,6 +41,13 @@ public class PopulateService {
     "  | | | |___/\\__/ / | |  <br/>" +
     "  \\_/ \\____/\\____/  \\_/  " +
     "</code></pre>";
+  private final static int QUESTIONNAIRE_QUESTIONS_COUNT = 10;
+  private final static int QUESTIONNAIRE_ANSWERS_COUNT = 4;
+  private final static int TEST_MEMBERS_COUNT = 500;
+  private final static int MEMBER_SUBMISSIONS_COUNT = 10;
+  private final static int TEST_EDITORS_COUNT = 500;
+  private final static int EDITOR_SUBMISSIONS_COUNT = 20;
+  // ------------------------------------------------------------------------------------------------
   private final ApplicationUserDao applicationUserDao;
   private final PasswordEncoder passwordEncoder;
   private final UserGroupDao userGroupDao;
@@ -47,16 +55,20 @@ public class PopulateService {
   private final TaskDao taskDao;
   private final QuestionnaireDao questionnaireDao;
   private final QuestionnaireSubmissionDao questionnaireSubmissionDao;
+  private final DefaultAdminInitializer defaultAdminInitializer;
 
   @PostConstruct
   @Transactional(rollbackFor = Exception.class)
   public void populate() {
+    defaultAdminInitializer.createDefaultSystemAdministratorAccount();
+
     if (applicationUserDao.count() > 1) {
       log.info("Database has already been populated with example data");
       return;
     }
-    List<ApplicationUser> testUsers = createApplicationUsers(500);
-    List<ApplicationUser> testEditors = createEditors(10);
+
+    List<ApplicationUser> testUsers = createApplicationUsers(TEST_MEMBERS_COUNT);
+    List<ApplicationUser> testEditors = createEditors(TEST_EDITORS_COUNT);
     UserGroup userGroup = new UserGroup(
       "Test group 1", "Test group 1 description",
       EXAMPLE_DATA_POPULATED_MESSAGE,
@@ -80,7 +92,8 @@ public class PopulateService {
     taskDao.save(task);
 
     Questionnaire questionnaire =
-      createQuestionnaire(project, testUsers);
+      createQuestionnaire(
+        project, testUsers, QUESTIONNAIRE_QUESTIONS_COUNT, QUESTIONNAIRE_ANSWERS_COUNT);
     questionnaire.setStatus(QuestionnaireStatus.ACTIVE);
     questionnaireDao.save(questionnaire);
 
@@ -91,17 +104,20 @@ public class PopulateService {
     log.info("Database has been populated with example data successfully");
   }
 
-  private void populateEditorQuestionnaireSubmissions(List<ApplicationUser> testEditors, Questionnaire questionnaire) {
-    testEditors.parallelStream().forEach(u -> IntStream.range(0, 20).parallel().forEach(i -> {
-      QuestionnaireSubmission qs = new QuestionnaireSubmission(
-        questionnaire,
-        u, QuestionnaireStatus.TEST);
-      createSubmittedQuestionsAndAnswers(questionnaire, qs);
-      questionnaireSubmissionDao.save(qs);
-    }));
+  private void populateEditorQuestionnaireSubmissions(
+    List<ApplicationUser> testEditors, Questionnaire questionnaire) {
+    testEditors.parallelStream().forEach(u -> IntStream.range(0, EDITOR_SUBMISSIONS_COUNT)
+      .parallel().forEach(i -> {
+        QuestionnaireSubmission qs = new QuestionnaireSubmission(
+          questionnaire,
+          u, QuestionnaireStatus.TEST);
+        createSubmittedQuestionsAndAnswers(questionnaire, qs);
+        questionnaireSubmissionDao.save(qs);
+      }));
   }
 
-  private void createSubmittedQuestionsAndAnswers(Questionnaire questionnaire, QuestionnaireSubmission qs) {
+  private void createSubmittedQuestionsAndAnswers(
+    Questionnaire questionnaire, QuestionnaireSubmission qs) {
     qs.setSubmittedQuestions(questionnaire.getQuestions().stream()
       .map(
         q -> {
@@ -116,29 +132,30 @@ public class PopulateService {
         }).toList());
   }
 
-  private void populateUserQuestionnaireSubmissions(List<ApplicationUser> testUsers, Questionnaire questionnaire) {
-    testUsers.parallelStream().forEach(u -> IntStream.range(0, 10).parallel().forEach(i -> {
-      QuestionnaireSubmission qs = new QuestionnaireSubmission(
-        questionnaire,
-        u, QuestionnaireStatus.ACTIVE);
-      createSubmittedQuestionsAndAnswers(questionnaire, qs);
-      questionnaireSubmissionDao.save(qs);
-    }));
+  private void populateUserQuestionnaireSubmissions(
+    List<ApplicationUser> testUsers, Questionnaire questionnaire) {
+    testUsers.parallelStream().forEach(u -> IntStream.range(0, MEMBER_SUBMISSIONS_COUNT).parallel()
+      .forEach(i -> {
+        QuestionnaireSubmission qs = new QuestionnaireSubmission(
+          questionnaire,
+          u, QuestionnaireStatus.ACTIVE);
+        createSubmittedQuestionsAndAnswers(questionnaire, qs);
+        questionnaireSubmissionDao.save(qs);
+      }));
   }
 
-  private Questionnaire createQuestionnaire(Project project, List<ApplicationUser> testUsers) {
+  private Questionnaire createQuestionnaire(
+    Project project, List<ApplicationUser> testUsers, int questions, int answers) {
     Questionnaire questionnaire = new Questionnaire("Test questionnaire 1",
       EXAMPLE_DATA_POPULATED_MESSAGE,
       project, testUsers.get(0));
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < questions; i++) {
       Question question = new Question(
         EXAMPLE_DATA_POPULATED_MESSAGE, QuestionType.RADIO, i + 1, 1, questionnaire);
-      Answer answer1 = new Answer("Test answer " + i + " - 1", true, 1, question);
-      question.addAnswer(answer1);
-      Answer answer2 = new Answer("Test answer " + i + " - 2", false, 2, question);
-      question.addAnswer(answer2);
-      Answer answer3 = new Answer("Test answer " + i + " - 3", false, 3, question);
-      question.addAnswer(answer3);
+      for (int j = 0; j < answers; j++) {
+        Answer answer = new Answer("Test answer " + i + " - " + j, j == 0, j + 1, question);
+        question.addAnswer(answer);
+      }
       questionnaire.addQuestion(question);
     }
     return questionnaire;
@@ -147,7 +164,8 @@ public class PopulateService {
   private List<ApplicationUser> createApplicationUsers(int i) {
     List<ApplicationUser> users = new ArrayList<>();
     IntStream.range(0, i).parallel().forEach(index -> {
-      ApplicationUser applicationUser = new ApplicationUser("Test User " + index,
+      ApplicationUser applicationUser = new ApplicationUser(
+        "Test User " + index,
         "user" + index + "@test.test",
         passwordEncoder.encode("testuser" + index + "password"));
       ApplicationUser savedUser = applicationUserDao.save(applicationUser);
@@ -161,7 +179,8 @@ public class PopulateService {
   private List<ApplicationUser> createEditors(int i) {
     List<ApplicationUser> users = new ArrayList<>();
     IntStream.range(0, i).parallel().forEach(index -> {
-      ApplicationUser applicationUser = new ApplicationUser("Test Editor " + index,
+      ApplicationUser applicationUser = new ApplicationUser(
+        "Test Editor " + index,
         "editor" + index + "@test.test",
         passwordEncoder.encode("testeditor" + index + "password"));
       ApplicationUser savedUser = applicationUserDao.save(applicationUser);
