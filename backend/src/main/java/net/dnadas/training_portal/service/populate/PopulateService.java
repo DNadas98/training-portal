@@ -112,25 +112,27 @@ public class PopulateService {
         QuestionnaireSubmission qs = new QuestionnaireSubmission(
           questionnaire,
           u, QuestionnaireStatus.TEST);
-        createSubmittedQuestionsAndAnswers(questionnaire, qs);
-        questionnaireSubmissionDao.save(qs);
+        QuestionnaireSubmission processed = createSubmittedQuestionsAndAnswers(questionnaire, qs);
+        questionnaireSubmissionDao.save(processed);
       }));
   }
 
-  private void createSubmittedQuestionsAndAnswers(
+  private QuestionnaireSubmission createSubmittedQuestionsAndAnswers(
     Questionnaire questionnaire, QuestionnaireSubmission qs) {
     qs.setSubmittedQuestions(questionnaire.getQuestions().stream()
       .map(
         q -> {
           SubmittedQuestion sq = new SubmittedQuestion(q.getText(), q.getType(),
-            q.getQuestionOrder(), q.getPoints(),
-            0, qs);
+            q.getQuestionOrder(), q.getPoints(), 0, qs);
           sq.setSubmittedAnswers(q.getAnswers().stream()
             .map(a -> new SubmittedAnswer(a.getText(), a.getAnswerOrder(),
-              SubmittedAnswerStatus.INCORRECT, sq))
+              a.getAnswerOrder().equals(2)?SubmittedAnswerStatus.INCORRECT:SubmittedAnswerStatus.UNCHECKED, sq))
             .toList());
           return sq;
         }).toList());
+    qs.setMaxPoints(QUESTIONNAIRE_QUESTIONS_COUNT);
+    qs.setReceivedPoints(0);
+    return qs;
   }
 
   private void populateUserQuestionnaireSubmissions(
