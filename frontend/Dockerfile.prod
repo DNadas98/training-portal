@@ -1,0 +1,17 @@
+FROM node:21-alpine
+
+# See the .dockerignore for details
+
+COPY frontend/public /home/app/public
+COPY frontend/src /home/app/src
+COPY frontend/public /home/app/public
+COPY frontend/.env.prod /home/app/.env
+COPY frontend/index.html /home/app/index.html
+COPY frontend/package.json /home/app/package.json
+COPY frontend/tsconfig.json /home/app/tsconfig.json
+COPY frontend/tsconfig.node.json /home/app/tsconfig.node.json
+COPY frontend/vite.config.ts /home/app/vite.config.ts
+
+WORKDIR /home/app
+RUN npm install
+RUN npm run build

@@ -1,4 +1,4 @@
-FROM node:latest as build_frontend
+FROM node:21-alpine as build_frontend
 
 # See the .dockerignore for details
 COPY frontend /home/app

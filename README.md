@@ -128,7 +128,7 @@ The project uses Nginx as reverse-proxy and static file server.
 - Optional: [Java JDK](https://www.oracle.com/java/technologies/downloads/#java21)
   - The project uses Java 21 and Java Spring 3.2.0
 - Optional: [Node.js, NPM](https://nodejs.org/en/download)
-  - The frontend is developed using the latest Node and NPM versions currently available
+  - The frontend is developed using Node version 21
   - The frontend project is set up using [Vite JS](https://vitejs.dev/)
 
 ### Setup & Run
