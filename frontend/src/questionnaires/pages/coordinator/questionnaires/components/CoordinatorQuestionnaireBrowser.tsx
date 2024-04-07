@@ -4,7 +4,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   Button,
-  Card,
+  Card, CardActions,
   CardContent,
   CardHeader,
   Divider,
@@ -24,7 +24,8 @@ interface CoordinatorQuestionnaireBrowserProps {
   questionnairesLoading: boolean,
   questionnaires: QuestionnaireResponseEditorDto[],
   handleQuestionnaireSearch: (event: FormEvent<HTMLInputElement>) => void,
-  handleStatisticClick: (questionnaireId: number) => void
+  handleStatisticClick: (questionnaireId: number) => void,
+  handleBackClick: () => void
 }
 
 export default function CoordinatorQuestionnaireBrowser(props: CoordinatorQuestionnaireBrowserProps) {
@@ -34,7 +35,7 @@ export default function CoordinatorQuestionnaireBrowser(props: CoordinatorQuesti
       <Grid item xs={10} sm={10} md={9} lg={8}>
         <Stack spacing={2}>
           <Card>
-            <CardHeader title={"Questionnaires"} sx={{textAlign: "center"}}/>
+            <CardHeader title={"Questionnaire Statistics"} sx={{textAlign: "center"}}/>
             <CardContent>
               <TextField variant={"standard"} type={"search"}
                          label={"Search"}
@@ -108,6 +109,11 @@ export default function CoordinatorQuestionnaireBrowser(props: CoordinatorQuesti
                 </CardContent>
               </Card>
           }
+          <Card><CardActions>
+            <Button sx={{width:"fit-content"}} onClick={props.handleBackClick}>
+              Back to project
+            </Button>
+          </CardActions></Card>
         </Stack>
       </Grid>
     </Grid>

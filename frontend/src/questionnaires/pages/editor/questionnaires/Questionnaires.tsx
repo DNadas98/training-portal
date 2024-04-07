@@ -119,8 +119,8 @@ export default function Questionnaires() {
     });
   };
 
-  const handleStatisticClick = (questionnaireId: number) => {
-    navigate(`/groups/${groupId}/projects/${projectId}/coordinator/questionnaires/${questionnaireId}/statistics`);
+  const handleBackClick = () => {
+    navigate(`/groups/${groupId}/projects/${projectId}`);
   };
 
   if (loading || permissionsLoading) {
@@ -143,7 +143,7 @@ export default function Questionnaires() {
                           onEditClick={handleEditQuestionnaire}
                           onDeleteClick={handleDeleteClick}
                           onViewTestsClick={handleViewTests}
-                          handleStatisticClick={handleStatisticClick}
-                          isAdmin={projectPermissions.includes(PermissionType.PROJECT_ADMIN)}/>
+                          isAdmin={projectPermissions.includes(PermissionType.PROJECT_ADMIN)}
+                          handleBackClick={handleBackClick}/>
   );
 }

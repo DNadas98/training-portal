@@ -1,4 +1,4 @@
-import {Card, CardContent, CardHeader, Grid, IconButton, Stack, TextField} from "@mui/material";
+import {Button, Card, CardActions, CardContent, CardHeader, Grid, IconButton, Stack, TextField} from "@mui/material";
 import {FormEvent} from "react";
 import AddIcon from "../../../../../common/utils/components/AddIcon.tsx";
 import QuestionnaireList from "./QuestionnaireList.tsx";
@@ -13,8 +13,8 @@ interface QuestionnaireBrowserProps {
   onTestClick: (questionnaireId: number) => unknown,
   onViewTestsClick: (questionnaireId: number) => unknown,
   onDeleteClick: (questionnaireId: number) => void,
-  handleStatisticClick: (questionnaireId: number) => void,
-  isAdmin: boolean
+  isAdmin: boolean,
+  handleBackClick: () => void
 }
 
 export default function QuestionnaireBrowser(props: QuestionnaireBrowserProps) {
@@ -43,8 +43,12 @@ export default function QuestionnaireBrowser(props: QuestionnaireBrowserProps) {
                              onTestClick={props.onTestClick}
                              onDeleteClick={props.onDeleteClick}
                              onViewTestsClick={props.onViewTestsClick}
-                             handleStatisticClick={props.handleStatisticClick}
                              isAdmin={props.isAdmin}/>
+          <Card><CardActions>
+            <Button sx={{width: "fit-content"}} onClick={props.handleBackClick}>
+              Back to project
+            </Button>
+          </CardActions></Card>
         </Stack>
       </Grid>
     </Grid>

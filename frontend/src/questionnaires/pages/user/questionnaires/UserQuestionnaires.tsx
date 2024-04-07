@@ -132,6 +132,7 @@ export default function UserQuestionnaires() {
                               handleMaxPointQuestionnaireSearch={handleMaxPointQuestionnaireSearch}
                               handleFillOutClick={handleFillOutClick}
                               handlePastSubmissionsClick={handlePastSubmissionsClick}
+                              handleBackClick={()=>navigate(`/groups/${groupId}/projects/${projectId}`)}
     />
   );
 }

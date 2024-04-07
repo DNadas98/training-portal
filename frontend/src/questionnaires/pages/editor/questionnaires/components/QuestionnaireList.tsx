@@ -24,7 +24,6 @@ interface QuestionnaireListProps {
   onTestClick: (questionnaireId: number) => unknown,
   onViewTestsClick: (questionnaireId: number) => unknown,
   onDeleteClick: (questionnaireId: number) => void,
-  handleStatisticClick: (questionnaireId: number) => void,
   isAdmin: boolean
 }
 

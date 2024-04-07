@@ -29,9 +29,8 @@ public class GroupRequestController {
 
   @GetMapping()
   public ResponseEntity<?> readJoinRequestsOfGroup(
-    @PathVariable @Min(1) Long groupId, @PathVariable @Min(1) Long projectId,
-    @RequestParam @Min(1) int page,
-    @RequestParam @Min(1) @Max(50) int size, @RequestParam(required = false) String search) {
+    @PathVariable @Min(1) Long groupId, @RequestParam @Min(1) Integer page,
+    @RequestParam @Min(1) @Max(50) Integer size, @RequestParam(required = false) String search) {
     String decodedSearch = URLDecoder.decode(search, StandardCharsets.UTF_8);
     //TODO: sanitize search input
     Page<GroupJoinRequestResponseDto> requests =

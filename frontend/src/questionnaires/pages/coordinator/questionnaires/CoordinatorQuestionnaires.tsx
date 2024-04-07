@@ -72,6 +72,10 @@ export default function CoordinatorQuestionnaires() {
     navigate(`/groups/${groupId}/projects/${projectId}/coordinator/questionnaires/${questionnaireId}/statistics`);
   };
 
+  const handleBackClick = () => {
+    navigate(`/groups/${groupId}/projects/${projectId}`);
+  };
+
   if (loading || permissionsLoading) {
     return <LoadingSpinner/>;
   } else if (!projectPermissions.includes(PermissionType.PROJECT_COORDINATOR)) {
@@ -87,6 +91,7 @@ export default function CoordinatorQuestionnaires() {
     <CoordinatorQuestionnaireBrowser questionnairesLoading={loading}
                                      questionnaires={questionnairesFiltered}
                                      handleQuestionnaireSearch={handleQuestionnairesSearch}
-                                     handleStatisticClick={handleStatisticClick}/>
+                                     handleStatisticClick={handleStatisticClick}
+    handleBackClick={handleBackClick}/>
   );
 }

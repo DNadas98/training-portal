@@ -35,10 +35,10 @@ public class PopulateService {
     "<pre><code>" +
     " _____ _____ _____ _____ <br/>" +
     "|_   _|  ___/  ___|_   _|<br/>" +
-    "  | | | |__ \\ `--.  | |  <br/>" + // Escaped the backslash before the `
-    "  | | |  __| `--. \\ | |  <br/>" + // Escaped the backslash before the |
-    "  | | | |___/\\__/ / | |  <br/>" + // Escaped the backslashes before / and |
-    "  \\_/ \\____/\\____/  \\_/  " + // Escaped all backslashes
+    "  | | | |__ \\ `--.  | |  <br/>" +
+    "  | | |  __| `--. \\ | |  <br/>" +
+    "  | | | |___/\\__/ / | |  <br/>" +
+    "  \\_/ \\____/\\____/  \\_/  " +
     "</code></pre>";
   private final ApplicationUserDao applicationUserDao;
   private final PasswordEncoder passwordEncoder;
