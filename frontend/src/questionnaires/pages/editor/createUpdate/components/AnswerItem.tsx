@@ -90,7 +90,7 @@ const AnswerItem = memo((props: AnswerItemProps) => {
                 minRows={1}
                 inputProps={{
                   minLength: 1,
-                  maxLength: 100
+                  maxLength: 300
                 }}
                 value={text}
                 onChange={onTextChange}

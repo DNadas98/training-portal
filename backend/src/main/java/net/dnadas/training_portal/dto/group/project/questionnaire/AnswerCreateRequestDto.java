@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 public record AnswerCreateRequestDto(
-  @NotNull @Length(min = 1, max = 500) String text,
+  @NotNull @Length(min = 1, max = 300) String text,
   @NotNull Boolean correct,
   @NotNull @Min(1) Integer order) {
 }

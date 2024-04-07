@@ -19,6 +19,7 @@ import {QuestionRequestDto} from "../../../../dto/QuestionRequestDto.ts";
 import {AnswerRequestDto} from "../../../../dto/AnswerRequestDto.ts";
 import {v4 as uuidv4} from "uuid";
 import RichTextDynamicEditor from "../../../../../common/richTextEditor/RichTextDynamicEditor.tsx";
+import RichTextEditorControlled from "../../../../../common/richTextEditor/RichTextEditorControlled.tsx";
 
 interface QuestionItemProps {
   question: QuestionRequestDto;
@@ -95,7 +96,7 @@ const QuestionItem = memo((props: QuestionItemProps) => {
                   Delete
                 </Button>
               </Stack>
-              <RichTextDynamicEditor id={props.question.tempId}
+              <RichTextEditorControlled id={props.question.tempId}
                                         key={`rteditor-${props.question.tempId}`}
                                         value={text}
                                         onChange={handleTextChange}/>
@@ -104,7 +105,7 @@ const QuestionItem = memo((props: QuestionItemProps) => {
               <Typography variant={"h5"}>
                 {props.question.order}.
               </Typography>
-              <RichTextDynamicEditor id={props.question.tempId}
+              <RichTextEditorControlled id={props.question.tempId}
                                         key={`rteditor-${props.question.tempId}`}
                                         value={props.question.text}
                                         onChange={handleTextChange}/>
