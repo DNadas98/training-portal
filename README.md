@@ -204,8 +204,6 @@ basis for authentication and authorization management.
 
 ## Roadmap
 
-- See the [Project board](https://github.com/users/DNadas98/projects/4) to track the
-  progress of this project
 - See the [open issues](https://github.com/DNadas98/training-portal/issues) for a
   full list of proposed features (and known issues).
 
