@@ -51,6 +51,10 @@ public class Questionnaire {
   @ToString.Exclude
   private ApplicationUser createdBy;
 
+  @OneToMany(mappedBy = "questionnaire", orphanRemoval = true, cascade = CascadeType.ALL,
+    fetch = FetchType.LAZY)
+  private List<QuestionnaireSubmission> submissions = new ArrayList<>();
+
   @UpdateTimestamp
   private Instant updatedAt;
 
