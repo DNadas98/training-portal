@@ -144,7 +144,7 @@ export default function GroupDashboard() {
               <CardActions>
                 <Stack spacing={2}>
                   <Button onClick={handleJoinRequestClick}>View group join requests</Button>
-                  {!authentication.getRoles().includes(GlobalRole.ADMIN) ? <></> :
+                  {!authentication.getRoles()?.includes(GlobalRole.ADMIN) ? <></> :
                     <Button sx={{width: "fit-content"}} onClick={handleDeleteGroupClick}>Delete Group</Button>
                   }
                 </Stack>

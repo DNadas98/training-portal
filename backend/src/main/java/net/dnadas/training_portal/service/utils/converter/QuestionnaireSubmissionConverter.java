@@ -1,4 +1,4 @@
-package net.dnadas.training_portal.service.converter;
+package net.dnadas.training_portal.service.utils.converter;
 
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.dto.group.project.questionnaire.*;
@@ -6,7 +6,7 @@ import net.dnadas.training_portal.model.group.project.questionnaire.Questionnair
 import net.dnadas.training_portal.model.group.project.questionnaire.QuestionnaireSubmission;
 import net.dnadas.training_portal.model.group.project.questionnaire.SubmittedAnswer;
 import net.dnadas.training_portal.model.group.project.questionnaire.SubmittedQuestion;
-import net.dnadas.training_portal.service.datetime.DateTimeService;
+import net.dnadas.training_portal.service.utils.datetime.DateTimeService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -8,9 +8,9 @@ import net.dnadas.training_portal.exception.group.project.questionnaire.Question
 import net.dnadas.training_portal.model.auth.ApplicationUser;
 import net.dnadas.training_portal.model.auth.PermissionType;
 import net.dnadas.training_portal.model.group.project.questionnaire.*;
-import net.dnadas.training_portal.service.auth.UserProvider;
-import net.dnadas.training_portal.service.converter.QuestionnaireSubmissionConverter;
 import net.dnadas.training_portal.service.group.project.ProjectService;
+import net.dnadas.training_portal.service.user.UserProvider;
+import net.dnadas.training_portal.service.utils.converter.QuestionnaireSubmissionConverter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;

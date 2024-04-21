@@ -1,4 +1,4 @@
-package net.dnadas.training_portal.service.auth;
+package net.dnadas.training_portal.service.user;
 
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.dto.email.EmailRequestDto;
@@ -12,9 +12,9 @@ import net.dnadas.training_portal.model.auth.GlobalRole;
 import net.dnadas.training_portal.model.verification.EmailChangeVerificationToken;
 import net.dnadas.training_portal.model.verification.EmailChangeVerificationTokenDao;
 import net.dnadas.training_portal.model.verification.RegistrationTokenDao;
-import net.dnadas.training_portal.service.converter.UserConverter;
-import net.dnadas.training_portal.service.email.EmailService;
-import net.dnadas.training_portal.service.email.EmailTemplateService;
+import net.dnadas.training_portal.service.utils.converter.UserConverter;
+import net.dnadas.training_portal.service.utils.email.EmailService;
+import net.dnadas.training_portal.service.utils.email.EmailTemplateService;
 import net.dnadas.training_portal.service.verification.VerificationTokenService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

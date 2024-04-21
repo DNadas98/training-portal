@@ -1,4 +1,4 @@
-package net.dnadas.training_portal.service.converter;
+package net.dnadas.training_portal.service.utils.converter;
 
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.dto.group.GroupResponsePrivateDTO;

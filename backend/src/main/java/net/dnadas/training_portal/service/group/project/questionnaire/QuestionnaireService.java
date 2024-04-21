@@ -10,8 +10,8 @@ import net.dnadas.training_portal.model.auth.GlobalRole;
 import net.dnadas.training_portal.model.group.project.Project;
 import net.dnadas.training_portal.model.group.project.ProjectDao;
 import net.dnadas.training_portal.model.group.project.questionnaire.*;
-import net.dnadas.training_portal.service.auth.UserProvider;
-import net.dnadas.training_portal.service.converter.QuestionnaireConverter;
+import net.dnadas.training_portal.service.user.UserProvider;
+import net.dnadas.training_portal.service.utils.converter.QuestionnaireConverter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +26,15 @@ public class QuestionnaireService {
   private final ProjectDao projectDao;
   private final QuestionnaireConverter questionnaireConverter;
   private final UserProvider userProvider;
+
+  @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ADMIN')")
+  public List<QuestionnaireResponseEditorDto> getQuestionnairesOfProject(
+    Long groupId, Long projectId) {
+    List<Questionnaire> questionnaires = questionnaireDao.findAllByGroupIdAndProjectId(
+      groupId, projectId);
+    return questionnaireConverter.toQuestionnaireResponseEditorDtos(questionnaires);
+  }
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")

@@ -13,8 +13,9 @@ import net.dnadas.training_portal.exception.verification.VerificationTokenAlread
 import net.dnadas.training_portal.model.auth.ApplicationUser;
 import net.dnadas.training_portal.model.auth.ApplicationUserDao;
 import net.dnadas.training_portal.model.verification.*;
-import net.dnadas.training_portal.service.email.EmailService;
-import net.dnadas.training_portal.service.email.EmailTemplateService;
+import net.dnadas.training_portal.service.utils.email.EmailService;
+import net.dnadas.training_portal.service.utils.email.EmailTemplateService;
+import net.dnadas.training_portal.service.utils.security.JwtService;
 import net.dnadas.training_portal.service.verification.VerificationTokenService;
 import org.springframework.mail.MailSendException;
 import org.springframework.security.authentication.AuthenticationManager;

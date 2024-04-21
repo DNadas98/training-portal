@@ -5,7 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.dto.auth.*;
 import net.dnadas.training_portal.service.auth.AuthenticationService;
-import net.dnadas.training_portal.service.auth.CookieService;
+import net.dnadas.training_portal.service.utils.security.CookieService;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;

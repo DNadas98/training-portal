@@ -11,7 +11,7 @@ import net.dnadas.training_portal.model.auth.PermissionType;
 import net.dnadas.training_portal.model.group.UserGroup;
 import net.dnadas.training_portal.model.group.project.Project;
 import net.dnadas.training_portal.model.group.project.ProjectDao;
-import net.dnadas.training_portal.service.converter.UserConverter;
+import net.dnadas.training_portal.service.utils.converter.UserConverter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;

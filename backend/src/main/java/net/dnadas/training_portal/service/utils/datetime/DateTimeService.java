@@ -1,4 +1,4 @@
-package net.dnadas.training_portal.service.datetime;
+package net.dnadas.training_portal.service.utils.datetime;
 
 import lombok.extern.slf4j.Slf4j;
 import net.dnadas.training_portal.exception.datetime.*;

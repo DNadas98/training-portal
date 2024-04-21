@@ -1,4 +1,4 @@
-package net.dnadas.training_portal.service.email;
+package net.dnadas.training_portal.service.utils.email;
 
 import net.dnadas.training_portal.dto.email.EmailRequestDto;
 import net.dnadas.training_portal.dto.verification.VerificationTokenDto;

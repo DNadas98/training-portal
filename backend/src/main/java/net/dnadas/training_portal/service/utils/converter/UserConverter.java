@@ -1,4 +1,4 @@
-package net.dnadas.training_portal.service.converter;
+package net.dnadas.training_portal.service.utils.converter;
 
 import net.dnadas.training_portal.dto.user.UserResponsePrivateDto;
 import net.dnadas.training_portal.dto.user.UserResponsePublicDto;

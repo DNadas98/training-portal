@@ -1,4 +1,4 @@
-package net.dnadas.training_portal.service.converter;
+package net.dnadas.training_portal.service.utils.converter;
 
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.dto.group.project.ProjectResponsePrivateDTO;
@@ -6,7 +6,7 @@ import net.dnadas.training_portal.dto.group.project.ProjectResponsePublicDTO;
 import net.dnadas.training_portal.dto.requests.ProjectJoinRequestResponseDto;
 import net.dnadas.training_portal.model.group.project.Project;
 import net.dnadas.training_portal.model.request.ProjectJoinRequest;
-import net.dnadas.training_portal.service.datetime.DateTimeService;
+import net.dnadas.training_portal.service.utils.datetime.DateTimeService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

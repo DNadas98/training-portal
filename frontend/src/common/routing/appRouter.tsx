@@ -43,6 +43,8 @@ import PermissionProvider from "../../authentication/context/PermissionProvider.
 import ProjectAssignedMembers from "../../projects/pages/members/ProjectAssignedMembers.tsx";
 import CoordinatorQuestionnaires
   from "../../questionnaires/pages/coordinator/questionnaires/CoordinatorQuestionnaires.tsx";
+import AdminLayout from "../../admin/layout/AdminLayout.tsx";
+import UserPreRegistrationPage from "../../admin/pages/userPreRegistration/UserPreRegistrationPage.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -78,7 +80,7 @@ const appRouter = createBrowserRouter([
   /* user */
   {
     path: "/user/",
-    element: <RequireAuthentication allowedRoles={[GlobalRole.USER]}/>,
+    element: <RequireAuthentication allowedRoles={[GlobalRole.USER, GlobalRole.ADMIN]}/>,
     errorElement: <ErrorPage/>,
     children: [
       {
@@ -95,7 +97,7 @@ const appRouter = createBrowserRouter([
   /* groups */
   {
     path: "/groups/",
-    element: <RequireAuthentication allowedRoles={[GlobalRole.USER]}/>,
+    element: <RequireAuthentication allowedRoles={[GlobalRole.USER, GlobalRole.ADMIN]}/>,
     errorElement: <ErrorPage/>,
     children: [
       {
@@ -193,10 +195,26 @@ const appRouter = createBrowserRouter([
                 path: "*", element: <NotFound/>
               }
             ]
-          }]
+          }
+        ]
       }
     ]
-  }
+  },
+  /* admin */
+  {
+    path: "/admin/",
+    element: <RequireAuthentication allowedRoles={[GlobalRole.ADMIN]}/>,
+    errorElement: <ErrorPage/>,
+    children: [
+      {
+        element: <AdminLayout/>,
+        children: [
+          {path: "", element: <UserPreRegistrationPage/>},
+          {path: "*", element: <NotFound/>}
+        ]
+      }
+    ]
+  },
 ]);
 
 export default appRouter;

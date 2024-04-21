@@ -18,9 +18,9 @@ import net.dnadas.training_portal.model.group.project.ProjectDao;
 import net.dnadas.training_portal.model.group.project.task.Task;
 import net.dnadas.training_portal.model.request.RequestStatus;
 import net.dnadas.training_portal.service.auth.CustomPermissionEvaluator;
-import net.dnadas.training_portal.service.auth.UserProvider;
-import net.dnadas.training_portal.service.converter.ProjectConverter;
-import net.dnadas.training_portal.service.datetime.DateTimeService;
+import net.dnadas.training_portal.service.user.UserProvider;
+import net.dnadas.training_portal.service.utils.converter.ProjectConverter;
+import net.dnadas.training_portal.service.utils.datetime.DateTimeService;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -41,6 +41,15 @@ public class ProjectService {
   private final UserProvider userProvider;
   private final DateTimeService dateTimeService;
   private final CustomPermissionEvaluator customPermissionEvaluator;
+
+  @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_ADMIN')")
+  public List<ProjectResponsePublicDTO> getAllProjectsOfGroup(Long groupId) {
+    UserGroup userGroup = userGroupDao.findById(groupId).orElseThrow(
+      () -> new GroupNotFoundException(groupId));
+    List<Project> projects = projectDao.findAllByUserGroup(userGroup);
+    return projectConverter.getProjectResponsePublicDtos(projects);
+  }
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_MEMBER')")

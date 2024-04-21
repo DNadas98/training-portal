@@ -1,4 +1,4 @@
-package net.dnadas.training_portal.service.email;
+package net.dnadas.training_portal.service.utils.email;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

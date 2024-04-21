@@ -1,4 +1,4 @@
-package net.dnadas.training_portal.service.auth;
+package net.dnadas.training_portal.service.utils.security;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;

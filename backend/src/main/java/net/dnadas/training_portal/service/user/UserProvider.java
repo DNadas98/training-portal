@@ -1,4 +1,4 @@
-package net.dnadas.training_portal.service.auth;
+package net.dnadas.training_portal.service.user;
 
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.exception.auth.UnauthorizedException;

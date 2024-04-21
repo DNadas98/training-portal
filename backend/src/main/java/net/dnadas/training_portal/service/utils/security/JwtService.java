@@ -1,4 +1,4 @@
-package net.dnadas.training_portal.service.auth;
+package net.dnadas.training_portal.service.utils.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;

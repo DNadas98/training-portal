@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.dto.user.UserResponsePrivateDto;
 import net.dnadas.training_portal.dto.user.UserResponsePublicDto;
-import net.dnadas.training_portal.service.auth.ApplicationUserService;
+import net.dnadas.training_portal.service.user.ApplicationUserService;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
