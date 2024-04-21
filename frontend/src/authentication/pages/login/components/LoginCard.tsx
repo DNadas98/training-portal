@@ -45,7 +45,7 @@ export default function LoginCard({onSubmit}: LoginCardProps) {
                 <form onSubmit={onSubmit}>
                   <Stack spacing={2}>
                     <EmailInput/>
-                    <PasswordInput/>
+                    <PasswordInput autoComplete={"current-password"}/>
                     <Button type={"submit"}
                             variant={"contained"}>
                       {getLocalized("pages.sign_in.submit_button")}

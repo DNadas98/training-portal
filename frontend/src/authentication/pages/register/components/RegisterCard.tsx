@@ -35,7 +35,7 @@ export default function RegisterCard({onSubmit}: RegisterCardProps) {
               <Stack spacing={2}>
                 <UsernameInput/>
                 <EmailInput/>
-                <PasswordInput/>
+                <PasswordInput autoComplete={"new-password"}/>
                 <PasswordInput confirm={true}/>
                 <Button type={"submit"}
                         variant={"contained"}>
