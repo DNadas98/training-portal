@@ -53,6 +53,8 @@ public class Questionnaire {
 
   @OneToMany(mappedBy = "questionnaire", orphanRemoval = true, cascade = CascadeType.ALL,
     fetch = FetchType.LAZY)
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private List<QuestionnaireSubmission> submissions = new ArrayList<>();
 
   @UpdateTimestamp
