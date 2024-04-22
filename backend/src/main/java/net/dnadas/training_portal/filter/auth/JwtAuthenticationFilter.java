@@ -59,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     try {
       if (jwtService.isAccessTokenExpired(accessToken)) {
-        logger.error("Access Token is expired");
+        logger.debug("Access Token is expired");
         setAccessTokenExpiredResponse(response);
         return;
       }
@@ -73,7 +73,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       SecurityContextHolder.getContext().setAuthentication(authenticationToken);
       filterChain.doFilter(request, response);
     } catch (JwtException | UnauthorizedException e) {
-      logger.error(e.getMessage());
+      logger.debug(e.getMessage());
       setUnauthorizedResponse(response);
     }
   }
