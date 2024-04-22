@@ -12,11 +12,11 @@ function getFormattedLocale(locale) {
   }
 }
 
-export function getRequestConfig(request: ApiRequestDto, locale: SupportedLocaleType): RequestInit {
+export function getRequestConfig(request: ApiRequestDto, locale: SupportedLocaleType, contentType:string="application/json"): RequestInit {
   const requestConfig: RequestInit = {
     method: `${request?.method ?? "GET"}`,
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": contentType,
       "Accept-Language": getFormattedLocale(locale),
     },
     credentials: "include"
@@ -27,11 +27,11 @@ export function getRequestConfig(request: ApiRequestDto, locale: SupportedLocale
   return requestConfig;
 }
 
-export function verifyHttpResponse(httpResponse: Response): void {
+export function verifyHttpResponse(httpResponse: Response, contentType:string="application/json"): void {
   if (!httpResponse?.status) {
     throw new Error("Invalid response received from the server");
   }
-  if (httpResponse?.status !== 401 && httpResponse?.headers?.get("Content-Type") !== "application/json") {
+  if (httpResponse?.status !== 401 && httpResponse?.headers?.get("Content-Type") !== contentType) {
     throw new Error("Server response received in invalid format");
   }
 }

@@ -7,16 +7,17 @@ import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {useNavigate} from "react-router-dom";
 import UserPreRegistrationForm from "./components/UserPreRegistrationForm.tsx";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
-import {useAuthentication} from "../../../authentication/hooks/useAuthentication.ts";
 import {PreRegisterUsersReportDto} from "../../dto/PreRegisterUsersReportDto.ts";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import UserPreRegistrationReport from "./components/UserPreRegistrationReport.tsx";
 import {formatISO} from "date-fns";
+import useAuthFetch from "../../../common/api/hooks/useAuthFetch.tsx";
 
 //TODO: add backend search filtering, pagination if necessary
 
 export default function UserPreRegistrationPage() {
   const [loading, setLoading] = useState<boolean>(false);
+  const [downloadLoading, setDownloadLoading] = useState<boolean>(false);
   const [groupsLoading, setGroupsLoading] = useState<boolean>(true);
   const [groups, setGroups] = useState<GroupResponsePublicDto[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<GroupResponsePublicDto | null | undefined>(null);
@@ -41,7 +42,7 @@ export default function UserPreRegistrationPage() {
   const dialog = useDialog();
   const navigate = useNavigate();
   const authJsonFetch = useAuthJsonFetch();
-  const authentication = useAuthentication();
+  const authFetch = useAuthFetch();
 
   const openErrorNotification = (message: string) => notification.openNotification({
     type: "error", vertical: "top", horizontal: "center", message: message
@@ -196,12 +197,11 @@ export default function UserPreRegistrationPage() {
       formData.append("projectId", selectedProject.projectId.toString());
       formData.append("questionnaireId", selectedQuestionnaire.id.toString());
       formData.append("expiresAt", formatISO(expiresAt));
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/pre-register/users`, {
+      const response = await authFetch({
+        path: `admin/pre-register/users`,
         method: 'POST',
         body: formData,
-        headers: {
-          'Authorization': `Bearer ${authentication.getAccessToken()}`,
-        },
+        contentType: "text/csv"
       }).then(res => res.json());
       if (!response || response.status > 399 || !response.data) {
         openErrorNotification(response?.error ?? defaultError);
@@ -235,10 +235,13 @@ export default function UserPreRegistrationPage() {
   }
   const handleDownloadTemplate = async () => {
     try {
-      const response = await fetch("/api/v1/admin/pre-register/users/csv-template", {
-        headers: {
-          Authorization: `Bearer ${authentication.getAccessToken()}`,
-        }
+      if (downloadLoading) {
+        return;
+      }
+      setDownloadLoading(true);
+      const response = await authFetch({
+        path: "admin/pre-register/users/csv-template",
+        contentType: "text/csv"
       });
       const blob = await response.blob();
       const link = document.createElement("a");
@@ -249,6 +252,8 @@ export default function UserPreRegistrationPage() {
       link.parentNode?.removeChild(link);
     } catch (e) {
       openErrorNotification("Failed to download template");
+    } finally {
+      setDownloadLoading(false);
     }
   };
 
@@ -256,28 +261,22 @@ export default function UserPreRegistrationPage() {
     loadQuestionnaires().then();
   }, [selectedGroup, selectedProject]);
 
-  if (!authentication.getRoles()?.length) {
-    openErrorNotification("Unauthorized");
-    navigate(-1);
-    return <></>;
-  }
-
   function handleExpirationChange(newValue: Date) {
     setExpiresAt(newValue);
   }
 
   return loading ? <LoadingSpinner/> : <UserPreRegistrationForm
-    groups={groups}
+    groups={groups.filter(group => group.name.trim().toLowerCase().includes(groupFilterValue))}
     groupsLoading={groupsLoading}
     selectedGroup={selectedGroup}
     onGroupSelect={handleGroupSelect}
     onGroupSearchInputChange={handleGroupSearchInputChange}
-    projects={projects}
+    projects={projects.filter(project => project.name.trim().toLowerCase().includes(projectFilterValue))}
     projectsLoading={projectsLoading}
     selectedProject={selectedProject}
     onProjectSelect={handleProjectSelect}
     onProjectSearchInputChange={handleProjectSearchInputChange}
-    questionnaires={questionnaires}
+    questionnaires={questionnaires.filter(questionnaire => questionnaire.name.trim().toLowerCase().includes(questionnaireFilterValue))}
     questionnairesLoading={questionnairesLoading}
     selectedQuestionnaire={selectedQuestionnaire}
     onQuestionnaireSelect={handleQuestionnaireSelect}

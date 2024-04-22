@@ -34,12 +34,13 @@ import RichTextDisplay from "../../../../common/richTextEditor/RichTextDisplay.t
 import URLQueryPagination from "../../../../common/pagination/URLQueryPagination.tsx";
 import {ApiResponsePageableDto} from "../../../../common/api/dto/ApiResponsePageableDto.ts";
 import {QuestionnaireResponseEditorDto} from "../../../dto/QuestionnaireResponseEditorDto.ts";
-import {useAuthentication} from "../../../../authentication/hooks/useAuthentication.ts";
 import {Downloading, FileDownload} from "@mui/icons-material";
+import useAuthFetch from "../../../../common/api/hooks/useAuthFetch.tsx";
 
 export default function QuestionnaireStatistics() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
   const authJsonFetch = useAuthJsonFetch();
+  const authFetch = useAuthFetch();
   const navigate = useNavigate();
   const notification = useNotification();
   const [questionnaire, setQuestionnaire] = useState<QuestionnaireResponseEditorDto | undefined>(undefined);
@@ -60,7 +61,6 @@ export default function QuestionnaireStatistics() {
   const page = parseInt(searchParams.get('page') || '1', 10);
   const size = parseInt(searchParams.get('size') || '10', 10);
   const [usernameSearchValue, setUsernameSearchValue] = useState<string>("");
-  const authentication = useAuthentication();
 
   function handleErrorNotification(message: string) {
     notification.openNotification({
@@ -167,19 +167,16 @@ export default function QuestionnaireStatistics() {
   const handleExcelDownload = async () => {
     try {
       setDownloadLoading(true);
-      const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/groups/${groupId}/projects/${projectId}/coordinator/questionnaires/${questionnaireId}/submissions/stats/excel?status=${displayedQuestionnaireStatus}`, {
-          headers: {
-            Authorization: `Bearer ${authentication.getAccessToken()}`,
-          }
-        });
-      if (!response.ok || response.status > 399) {
-        const res = await response.json();
-        console.error(res?.error, "-", res?.message);
-        handleErrorNotification(res?.error ?? "Failed to download template");
+      const response = await authFetch({
+        path:
+          `groups/${groupId}/projects/${projectId}/coordinator/questionnaires/${questionnaireId}/submissions/stats/excel?status=${displayedQuestionnaireStatus}`,
+        contentType: "application/*"
+      });
+      if (!response || response.status > 399) {
+        handleErrorNotification(response?.error ?? "Failed to download template");
         return;
       }
-      const blob = await response.blob();
+      const blob = await response?.blob();
       const link = document.createElement("a");
       link.href = window.URL.createObjectURL(blob);
       link.setAttribute("download", "questionnaire-statistics.xlsx");
@@ -258,15 +255,15 @@ export default function QuestionnaireStatistics() {
                 ? <Button variant={"contained"}
                           color={"success"}
                           disabled
-                          sx={{width: 250}}
+                          sx={{minWidth: 220}}
                           startIcon={<Downloading/>}>
                   Exporting Data ...
                 </Button>
                 : <Button variant={"contained"} color={"success"}
                           onClick={handleExcelDownload}
-                          sx={{width: 250}}
+                          sx={{minWidth: 220}}
                           startIcon={<FileDownload/>}>
-                  Export to Excel (.xlsx)
+                  Export to Excel
                 </Button>}
             </Grid>
             <Grid item><Button onClick={() => {
