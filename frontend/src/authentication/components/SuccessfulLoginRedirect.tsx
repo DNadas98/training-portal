@@ -42,11 +42,11 @@ export default function SuccessfulLoginRedirect(props: SuccessfulLoginRedirectPr
       if (permissions.includes(PermissionType.PROJECT_ADMIN)) {
         navigate(`/groups/${props.groupId}/projects/${props.projectId}`);
       } else if (permissions.includes(PermissionType.PROJECT_COORDINATOR)) {
-        navigate(`/groups/${props.groupId}/projects/${props.projectId}//coordinator/questionnaires/${props.questionnaireId}/statistics`);
+        navigate(`/groups/${props.groupId}/projects/${props.projectId}/coordinator/questionnaires`);
       } else if (permissions.includes(PermissionType.PROJECT_EDITOR)) {
         navigate(`/groups/${props.groupId}/projects/${props.projectId}/editor/questionnaires`);
       } else if (permissions.includes(PermissionType.PROJECT_ASSIGNED_MEMBER)) {
-        navigate(`/groups/${props.groupId}/projects/${props.projectId}/questionnaires/${props.questionnaireId}`);
+        navigate(`/groups/${props.groupId}/projects/${props.projectId}`);
       } else navigate("/groups");
     })
   }, [authentication, props]);
