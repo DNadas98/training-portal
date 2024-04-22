@@ -1,5 +1,5 @@
-import {Card, CardContent, CardHeader, Grid, Stack, TextField} from "@mui/material";
-import {FormEvent} from "react";
+import {Button, Card, CardContent, CardHeader, Grid, Stack, TextField, Typography} from "@mui/material";
+import {FormEvent, useRef} from "react";
 import {QuestionnaireResponseDto} from "../../../../../questionnaires/dto/QuestionnaireResponseDto.ts";
 import UserQuestionnaireList from "./UserQuestionnaireList.tsx";
 
@@ -12,16 +12,28 @@ interface UserQuestionnaireBrowserProps {
   maxPointQuestionnaires: QuestionnaireResponseDto[],
   handleMaxPointQuestionnaireSearch: (event: any) => void,
   maxPointQuestionnairesLoading: boolean
-  handleBackClick:()=>void;
+  handleBackClick: () => void;
 }
 
 export default function UserQuestionnaireBrowser(props: UserQuestionnaireBrowserProps) {
+  const scrollRef = useRef(null);
+  const handleScroll = () => {
+    const current = scrollRef.current as any;
+    current?.scrollIntoView({behavior: "smooth"});
+  };
+
+
   return (
     <Grid container spacing={2} justifyContent={"center"} alignItems={"top"}>
       <Grid item xs={12}>
         <Stack spacing={2}>
           <Card>
-            <CardHeader title={"Active Questionnaires"} sx={{textAlign: "center"}}/>
+            <CardHeader title={
+              <Button variant={"text"}
+                      ref={scrollRef} onClick={handleScroll} sx={{color: "inherit", padding: 0, textTransform: "none"}}>
+                <Typography variant={"h6"}>Active Questionnaires</Typography>
+              </Button>
+            }/>
             <CardContent>
               <TextField variant={"standard"} type={"search"}
                          label={"Search"}
