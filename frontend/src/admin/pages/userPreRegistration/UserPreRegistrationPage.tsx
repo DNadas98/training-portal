@@ -8,10 +8,15 @@ import {useNavigate} from "react-router-dom";
 import UserPreRegistrationForm from "./components/UserPreRegistrationForm.tsx";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 import {useAuthentication} from "../../../authentication/hooks/useAuthentication.ts";
+import {PreRegisterUsersReportDto} from "../../dto/PreRegisterUsersReportDto.ts";
+import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
+import UserPreRegistrationReport from "./components/UserPreRegistrationReport.tsx";
+import {formatISO} from "date-fns";
 
 //TODO: add backend search filtering, pagination if necessary
 
 export default function UserPreRegistrationPage() {
+  const [loading, setLoading] = useState<boolean>(false);
   const [groupsLoading, setGroupsLoading] = useState<boolean>(true);
   const [groups, setGroups] = useState<GroupResponsePublicDto[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<GroupResponsePublicDto | null | undefined>(null);
@@ -29,6 +34,8 @@ export default function UserPreRegistrationPage() {
 
   const [selectedFile, setSelectedFile] = useState<File | undefined | null>(null);
   const MAX_FILE_SIZE = 400000; // 400 KB
+
+  const [expiresAt, setExpiresAt] = useState<Date>(new Date());
 
   const notification = useNotification();
   const dialog = useDialog();
@@ -89,6 +96,7 @@ export default function UserPreRegistrationPage() {
       setSelectedProject(null);
       setProjectFilterValue("");
       if (!selectedGroup) {
+        setProjects([]);
         return;
       }
       const response = await authJsonFetch({
@@ -127,6 +135,7 @@ export default function UserPreRegistrationPage() {
       setSelectedQuestionnaire(null);
       setQuestionnaireFilterValue("");
       if (!selectedGroup || !selectedProject) {
+        setQuestionnaires([]);
         return;
       }
       const response = await authJsonFetch({
@@ -174,17 +183,19 @@ export default function UserPreRegistrationPage() {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    setLoading(true);
     const defaultError = "Failed to upload user data";
     if (!selectedFile || !selectedGroup || !selectedProject || !selectedQuestionnaire) {
       openErrorNotification("All fields are required");
       return;
     }
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-    formData.append('groupId', selectedGroup.groupId.toString());
-    formData.append('projectId', selectedProject.projectId.toString());
-    formData.append('questionnaireId', selectedQuestionnaire.id.toString());
     try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+      formData.append("groupId", selectedGroup.groupId.toString());
+      formData.append("projectId", selectedProject.projectId.toString());
+      formData.append("questionnaireId", selectedQuestionnaire.id.toString());
+      formData.append("expiresAt", formatISO(expiresAt));
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/pre-register/users`, {
         method: 'POST',
         body: formData,
@@ -192,21 +203,35 @@ export default function UserPreRegistrationPage() {
           'Authorization': `Bearer ${authentication.getAccessToken()}`,
         },
       }).then(res => res.json());
-      if (!response || response.status > 399 || response.message) {
+      if (!response || response.status > 399 || !response.data) {
         openErrorNotification(response?.error ?? defaultError);
         return;
       }
-      notification.openNotification({
-        type: "success", vertical: "top", horizontal: "center", message: response.message
-      });
-      window.location.href = window.location.href;
+      setSelectedFile(null);
+      setSelectedGroup(null);
+      setExpiresAt(new Date());
+      handleSuccess(response.data as PreRegisterUsersReportDto);
     } catch (error) {
       openErrorNotification(defaultError);
+    } finally {
+      setLoading(false);
     }
   }
 
+  function handleSuccess(reportDto: PreRegisterUsersReportDto) {
+    dialog.openDialog({
+      oneActionOnly: true, confirmText: "Ok", onConfirm: () => {
+      },
+      content: <UserPreRegistrationReport
+        totalUsers={reportDto.totalUsers}
+        createdUsers={reportDto.createdUsers}
+        updatedUsers={reportDto.updatedUsers}
+        failedUsers={reportDto.failedUsers}/>
+    });
+  }
+
   const handleBackClick = () => {
-    navigate(-1);
+    navigate("/user");
   }
   const handleDownloadTemplate = async () => {
     try {
@@ -237,7 +262,11 @@ export default function UserPreRegistrationPage() {
     return <></>;
   }
 
-  return <UserPreRegistrationForm
+  function handleExpirationChange(newValue: Date) {
+    setExpiresAt(newValue);
+  }
+
+  return loading ? <LoadingSpinner/> : <UserPreRegistrationForm
     groups={groups}
     groupsLoading={groupsLoading}
     selectedGroup={selectedGroup}
@@ -257,5 +286,7 @@ export default function UserPreRegistrationPage() {
     onFileSelect={handleFileSelect}
     onSubmit={handleSubmit}
     onBackClick={handleBackClick}
-    onDownloadTemplate={handleDownloadTemplate}/>;
+    onDownloadTemplate={handleDownloadTemplate}
+    expiresAt={expiresAt}
+    onExpiresAtChange={handleExpirationChange}/>;
 }

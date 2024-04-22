@@ -22,6 +22,7 @@ import net.dnadas.training_portal.model.group.project.questionnaire.Questionnair
 import net.dnadas.training_portal.model.group.project.questionnaire.QuestionnaireDao;
 import net.dnadas.training_portal.model.verification.PreRegistrationVerificationToken;
 import net.dnadas.training_portal.model.verification.PreRegistrationVerificationTokenDao;
+import net.dnadas.training_portal.service.utils.datetime.DateTimeService;
 import net.dnadas.training_portal.service.utils.email.EmailService;
 import net.dnadas.training_portal.service.utils.email.EmailTemplateService;
 import net.dnadas.training_portal.service.utils.file.CsvUtilsService;
@@ -41,7 +42,6 @@ import java.util.*;
 @Slf4j
 public class PreRegistrationService {
   private static final Integer MAX_RECEIVED_CSV_SIZE = 400000;
-  private static final Integer VERIFICATION_EXPIRATION_DAYS = 60;
   private final ApplicationUserDao applicationUserDao;
   private final UserGroupDao userGroupDao;
   private final ProjectDao projectDao;
@@ -52,14 +52,22 @@ public class PreRegistrationService {
   private final EmailTemplateService emailTemplateService;
   private final EmailService emailService;
   private final PasswordEncoder passwordEncoder;
+  private final DateTimeService dateTimeService;
 
-  @Transactional(rollbackFor = Exception.class)
+  @Transactional(rollbackFor = Error.class)
   @Secured("ADMIN")
   public PreRegisterUsersReportDto preRegisterUsers(
-    Long groupId, Long projectId, Long questionnaireId, MultipartFile usersCsv) {
+    Long groupId, Long projectId, Long questionnaireId, MultipartFile usersCsv, String expiresAt) {
     List<PreRegisterUserInternalDto> updatedUsers = new ArrayList<>();
     List<PreRegisterUserInternalDto> createdUsers = new ArrayList<>();
     Map<PreRegisterUserInternalDto, String> failedUsers = new HashMap<>();
+    Instant expirationDate = dateTimeService.toStoredDate(expiresAt);
+    if (expirationDate.isBefore(Instant.now())) {
+      throw new IllegalArgumentException("Expiration date must be in the future");
+    }
+    if (expirationDate.isAfter(Instant.now().plusSeconds(60*60*24*365))) {
+      throw new IllegalArgumentException("Expiration date must be within a year");
+    }
 
     csvUtilsService.verifyCsv(usersCsv, MAX_RECEIVED_CSV_SIZE);
     PreRegisterUsersInternalDto parsedCsv = csvUtilsService
@@ -81,7 +89,8 @@ public class PreRegistrationService {
           updateExistingUser(group, project, questionnaire, existingUser);
           updatedUsers.add(userRequest);
         } else {
-          handlePreRegistrationRequest(groupId, projectId, questionnaireId, userRequest);
+          handlePreRegistrationRequest(groupId, projectId, questionnaireId, userRequest,
+            expirationDate);
           createdUsers.add(userRequest);
         }
       } catch (Exception e) {
@@ -132,14 +141,13 @@ public class PreRegistrationService {
   }
 
   private void handlePreRegistrationRequest(
-    Long groupId, Long projectId, Long questionnaireId, PreRegisterUserInternalDto userRequest) {
+    Long groupId, Long projectId, Long questionnaireId, PreRegisterUserInternalDto userRequest,
+    Instant expiresAt) {
     PreRegistrationVerificationToken token = null;
     try {
       UUID verificationCode = UUID.randomUUID();
       String hashedVerificationCode = verificationTokenService.getHashedVerificationCode(
         verificationCode);
-      //TODO: get expiration date from frontend request
-      Instant expiresAt = Instant.now().plusSeconds(60L * 60 * 24 * VERIFICATION_EXPIRATION_DAYS);
       token = preRegistrationVerificationTokenDao.save(new PreRegistrationVerificationToken(
         userRequest.email(), userRequest.username(), groupId, projectId, questionnaireId,
         hashedVerificationCode, expiresAt));

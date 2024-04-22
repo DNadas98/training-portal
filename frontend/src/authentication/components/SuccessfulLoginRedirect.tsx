@@ -3,6 +3,8 @@ import {useNavigate} from "react-router-dom";
 import useAuthJsonFetch from "../../common/api/hooks/useAuthJsonFetch.tsx";
 import {useEffect} from "react";
 import {PermissionType} from "../dto/PermissionType.ts";
+import {useAuthentication} from "../hooks/useAuthentication.ts";
+import {GlobalRole} from "../dto/userInfo/GlobalRole.ts";
 
 interface SuccessfulLoginRedirectProps {
   groupId: number | null;
@@ -12,6 +14,7 @@ interface SuccessfulLoginRedirectProps {
 
 export default function SuccessfulLoginRedirect(props: SuccessfulLoginRedirectProps) {
   const navigate = useNavigate();
+  const authentication = useAuthentication();
   const authJsonFetch = useAuthJsonFetch();
 
   useEffect(() => {
@@ -27,22 +30,26 @@ export default function SuccessfulLoginRedirect(props: SuccessfulLoginRedirectPr
       }
     }
 
+    if (authentication.getRoles()?.includes(GlobalRole.ADMIN)) {
+      navigate("/admin");
+      return;
+    }
     if (!props.groupId || !props.projectId || !props.questionnaireId) {
       navigate("/groups");
-    } else {
-      loadProjectPermissions().then(permissions => {
-        if (permissions.includes(PermissionType.PROJECT_ADMIN)) {
-          navigate(`/groups/${props.groupId}/projects/${props.projectId}`);
-        } else if (permissions.includes(PermissionType.PROJECT_COORDINATOR)) {
-          navigate(`/groups/${props.groupId}/projects/${props.projectId}//coordinator/questionnaires/${props.questionnaireId}/statistics`);
-        } else if (permissions.includes(PermissionType.PROJECT_EDITOR)) {
-          navigate(`/groups/${props.groupId}/projects/${props.projectId}/editor/questionnaires`);
-        } else if (permissions.includes(PermissionType.PROJECT_ASSIGNED_MEMBER)) {
-          navigate(`/groups/${props.groupId}/projects/${props.projectId}/questionnaires/${props.questionnaireId}`);
-        } else navigate("/groups");
-      })
+      return;
     }
-  }, [props]);
+    loadProjectPermissions().then(permissions => {
+      if (permissions.includes(PermissionType.PROJECT_ADMIN)) {
+        navigate(`/groups/${props.groupId}/projects/${props.projectId}`);
+      } else if (permissions.includes(PermissionType.PROJECT_COORDINATOR)) {
+        navigate(`/groups/${props.groupId}/projects/${props.projectId}//coordinator/questionnaires/${props.questionnaireId}/statistics`);
+      } else if (permissions.includes(PermissionType.PROJECT_EDITOR)) {
+        navigate(`/groups/${props.groupId}/projects/${props.projectId}/editor/questionnaires`);
+      } else if (permissions.includes(PermissionType.PROJECT_ASSIGNED_MEMBER)) {
+        navigate(`/groups/${props.groupId}/projects/${props.projectId}/questionnaires/${props.questionnaireId}`);
+      } else navigate("/groups");
+    })
+  }, [authentication, props]);
 
   return <LoadingSpinner/>;
 }

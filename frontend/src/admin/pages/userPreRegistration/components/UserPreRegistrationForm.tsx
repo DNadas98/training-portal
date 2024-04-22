@@ -4,6 +4,7 @@ import {QuestionnaireResponseEditorDto} from "../../../../questionnaires/dto/Que
 import {Autocomplete, Avatar, Button, Card, CardActions, CardContent, CardHeader, Grid, TextField} from "@mui/material";
 import {FileDownload, PersonAddOutlined} from "@mui/icons-material";
 import {ChangeEvent} from "react";
+import {MobileDateTimePicker} from "@mui/x-date-pickers";
 
 interface UserPreRegistrationFormProps {
   groups: GroupResponsePublicDto[],
@@ -25,7 +26,9 @@ interface UserPreRegistrationFormProps {
   onFileSelect: (event: ChangeEvent<HTMLInputElement>) => void,
   onSubmit: (e: any) => void,
   onBackClick: () => void,
-  onDownloadTemplate: () => void
+  onDownloadTemplate: () => void,
+  onExpiresAtChange: (e: any) => void;
+  expiresAt: any;
 }
 
 export default function UserPreRegistrationForm(props: UserPreRegistrationFormProps) {
@@ -97,8 +100,16 @@ export default function UserPreRegistrationForm(props: UserPreRegistrationFormPr
                 onClick={props.onDownloadTemplate}
                 startIcon={<FileDownload/>}
                 sx={{width: "fit-content"}}>
-                Download CSV Template
+                Download CSV Template for User Data
               </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <MobileDateTimePicker
+                label={"Expiration Date"}
+                value={props.expiresAt?.length ? props.expiresAt : new Date()}
+                onChange={props.onExpiresAtChange}
+                timezone={"system"}
+              />
             </Grid>
           </Grid></CardContent>
           <CardActions>

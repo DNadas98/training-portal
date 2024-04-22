@@ -34,9 +34,10 @@ public class GlobalAdminPreRegistrationController {
     @RequestParam("file") MultipartFile file,
     @RequestParam("groupId") Long groupId,
     @RequestParam("projectId") Long projectId,
-    @RequestParam("questionnaireId") Long questionnaireId) {
+    @RequestParam("questionnaireId") Long questionnaireId,
+    @RequestParam("expiresAt") String expiresAt) {
     PreRegisterUsersReportDto reportDto = preRegistrationService.preRegisterUsers(
-      groupId, projectId, questionnaireId, file);
+      groupId, projectId, questionnaireId, file,expiresAt);
     return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("data", reportDto));
   }
 }
