@@ -1,9 +1,6 @@
 package net.dnadas.training_portal.service.utils.file;
 
-import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
-import net.dnadas.training_portal.dto.user.PreRegisterUserInternalDto;
-import net.dnadas.training_portal.dto.user.PreRegisterUsersInternalDto;
 import net.dnadas.training_portal.exception.utils.file.InvalidFileException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,54 +17,82 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CsvUtilsService {
-  private final static String PRE_REGISTER_USERS_DELIMITER = ",";
-  private final static int PRE_REGISTER_USERS_EXPECTED_COLUMNS = 2;
-  private final static List PRE_REGISTER_USERS_HEADERS = List.of("Username", "Email");
-  private final Validator validator;
 
-  public void verifyCsv(MultipartFile file, Integer maxSize) throws InvalidFileException {
+  /**
+   * Verifies that the file is a non-empty CSV file with the correct content type and size.
+   *
+   * @param file        The file to verify
+   * @param contentType The expected content type
+   * @param maxSize     The maximum allowed file size
+   * @throws InvalidFileException
+   */
+  public void verifyCsv(MultipartFile file, String contentType, long maxSize)
+    throws InvalidFileException {
     if (file.isEmpty() || file.getContentType() == null || !file.getContentType().equals(
-      "text/csv") || file.getSize() > maxSize) {
+      contentType) || file.getSize() > maxSize) {
       throw new InvalidFileException("Invalid file type or size");
     }
   }
 
-  public byte[] getPreRegisterUsersCsvTemplate() {
-    StringBuilder csvBuilder = new StringBuilder();
-    csvBuilder.append(String.join(PRE_REGISTER_USERS_DELIMITER, PRE_REGISTER_USERS_HEADERS)).append(
-      "\n");
-    csvBuilder.append("exampleUser1").append(PRE_REGISTER_USERS_DELIMITER).append(
-      "example1@example.com").append("\n");
-    csvBuilder.append("exampleUser2").append(PRE_REGISTER_USERS_DELIMITER).append(
-      "example2@example.com").append("\n");
-    return csvBuilder.toString().getBytes();
-  }
-
-  public PreRegisterUsersInternalDto parsePreRegisterUsersRequestCsv(MultipartFile usersCsv) {
-    List<List<String>> records = getRecords(usersCsv, PRE_REGISTER_USERS_DELIMITER);
-    List<PreRegisterUserInternalDto> users = getPreRegisterUsers(
-      records, PRE_REGISTER_USERS_EXPECTED_COLUMNS);
-    return new PreRegisterUsersInternalDto(users);
-  }
-
-  private List<PreRegisterUserInternalDto> getPreRegisterUsers(
-    List<List<String>> records, int EXPECTED_COLUMNS) {
-    List<PreRegisterUserInternalDto> users = new ArrayList<>();
-    for (int i = 0; i < records.size(); i++) {
-      List<String> record = records.get(i);
-      if (record.equals(PRE_REGISTER_USERS_HEADERS)) {
-        //skip headers
-        continue;
-      }
-      if (record.size() != EXPECTED_COLUMNS) {
-        throw new InvalidFileException("Invalid record length at record " + i + 1);
-      }
-      PreRegisterUserInternalDto user = new PreRegisterUserInternalDto(
-        record.get(0), record.get(1));
-      validator.validate(user);
-      users.add(user);
+  /**
+   * Creates a CSV file from the given data.
+   *
+   * @param data      The data to write
+   * @param delimiter The delimiter to use
+   * @param headers   The headers of the CSV file
+   * @return The CSV file as a byte array
+   */
+  public byte[] createCsv(List<List<String>> data, String delimiter, List<String> headers) {
+    StringBuilder csvBuilder = new StringBuilder(String.join(delimiter, headers) + "\n");
+    for (List<String> row : data) {
+      csvBuilder.append(String.join(delimiter, row)).append("\n");
     }
-    return users;
+    return csvBuilder.toString().getBytes(StandardCharsets.UTF_8);
+  }
+
+  /**
+   * Writes CSV formatted data directly to the given OutputStream.
+   *
+   * @param data         The data to write
+   * @param delimiter    The delimiter to use
+   * @param headers      The headers of the CSV file
+   * @param outputStream The OutputStream to which the CSV data will be written.
+   */
+  public void writeCsvToStream(
+    List<List<String>> data, String delimiter, List<String> headers, OutputStream outputStream)
+    throws IOException {
+    outputStream.write(String.join(delimiter, headers).concat("\n")
+      .getBytes(StandardCharsets.UTF_8));
+    for (List<String> row : data) {
+      outputStream.write(String.join(delimiter, row).concat("\n").getBytes(StandardCharsets.UTF_8));
+    }
+  }
+
+  /**
+   * Parses a CSV file and returns the records.
+   *
+   * @param csvFile         The CSV file to parse
+   * @param delimiter       The delimiter to use
+   * @param headers         The expected headers
+   * @param expectedColumns The expected number of columns
+   * @return The records in the CSV file as a list of lists
+   */
+  public List<List<String>> parseCsv(
+    MultipartFile csvFile, String delimiter, List<String> headers, int expectedColumns) {
+    List<List<String>> records = getRecords(csvFile, delimiter);
+    if (!records.isEmpty() && !records.get(0).equals(headers)) {
+      throw new InvalidFileException("CSV does not contain the correct headers.");
+    }
+    validateRecords(records, expectedColumns);
+    return records.subList(1, records.size());  // Skip headers
+  }
+
+  private void validateRecords(List<List<String>> records, int expectedColumns) {
+    for (int i = 1; i < records.size(); i++) {
+      if (records.get(i).size() != expectedColumns) {
+        throw new InvalidFileException("Invalid record length at record " + i);
+      }
+    }
   }
 
   private List<List<String>> getRecords(MultipartFile csvFile, String delimiter) {
@@ -78,7 +104,7 @@ public class CsvUtilsService {
         if (line.trim().isEmpty()) {
           continue;
         }
-        records.add(Arrays.stream(line.split(delimiter)).map(String::trim).toList());
+        records.add(Arrays.stream(line.split(delimiter, -1)).map(String::trim).toList());
       }
       return records;
     } catch (IOException e) {

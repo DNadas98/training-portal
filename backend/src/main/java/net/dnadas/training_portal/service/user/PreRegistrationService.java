@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.dnadas.training_portal.dto.auth.PreRegistrationCompleteRequestDto;
 import net.dnadas.training_portal.dto.email.EmailRequestDto;
 import net.dnadas.training_portal.dto.user.PreRegisterUserInternalDto;
-import net.dnadas.training_portal.dto.user.PreRegisterUsersInternalDto;
 import net.dnadas.training_portal.dto.user.PreRegisterUsersReportDto;
 import net.dnadas.training_portal.dto.user.PreRegistrationCompleteInternalDto;
 import net.dnadas.training_portal.dto.verification.VerificationTokenDto;
@@ -34,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.time.Instant;
 import java.util.*;
 
@@ -41,7 +41,12 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class PreRegistrationService {
-  private static final Integer MAX_RECEIVED_CSV_SIZE = 400000;
+  private static final Integer RECEIVED_CSV_MAX_SIZE = 400000;
+  private static final String RECEIVED_CSV_CONTENT_TYPE = "text/csv";
+  private static final String CSV_DELIMITER = ",";
+  private static final List<String> CSV_HEADERS = List.of("Username", "Email");
+  private static final int CSV_COLUMNS = 2;
+  private static final long MAX_EXPIRATION_SECONDS = 60 * 60 * 24 * 365; // 1 year
   private final ApplicationUserDao applicationUserDao;
   private final UserGroupDao userGroupDao;
   private final ProjectDao projectDao;
@@ -54,6 +59,13 @@ public class PreRegistrationService {
   private final PasswordEncoder passwordEncoder;
   private final DateTimeService dateTimeService;
 
+  public void getPreRegisterUsersCsvTemplate(OutputStream outputStream) throws IOException {
+    List<List<String>> exampleData = List.of(
+      List.of("exampleUser1", "example1@example.com"),
+      List.of("exampleUser2", "example2@example.com"));
+    csvUtilsService.writeCsvToStream(exampleData, CSV_DELIMITER, CSV_HEADERS, outputStream);
+  }
+
   @Transactional(rollbackFor = Error.class)
   @Secured("ADMIN")
   public PreRegisterUsersReportDto preRegisterUsers(
@@ -65,19 +77,17 @@ public class PreRegistrationService {
     if (expirationDate.isBefore(Instant.now())) {
       throw new IllegalArgumentException("Expiration date must be in the future");
     }
-    if (expirationDate.isAfter(Instant.now().plusSeconds(60*60*24*365))) {
+    if (expirationDate.isAfter(Instant.now().plusSeconds(MAX_EXPIRATION_SECONDS))) {
       throw new IllegalArgumentException("Expiration date must be within a year");
     }
 
-    csvUtilsService.verifyCsv(usersCsv, MAX_RECEIVED_CSV_SIZE);
-    PreRegisterUsersInternalDto parsedCsv = csvUtilsService
-      .parsePreRegisterUsersRequestCsv(usersCsv);
     Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndId(
       groupId, projectId, questionnaireId).orElseThrow(QuestionnaireNotFoundException::new);
     Project project = questionnaire.getProject();
     UserGroup group = project.getUserGroup();
 
-    List<PreRegisterUserInternalDto> userRequests = parsedCsv.users();
+    List<PreRegisterUserInternalDto> userRequests = parsePreRegistrationCsv(usersCsv);
+
     List<ApplicationUser> existingUsers = applicationUserDao.findAllByEmailIn(
       userRequests.stream().map(PreRegisterUserInternalDto::email).toList());
 
@@ -108,8 +118,7 @@ public class PreRegistrationService {
       (PreRegistrationVerificationToken) verificationTokenService.getVerificationToken(
         verificationTokenDto);
     Optional<ApplicationUser> existingUser = applicationUserDao.findByEmailOrUsername(
-      token.getEmail(),
-      token.getUsername());
+      token.getEmail(), token.getUsername());
     if (existingUser.isPresent()) {
       throw new UserAlreadyExistsException();
     }
@@ -140,6 +149,15 @@ public class PreRegistrationService {
     return new PreRegistrationCompleteInternalDto(user.getEmail());
   }
 
+  private List<PreRegisterUserInternalDto> parsePreRegistrationCsv(MultipartFile usersCsv) {
+    csvUtilsService.verifyCsv(usersCsv, RECEIVED_CSV_CONTENT_TYPE, RECEIVED_CSV_MAX_SIZE);
+    List<List<String>> csvRecords = csvUtilsService.parseCsv(
+      usersCsv, CSV_DELIMITER, CSV_HEADERS, CSV_COLUMNS);
+    List<PreRegisterUserInternalDto> userRequests = csvRecords.stream().map(
+      record -> new PreRegisterUserInternalDto(record.get(0), record.get(1))).toList();
+    return userRequests;
+  }
+
   private void handlePreRegistrationRequest(
     Long groupId, Long projectId, Long questionnaireId, PreRegisterUserInternalDto userRequest,
     Instant expiresAt) {
@@ -148,15 +166,14 @@ public class PreRegistrationService {
       UUID verificationCode = UUID.randomUUID();
       String hashedVerificationCode = verificationTokenService.getHashedVerificationCode(
         verificationCode);
-      token = preRegistrationVerificationTokenDao.save(new PreRegistrationVerificationToken(
-        userRequest.email(), userRequest.username(), groupId, projectId, questionnaireId,
-        hashedVerificationCode, expiresAt));
+      token = preRegistrationVerificationTokenDao.save(
+        new PreRegistrationVerificationToken(userRequest.email(), userRequest.username(), groupId,
+          projectId, questionnaireId, hashedVerificationCode, expiresAt));
       if (token == null) {
         throw new RuntimeException("Failed to create verification token");
       }
-      sendPreRegisterEmail(
-        new VerificationTokenDto(token.getId(), verificationCode), userRequest.username(),
-        userRequest.email());
+      sendPreRegisterEmail(new VerificationTokenDto(token.getId(), verificationCode),
+        userRequest.username(), userRequest.email());
     } catch (Exception e) {
       if (token != null) {
         verificationTokenService.deleteVerificationToken(token.getId());
