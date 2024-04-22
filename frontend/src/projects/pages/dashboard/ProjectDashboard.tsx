@@ -200,9 +200,11 @@ export default function ProjectDashboard() {
           }
         </Grid>
       </Grid>
-      <Grid item xs={10}>
-        <UserQuestionnaires groupId={groupId} projectId={projectId}/>
-      </Grid>
+      {(projectPermissions?.length === 1 && projectPermissions.includes(PermissionType.PROJECT_ASSIGNED_MEMBER))
+        ? <Grid item xs={10}>
+          <UserQuestionnaires groupId={groupId} projectId={projectId}/>
+        </Grid>
+        : <></>}
     </Grid>
   );
 }
