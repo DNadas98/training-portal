@@ -1,7 +1,18 @@
 import {GroupResponsePublicDto} from "../../../../groups/dto/GroupResponsePublicDto.ts";
 import {ProjectResponsePublicDto} from "../../../../projects/dto/ProjectResponsePublicDto.ts";
 import {QuestionnaireResponseEditorDto} from "../../../../questionnaires/dto/QuestionnaireResponseEditorDto.ts";
-import {Autocomplete, Avatar, Button, Card, CardActions, CardContent, CardHeader, Grid, TextField} from "@mui/material";
+import {
+  Autocomplete,
+  Avatar,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  Grid,
+  Stack,
+  TextField, useTheme
+} from "@mui/material";
 import {FileDownload, PersonAddOutlined} from "@mui/icons-material";
 import {ChangeEvent} from "react";
 import {MobileDateTimePicker} from "@mui/x-date-pickers";
@@ -32,18 +43,28 @@ interface UserPreRegistrationFormProps {
 }
 
 export default function UserPreRegistrationForm(props: UserPreRegistrationFormProps) {
+  const theme = useTheme();
   return (
     <Grid container justifyContent={"center"} alignItems={"center"} spacing={2}>
-      <Grid item xs={10}>
+      <Grid item xs={10} sm={8} md={5} lg={4}>
         <Card component={"form"} onSubmit={props.onSubmit}>
           <CardHeader
             title={"User Pre-Registration"}
             titleTypographyProps={{variant: "h5"}}
             avatar={
-              <Avatar variant={"rounded"} color={"primary.main"}>
+              <Avatar variant={"rounded"} sx={{backgroundColor: theme.palette.primary.main}}>
                 <PersonAddOutlined/>
               </Avatar>}/>
           <CardContent><Grid container spacing={2}>
+            <Grid item xs={12}>
+              <MobileDateTimePicker
+                label={"Expiration Date"}
+                sx={{width: "100%"}}
+                value={props.expiresAt?.length ? props.expiresAt : new Date()}
+                onChange={props.onExpiresAtChange}
+                timezone={"system"}
+              />
+            </Grid>
             <Grid item xs={12}>
               <Autocomplete
                 options={props.groups}
@@ -52,7 +73,7 @@ export default function UserPreRegistrationForm(props: UserPreRegistrationFormPr
                 value={props.selectedGroup}
                 onChange={props.onGroupSelect}
                 renderInput={(params) => (
-                  <TextField {...params} label="Select Group" variant="outlined"/>)}
+                  <TextField {...params} label="Select Group" variant="outlined" required/>)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -63,7 +84,7 @@ export default function UserPreRegistrationForm(props: UserPreRegistrationFormPr
                 value={props.selectedProject}
                 onChange={props.onProjectSelect}
                 renderInput={(params) => (
-                  <TextField {...params} label="Select Project" variant="outlined"/>)}
+                  <TextField {...params} label="Select Project" variant="outlined" required/>)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -74,14 +95,27 @@ export default function UserPreRegistrationForm(props: UserPreRegistrationFormPr
                 value={props.selectedQuestionnaire}
                 onChange={props.onQuestionnaireSelect}
                 renderInput={(params) => (
-                  <TextField {...params} label="Select Questionnaire" variant="outlined"/>)}
+                  <TextField {...params} label="Select Questionnaire" variant="outlined" required/>)}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12}><Stack spacing={2}>
+              <p>The user data must be uploaded as a <code>.csv</code> file.</p>
+              <Button
+                type="button"
+                onClick={props.onDownloadTemplate}
+                variant={"contained"}
+                color={"success"}
+                startIcon={<FileDownload/>}
+                sx={{width: "fit-content"}}>
+                Download CSV Template
+              </Button>
               <TextField
                 label="Upload User Data - .csv, max. 400KB"
                 type="file"
                 required
+                variant="outlined"
+                name="userData"
+                fullWidth
                 InputLabelProps={{shrink: true}}
                 InputProps={{
                   inputProps: {
@@ -89,28 +123,8 @@ export default function UserPreRegistrationForm(props: UserPreRegistrationFormPr
                     onChange: props.onFileSelect
                   }
                 }}
-                variant="filled"
-                fullWidth
-                name="userData"
               />
-            </Grid>
-            <Grid item xs={12} alignItems={"left"}>
-              <Button
-                type="button"
-                onClick={props.onDownloadTemplate}
-                startIcon={<FileDownload/>}
-                sx={{width: "fit-content"}}>
-                Download CSV Template for User Data
-              </Button>
-            </Grid>
-            <Grid item xs={12}>
-              <MobileDateTimePicker
-                label={"Expiration Date"}
-                value={props.expiresAt?.length ? props.expiresAt : new Date()}
-                onChange={props.onExpiresAtChange}
-                timezone={"system"}
-              />
-            </Grid>
+            </Stack></Grid>
           </Grid></CardContent>
           <CardActions>
             <Button type={"submit"}>Send</Button>
