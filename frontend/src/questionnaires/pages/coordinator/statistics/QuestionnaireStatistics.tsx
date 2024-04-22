@@ -223,7 +223,7 @@ export default function QuestionnaireStatistics() {
           </Stack>
         </Grid>
         <Grid item xs={12} mb={2}>
-          <Grid container spacing={2} alignItems={"center"} justifyContent={"space-between"}>
+          <Grid container spacing={2} alignItems={"left"} justifyContent={"left"}>
             <Grid item xs={12} md={"auto"}>
               <Typography variant={"body2"}>
                 Created
@@ -331,7 +331,11 @@ export default function QuestionnaireStatistics() {
                           <TableCell>{stat.lastSubmissionReceivedPoints} / {stat.questionnaireMaxPoints}</TableCell>
                           <TableCell>{stat.submissionCount}</TableCell>
                         </>
-                        : <TableCell>No questionnaire submissions found</TableCell>}
+                        : <>
+                          <TableCell>No questionnaire submissions found</TableCell>
+                          <TableCell></TableCell><TableCell></TableCell>
+                          <TableCell></TableCell><TableCell></TableCell>
+                        </>}
                     </TableRow>
                   ))
                   : <TableRow>

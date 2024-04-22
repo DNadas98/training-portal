@@ -5,8 +5,8 @@ import {ChevronRight} from "@mui/icons-material";
 export default function ForwardIcon() {
   return (
     <Avatar variant={"rounded"} sx={{
+      color: "secondary.main",
       backgroundColor: "background.paper",
-      color: "primary.main",
       height: "1.25rem",
       width: "1.25rem"
     }}>
