@@ -34,6 +34,8 @@ import RichTextDisplay from "../../../../common/richTextEditor/RichTextDisplay.t
 import URLQueryPagination from "../../../../common/pagination/URLQueryPagination.tsx";
 import {ApiResponsePageableDto} from "../../../../common/api/dto/ApiResponsePageableDto.ts";
 import {QuestionnaireResponseEditorDto} from "../../../dto/QuestionnaireResponseEditorDto.ts";
+import {useAuthentication} from "../../../../authentication/hooks/useAuthentication.ts";
+import {FileDownload} from "@mui/icons-material";
 
 export default function QuestionnaireStatistics() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -58,6 +60,7 @@ export default function QuestionnaireStatistics() {
   const page = parseInt(searchParams.get('page') || '1', 10);
   const size = parseInt(searchParams.get('size') || '10', 10);
   const [usernameSearchValue, setUsernameSearchValue] = useState<string>("");
+  const authentication = useAuthentication();
 
   function handleErrorNotification(message: string) {
     notification.openNotification({
@@ -93,7 +96,7 @@ export default function QuestionnaireStatistics() {
     }
   }
 
-  async function loadQuestionnaireStatistics(search: string, currentPage: number, currentSize: number, currentStatus) {
+  async function loadQuestionnaireStatistics(search: string, currentPage: number, currentSize: number, currentStatus: QuestionnaireStatus) {
     try {
       setQuestionnaireStatisticsLoading(true);
       const usernameSearchEncoded = encodeURIComponent(search ?? "");
@@ -115,10 +118,10 @@ export default function QuestionnaireStatistics() {
       const newTotalPages = Number(pageableResponse.totalPages);
       setTotalPages((newTotalPages && newTotalPages > 0) ? newTotalPages : 1);
       const newPage = pageableResponse.currentPage;
-      const newSize=pageableResponse.size;
+      const newSize = pageableResponse.size;
       searchParams.set("page", `${newPage}`);
       searchParams.set("size", `${newSize}`);
-      navigate(`?${searchParams.toString()}`, { replace: true });
+      navigate(`?${searchParams.toString()}`, {replace: true});
     } catch (e) {
       setQuestionnaireStatistics([]);
       notification.openNotification({
@@ -134,11 +137,11 @@ export default function QuestionnaireStatistics() {
 
   useEffect(() => {
     reloadStatisticsDebouncedRef.current = debounce((searchValue, currentPage, currentSize, currentStatus) => {
-      loadQuestionnaireStatistics(searchValue, currentPage, currentSize, currentStatus);
+      loadQuestionnaireStatistics(searchValue, currentPage, currentSize, currentStatus).then();
     }, 300);
 
-    loadQuestionnaire();
-    loadQuestionnaireStatistics(usernameSearchValue,page,size,displayedQuestionnaireStatus);
+    loadQuestionnaire().then();
+    loadQuestionnaireStatistics(usernameSearchValue, page, size, displayedQuestionnaireStatus).then();
   }, []);
 
   const handleStatisticsSearch = (event: any) => {
@@ -160,6 +163,33 @@ export default function QuestionnaireStatistics() {
   function handlePageChange(newPage: number): void {
     reloadStatisticsDebouncedRef.current?.(usernameSearchValue, newPage, size, displayedQuestionnaireStatus);
   }
+
+  const handleExcelDownload = async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/groups/${groupId}/projects/${projectId}/coordinator/questionnaires/${questionnaireId}/submissions/stats/excel?status=${displayedQuestionnaireStatus}`, {
+          headers: {
+            Authorization: `Bearer ${authentication.getAccessToken()}`,
+          }
+        });
+      if (!response.ok || response.status > 399) {
+        const res = await response.json();
+        console.error(res?.error,"-",res?.message);
+        handleErrorNotification(res?.error ?? "Failed to download template");
+        return;
+      }
+      const blob = await response.blob();
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.setAttribute("download", "questionnaire-statistics.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+    } catch (e) {
+      console.error(e);
+      handleErrorNotification("Failed to download template");
+    }
+  };
 
   const hasValidSubmission = (stat: QuestionnaireSubmissionStatisticsResponseDto) => {
     return stat.maxPointSubmissionId !== null && stat.maxPointSubmissionId !== undefined &&
@@ -219,12 +249,19 @@ export default function QuestionnaireStatistics() {
           </Grid>
         </Grid>
         <Grid item xs={12} mb={2}>
-          <Button onClick={() => {
-            navigate(`/groups/${groupId}/projects/${projectId}/coordinator/questionnaires`);
-          }}
-                  sx={{width: "fit-content"}} variant={"outlined"}>
-            Back To Questionnaires
-          </Button>
+          <Grid container spacing={2}>
+            <Grid item><Button
+              onClick={handleExcelDownload}
+              startIcon={<FileDownload/>}>
+              Export to excel (.xlsx)
+            </Button></Grid>
+            <Grid item><Button onClick={() => {
+              navigate(`/groups/${groupId}/projects/${projectId}/coordinator/questionnaires`);
+            }}
+                               sx={{width: "fit-content"}} variant={"outlined"}>
+              Back To Questionnaires
+            </Button></Grid>
+          </Grid>
         </Grid>
         <Grid item xs={12}><Grid container spacing={1}>
           <Grid item xs={12} sm={true}>
@@ -246,8 +283,8 @@ export default function QuestionnaireStatistics() {
           </Grid>
           <Grid item xs={12} sm={"auto"}>
             <URLQueryPagination totalPages={totalPages} defaultPage={1}
-            onPageChange={handlePageChange}
-            onSizeChange={handleSizeChange}/>
+                                onPageChange={handlePageChange}
+                                onSizeChange={handleSizeChange}/>
           </Grid>
         </Grid></Grid>
         <Grid item xs={12}><TableContainer component={Paper}>

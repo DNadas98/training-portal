@@ -15,6 +15,7 @@ spring:
       hibernate:
         jdbc:
           batch_size: 50
+          fetch_size: 250
     open-in-view: false
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   main:

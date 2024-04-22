@@ -134,20 +134,6 @@ public class QuestionnaireSubmissionService {
     return responseDtos;
   }
 
-  @Transactional(readOnly = true)
-  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_COORDINATOR')")
-  public Page<QuestionnaireSubmissionStatsResponseDto> getQuestionnaireSubmissionStatistics(
-    Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status,
-    Pageable pageable, String searchInput) {
-    if (!status.equals(QuestionnaireStatus.ACTIVE)) {
-      return getStatisticsByStatus(groupId, projectId, questionnaireId, status, pageable,
-        searchInput);
-    }
-    return getStatisticsWithNonSubmittersByStatus(groupId, projectId, questionnaireId, status,
-      pageable, searchInput);
-  }
-
-
   @Transactional(rollbackFor = Exception.class)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
   public void deleteQuestionnaireSubmission(
@@ -286,27 +272,5 @@ public class QuestionnaireSubmissionService {
     }
 
     return submittedAnswers;
-  }
-
-  private Page<QuestionnaireSubmissionStatsResponseDto> getStatisticsByStatus(
-    Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status,
-    Pageable pageable, String searchInput) {
-    Page<QuestionnaireSubmissionStatsInternalDto> questionnaireStats = questionnaireSubmissionDao
-      .getQuestionnaireSubmissionStatisticsByStatus(groupId, projectId, questionnaireId, status,
-        pageable, searchInput);
-    return questionnaireStats.map(
-      questionnaireSubmissionConverter::toQuestionnaireSubmissionStatsAdminDto);
-  }
-
-  private Page<QuestionnaireSubmissionStatsResponseDto> getStatisticsWithNonSubmittersByStatus(
-    Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status,
-    Pageable pageable, String searchInput) {
-    Page<QuestionnaireSubmissionStatsInternalDto> questionnaireStats =
-      questionnaireSubmissionDao.getQuestionnaireSubmissionStatisticsWithNonSubmittersByStatus(
-        groupId, projectId, questionnaireId, status, pageable, searchInput);
-    Page<QuestionnaireSubmissionStatsResponseDto> responseDtos =
-      questionnaireStats.map(
-        questionnaireSubmissionConverter::toQuestionnaireSubmissionStatsAdminDto);
-    return responseDtos;
   }
 }
