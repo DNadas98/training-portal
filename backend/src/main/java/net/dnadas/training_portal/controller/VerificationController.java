@@ -1,12 +1,16 @@
 package net.dnadas.training_portal.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import net.dnadas.training_portal.dto.auth.PasswordResetDto;
+import net.dnadas.training_portal.dto.auth.*;
+import net.dnadas.training_portal.dto.user.PreRegistrationCompleteInternalDto;
 import net.dnadas.training_portal.dto.verification.VerificationTokenDto;
 import net.dnadas.training_portal.service.auth.AuthenticationService;
 import net.dnadas.training_portal.service.user.ApplicationUserService;
+import net.dnadas.training_portal.service.user.PreRegistrationService;
+import net.dnadas.training_portal.service.utils.security.CookieService;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +30,8 @@ import java.util.UUID;
 public class VerificationController {
   private final ApplicationUserService applicationUserService;
   private final AuthenticationService authenticationService;
+  private final CookieService cookieService;
+  private final PreRegistrationService preRegistrationService;
   private final MessageSource messageSource;
 
   @PostMapping("/registration")
@@ -61,5 +67,25 @@ public class VerificationController {
     return ResponseEntity.status(HttpStatus.OK).body(
       Map.of("message", messageSource.getMessage(
         "auth.password.reset.success", null, locale)));
+  }
+
+  @PostMapping("/invitation-accept")
+  public ResponseEntity<?> completePreRegistration(
+    @RequestParam(name = "code") UUID verificationCode,
+    @RequestParam(name = "id") @Min(1) Long verificationTokenId,
+    @RequestBody @Valid PreRegistrationCompleteRequestDto requestDto,
+    HttpServletResponse response) {
+    PreRegistrationCompleteInternalDto registrationCompleteDto = preRegistrationService
+      .completePreRegistration(new @Valid VerificationTokenDto(
+        verificationTokenId, verificationCode), requestDto);
+
+    LoginResponseDto loginResponse = authenticationService.login(new LoginRequestDto(
+      registrationCompleteDto.email(), requestDto.password()));
+    String refreshToken = authenticationService.getNewRefreshToken(
+      new TokenPayloadDto(loginResponse.getUserInfo().email()));
+    cookieService.addRefreshCookie(refreshToken, response);
+
+    return ResponseEntity.status(HttpStatus.OK).body(
+      Map.of("data", loginResponse));
   }
 }

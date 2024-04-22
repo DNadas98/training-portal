@@ -1,4 +1,4 @@
-package net.dnadas.training_portal.exception.datetime;
+package net.dnadas.training_portal.exception.utils.datetime;
 
 public class ProjectStartAfterEarliestTaskStartException extends DateTimeBadRequestException {
   public ProjectStartAfterEarliestTaskStartException() {

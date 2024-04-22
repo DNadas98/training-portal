@@ -6,6 +6,6 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
-public record PreRegisterUserRequestDto(
-  @NotNull @NotEmpty List<@Valid PreRegisterUserRequestDto> users) {
+public record PreRegisterUsersInternalDto(
+  @NotNull @NotEmpty List<@Valid PreRegisterUserInternalDto> users) {
 }

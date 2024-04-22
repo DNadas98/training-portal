@@ -45,6 +45,7 @@ import CoordinatorQuestionnaires
   from "../../questionnaires/pages/coordinator/questionnaires/CoordinatorQuestionnaires.tsx";
 import AdminLayout from "../../admin/layout/AdminLayout.tsx";
 import UserPreRegistrationPage from "../../admin/pages/userPreRegistration/UserPreRegistrationPage.tsx";
+import InvitationRedirect from "../../authentication/pages/redirect/InvitationRedirect.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -74,6 +75,9 @@ const appRouter = createBrowserRouter([
       },
       {
         path: "password-reset", element: <PasswordResetVerificationRedirect/>
+      },
+      {
+        path: "invitation", element: <InvitationRedirect/>
       }
     ]
   },

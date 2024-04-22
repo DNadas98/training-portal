@@ -21,7 +21,7 @@ public class EmailChangeVerificationToken extends VerificationToken {
 
   public EmailChangeVerificationToken(
     String newEmail, Long userId, String hashedVerificationCode) {
-    super(TokenType.REGISTRATION, hashedVerificationCode);
+    super(TokenType.EMAIL_CHANGE, hashedVerificationCode);
     this.userId = userId;
     this.newEmail = newEmail;
   }

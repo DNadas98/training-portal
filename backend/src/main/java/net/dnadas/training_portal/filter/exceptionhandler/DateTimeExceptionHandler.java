@@ -1,7 +1,7 @@
 package net.dnadas.training_portal.filter.exceptionhandler;
 
 import lombok.RequiredArgsConstructor;
-import net.dnadas.training_portal.exception.datetime.DateTimeBadRequestException;
+import net.dnadas.training_portal.exception.utils.datetime.DateTimeBadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

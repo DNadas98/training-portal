@@ -15,7 +15,6 @@ import java.time.ZoneId;
 @RequiredArgsConstructor
 public class VerificationTokenCleanupService {
   private static final long TOKEN_CLEANUP_SCHEDULE_RATE_MS = 1000 * 60 * 60; // 1h
-  private static final long TOKEN_EXPIRATION_MS = 1000 * 60 * 60; // 1h
   private final VerificationTokenDao tokenRepository;
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -23,11 +22,10 @@ public class VerificationTokenCleanupService {
   @Transactional(rollbackOn = Exception.class)
   public void cleanExpiredTokens() {
     try {
-      tokenRepository.deleteAllExpired(Instant.now().minusMillis(TOKEN_EXPIRATION_MS));
-
+      tokenRepository.deleteAllExpired(Instant.now());
       logger.info(String.format(
         "Scheduled job to clear expired verification tokens finished successfully, next execution at %s",
-        Instant.now().plusMillis(TOKEN_EXPIRATION_MS).atZone(ZoneId.of("UTC"))));
+        Instant.now().plusMillis(TOKEN_CLEANUP_SCHEDULE_RATE_MS).atZone(ZoneId.of("UTC"))));
     } catch (Exception e) {
       logger.error(
         String.format(

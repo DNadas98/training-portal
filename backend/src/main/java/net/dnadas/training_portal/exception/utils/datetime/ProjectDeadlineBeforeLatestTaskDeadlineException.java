@@ -1,4 +1,4 @@
-package net.dnadas.training_portal.exception.datetime;
+package net.dnadas.training_portal.exception.utils.datetime;
 
 public class ProjectDeadlineBeforeLatestTaskDeadlineException extends DateTimeBadRequestException {
   public ProjectDeadlineBeforeLatestTaskDeadlineException() {

@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -40,4 +41,6 @@ public interface ApplicationUserDao extends JpaRepository<ApplicationUser, Long>
   Optional<ApplicationUser> findByIdAndFetchAssignedTasks(@Param("id") Long id);
 
   Optional<ApplicationUser> findByUsername(String username);
+
+  List<ApplicationUser> findAllByEmailIn(List<String> emails);
 }

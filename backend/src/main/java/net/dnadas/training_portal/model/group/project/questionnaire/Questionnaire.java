@@ -66,6 +66,11 @@ public class Questionnaire {
   @ToString.Exclude
   private ApplicationUser updatedBy;
 
+  @OneToMany(mappedBy = "activeQuestionnaire", orphanRemoval = true, fetch = FetchType.LAZY)
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
+  private List<ApplicationUser> activeQuestionnaireUsers = new ArrayList<>();
+
   public Questionnaire(
     String name, String description, Project project, ApplicationUser createdBy) {
     this.name = name;
@@ -94,5 +99,12 @@ public class Questionnaire {
   public void removeAllQuestions() {
     this.questions.clear();
     maxPoints = 0;
+  }
+
+  @PreRemove
+  private void removeQuestionnaireFromUsers() {
+    for (ApplicationUser user : activeQuestionnaireUsers) {
+      user.setActiveQuestionnaire(null);
+    }
   }
 }

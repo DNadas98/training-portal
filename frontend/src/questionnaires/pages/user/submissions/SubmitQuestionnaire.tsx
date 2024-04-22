@@ -163,7 +163,7 @@ export default function SubmitQuestionnaire() {
         type: "success", vertical: "top", horizontal: "center", message: response.message
       });
       localStorage.removeItem(LOCAL_STORAGE_KEY);
-      navigate(-1);
+      navigateBack();
     } catch (e) {
       notification.openNotification({
         type: "error", vertical: "top", horizontal: "center", message: defaultError
@@ -180,9 +180,16 @@ export default function SubmitQuestionnaire() {
       cancelText: "No, continue the questionnaire",
       onConfirm: () => {
         localStorage.removeItem(LOCAL_STORAGE_KEY);
-        navigate(-1);
+        navigateBack();
       }
     });
+  }
+
+  function navigateBack() {
+    if (window.location.pathname.includes("editor")) {
+      return navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`);
+    }
+    return navigate(`/groups/${groupId}/projects/${projectId}/questionnaires`);
   }
 
   if (loading || permissionsLoading) {

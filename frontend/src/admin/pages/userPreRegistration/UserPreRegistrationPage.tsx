@@ -199,7 +199,7 @@ export default function UserPreRegistrationPage() {
       notification.openNotification({
         type: "success", vertical: "top", horizontal: "center", message: response.message
       });
-      window.location.href = ".";
+      window.location.href = window.location.href;
     } catch (error) {
       openErrorNotification(defaultError);
     }
@@ -208,6 +208,24 @@ export default function UserPreRegistrationPage() {
   const handleBackClick = () => {
     navigate(-1);
   }
+  const handleDownloadTemplate = async () => {
+    try {
+      const response = await fetch("/api/v1/admin/pre-register/users/csv-template", {
+        headers: {
+          Authorization: `Bearer ${authentication.getAccessToken()}`,
+        }
+      });
+      const blob = await response.blob();
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.setAttribute("download", "user_pre_registration_template.csv");
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+    } catch (e) {
+      openErrorNotification("Failed to download template");
+    }
+  };
 
   useEffect(() => {
     loadQuestionnaires().then();
@@ -238,5 +256,6 @@ export default function UserPreRegistrationPage() {
     selectedFile={selectedFile}
     onFileSelect={handleFileSelect}
     onSubmit={handleSubmit}
-    onBackClick={handleBackClick}/>;
+    onBackClick={handleBackClick}
+    onDownloadTemplate={handleDownloadTemplate}/>;
 }

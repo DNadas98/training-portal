@@ -2,11 +2,12 @@ package net.dnadas.training_portal.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.dto.auth.*;
+import net.dnadas.training_portal.exception.auth.UnauthorizedException;
 import net.dnadas.training_portal.service.auth.AuthenticationService;
 import net.dnadas.training_portal.service.utils.security.CookieService;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,15 +48,20 @@ public class AuthenticationController {
     @RequestBody @Valid LoginRequestDto loginRequest, HttpServletResponse response) {
     LoginResponseDto loginResponse = authenticationService.login(loginRequest);
     String refreshToken = authenticationService.getNewRefreshToken(
-      new TokenPayloadDto(loginResponse.userInfo().email()));
+      new TokenPayloadDto(loginResponse.getUserInfo().email()));
     cookieService.addRefreshCookie(refreshToken, response);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", loginResponse));
   }
 
   @GetMapping("/refresh")
-  public ResponseEntity<?> refresh(@CookieValue @Length(min = 1) String jwt) {
-    RefreshResponseDto refreshResponse = authenticationService.refresh(new RefreshRequestDto(jwt));
-    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", refreshResponse));
+  public ResponseEntity<?> refresh(@CookieValue(required = false) String jwt) {
+    try {
+      RefreshResponseDto refreshResponse = authenticationService.refresh(
+        new RefreshRequestDto(jwt));
+      return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", refreshResponse));
+    } catch (ValidationException e) {
+      throw new UnauthorizedException();
+    }
   }
 
   @GetMapping("/logout")

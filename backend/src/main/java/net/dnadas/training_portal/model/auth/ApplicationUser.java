@@ -105,6 +105,10 @@ public class ApplicationUser implements UserDetails {
   @OrderBy("createdAt DESC")
   private List<QuestionnaireSubmission> questionnaireSubmissions = new ArrayList<>();
 
+  @ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = CascadeType.DETACH)
+  @JoinColumn(name = "active_questionnaire_id")
+  private Questionnaire activeQuestionnaire = null;
+
   public ApplicationUser(String username, String email, String password) {
     this.username = username;
     this.email = email;

@@ -1,7 +1,7 @@
 package net.dnadas.training_portal.service.utils.datetime;
 
 import lombok.extern.slf4j.Slf4j;
-import net.dnadas.training_portal.exception.datetime.*;
+import net.dnadas.training_portal.exception.utils.datetime.*;
 import net.dnadas.training_portal.model.group.project.task.Task;
 import org.springframework.stereotype.Service;
 

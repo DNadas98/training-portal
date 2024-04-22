@@ -10,6 +10,6 @@ import java.time.Instant;
 public interface VerificationTokenDao extends JpaRepository<VerificationToken, Long> {
   @Modifying
   @Transactional
-  @Query("DELETE FROM VerificationToken v WHERE v.createdAt <= :expirationDate")
-  void deleteAllExpired(Instant expirationDate);
+  @Query("DELETE FROM VerificationToken v WHERE v.expiresAt <= :now")
+  void deleteAllExpired(Instant now);
 }

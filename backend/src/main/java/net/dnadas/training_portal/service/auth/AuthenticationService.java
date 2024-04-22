@@ -1,7 +1,7 @@
 package net.dnadas.training_portal.service.auth;
 
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.dto.auth.*;
 import net.dnadas.training_portal.dto.email.EmailRequestDto;
 import net.dnadas.training_portal.dto.verification.VerificationTokenDto;
@@ -12,6 +12,9 @@ import net.dnadas.training_portal.exception.auth.UserNotFoundException;
 import net.dnadas.training_portal.exception.verification.VerificationTokenAlreadyExistsException;
 import net.dnadas.training_portal.model.auth.ApplicationUser;
 import net.dnadas.training_portal.model.auth.ApplicationUserDao;
+import net.dnadas.training_portal.model.group.UserGroup;
+import net.dnadas.training_portal.model.group.project.Project;
+import net.dnadas.training_portal.model.group.project.questionnaire.Questionnaire;
 import net.dnadas.training_portal.model.verification.*;
 import net.dnadas.training_portal.service.utils.email.EmailService;
 import net.dnadas.training_portal.service.utils.email.EmailTemplateService;
@@ -28,7 +31,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AuthenticationService {
   private final ApplicationUserDao applicationUserDao;
   private final PasswordEncoder passwordEncoder;
@@ -91,6 +94,7 @@ public class AuthenticationService {
     verificationTokenService.deleteVerificationToken(token.getId());
   }
 
+  @Transactional(readOnly = true)
   public LoginResponseDto login(LoginRequestDto loginRequest) {
     try {
       authenticationManager.authenticate(
@@ -102,9 +106,26 @@ public class AuthenticationService {
       InvalidCredentialsException::new);
     TokenPayloadDto payloadDto = new TokenPayloadDto(user.getEmail());
     String accessToken = jwtService.generateAccessToken(payloadDto);
+
+    Optional<Questionnaire> activeQuestionnaire = Optional.ofNullable(
+      user.getActiveQuestionnaire());
+    if (activeQuestionnaire.isPresent()) {
+      return getLoginResponseWithActiveQuestionnaire(activeQuestionnaire.get(), accessToken, user);
+    }
+
     return new LoginResponseDto(
       accessToken,
       new UserInfoDto(user.getActualUsername(), user.getEmail(), user.getGlobalRoles()));
+  }
+
+  private LoginResponseDto getLoginResponseWithActiveQuestionnaire(
+    Questionnaire questionnaire, String accessToken, ApplicationUser user) {
+    Project project = questionnaire.getProject();
+    UserGroup group = project.getUserGroup();
+    return new LoginResponseDto(
+      accessToken,
+      new UserInfoDto(user.getActualUsername(), user.getEmail(), user.getGlobalRoles()),
+      group.getId(), project.getId(), questionnaire.getId());
   }
 
 
