@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import ExpandIcon from "../../../../../common/utils/components/ExpandIcon.tsx";
 import LoadingSpinner from "../../../../../common/utils/components/LoadingSpinner.tsx";
-import {QuestionnaireResponseDto} from "../../../../dto/QuestionnaireResponseDto.ts";
+import {QuestionnaireResponseDto} from "../../../../../questionnaires/dto/QuestionnaireResponseDto.ts";
 import RichTextDisplay from "../../../../../common/richTextEditor/RichTextDisplay.tsx";
 
 interface UserQuestionnaireListProps {
@@ -28,9 +28,9 @@ export default function UserQuestionnaireList(props: UserQuestionnaireListProps)
   return props.loading
     ? <LoadingSpinner/>
     : props.questionnaires?.length > 0
-      ? props.questionnaires.map((questionnaire) => {
+      ? props.questionnaires.map((questionnaire, index) => {
         return <Card key={questionnaire.id}>
-          <Accordion defaultExpanded={false}
+          <Accordion defaultExpanded={index === 0}
                      variant={"elevation"}
                      sx={{paddingTop: 0.5, paddingBottom: 0.5}}>
             <AccordionSummary expandIcon={<ExpandIcon/>}>

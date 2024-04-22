@@ -1,6 +1,6 @@
-import {Button, Card, CardActions, CardContent, CardHeader, Grid, Stack, TextField} from "@mui/material";
+import {Card, CardContent, CardHeader, Grid, Stack, TextField} from "@mui/material";
 import {FormEvent} from "react";
-import {QuestionnaireResponseDto} from "../../../../dto/QuestionnaireResponseDto.ts";
+import {QuestionnaireResponseDto} from "../../../../../questionnaires/dto/QuestionnaireResponseDto.ts";
 import UserQuestionnaireList from "./UserQuestionnaireList.tsx";
 
 interface UserQuestionnaireBrowserProps {
@@ -18,7 +18,7 @@ interface UserQuestionnaireBrowserProps {
 export default function UserQuestionnaireBrowser(props: UserQuestionnaireBrowserProps) {
   return (
     <Grid container spacing={2} justifyContent={"center"} alignItems={"top"}>
-      <Grid item xs={10} sm={10} md={9} lg={8}>
+      <Grid item xs={12}>
         <Stack spacing={2}>
           <Card>
             <CardHeader title={"Active Questionnaires"} sx={{textAlign: "center"}}/>
@@ -39,7 +39,7 @@ export default function UserQuestionnaireBrowser(props: UserQuestionnaireBrowser
         </Stack>
       </Grid>
       {props.maxPointQuestionnaires?.length ?
-        <Grid item xs={10} sm={10} md={9} lg={8}>
+        <Grid item xs={12}>
           <Stack spacing={2}>
             <Card>
               <CardHeader title={"Questionnaires With Max Points"} sx={{textAlign: "center"}}/>
@@ -58,13 +58,6 @@ export default function UserQuestionnaireBrowser(props: UserQuestionnaireBrowser
                                    maxPoints={true}/>
           </Stack>
         </Grid> : <></>}
-      <Grid item xs={10} sm={10} md={9} lg={8}>
-      <Card><CardActions>
-        <Button sx={{width: "fit-content"}} onClick={props.handleBackClick}>
-          Back to project
-        </Button>
-      </CardActions></Card>
-      </Grid>
     </Grid>
   );
 }

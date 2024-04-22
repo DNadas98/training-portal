@@ -26,9 +26,9 @@ export default function TaskList(props: TaskListProps) {
   return props.loading
     ? <LoadingSpinner/>
     : props.tasks?.length > 0
-      ? props.tasks.map((task) => {
+      ? props.tasks.map((task, index) => {
         return <Card key={task.taskId}>
-          <Accordion defaultExpanded={false}
+          <Accordion defaultExpanded={index === 0}
                      variant={"elevation"}
                      sx={{paddingTop: 0.5, paddingBottom: 0.5}}>
             <AccordionSummary expandIcon={<ExpandIcon/>}>

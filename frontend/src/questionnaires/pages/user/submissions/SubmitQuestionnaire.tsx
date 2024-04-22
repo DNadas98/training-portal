@@ -189,7 +189,7 @@ export default function SubmitQuestionnaire() {
     if (window.location.pathname.includes("editor")) {
       return navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`);
     }
-    return navigate(`/groups/${groupId}/projects/${projectId}/questionnaires`);
+    return navigate(`/groups/${groupId}/projects/${projectId}`);
   }
 
   if (loading || permissionsLoading) {

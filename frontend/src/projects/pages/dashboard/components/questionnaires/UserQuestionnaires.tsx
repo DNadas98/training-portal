@@ -1,15 +1,18 @@
 import {useEffect, useMemo, useState} from "react";
-import LoadingSpinner from "../../../../common/utils/components/LoadingSpinner.tsx";
-import usePermissions from "../../../../authentication/hooks/usePermissions.ts";
-import {useNavigate, useParams} from "react-router-dom";
-import {useNotification} from "../../../../common/notification/context/NotificationProvider.tsx";
-import UserQuestionnaireBrowser from "./components/UserQuestionnaireBrowser.tsx";
-import {QuestionnaireResponseDto} from "../../../dto/QuestionnaireResponseDto.ts";
-import {isValidId} from "../../../../common/utils/isValidId.ts";
-import useAuthJsonFetch from "../../../../common/api/hooks/useAuthJsonFetch.tsx";
+import LoadingSpinner from "../../../../../common/utils/components/LoadingSpinner.tsx";
+import {useNavigate} from "react-router-dom";
+import {useNotification} from "../../../../../common/notification/context/NotificationProvider.tsx";
+import UserQuestionnaireBrowser from "./UserQuestionnaireBrowser.tsx";
+import {QuestionnaireResponseDto} from "../../../../../questionnaires/dto/QuestionnaireResponseDto.ts";
+import {isValidId} from "../../../../../common/utils/isValidId.ts";
+import useAuthJsonFetch from "../../../../../common/api/hooks/useAuthJsonFetch.tsx";
 
-export default function UserQuestionnaires() {
-  const {loading: permissionsLoading, projectPermissions} = usePermissions();
+interface UserQuestionnairesProps {
+  groupId: string | undefined,
+  projectId: string | undefined
+}
+
+export default function UserQuestionnaires({groupId, projectId}: UserQuestionnairesProps) {
   const [questionnairesLoading, setQuestionnairesLoading] = useState<boolean>(true);
   const [maxPointQuestionnairesLoading, setMaxPointQuestionnairesLoading] = useState<boolean>(true);
   const [questionnaires, setQuestionnaires] = useState<QuestionnaireResponseDto[]>([]);
@@ -17,9 +20,6 @@ export default function UserQuestionnaires() {
   const authJsonFetch = useAuthJsonFetch();
   const navigate = useNavigate();
   const notification = useNotification();
-
-  const groupId = useParams()?.groupId;
-  const projectId = useParams()?.projectId;
 
   const loadQuestionnaires = async () => {
     try {
@@ -112,15 +112,8 @@ export default function UserQuestionnaires() {
     navigate(`/groups/${groupId}/projects/${projectId}/questionnaires/${id}/submissions`);
   }
 
-  if (questionnairesLoading || maxPointQuestionnairesLoading || permissionsLoading) {
+  if (questionnairesLoading || maxPointQuestionnairesLoading) {
     return <LoadingSpinner/>;
-  } else if (!projectPermissions.length) {
-    notification.openNotification({
-      type: "error", vertical: "top", horizontal: "center",
-      message: "Access Denied: Insufficient permissions"
-    });
-    navigate(`/groups/${groupId}/projects`);
-    return <></>;
   }
 
   return (
@@ -132,7 +125,7 @@ export default function UserQuestionnaires() {
                               handleMaxPointQuestionnaireSearch={handleMaxPointQuestionnaireSearch}
                               handleFillOutClick={handleFillOutClick}
                               handlePastSubmissionsClick={handlePastSubmissionsClick}
-                              handleBackClick={()=>navigate(`/groups/${groupId}/projects/${projectId}`)}
+                              handleBackClick={() => navigate(`/groups/${groupId}/projects/${projectId}`)}
     />
   );
 }

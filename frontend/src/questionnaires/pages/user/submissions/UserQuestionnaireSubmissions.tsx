@@ -187,6 +187,6 @@ export default function UserQuestionnaireSubmissions() {
       totalPages={totalPages}
       page={page} size={size}
       onDeleteClick={handleDeleteClick}
-      handleBackClick={() => navigate(`/groups/${groupId}/projects/${projectId}/questionnaires`)}/>
+      handleBackClick={() => navigate(`/groups/${groupId}/projects/${projectId}`)}/>
   );
 }

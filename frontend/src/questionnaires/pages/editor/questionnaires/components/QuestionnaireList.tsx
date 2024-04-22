@@ -32,9 +32,9 @@ export default function QuestionnaireList(props: QuestionnaireListProps) {
   return props.loading
     ? <LoadingSpinner/>
     : props.questionnaires?.length > 0
-      ? props.questionnaires.map((questionnaire) => {
+      ? props.questionnaires.map((questionnaire, index) => {
         return <Card key={questionnaire.id}>
-          <Accordion defaultExpanded={false}
+          <Accordion defaultExpanded={index === 0}
                      variant={"elevation"}
                      sx={{paddingTop: 0.5, paddingBottom: 0.5}}>
             <AccordionSummary expandIcon={<ExpandIcon/>}>

@@ -11,6 +11,7 @@ import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 import useLocalizedDateTime from "../../../common/localization/hooks/useLocalizedDateTime.tsx";
 import RichTextDisplay from "../../../common/richTextEditor/RichTextDisplay.tsx";
 import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
+import UserQuestionnaires from "./components/questionnaires/UserQuestionnaires.tsx";
 
 export default function ProjectDashboard() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -82,11 +83,6 @@ export default function ProjectDashboard() {
     navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`);
   }
 
-  function handleUserQuestionnairesClick() {
-    navigate(`/groups/${groupId}/projects/${projectId}/questionnaires`);
-  }
-
-
   async function deleteProject() {
     try {
       setProjectLoading(true);
@@ -141,7 +137,6 @@ export default function ProjectDashboard() {
         <CardContent>
           <Stack spacing={2}>
             <RichTextDisplay content={project.detailedDescription}/>
-            {/*<Typography gutterBottom>{project.description}</Typography>*/}
           </Stack>
           <Typography>
             Start Date: {getLocalizedDateTime(project.startDate)}
@@ -151,9 +146,6 @@ export default function ProjectDashboard() {
           </Typography>
         </CardContent>
         <CardActions> <Stack spacing={0.5}>
-          <Button sx={{width: "fit-content", textAlign: "left"}} onClick={handleUserQuestionnairesClick}>
-            View active questionnaires
-          </Button>
           <Button sx={{width: "fit-content"}} onClick={() => navigate(`/groups/${groupId}/projects`)}>
             Back to projects
           </Button>
@@ -207,6 +199,9 @@ export default function ProjectDashboard() {
               </CardActions></Card></Grid>
           }
         </Grid>
+      </Grid>
+      <Grid item xs={10}>
+        <UserQuestionnaires groupId={groupId} projectId={projectId}/>
       </Grid>
     </Grid>
   );

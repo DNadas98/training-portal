@@ -29,9 +29,9 @@ export default function GroupList(props: GroupListProps) {
   return props.loading
     ? <LoadingSpinner/>
     : props.groups?.length > 0
-      ? props.groups.map((group) => {
+      ? props.groups.map((group, index) => {
         return <Card key={group.groupId}>
-          <Accordion defaultExpanded={false}
+          <Accordion defaultExpanded={index === 0}
                      variant={"elevation"}
                      sx={{paddingTop: 0.5, paddingBottom: 0.5}}>
             <AccordionSummary expandIcon={<ExpandIcon/>}>

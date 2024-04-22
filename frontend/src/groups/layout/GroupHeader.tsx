@@ -50,12 +50,6 @@ export default function GroupHeader(props: GroupHeaderProps) {
       path: `/groups/${props?.group?.groupId}/projects/${props?.project?.projectId}`,
       title: "Project Dashboard"
     }];
-    if (props.projectPermissions.includes(PermissionType.PROJECT_ASSIGNED_MEMBER)) {
-      items.push({
-        path: `/groups/${props?.group?.groupId}/projects/${props?.project?.projectId}/questionnaires`,
-        title: "Active Questionnaires"
-      });
-    }
     if (props.projectPermissions.includes(PermissionType.PROJECT_EDITOR)) {
       items.push({
         path: `/groups/${props?.group?.groupId}/projects/${props?.project?.projectId}/editor/questionnaires`,

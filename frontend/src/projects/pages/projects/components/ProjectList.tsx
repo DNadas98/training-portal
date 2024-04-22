@@ -29,9 +29,9 @@ export default function ProjectList(props: ProjectListProps) {
   return props.loading
     ? <LoadingSpinner/>
     : props.projects?.length > 0
-      ? props.projects.map((project) => {
+      ? props.projects.map((project, index) => {
         return <Card key={project.projectId}>
-          <Accordion defaultExpanded={false}
+          <Accordion defaultExpanded={index === 0}
                      variant={"elevation"}
                      sx={{paddingTop: 0.5, paddingBottom: 0.5}}>
             <AccordionSummary expandIcon={<ExpandIcon/>}>
