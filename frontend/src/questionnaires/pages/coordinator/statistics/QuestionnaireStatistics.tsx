@@ -35,7 +35,7 @@ import URLQueryPagination from "../../../../common/pagination/URLQueryPagination
 import {ApiResponsePageableDto} from "../../../../common/api/dto/ApiResponsePageableDto.ts";
 import {QuestionnaireResponseEditorDto} from "../../../dto/QuestionnaireResponseEditorDto.ts";
 import {useAuthentication} from "../../../../authentication/hooks/useAuthentication.ts";
-import {FileDownload} from "@mui/icons-material";
+import {Downloading, FileDownload} from "@mui/icons-material";
 
 export default function QuestionnaireStatistics() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -47,12 +47,12 @@ export default function QuestionnaireStatistics() {
   const [questionnaireStatistics, setQuestionnaireStatistics] = useState<QuestionnaireSubmissionStatisticsResponseDto[]>([]);
   const [questionnaireStatisticsLoading, setQuestionnaireStatisticsLoading] = useState<boolean>(true)
   const [displayedQuestionnaireStatus, setDisplayedQuestionnaireStatus] = useState<QuestionnaireStatus>(QuestionnaireStatus.ACTIVE);
+  const [downloadLoading, setDownloadLoading] = useState<boolean>(false);
   const getLocalizedDateTime = useLocalizedDateTime();
 
   const groupId = useParams()?.groupId;
   const projectId = useParams()?.projectId;
   const questionnaireId = useParams()?.questionnaireId;
-
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -166,6 +166,7 @@ export default function QuestionnaireStatistics() {
 
   const handleExcelDownload = async () => {
     try {
+      setDownloadLoading(true);
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/groups/${groupId}/projects/${projectId}/coordinator/questionnaires/${questionnaireId}/submissions/stats/excel?status=${displayedQuestionnaireStatus}`, {
           headers: {
@@ -174,7 +175,7 @@ export default function QuestionnaireStatistics() {
         });
       if (!response.ok || response.status > 399) {
         const res = await response.json();
-        console.error(res?.error,"-",res?.message);
+        console.error(res?.error, "-", res?.message);
         handleErrorNotification(res?.error ?? "Failed to download template");
         return;
       }
@@ -188,6 +189,8 @@ export default function QuestionnaireStatistics() {
     } catch (e) {
       console.error(e);
       handleErrorNotification("Failed to download template");
+    } finally {
+      setDownloadLoading(false);
     }
   };
 
@@ -250,11 +253,22 @@ export default function QuestionnaireStatistics() {
         </Grid>
         <Grid item xs={12} mb={2}>
           <Grid container spacing={2}>
-            <Grid item><Button
-              onClick={handleExcelDownload}
-              startIcon={<FileDownload/>}>
-              Export to excel (.xlsx)
-            </Button></Grid>
+            <Grid item>
+              {downloadLoading
+                ? <Button variant={"contained"}
+                          color={"success"}
+                          disabled
+                          sx={{width: 250}}
+                          startIcon={<Downloading/>}>
+                  Exporting Data ...
+                </Button>
+                : <Button variant={"contained"} color={"success"}
+                          onClick={handleExcelDownload}
+                          sx={{width: 250}}
+                          startIcon={<FileDownload/>}>
+                  Export to Excel (.xlsx)
+                </Button>}
+            </Grid>
             <Grid item><Button onClick={() => {
               navigate(`/groups/${groupId}/projects/${projectId}/coordinator/questionnaires`);
             }}

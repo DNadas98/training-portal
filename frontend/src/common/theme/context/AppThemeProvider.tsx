@@ -41,7 +41,15 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
       },
       MuiButton: {
         defaultProps: {
-          color: "secondary"
+          color: "secondary",
+        },
+        styleOverrides: {
+          root: {
+            "&.Mui-disabled": {
+              opacity: 1,
+              color: "unset"
+            }
+          }
         }
       },
       MuiAlert: {
