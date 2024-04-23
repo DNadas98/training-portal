@@ -7,7 +7,7 @@ export default function usePublicJsonFetch() {
   const {locale} = useLocaleContext();
   const publicJsonFetch = async (request: ApiRequestDto): Promise<ApiResponseDto> => {
     try {
-      const requestConfig = getRequestConfig(request, locale);
+      const requestConfig = getRequestConfig(request, locale, "application/json");
       const baseUrl = import.meta.env.VITE_API_BASE_URL;
       const httpResponse: Response = await fetch(`${baseUrl}/${request.path}`, requestConfig);
       verifyHttpResponse(httpResponse);

@@ -200,8 +200,7 @@ export default function UserPreRegistrationPage() {
       const response = await authFetch({
         path: `admin/pre-register/users`,
         method: 'POST',
-        body: formData,
-        contentType: "text/csv"
+        body: formData
       }).then(res => res.json());
       if (!response || response.status > 399 || !response.data) {
         openErrorNotification(response?.error ?? defaultError);

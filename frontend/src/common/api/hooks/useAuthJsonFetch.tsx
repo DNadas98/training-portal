@@ -27,7 +27,7 @@ export default function useAuthJsonFetch() {
   }
   const authJsonFetch = async (request: ApiRequestDto) => {
     try {
-      const requestConfig = getRequestConfig(request, locale);
+      const requestConfig = getRequestConfig(request, locale, "application/json");
       const accessToken = authentication.getAccessToken();
       if (!accessToken) {
         throw new Error("Unauthorized");

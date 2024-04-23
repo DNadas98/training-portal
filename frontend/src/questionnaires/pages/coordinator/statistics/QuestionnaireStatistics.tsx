@@ -185,7 +185,6 @@ export default function QuestionnaireStatistics() {
       link.click();
       link.parentNode?.removeChild(link);
     } catch (e) {
-      console.error(e);
       handleErrorNotification("Failed to download template");
     } finally {
       setDownloadLoading(false);

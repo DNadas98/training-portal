@@ -12,22 +12,28 @@ function getFormattedLocale(locale) {
   }
 }
 
-export function getRequestConfig(request: ApiRequestDto, locale: SupportedLocaleType, contentType:string="application/json"): RequestInit {
+export function getRequestConfig(request: ApiRequestDto, locale: SupportedLocaleType, contentType: string | null): RequestInit {
   const requestConfig: RequestInit = {
     method: `${request?.method ?? "GET"}`,
     headers: {
-      "Content-Type": contentType,
       "Accept-Language": getFormattedLocale(locale),
     },
     credentials: "include"
   };
   if (request?.body) {
-    requestConfig.body = JSON.stringify(request.body);
+    if (contentType && contentType === "application/json") {
+      requestConfig.body = JSON.stringify(request.body);
+    } else {
+      requestConfig.body = request.body as any;
+    }
+  }
+  if (contentType && requestConfig.headers) {
+    requestConfig.headers["Content-Type"] = contentType;
   }
   return requestConfig;
 }
 
-export function verifyHttpResponse(httpResponse: Response, contentType:string="application/json"): void {
+export function verifyHttpResponse(httpResponse: Response, contentType: string = "application/json"): void {
   if (!httpResponse?.status) {
     throw new Error("Invalid response received from the server");
   }

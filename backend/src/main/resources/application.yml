@@ -21,5 +21,6 @@ spring:
     web-application-type: servlet
   servlet:
     multipart:
+      enabled: true
       max-file-size: 3MB
       max-request-size: 3MB

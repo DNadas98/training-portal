@@ -74,7 +74,6 @@ public class QuestionnaireStatisticsService {
    * @param status          The status of the questionnaire.
    * @param response        The HttpServletResponse object needed for the output stream.
    */
-
   @Transactional(readOnly = true)
   public void exportAllQuestionnaireSubmissionsToExcel(
     Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status, String search,
