@@ -8,10 +8,10 @@ import net.dnadas.training_portal.model.group.project.questionnaire.Questionnair
 import net.dnadas.training_portal.model.group.project.questionnaire.QuestionnaireSubmissionDao;
 import net.dnadas.training_portal.service.utils.converter.QuestionnaireSubmissionConverter;
 import net.dnadas.training_portal.service.utils.file.ExcelUtilsService;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -52,40 +54,59 @@ public class QuestionnaireStatisticsService {
    * @param response        The HttpServletResponse object needed for the output stream.
    */
 
+  @Transactional(readOnly = true)
   public void exportAllQuestionnaireSubmissionsToExcel(
     Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status, String search,
     HttpServletResponse response) throws IOException {
 
-    try (SXSSFWorkbook workbook = excelUtilsService.getWorkbook(); OutputStream outputStream = response.getOutputStream()) {
+    try (SXSSFWorkbook workbook = excelUtilsService.createWorkbook();
+         OutputStream outputStream = response.getOutputStream();
+         Stream<QuestionnaireSubmissionStatsInternalDto> dtos = getQuestionnaireStatisticsOutputStream(
+           groupId, projectId, questionnaireId, status, search
+         )) {
       Sheet sheet = excelUtilsService.createSheet(workbook, "Questionnaire Submissions");
-      List<String> columns = List.of("Username", "Max Points Submission Date",
-        "Max Points Submission Received Points", "Last Submission Date",
-        "Last Submission Received Points", "Questionnaire Total Points", "Total Submissions");
+      List<String> columns = getQuestionnaireStatisticsColumns();
       excelUtilsService.createHeaderRow(sheet, columns);
-      List<Function<QuestionnaireSubmissionStatsResponseDto, Object>> valueExtractors = List.of(
-        QuestionnaireSubmissionStatsResponseDto::username,
-        QuestionnaireSubmissionStatsResponseDto::maxPointSubmissionCreatedAt,
-        QuestionnaireSubmissionStatsResponseDto::maxPointSubmissionReceivedPoints,
-        QuestionnaireSubmissionStatsResponseDto::lastSubmissionCreatedAt,
-        QuestionnaireSubmissionStatsResponseDto::lastSubmissionReceivedPoints,
-        QuestionnaireSubmissionStatsResponseDto::questionnaireMaxPoints,
-        QuestionnaireSubmissionStatsResponseDto::submissionCount);
+      List<Function<QuestionnaireSubmissionStatsResponseDto, Object>>
+        valueExtractors = getQuestionnaireStatisticsValueExtractors();
 
-      int page = 0;
-      final int size = 1000;
-      Page<QuestionnaireSubmissionStatsInternalDto> pageData;
-      do {
-        Pageable pageable = PageRequest.of(page, size);
-        pageData = questionnaireSubmissionDao.getQuestionnaireSubmissionStatisticsByStatus(
-          groupId, projectId, questionnaireId, status, pageable, search);
-        List<QuestionnaireSubmissionStatsResponseDto> dtos = pageData.map(
-          questionnaireSubmissionConverter::toQuestionnaireSubmissionStatsAdminDto).getContent();
-        excelUtilsService.fillDataRows(sheet, dtos, valueExtractors);
-        page++;
-      } while (pageData.hasNext());
+      AtomicInteger rowIndex = new AtomicInteger(1);
+      dtos.forEach(dto -> {
+        Row currentRow = sheet.createRow(rowIndex.getAndIncrement());
+        QuestionnaireSubmissionStatsResponseDto responseDto =
+          questionnaireSubmissionConverter.toQuestionnaireSubmissionStatsAdminDto(dto);
+        excelUtilsService.fillDataRow(currentRow, responseDto, valueExtractors);
+      });
 
       workbook.write(outputStream);
     }
+  }
+
+  private Stream<QuestionnaireSubmissionStatsInternalDto>  getQuestionnaireStatisticsOutputStream(
+    Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status, String search) {
+    return status.equals(QuestionnaireStatus.ACTIVE)
+      ? questionnaireSubmissionDao.streamQuestionnaireSubmissionStatisticsWithNonSubmittersByStatus(
+      groupId, projectId, questionnaireId, status, search)
+      : questionnaireSubmissionDao.streamQuestionnaireSubmissionStatisticsByStatus(
+      groupId, projectId, questionnaireId, status, search);
+  }
+
+  private static List<String> getQuestionnaireStatisticsColumns() {
+    return List.of("Username", "Max Points Submission Date",
+      "Max Points Submission Received Points", "Last Submission Date",
+      "Last Submission Received Points", "Questionnaire Total Points", "Total Submissions");
+  }
+
+  private static List<Function<QuestionnaireSubmissionStatsResponseDto, Object>> getQuestionnaireStatisticsValueExtractors() {
+    List<Function<QuestionnaireSubmissionStatsResponseDto, Object>> valueExtractors = List.of(
+      QuestionnaireSubmissionStatsResponseDto::username,
+      QuestionnaireSubmissionStatsResponseDto::maxPointSubmissionCreatedAt,
+      QuestionnaireSubmissionStatsResponseDto::maxPointSubmissionReceivedPoints,
+      QuestionnaireSubmissionStatsResponseDto::lastSubmissionCreatedAt,
+      QuestionnaireSubmissionStatsResponseDto::lastSubmissionReceivedPoints,
+      QuestionnaireSubmissionStatsResponseDto::questionnaireMaxPoints,
+      QuestionnaireSubmissionStatsResponseDto::submissionCount);
+    return valueExtractors;
   }
 
   private Page<QuestionnaireSubmissionStatsResponseDto> getStatisticsByStatus(
