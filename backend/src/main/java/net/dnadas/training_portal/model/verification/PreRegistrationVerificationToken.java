@@ -13,12 +13,12 @@ import java.time.Instant;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class PreRegistrationVerificationToken extends VerificationToken {
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String email;
 
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String username;
 
   @Column(nullable = false)

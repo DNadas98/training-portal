@@ -227,7 +227,7 @@ class ApplicationUserServiceTest {
       "newEmail@test.test", 1L, "hashedVerificationCode");
     ApplicationUser user = testUsers.get(0);
 
-    when(verificationTokenService.getVerificationToken(verificationTokenDto)).thenReturn(
+    when(verificationTokenService.findVerificationToken(verificationTokenDto)).thenReturn(
       verificationToken);
     when(applicationUserDao.findById(verificationToken.getUserId())).thenReturn(
       java.util.Optional.of(user));
@@ -242,7 +242,7 @@ class ApplicationUserServiceTest {
     EmailChangeVerificationToken verificationToken = new EmailChangeVerificationToken(
       "newEmail@test.test", 1L, "hashedVerificationCode");
 
-    when(verificationTokenService.getVerificationToken(verificationTokenDto)).thenReturn(
+    when(verificationTokenService.findVerificationToken(verificationTokenDto)).thenReturn(
       verificationToken);
     when(applicationUserDao.findById(verificationToken.getUserId())).thenReturn(
       java.util.Optional.empty());
@@ -259,7 +259,7 @@ class ApplicationUserServiceTest {
       "newEmail@test.test", 1L, "hashedVerificationCode");
     ApplicationUser user = testUsers.get(0);
 
-    when(verificationTokenService.getVerificationToken(verificationTokenDto)).thenReturn(
+    when(verificationTokenService.findVerificationToken(verificationTokenDto)).thenReturn(
       verificationToken);
     when(applicationUserDao.findById(verificationToken.getUserId())).thenReturn(
       java.util.Optional.of(user));

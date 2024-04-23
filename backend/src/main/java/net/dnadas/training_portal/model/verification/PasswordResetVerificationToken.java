@@ -11,9 +11,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class PasswordResetVerificationToken extends VerificationToken {
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String email;
 
   public PasswordResetVerificationToken(String email, String hashedVerificationCode) {

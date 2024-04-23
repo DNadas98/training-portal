@@ -60,7 +60,7 @@ export default function UserPreRegistrationForm(props: UserPreRegistrationFormPr
               <MobileDateTimePicker
                 label={"Expiration Date"}
                 sx={{width: "100%"}}
-                value={props.expiresAt?.length ? props.expiresAt : new Date()}
+                value={props.expiresAt ?? new Date()}
                 onChange={props.onExpiresAtChange}
                 timezone={"system"}
               />

@@ -176,19 +176,19 @@ class AuthenticationServiceTest {
     VerificationTokenDto verificationTokenDto = new VerificationTokenDto(1L, UUID.randomUUID());
     RegistrationToken token = new RegistrationToken("to", "email", "hashedPassword", "hashedCode");
 
-    when(verificationTokenService.getVerificationToken(verificationTokenDto)).thenReturn(token);
+    when(verificationTokenService.findVerificationToken(verificationTokenDto)).thenReturn(token);
     when(applicationUserDao.save(any(ApplicationUser.class))).thenReturn(new ApplicationUser());
 
     assertDoesNotThrow(() -> authenticationService.register(verificationTokenDto));
     verify(applicationUserDao, times(1)).save(any(ApplicationUser.class));
-    verify(verificationTokenService, times(1)).getVerificationToken(verificationTokenDto);
+    verify(verificationTokenService, times(1)).findVerificationToken(verificationTokenDto);
   }
 
   @Test
   void register_throws_InvalidCredentialsException_for_nonexistent_token() {
     VerificationTokenDto verificationTokenDto = new VerificationTokenDto(1L, UUID.randomUUID());
 
-    when(verificationTokenService.getVerificationToken(verificationTokenDto)).thenThrow(
+    when(verificationTokenService.findVerificationToken(verificationTokenDto)).thenThrow(
       InvalidCredentialsException.class);
 
     assertThrows(
@@ -201,7 +201,7 @@ class AuthenticationServiceTest {
   void register_throws_InvalidCredentialsException_for_invalid_token() {
     VerificationTokenDto verificationTokenDto = new VerificationTokenDto(1L, UUID.randomUUID());
     RegistrationToken token = new RegistrationToken("to", "email", "hashedPassword", "hashedCode");
-    when(verificationTokenService.getVerificationToken(verificationTokenDto)).thenReturn(
+    when(verificationTokenService.findVerificationToken(verificationTokenDto)).thenReturn(
       token);
     doThrow(InvalidCredentialsException.class).when(verificationTokenService)
       .validateVerificationToken(verificationTokenDto, token);

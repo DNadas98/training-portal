@@ -23,6 +23,7 @@ public abstract class VerificationToken {
 
   @Column(nullable = false)
   private Instant expiresAt;
+  @Column(nullable = false)
   private String verificationCodeHash;
 
   @Column(nullable = false)
@@ -32,24 +33,13 @@ public abstract class VerificationToken {
   protected VerificationToken() {
   }
 
-  /**
-   * Expiration time is set to 1h by default
-   *
-   * @param tokenType
-   * @param verificationCodeHash
-   */
   protected VerificationToken(TokenType tokenType, String verificationCodeHash) {
     this.tokenType = tokenType;
     this.verificationCodeHash = verificationCodeHash;
-    Integer DEFAULT_EXPIRATION_MS = 10 * 60 * 60; // 1h
+    int DEFAULT_EXPIRATION_MS = 10 * 60 * 60; // 1h
     this.expiresAt = Instant.now().plusMillis(DEFAULT_EXPIRATION_MS);
   }
 
-  /**
-   * @param tokenType
-   * @param verificationCodeHash
-   * @param expiresAt
-   */
   protected VerificationToken(TokenType tokenType, String verificationCodeHash, Instant expiresAt) {
     this.tokenType = tokenType;
     this.verificationCodeHash = verificationCodeHash;

@@ -5,13 +5,10 @@ import net.dnadas.training_portal.dto.email.EmailRequestDto;
 import net.dnadas.training_portal.dto.user.*;
 import net.dnadas.training_portal.dto.verification.VerificationTokenDto;
 import net.dnadas.training_portal.exception.auth.*;
-import net.dnadas.training_portal.exception.verification.VerificationTokenAlreadyExistsException;
 import net.dnadas.training_portal.model.auth.ApplicationUser;
 import net.dnadas.training_portal.model.auth.ApplicationUserDao;
 import net.dnadas.training_portal.model.auth.GlobalRole;
 import net.dnadas.training_portal.model.verification.EmailChangeVerificationToken;
-import net.dnadas.training_portal.model.verification.EmailChangeVerificationTokenDao;
-import net.dnadas.training_portal.model.verification.RegistrationTokenDao;
 import net.dnadas.training_portal.service.utils.converter.UserConverter;
 import net.dnadas.training_portal.service.utils.email.EmailService;
 import net.dnadas.training_portal.service.utils.email.EmailTemplateService;
@@ -30,11 +27,9 @@ public class ApplicationUserService {
   private final UserConverter userConverter;
   private final UserProvider userProvider;
   private final PasswordEncoder passwordEncoder;
-  private final EmailChangeVerificationTokenDao emailChangeVerificationTokenDao;
   private final EmailService emailService;
   private final EmailTemplateService emailTemplateService;
   private final VerificationTokenService verificationTokenService;
-  private final RegistrationTokenDao registrationTokenDao;
 
   public UserResponsePrivateDto getOwnUserDetails() throws UnauthorizedException {
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
@@ -103,23 +98,31 @@ public class ApplicationUserService {
 
       verifyChangedEmail(updateDto, applicationUser);
       verifyEmailNotTaken(updateDto);
-      verifyTokenDoesNotExist(applicationUser);
+      verificationTokenService.verifyNoEmailChangeTokenWithId(applicationUser.getId());
 
-      UUID verificationCode = UUID.randomUUID();
-      EmailChangeVerificationToken savedVerificationToken = getEmailChangeVerificationToken(
-        updateDto, applicationUser, verificationCode);
-      verificationTokenDto = new VerificationTokenDto(
-        savedVerificationToken.getId(),
-        verificationCode);
+      verificationTokenDto = verificationTokenService.saveEmailChangeVerificationToken(
+          updateDto, applicationUser);
 
       EmailRequestDto emailRequestDto = emailTemplateService.getEmailChangeVerificationEmailDto(
         verificationTokenDto, updateDto.email(), applicationUser.getActualUsername());
 
       emailService.sendMailToUserAddress(emailRequestDto);
     } catch (Exception e) {
-      cleanUpVerificationToken(verificationTokenDto);
+      verificationTokenService.cleanupVerificationToken(verificationTokenDto);
       throw e;
     }
+  }
+
+  @Transactional(rollbackFor = Exception.class)
+  public void changeEmail(VerificationTokenDto verificationTokenDto) {
+    EmailChangeVerificationToken verificationToken =
+      (EmailChangeVerificationToken) verificationTokenService.findVerificationToken(
+        verificationTokenDto);
+    ApplicationUser user = applicationUserDao.findById(verificationToken.getUserId()).orElseThrow(
+      InvalidCredentialsException::new);
+    user.setEmail(verificationToken.getNewEmail());
+    applicationUserDao.save(user);
+    verificationTokenService.deleteVerificationToken(verificationToken.getId());
   }
 
   private void verifyPassword(String password, ApplicationUser applicationUser) {
@@ -129,39 +132,11 @@ public class ApplicationUserService {
     }
   }
 
-  private EmailChangeVerificationToken getEmailChangeVerificationToken(
-    UserEmailUpdateDto updateDto, ApplicationUser applicationUser, UUID verificationCode) {
-    String hashedVerificationCode = verificationTokenService.getHashedVerificationCode(
-      verificationCode);
-    EmailChangeVerificationToken savedVerificationToken = emailChangeVerificationTokenDao.save(
-      new EmailChangeVerificationToken(updateDto.email(), applicationUser.getId(),
-        hashedVerificationCode));
-    return savedVerificationToken;
-  }
-
-  private void cleanUpVerificationToken(VerificationTokenDto verificationTokenDto) {
-    if (verificationTokenDto != null && verificationTokenDto.id() != null) {
-      verificationTokenService.deleteVerificationToken(verificationTokenDto.id());
-    }
-  }
-
-  private void verifyTokenDoesNotExist(ApplicationUser applicationUser) {
-    emailChangeVerificationTokenDao.findByUserId(
-      applicationUser.getId()).ifPresent(token -> {
-      throw new VerificationTokenAlreadyExistsException();
-    });
-  }
-
   private void verifyEmailNotTaken(UserEmailUpdateDto updateDto) {
     applicationUserDao.findByEmail(updateDto.email()).ifPresent(user -> {
       throw new UserAlreadyExistsException();
     });
-    emailChangeVerificationTokenDao.findByNewEmail(updateDto.email()).ifPresent(token -> {
-      throw new UserAlreadyExistsException();
-    });
-    registrationTokenDao.findByEmail(updateDto.email()).ifPresent(token -> {
-      throw new UserAlreadyExistsException();
-    });
+    verificationTokenService.verifyTokenDoesNotExistWith(updateDto.email());
   }
 
   private void verifyChangedEmail(
@@ -169,17 +144,5 @@ public class ApplicationUserService {
     if (applicationUser.getEmail().equals(updateDto.email())) {
       throw new UserAlreadyExistsException();
     }
-  }
-
-  @Transactional(rollbackFor = Exception.class)
-  public void changeEmail(VerificationTokenDto verificationTokenDto) {
-    EmailChangeVerificationToken verificationToken =
-      (EmailChangeVerificationToken) verificationTokenService.getVerificationToken(
-        verificationTokenDto);
-    ApplicationUser user = applicationUserDao.findById(verificationToken.getUserId()).orElseThrow(
-      InvalidCredentialsException::new);
-    user.setEmail(verificationToken.getNewEmail());
-    applicationUserDao.save(user);
-    verificationTokenService.deleteVerificationToken(verificationToken.getId());
   }
 }

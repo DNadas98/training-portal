@@ -11,12 +11,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class RegistrationToken extends VerificationToken {
 
   @Column(nullable = false, unique = true)
   private String email;
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String username;
   @Column(nullable = false)
   private String password;
@@ -31,9 +31,6 @@ public class RegistrationToken extends VerificationToken {
 
   @Override
   public String toString() {
-    return "RegistrationToken{" +
-      "email='" + email + '\'' +
-      ", username='" + username + '\'' +
-      '}';
+    return "RegistrationToken{" + "id=" + super.getId() + '}';
   }
 }

@@ -9,7 +9,6 @@ import net.dnadas.training_portal.exception.auth.InvalidCredentialsException;
 import net.dnadas.training_portal.exception.auth.UnauthorizedException;
 import net.dnadas.training_portal.exception.auth.UserAlreadyExistsException;
 import net.dnadas.training_portal.exception.auth.UserNotFoundException;
-import net.dnadas.training_portal.exception.verification.VerificationTokenAlreadyExistsException;
 import net.dnadas.training_portal.model.auth.ApplicationUser;
 import net.dnadas.training_portal.model.auth.ApplicationUserDao;
 import net.dnadas.training_portal.model.group.UserGroup;
@@ -28,36 +27,37 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
   private final ApplicationUserDao applicationUserDao;
   private final PasswordEncoder passwordEncoder;
-  private final RegistrationTokenDao registrationTokenDao;
   private final VerificationTokenService verificationTokenService;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
   private final EmailService emailService;
   private final EmailTemplateService emailTemplateService;
-  private final PasswordResetVerificationTokenDao passwordResetVerificationTokenDao;
-  private final EmailChangeVerificationTokenDao emailChangeVerificationTokenDao;
 
   @Transactional(rollbackFor = Exception.class)
   public void sendRegistrationVerificationEmail(RegisterRequestDto registerRequest)
     throws Exception {
     VerificationTokenDto verificationTokenDto = null;
     try {
-      verifyUserDoesNotExist(registerRequest.email(), registerRequest.username());
-      verifyRegistrationTokenDoesNotExist(registerRequest);
+      String email = registerRequest.email();
+      String username = registerRequest.username();
+      applicationUserDao.findByEmailOrUsername(email, username).ifPresent(user -> {
+        throw new UserAlreadyExistsException();
+      });
+      verificationTokenService.verifyTokenDoesNotExistWith(email, username);
       String hashedPassword = passwordEncoder.encode(registerRequest.password());
-      verificationTokenDto = saveRegistrationToken(registerRequest, hashedPassword);
+      verificationTokenDto = verificationTokenService.saveRegistrationToken(
+        registerRequest, hashedPassword);
       EmailRequestDto emailRequestDto = emailTemplateService.getRegistrationEmailDto(
-        verificationTokenDto, registerRequest.email(), registerRequest.username());
+        verificationTokenDto, email, username);
       emailService.sendMailToUserAddress(emailRequestDto);
     } catch (Exception e) {
-      cleanupVerificationToken(verificationTokenDto);
+      verificationTokenService.cleanupVerificationToken(verificationTokenDto);
       throw e;
     }
   }
@@ -69,13 +69,13 @@ public class AuthenticationService {
     try {
       ApplicationUser user = applicationUserDao.findByEmail(requestDto.email()).orElseThrow(
         UserNotFoundException::new);
-      verifyPasswordResetTokenDoesNotExist(requestDto);
-      verificationTokenDto = savePasswordResetToken(requestDto);
+      verificationTokenService.verifyNoPasswordResetTokenWithEmail(requestDto.email());
+      verificationTokenDto = verificationTokenService.savePasswordResetToken(requestDto);
       EmailRequestDto emailRequestDto = emailTemplateService.getPasswordResetEmailDto(
         verificationTokenDto, requestDto.email(), user.getActualUsername());
       emailService.sendMailToUserAddress(emailRequestDto);
     } catch (Exception e) {
-      cleanupVerificationToken(verificationTokenDto);
+      verificationTokenService.cleanupVerificationToken(verificationTokenDto);
       // User has to receive identical message whether the email exists or not
       if (!(e instanceof UserNotFoundException) && !(e instanceof MailSendException)) {
         throw e;
@@ -85,7 +85,7 @@ public class AuthenticationService {
 
   @Transactional(rollbackFor = Exception.class)
   public void register(VerificationTokenDto verificationTokenDto) {
-    RegistrationToken token = (RegistrationToken) verificationTokenService.getVerificationToken(
+    RegistrationToken token = (RegistrationToken) verificationTokenService.findVerificationToken(
       verificationTokenDto);
     verificationTokenService.validateVerificationToken(verificationTokenDto, token);
     ApplicationUser user = new ApplicationUser(token.getUsername(), token.getEmail(),
@@ -149,68 +149,13 @@ public class AuthenticationService {
   public void resetPassword(
     VerificationTokenDto verificationTokenDto, PasswordResetDto passwordResetDto) {
     PasswordResetVerificationToken token =
-      (PasswordResetVerificationToken) verificationTokenService.getVerificationToken(
+      (PasswordResetVerificationToken) verificationTokenService.findVerificationToken(
         verificationTokenDto);
     ApplicationUser user = applicationUserDao.findByEmail(token.getEmail()).orElseThrow(
       InvalidCredentialsException::new);
     user.setPassword(passwordEncoder.encode(passwordResetDto.newPassword()));
     applicationUserDao.save(user);
     verificationTokenService.deleteVerificationToken(token.getId());
-  }
-
-  private void cleanupVerificationToken(VerificationTokenDto verificationTokenDto) {
-    if (verificationTokenDto != null && verificationTokenDto.id() != null) {
-      verificationTokenService.deleteVerificationToken(verificationTokenDto.id());
-    }
-  }
-
-  private void verifyRegistrationTokenDoesNotExist(RegisterRequestDto registerRequest) {
-    Optional<RegistrationToken> existingToken = registrationTokenDao.findByEmailOrUsername(
-      registerRequest.email(), registerRequest.username());
-    if (existingToken.isPresent()) {
-      throw new UserAlreadyExistsException();
-    }
-  }
-
-  private void verifyPasswordResetTokenDoesNotExist(PasswordResetRequestDto requestDto) {
-    Optional<PasswordResetVerificationToken> existingToken =
-      passwordResetVerificationTokenDao.findByEmail(requestDto.email());
-    if (existingToken.isPresent()) {
-      throw new VerificationTokenAlreadyExistsException();
-    }
-  }
-
-  private void verifyUserDoesNotExist(String email, String username) {
-    Optional<ApplicationUser> existingUser = applicationUserDao.findByEmailOrUsername(
-      email,
-      username);
-    if (existingUser.isPresent()) {
-      throw new UserAlreadyExistsException();
-    }
-    emailChangeVerificationTokenDao.findByNewEmail(email).ifPresent(token -> {
-      throw new UserAlreadyExistsException();
-    });
-  }
-
-  private VerificationTokenDto saveRegistrationToken(
-    RegisterRequestDto registerRequest, String hashedPassword) {
-    UUID verificationCode = UUID.randomUUID();
-    String hashedVerificationCode = verificationTokenService.getHashedVerificationCode(
-      verificationCode);
-    RegistrationToken registrationToken = new RegistrationToken(registerRequest.email(),
-      registerRequest.username(), hashedPassword, hashedVerificationCode);
-    RegistrationToken savedToken = registrationTokenDao.save(registrationToken);
-    return new VerificationTokenDto(savedToken.getId(), verificationCode);
-  }
-
-  private VerificationTokenDto savePasswordResetToken(PasswordResetRequestDto requestDto) {
-    UUID verificationCode = UUID.randomUUID();
-    String hashedVerificationCode = verificationTokenService.getHashedVerificationCode(
-      verificationCode);
-    PasswordResetVerificationToken token = new PasswordResetVerificationToken(
-      requestDto.email(), hashedVerificationCode);
-    PasswordResetVerificationToken savedToken = passwordResetVerificationTokenDao.save(token);
-    return new VerificationTokenDto(savedToken.getId(), verificationCode);
   }
 }
 

@@ -11,12 +11,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class EmailChangeVerificationToken extends VerificationToken {
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private Long userId;
 
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String newEmail;
 
   public EmailChangeVerificationToken(

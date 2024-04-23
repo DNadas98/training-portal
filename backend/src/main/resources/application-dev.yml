@@ -7,10 +7,10 @@ spring:
     username: devuser
     password: devpassword
   jpa:
-    show-sql: false
+    show-sql: true
     properties:
       hibernate:
-        format_sql: false
+        format_sql: true
     hibernate:
       ddl-auto: create-drop
   mail:
@@ -34,4 +34,4 @@ logging:
   level:
     root: warn
     org.springframework: warn
-    #org.hibernate.sql: trace
+    org.hibernate.sql: trace

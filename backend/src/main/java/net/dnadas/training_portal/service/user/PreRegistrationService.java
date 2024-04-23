@@ -20,7 +20,6 @@ import net.dnadas.training_portal.model.group.project.ProjectDao;
 import net.dnadas.training_portal.model.group.project.questionnaire.Questionnaire;
 import net.dnadas.training_portal.model.group.project.questionnaire.QuestionnaireDao;
 import net.dnadas.training_portal.model.verification.PreRegistrationVerificationToken;
-import net.dnadas.training_portal.model.verification.PreRegistrationVerificationTokenDao;
 import net.dnadas.training_portal.service.utils.datetime.DateTimeService;
 import net.dnadas.training_portal.service.utils.email.EmailService;
 import net.dnadas.training_portal.service.utils.email.EmailTemplateService;
@@ -52,7 +51,6 @@ public class PreRegistrationService {
   private final ProjectDao projectDao;
   private final QuestionnaireDao questionnaireDao;
   private final VerificationTokenService verificationTokenService;
-  private final PreRegistrationVerificationTokenDao preRegistrationVerificationTokenDao;
   private final CsvUtilsService csvUtilsService;
   private final EmailTemplateService emailTemplateService;
   private final EmailService emailService;
@@ -115,7 +113,7 @@ public class PreRegistrationService {
   public PreRegistrationCompleteInternalDto completePreRegistration(
     VerificationTokenDto verificationTokenDto, PreRegistrationCompleteRequestDto requestDto) {
     PreRegistrationVerificationToken token =
-      (PreRegistrationVerificationToken) verificationTokenService.getVerificationToken(
+      (PreRegistrationVerificationToken) verificationTokenService.findVerificationToken(
         verificationTokenDto);
     Optional<ApplicationUser> existingUser = applicationUserDao.findByEmailOrUsername(
       token.getEmail(), token.getUsername());
@@ -161,23 +159,16 @@ public class PreRegistrationService {
   private void handlePreRegistrationRequest(
     Long groupId, Long projectId, Long questionnaireId, PreRegisterUserInternalDto userRequest,
     Instant expiresAt) {
-    PreRegistrationVerificationToken token = null;
+    VerificationTokenDto verificationTokenDto = null;
     try {
-      UUID verificationCode = UUID.randomUUID();
-      String hashedVerificationCode = verificationTokenService.getHashedVerificationCode(
-        verificationCode);
-      token = preRegistrationVerificationTokenDao.save(
-        new PreRegistrationVerificationToken(userRequest.email(), userRequest.username(), groupId,
-          projectId, questionnaireId, hashedVerificationCode, expiresAt));
-      if (token == null) {
-        throw new RuntimeException("Failed to create verification token");
-      }
-      sendPreRegisterEmail(new VerificationTokenDto(token.getId(), verificationCode),
-        userRequest.username(), userRequest.email());
+      String email = userRequest.email();
+      String username = userRequest.username();
+      verificationTokenService.verifyTokenDoesNotExistWith(email, username);
+      verificationTokenDto = verificationTokenService.savePreRegistrationVerificationToken(
+        userRequest, groupId, projectId, questionnaireId, expiresAt);
+      sendPreRegisterEmail(verificationTokenDto, username, email);
     } catch (Exception e) {
-      if (token != null) {
-        verificationTokenService.deleteVerificationToken(token.getId());
-      }
+      verificationTokenService.cleanupVerificationToken(verificationTokenDto);
       throw e;
     }
   }
