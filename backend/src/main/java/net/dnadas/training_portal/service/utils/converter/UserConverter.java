@@ -3,8 +3,8 @@ package net.dnadas.training_portal.service.utils.converter;
 import net.dnadas.training_portal.dto.user.UserResponsePrivateDto;
 import net.dnadas.training_portal.dto.user.UserResponsePublicDto;
 import net.dnadas.training_portal.dto.user.UserResponseWithPermissionsDto;
-import net.dnadas.training_portal.model.auth.ApplicationUser;
 import net.dnadas.training_portal.model.auth.PermissionType;
+import net.dnadas.training_portal.model.user.ApplicationUser;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

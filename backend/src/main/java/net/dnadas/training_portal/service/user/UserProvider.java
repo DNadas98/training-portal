@@ -2,8 +2,8 @@ package net.dnadas.training_portal.service.user;
 
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.exception.auth.UnauthorizedException;
-import net.dnadas.training_portal.model.auth.ApplicationUser;
-import net.dnadas.training_portal.model.auth.ApplicationUserDao;
+import net.dnadas.training_portal.model.user.ApplicationUser;
+import net.dnadas.training_portal.model.user.ApplicationUserDao;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

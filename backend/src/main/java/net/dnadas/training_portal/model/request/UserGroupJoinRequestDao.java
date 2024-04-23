@@ -1,8 +1,8 @@
 package net.dnadas.training_portal.model.request;
 
 import jakarta.persistence.OrderBy;
-import net.dnadas.training_portal.model.auth.ApplicationUser;
 import net.dnadas.training_portal.model.group.UserGroup;
+import net.dnadas.training_portal.model.user.ApplicationUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

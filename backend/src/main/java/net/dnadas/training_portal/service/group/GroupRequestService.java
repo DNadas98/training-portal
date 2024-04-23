@@ -7,12 +7,12 @@ import net.dnadas.training_portal.exception.group.DuplicateGroupJoinRequestExcep
 import net.dnadas.training_portal.exception.group.GroupJoinRequestNotFoundException;
 import net.dnadas.training_portal.exception.group.GroupNotFoundException;
 import net.dnadas.training_portal.exception.group.UserAlreadyInGroupException;
-import net.dnadas.training_portal.model.auth.ApplicationUser;
 import net.dnadas.training_portal.model.group.UserGroup;
 import net.dnadas.training_portal.model.group.UserGroupDao;
 import net.dnadas.training_portal.model.request.RequestStatus;
 import net.dnadas.training_portal.model.request.UserGroupJoinRequest;
 import net.dnadas.training_portal.model.request.UserGroupJoinRequestDao;
+import net.dnadas.training_portal.model.user.ApplicationUser;
 import net.dnadas.training_portal.service.user.UserProvider;
 import net.dnadas.training_portal.service.utils.converter.GroupConverter;
 import org.springframework.data.domain.Page;

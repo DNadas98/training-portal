@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.dto.auth.TokenPayloadDto;
 import net.dnadas.training_portal.exception.auth.UnauthorizedException;
-import net.dnadas.training_portal.model.auth.ApplicationUser;
+import net.dnadas.training_portal.model.user.ApplicationUser;
 import net.dnadas.training_portal.service.utils.security.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

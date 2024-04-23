@@ -7,12 +7,12 @@ import net.dnadas.training_portal.exception.group.project.DuplicateProjectJoinRe
 import net.dnadas.training_portal.exception.group.project.ProjectJoinRequestNotFoundException;
 import net.dnadas.training_portal.exception.group.project.ProjectNotFoundException;
 import net.dnadas.training_portal.exception.group.project.UserAlreadyInProjectException;
-import net.dnadas.training_portal.model.auth.ApplicationUser;
 import net.dnadas.training_portal.model.group.project.Project;
 import net.dnadas.training_portal.model.group.project.ProjectDao;
 import net.dnadas.training_portal.model.request.ProjectJoinRequest;
 import net.dnadas.training_portal.model.request.ProjectJoinRequestDao;
 import net.dnadas.training_portal.model.request.RequestStatus;
+import net.dnadas.training_portal.model.user.ApplicationUser;
 import net.dnadas.training_portal.service.user.UserProvider;
 import net.dnadas.training_portal.service.utils.converter.ProjectConverter;
 import org.springframework.data.domain.Page;

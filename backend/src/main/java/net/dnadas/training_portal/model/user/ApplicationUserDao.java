@@ -1,4 +1,4 @@
-package net.dnadas.training_portal.model.auth;
+package net.dnadas.training_portal.model.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

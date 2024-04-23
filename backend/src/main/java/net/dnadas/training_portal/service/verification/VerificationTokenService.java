@@ -9,7 +9,7 @@ import net.dnadas.training_portal.dto.verification.VerificationTokenDto;
 import net.dnadas.training_portal.exception.auth.InvalidCredentialsException;
 import net.dnadas.training_portal.exception.auth.UserAlreadyExistsException;
 import net.dnadas.training_portal.exception.verification.VerificationTokenAlreadyExistsException;
-import net.dnadas.training_portal.model.auth.ApplicationUser;
+import net.dnadas.training_portal.model.user.ApplicationUser;
 import net.dnadas.training_portal.model.verification.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;

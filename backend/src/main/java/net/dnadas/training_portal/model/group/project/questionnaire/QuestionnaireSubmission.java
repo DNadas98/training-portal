@@ -3,7 +3,7 @@ package net.dnadas.training_portal.model.group.project.questionnaire;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
-import net.dnadas.training_portal.model.auth.ApplicationUser;
+import net.dnadas.training_portal.model.user.ApplicationUser;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;

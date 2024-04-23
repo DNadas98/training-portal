@@ -2,10 +2,10 @@ package net.dnadas.training_portal.config.auth;
 
 import lombok.NoArgsConstructor;
 import net.dnadas.training_portal.exception.auth.UnauthorizedException;
-import net.dnadas.training_portal.model.auth.ApplicationUserDao;
 import net.dnadas.training_portal.model.group.UserGroupDao;
 import net.dnadas.training_portal.model.group.project.ProjectDao;
 import net.dnadas.training_portal.model.group.project.task.TaskDao;
+import net.dnadas.training_portal.model.user.ApplicationUserDao;
 import net.dnadas.training_portal.service.auth.CustomPermissionEvaluator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,7 +1,7 @@
 package net.dnadas.training_portal.model.group.project.questionnaire;
 
 import net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionStatsInternalDto;
-import net.dnadas.training_portal.model.auth.ApplicationUser;
+import net.dnadas.training_portal.model.user.ApplicationUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

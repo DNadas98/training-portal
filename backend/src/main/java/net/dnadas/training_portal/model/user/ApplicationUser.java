@@ -1,9 +1,10 @@
-package net.dnadas.training_portal.model.auth;
+package net.dnadas.training_portal.model.user;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.dnadas.training_portal.model.auth.GlobalRole;
 import net.dnadas.training_portal.model.group.UserGroup;
 import net.dnadas.training_portal.model.group.project.Project;
 import net.dnadas.training_portal.model.group.project.questionnaire.Questionnaire;

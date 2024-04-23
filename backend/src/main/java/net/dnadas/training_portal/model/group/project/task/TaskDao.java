@@ -1,7 +1,7 @@
 package net.dnadas.training_portal.model.group.project.task;
 
-import net.dnadas.training_portal.model.auth.ApplicationUser;
 import net.dnadas.training_portal.model.group.project.Project;
+import net.dnadas.training_portal.model.user.ApplicationUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -2,11 +2,11 @@ package net.dnadas.training_portal.model.group.project;
 
 import jakarta.persistence.*;
 import lombok.*;
-import net.dnadas.training_portal.model.auth.ApplicationUser;
 import net.dnadas.training_portal.model.group.UserGroup;
 import net.dnadas.training_portal.model.group.project.questionnaire.Questionnaire;
 import net.dnadas.training_portal.model.group.project.task.Task;
 import net.dnadas.training_portal.model.request.ProjectJoinRequest;
+import net.dnadas.training_portal.model.user.ApplicationUser;
 
 import java.time.Instant;
 import java.util.ArrayList;

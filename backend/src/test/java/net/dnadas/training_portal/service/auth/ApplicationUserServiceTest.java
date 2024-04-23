@@ -8,8 +8,8 @@ import net.dnadas.training_portal.exception.auth.PasswordVerificationFailedExcep
 import net.dnadas.training_portal.exception.auth.UserAlreadyExistsException;
 import net.dnadas.training_portal.exception.auth.UserNotFoundException;
 import net.dnadas.training_portal.exception.verification.VerificationTokenAlreadyExistsException;
-import net.dnadas.training_portal.model.auth.ApplicationUser;
-import net.dnadas.training_portal.model.auth.ApplicationUserDao;
+import net.dnadas.training_portal.model.user.ApplicationUser;
+import net.dnadas.training_portal.model.user.ApplicationUserDao;
 import net.dnadas.training_portal.model.verification.EmailChangeVerificationToken;
 import net.dnadas.training_portal.model.verification.EmailChangeVerificationTokenDao;
 import net.dnadas.training_portal.model.verification.RegistrationTokenDao;
