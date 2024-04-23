@@ -49,7 +49,7 @@ public class QuestionnaireSubmissionConverter {
       questionnaireSubmission.getStatus());
   }
 
-  public QuestionnaireSubmissionStatsResponseDto toQuestionnaireSubmissionStatsAdminDto(
+  public QuestionnaireSubmissionStatsResponseDto toQuestionnaireSubmissionStatsResponseDto(
     QuestionnaireSubmissionStatsInternalDto dto) {
     Instant maxPointSubmissionCreatedAt = dto.maxPointSubmissionCreatedAt();
     String maxPointSubmissionCreatedAtResult;

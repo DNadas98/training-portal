@@ -8,6 +8,7 @@ import net.dnadas.training_portal.model.group.project.questionnaire.Questionnair
 import net.dnadas.training_portal.model.group.project.questionnaire.QuestionnaireSubmissionDao;
 import net.dnadas.training_portal.service.utils.converter.QuestionnaireSubmissionConverter;
 import net.dnadas.training_portal.service.utils.file.ExcelUtilsService;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -19,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -44,6 +47,24 @@ public class QuestionnaireStatisticsService {
       pageable, searchInput);
   }
 
+  private static List<Function<QuestionnaireSubmissionStatsInternalDto, Object>> getQuestionnaireStatisticsValueExtractors(
+    ZoneId timeZoneId) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    return List.of(
+      QuestionnaireSubmissionStatsInternalDto::username,
+      dto -> dto.maxPointSubmissionCreatedAt() == null
+        ? null
+        : formatter.format(dto.maxPointSubmissionCreatedAt().atZone(timeZoneId)),
+      QuestionnaireSubmissionStatsInternalDto::maxPointSubmissionReceivedPoints,
+      dto -> dto.lastSubmissionCreatedAt() == null
+        ? null
+        : formatter.format(dto.lastSubmissionCreatedAt().atZone(timeZoneId)),
+      QuestionnaireSubmissionStatsInternalDto::lastSubmissionReceivedPoints,
+      QuestionnaireSubmissionStatsInternalDto::questionnaireMaxPoints,
+      QuestionnaireSubmissionStatsInternalDto::submissionCount
+    );
+  }
+
   /**
    * Exports all questionnaire submissions to an Excel file in paginated chunks.
    *
@@ -57,38 +78,27 @@ public class QuestionnaireStatisticsService {
   @Transactional(readOnly = true)
   public void exportAllQuestionnaireSubmissionsToExcel(
     Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status, String search,
-    HttpServletResponse response) throws IOException {
-
+    ZoneId timeZoneId, HttpServletResponse response) throws IOException {
     try (SXSSFWorkbook workbook = excelUtilsService.createWorkbook();
          OutputStream outputStream = response.getOutputStream();
          Stream<QuestionnaireSubmissionStatsInternalDto> dtos = getQuestionnaireStatisticsOutputStream(
            groupId, projectId, questionnaireId, status, search
          )) {
       Sheet sheet = excelUtilsService.createSheet(workbook, "Questionnaire Submissions");
+      CellStyle dateCellStyle = excelUtilsService.createDateCellStyle(workbook);
       List<String> columns = getQuestionnaireStatisticsColumns();
       excelUtilsService.createHeaderRow(sheet, columns);
-      List<Function<QuestionnaireSubmissionStatsResponseDto, Object>>
-        valueExtractors = getQuestionnaireStatisticsValueExtractors();
+      List<Function<QuestionnaireSubmissionStatsInternalDto, Object>>
+        valueExtractors = getQuestionnaireStatisticsValueExtractors(timeZoneId);
 
       AtomicInteger rowIndex = new AtomicInteger(1);
       dtos.forEach(dto -> {
         Row currentRow = sheet.createRow(rowIndex.getAndIncrement());
-        QuestionnaireSubmissionStatsResponseDto responseDto =
-          questionnaireSubmissionConverter.toQuestionnaireSubmissionStatsAdminDto(dto);
-        excelUtilsService.fillDataRow(currentRow, responseDto, valueExtractors);
+        excelUtilsService.fillDataRow(currentRow, dto, valueExtractors, dateCellStyle);
       });
 
       workbook.write(outputStream);
     }
-  }
-
-  private Stream<QuestionnaireSubmissionStatsInternalDto>  getQuestionnaireStatisticsOutputStream(
-    Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status, String search) {
-    return status.equals(QuestionnaireStatus.ACTIVE)
-      ? questionnaireSubmissionDao.streamQuestionnaireSubmissionStatisticsWithNonSubmittersByStatus(
-      groupId, projectId, questionnaireId, status, search)
-      : questionnaireSubmissionDao.streamQuestionnaireSubmissionStatisticsByStatus(
-      groupId, projectId, questionnaireId, status, search);
   }
 
   private static List<String> getQuestionnaireStatisticsColumns() {
@@ -97,16 +107,13 @@ public class QuestionnaireStatisticsService {
       "Last Submission Received Points", "Questionnaire Total Points", "Total Submissions");
   }
 
-  private static List<Function<QuestionnaireSubmissionStatsResponseDto, Object>> getQuestionnaireStatisticsValueExtractors() {
-    List<Function<QuestionnaireSubmissionStatsResponseDto, Object>> valueExtractors = List.of(
-      QuestionnaireSubmissionStatsResponseDto::username,
-      QuestionnaireSubmissionStatsResponseDto::maxPointSubmissionCreatedAt,
-      QuestionnaireSubmissionStatsResponseDto::maxPointSubmissionReceivedPoints,
-      QuestionnaireSubmissionStatsResponseDto::lastSubmissionCreatedAt,
-      QuestionnaireSubmissionStatsResponseDto::lastSubmissionReceivedPoints,
-      QuestionnaireSubmissionStatsResponseDto::questionnaireMaxPoints,
-      QuestionnaireSubmissionStatsResponseDto::submissionCount);
-    return valueExtractors;
+  private Stream<QuestionnaireSubmissionStatsInternalDto> getQuestionnaireStatisticsOutputStream(
+    Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status, String search) {
+    return status.equals(QuestionnaireStatus.ACTIVE)
+      ? questionnaireSubmissionDao.streamQuestionnaireSubmissionStatisticsWithNonSubmittersByStatus(
+      groupId, projectId, questionnaireId, status, search)
+      : questionnaireSubmissionDao.streamQuestionnaireSubmissionStatisticsByStatus(
+      groupId, projectId, questionnaireId, status, search);
   }
 
   private Page<QuestionnaireSubmissionStatsResponseDto> getStatisticsByStatus(
@@ -116,7 +123,7 @@ public class QuestionnaireStatisticsService {
       questionnaireSubmissionDao.getQuestionnaireSubmissionStatisticsByStatus(groupId, projectId,
         questionnaireId, status, pageable, searchInput);
     return questionnaireStats.map(
-      questionnaireSubmissionConverter::toQuestionnaireSubmissionStatsAdminDto);
+      questionnaireSubmissionConverter::toQuestionnaireSubmissionStatsResponseDto);
   }
 
   private Page<QuestionnaireSubmissionStatsResponseDto> getStatisticsWithNonSubmittersByStatus(
@@ -126,7 +133,7 @@ public class QuestionnaireStatisticsService {
       questionnaireSubmissionDao.getQuestionnaireSubmissionStatisticsWithNonSubmittersByStatus(
         groupId, projectId, questionnaireId, status, pageable, searchInput);
     Page<QuestionnaireSubmissionStatsResponseDto> responseDtos = questionnaireStats.map(
-      questionnaireSubmissionConverter::toQuestionnaireSubmissionStatsAdminDto);
+      questionnaireSubmissionConverter::toQuestionnaireSubmissionStatsResponseDto);
     return responseDtos;
   }
 }

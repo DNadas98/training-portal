@@ -167,9 +167,10 @@ export default function QuestionnaireStatistics() {
   const handleExcelDownload = async () => {
     try {
       setDownloadLoading(true);
+      const userTimezone = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
       const response = await authFetch({
         path:
-          `groups/${groupId}/projects/${projectId}/coordinator/questionnaires/${questionnaireId}/submissions/stats/excel?status=${displayedQuestionnaireStatus}`,
+          `groups/${groupId}/projects/${projectId}/coordinator/questionnaires/${questionnaireId}/submissions/stats/excel?status=${displayedQuestionnaireStatus}&timeZone=${userTimezone}`,
         contentType: "application/*"
       });
       if (!response || response.status > 399) {

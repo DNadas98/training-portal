@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,16 +52,17 @@ public class CoordinatorQuestionnaireSubmissionController {
   public void getAllQuestionnaireSubmissionsExcel(
     @PathVariable Long groupId, @PathVariable Long projectId, @PathVariable Long questionnaireId,
     @RequestParam QuestionnaireStatus status, @RequestParam(required = false) String search,
-    HttpServletResponse response) {
-    String decodedSearch = search != null ? URLDecoder.decode(search, StandardCharsets.UTF_8) : "";
+    @RequestParam String timeZone, HttpServletResponse response) {
     //TODO: sanitize search input
     try {
       response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
       response.setHeader(
         "Content-Disposition",
         "attachment; filename=\"questionnaire-statistics.xlsx\"");
+      ZoneId zoneId = ZoneId.of(timeZone);
       questionnaireStatisticsService.exportAllQuestionnaireSubmissionsToExcel(
-        groupId, projectId, questionnaireId, status, decodedSearch, response);
+        groupId, projectId, questionnaireId, status, search != null ? search : "", zoneId,
+        response);
       response.flushBuffer();
     } catch (IOException e) {
       log.error("Failed to export questionnaire submissions to Excel", e);

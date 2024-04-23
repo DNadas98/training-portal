@@ -1,6 +1,5 @@
 package net.dnadas.training_portal.service.utils.datetime;
 
-import lombok.extern.slf4j.Slf4j;
 import net.dnadas.training_portal.exception.utils.datetime.*;
 import net.dnadas.training_portal.model.group.project.task.Task;
 import org.springframework.stereotype.Service;
@@ -12,13 +11,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
-@Slf4j
 public class DateTimeService {
   public Instant toStoredDate(String zonedDateTimeString) {
     try {
       ZonedDateTime zdt = ZonedDateTime.parse(zonedDateTimeString, DateTimeFormatter.ISO_DATE_TIME);
       Instant instant = zdt.toInstant();
-      log.debug("received time string: " + zonedDateTimeString + " storing Instant: " + instant);
       return instant;
     } catch (Exception e) {
       throw new InvalidDateTimeReceivedException();
@@ -28,8 +25,6 @@ public class DateTimeService {
   public String toDisplayedDate(Instant storedDate) {
     ZonedDateTime zonedDateTime = storedDate.atZone(ZoneId.of("UTC"));
     String formattedDateTime = zonedDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-    log.debug("retrieved Instant: " + storedDate + " returning UTC ZonedDateTime String: " +
-      formattedDateTime);
     return formattedDateTime;
   }
 

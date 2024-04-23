@@ -1,12 +1,11 @@
 package net.dnadas.training_portal.service.utils.file;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Function;
 
@@ -31,7 +30,15 @@ public class ExcelUtilsService {
     }
   }
 
-  public <T> void fillDataRow(Row row, T item, List<Function<T, Object>> valueExtractors) {
+  public CellStyle createDateCellStyle(SXSSFWorkbook workbook) {
+    CellStyle cellStyle = workbook.createCellStyle();
+    CreationHelper createHelper = workbook.getCreationHelper();
+    cellStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-MM-dd HH:mm:ss"));
+    return cellStyle;
+  }
+
+  public <T> void fillDataRow(
+    Row row, T item, List<Function<T, Object>> valueExtractors, CellStyle dateCellStyle) {
     for (int i = 0; i < valueExtractors.size(); i++) {
       Cell cell = row.createCell(i);
       Object value = valueExtractors.get(i).apply(item);
@@ -40,6 +47,10 @@ public class ExcelUtilsService {
           case Integer integer -> cell.setCellValue(integer);
           case Long l -> cell.setCellValue(l);
           case Double v -> cell.setCellValue(v);
+          case LocalDateTime localDateTime -> {
+            cell.setCellValue(localDateTime);
+            cell.setCellStyle(dateCellStyle);
+          }
           default -> cell.setCellValue(value.toString());
         }
       }
