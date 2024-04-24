@@ -4,6 +4,7 @@ import UsernameInput from "../../../components/inputs/UsernameInput.tsx";
 import EmailInput from "../../../components/inputs/EmailInput.tsx";
 import PasswordInput from "../../../components/inputs/PasswordInput.tsx";
 import {FormEvent} from "react";
+import FullNameInput from "../../../components/inputs/FullNameInput.tsx";
 
 interface RegisterCardProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
@@ -33,8 +34,9 @@ export default function RegisterCard({onSubmit}: RegisterCardProps) {
           <CardContent sx={{justifyContent: "center", textAlign: "center"}}>
             <form onSubmit={onSubmit}>
               <Stack spacing={2}>
-                <UsernameInput/>
+                <FullNameInput/>
                 <EmailInput/>
+                <UsernameInput/>
                 <PasswordInput autoComplete={"new-password"}/>
                 <PasswordInput confirm={true}/>
                 <Button type={"submit"}

@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionStatsInternalDto;
 import net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionStatsResponseDto;
+import net.dnadas.training_portal.model.group.project.questionnaire.QuestionnaireDao;
 import net.dnadas.training_portal.model.group.project.questionnaire.QuestionnaireStatus;
 import net.dnadas.training_portal.model.group.project.questionnaire.QuestionnaireSubmissionDao;
 import net.dnadas.training_portal.service.utils.converter.QuestionnaireSubmissionConverter;
@@ -30,6 +31,8 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 public class QuestionnaireStatisticsService {
+  private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(
+    "yyyy-MM-dd HH:mm:ss");
   private final QuestionnaireSubmissionDao questionnaireSubmissionDao;
   private final QuestionnaireSubmissionConverter questionnaireSubmissionConverter;
   private final ExcelUtilsService excelUtilsService;
@@ -47,18 +50,25 @@ public class QuestionnaireStatisticsService {
       pageable, searchInput);
   }
 
+  private static List<String> getQuestionnaireStatisticsColumns() {
+    return List.of("Username", "Full Name", "E-mail Address", "Max Points Submission Date",
+      "Max Points Submission Received Points", "Last Submission Date",
+      "Last Submission Received Points", "Questionnaire Total Points", "Total Submissions");
+  }
+
   private static List<Function<QuestionnaireSubmissionStatsInternalDto, Object>> getQuestionnaireStatisticsValueExtractors(
     ZoneId timeZoneId) {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     return List.of(
       QuestionnaireSubmissionStatsInternalDto::username,
+      QuestionnaireSubmissionStatsInternalDto::fullName,
+      QuestionnaireSubmissionStatsInternalDto::email,
       dto -> dto.maxPointSubmissionCreatedAt() == null
         ? null
-        : formatter.format(dto.maxPointSubmissionCreatedAt().atZone(timeZoneId)),
+        : dateTimeFormatter.format(dto.maxPointSubmissionCreatedAt().atZone(timeZoneId)),
       QuestionnaireSubmissionStatsInternalDto::maxPointSubmissionReceivedPoints,
       dto -> dto.lastSubmissionCreatedAt() == null
         ? null
-        : formatter.format(dto.lastSubmissionCreatedAt().atZone(timeZoneId)),
+        : dateTimeFormatter.format(dto.lastSubmissionCreatedAt().atZone(timeZoneId)),
       QuestionnaireSubmissionStatsInternalDto::lastSubmissionReceivedPoints,
       QuestionnaireSubmissionStatsInternalDto::questionnaireMaxPoints,
       QuestionnaireSubmissionStatsInternalDto::submissionCount
@@ -83,7 +93,7 @@ public class QuestionnaireStatisticsService {
          Stream<QuestionnaireSubmissionStatsInternalDto> dtos = getQuestionnaireStatisticsOutputStream(
            groupId, projectId, questionnaireId, status, search
          )) {
-      Sheet sheet = excelUtilsService.createSheet(workbook, "Questionnaire Submissions");
+      Sheet sheet = excelUtilsService.createSheet(workbook, "Statistics");
       CellStyle dateCellStyle = excelUtilsService.createDateCellStyle(workbook);
       List<String> columns = getQuestionnaireStatisticsColumns();
       excelUtilsService.createHeaderRow(sheet, columns);
@@ -98,12 +108,6 @@ public class QuestionnaireStatisticsService {
 
       workbook.write(outputStream);
     }
-  }
-
-  private static List<String> getQuestionnaireStatisticsColumns() {
-    return List.of("Username", "Max Points Submission Date",
-      "Max Points Submission Received Points", "Last Submission Date",
-      "Last Submission Received Points", "Questionnaire Total Points", "Total Submissions");
   }
 
   private Stream<QuestionnaireSubmissionStatsInternalDto> getQuestionnaireStatisticsOutputStream(

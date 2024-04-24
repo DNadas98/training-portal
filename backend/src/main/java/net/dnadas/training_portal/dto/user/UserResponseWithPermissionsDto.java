@@ -9,5 +9,6 @@ import java.util.List;
 public record UserResponseWithPermissionsDto(
   @NotNull @Min(1) Long userId,
   @NotNull String username,
+  @NotNull String fullName,
   @NotNull List<PermissionType> permissions) {
 }

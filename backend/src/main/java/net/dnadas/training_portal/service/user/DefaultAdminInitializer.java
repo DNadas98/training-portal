@@ -35,15 +35,17 @@ public class DefaultAdminInitializer {
   @Value("${BACKEND_DEFAULT_ADMIN_PASSWORD}")
   private String password;
 
+  private static final String fullName = "System Administrator";
+
   @Transactional(rollbackFor = Exception.class)
   public void createDefaultSystemAdministratorAccount() {
-    Boolean adminExists = applicationUserDao.findAll(PageRequest.of(0, 1)).stream().findAny()
+    boolean adminExists = applicationUserDao.findAll(PageRequest.of(0, 1)).stream().findAny()
       .isPresent();
     if (adminExists) {
-      logger.warn("User accounts already exist, skipping system administrator initialization");
+      logger.info("User accounts already exist, skipping system administrator initialization");
       return;
     }
-    RegisterRequestDto dto = new RegisterRequestDto(username, email, password);
+    RegisterRequestDto dto = new RegisterRequestDto(username, email, password, fullName);
     List<FieldError> fieldErrors = validator.validateObject(dto).getFieldErrors();
     if (!fieldErrors.isEmpty()) {
       CustomValidationException e = new CustomValidationException(fieldErrors);
@@ -53,9 +55,9 @@ public class DefaultAdminInitializer {
 
     String hashedPassword = passwordEncoder.encode(dto.password());
     ApplicationUser defaultAdminUser = new ApplicationUser(dto.username(), dto.email(),
-      hashedPassword);
+      hashedPassword, fullName);
     defaultAdminUser.addGlobalRole(GlobalRole.ADMIN);
     applicationUserDao.save(defaultAdminUser);
-    logger.warn("Default system administrator account initialized successfully");
+    logger.info("Default system administrator account initialized successfully");
   }
 }

@@ -8,6 +8,7 @@ import net.dnadas.training_portal.dto.email.EmailRequestDto;
 import net.dnadas.training_portal.dto.user.PreRegisterUserInternalDto;
 import net.dnadas.training_portal.dto.user.PreRegisterUsersReportDto;
 import net.dnadas.training_portal.dto.user.PreRegistrationCompleteInternalDto;
+import net.dnadas.training_portal.dto.user.PreRegistrationDetailsResponseDto;
 import net.dnadas.training_portal.dto.verification.VerificationTokenDto;
 import net.dnadas.training_portal.exception.auth.UserAlreadyExistsException;
 import net.dnadas.training_portal.exception.group.project.questionnaire.QuestionnaireNotFoundException;
@@ -35,6 +36,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,8 +45,7 @@ public class PreRegistrationService {
   private static final Integer RECEIVED_CSV_MAX_SIZE = 400000;
   private static final String RECEIVED_CSV_CONTENT_TYPE = "text/csv";
   private static final String CSV_DELIMITER = ",";
-  private static final List<String> CSV_HEADERS = List.of("Username", "Email");
-  private static final int CSV_COLUMNS = 2;
+  private static final List<String> CSV_HEADERS = List.of("Username", "Email", "Full Name");
   private static final long MAX_EXPIRATION_SECONDS = 60 * 60 * 24 * 365; // 1 year
   private final ApplicationUserDao applicationUserDao;
   private final UserGroupDao userGroupDao;
@@ -59,8 +60,8 @@ public class PreRegistrationService {
 
   public void getPreRegisterUsersCsvTemplate(OutputStream outputStream) throws IOException {
     List<List<String>> exampleData = List.of(
-      List.of("exampleUser1", "example1@example.com"),
-      List.of("exampleUser2", "example2@example.com"));
+      List.of("exampleUser1", "example1@example.com", "Example User 1"),
+      List.of("exampleUser2", "example2@example.com", "Example User 2"));
     csvUtilsService.writeCsvToStream(exampleData, CSV_DELIMITER, CSV_HEADERS, outputStream);
   }
 
@@ -86,13 +87,12 @@ public class PreRegistrationService {
 
     List<PreRegisterUserInternalDto> userRequests = parsePreRegistrationCsv(usersCsv);
 
-    List<ApplicationUser> existingUsers = applicationUserDao.findAllByEmailIn(
-      userRequests.stream().map(PreRegisterUserInternalDto::email).toList());
+    Map<String, ApplicationUser>
+      existingUsersEmailUserMap = getEmailUserMapOfExistingUsers(userRequests);
 
     userRequests.forEach(userRequest -> {
       try {
-        ApplicationUser existingUser = existingUsers.stream().filter(
-          user -> user.getEmail().equals(userRequest.email())).findFirst().orElse(null);
+        ApplicationUser existingUser = existingUsersEmailUserMap.get(userRequest.email());
         if (existingUser != null) {
           updateExistingUser(group, project, questionnaire, existingUser);
           updatedUsers.add(userRequest);
@@ -109,6 +109,14 @@ public class PreRegistrationService {
       userRequests.size(), updatedUsers, createdUsers, failedUsers);
   }
 
+  private Map<String, ApplicationUser> getEmailUserMapOfExistingUsers(
+    List<PreRegisterUserInternalDto> userRequests) {
+    Map<String, ApplicationUser> existingUsersEmailUserMap = applicationUserDao.findAllByEmailIn(
+      userRequests.stream().map(PreRegisterUserInternalDto::email).toList()).stream().collect(
+      Collectors.toMap(ApplicationUser::getEmail, user -> user));
+    return existingUsersEmailUserMap;
+  }
+
   @Transactional(rollbackFor = Exception.class)
   public PreRegistrationCompleteInternalDto completePreRegistration(
     VerificationTokenDto verificationTokenDto, PreRegistrationCompleteRequestDto requestDto) {
@@ -123,9 +131,9 @@ public class PreRegistrationService {
     Optional<UserGroup> group = userGroupDao.findById(token.getGroupId());
     Optional<Project> project = projectDao.findById(token.getProjectId());
     Optional<Questionnaire> questionnaire = questionnaireDao.findById(token.getQuestionnaireId());
-
+    String fullName = getFullName(requestDto, token);
     ApplicationUser user = new ApplicationUser(token.getUsername(), token.getEmail(),
-      passwordEncoder.encode(requestDto.password()));
+      passwordEncoder.encode(requestDto.password()), fullName);
     applicationUserDao.save(user);
     if (group.isPresent()) {
       UserGroup foundGroup = group.get();
@@ -147,12 +155,32 @@ public class PreRegistrationService {
     return new PreRegistrationCompleteInternalDto(user.getEmail());
   }
 
+  @Transactional(readOnly = true)
+  public PreRegistrationDetailsResponseDto getPreRegistrationDetails(
+    VerificationTokenDto verificationTokenDto) {
+    PreRegistrationVerificationToken token =
+      (PreRegistrationVerificationToken) verificationTokenService.findVerificationToken(
+        verificationTokenDto);
+    return new PreRegistrationDetailsResponseDto(token.getUsername(), token.getFullName());
+  }
+
+  private String getFullName(
+    PreRegistrationCompleteRequestDto requestDto, PreRegistrationVerificationToken token) {
+    if (requestDto.fullName() != null) {
+      return requestDto.fullName();
+    }
+    if (token.getUsername() != null) {
+      return token.getUsername();
+    }
+    throw new IllegalArgumentException("Missing full name");
+  }
+
   private List<PreRegisterUserInternalDto> parsePreRegistrationCsv(MultipartFile usersCsv) {
     csvUtilsService.verifyCsv(usersCsv, RECEIVED_CSV_CONTENT_TYPE, RECEIVED_CSV_MAX_SIZE);
-    List<List<String>> csvRecords = csvUtilsService.parseCsv(
-      usersCsv, CSV_DELIMITER, CSV_HEADERS, CSV_COLUMNS);
+    List<List<String>> csvRecords = csvUtilsService.parseCsv(usersCsv, CSV_DELIMITER, CSV_HEADERS);
     List<PreRegisterUserInternalDto> userRequests = csvRecords.stream().map(
-      record -> new PreRegisterUserInternalDto(record.get(0), record.get(1))).toList();
+        record -> new PreRegisterUserInternalDto(record.get(0), record.get(1), record.get(2)))
+      .toList();
     return userRequests;
   }
 

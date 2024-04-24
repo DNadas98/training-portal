@@ -74,7 +74,7 @@ public class QuestionnaireSubmissionConverter {
       dto.lastSubmissionId(),
       lastSubmissionCreatedAtResult,
       dto.lastSubmissionReceivedPoints(),
-      dto.userId(), dto.username(), dto.submissionCount());
+      dto.userId(), dto.username(), dto.fullName(), dto.email(), dto.submissionCount());
   }
 
   private SubmittedQuestionResponseDto toSubmittedQuestionResponseDto(

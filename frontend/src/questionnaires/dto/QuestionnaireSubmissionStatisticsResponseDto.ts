@@ -9,5 +9,7 @@ export interface QuestionnaireSubmissionStatisticsResponseDto {
   lastSubmissionReceivedPoints: number;
   userId: number;
   username: string;
+  fullName: string;
+  email: string;
   submissionCount: number;
 }

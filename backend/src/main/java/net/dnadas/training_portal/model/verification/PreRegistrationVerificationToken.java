@@ -21,6 +21,9 @@ public class PreRegistrationVerificationToken extends VerificationToken {
   @Column(nullable = false, unique = true)
   private String username;
 
+  @Column(nullable = true, unique = true)
+  private String fullName;
+
   @Column(nullable = false)
   private Long groupId;
 
@@ -32,13 +35,16 @@ public class PreRegistrationVerificationToken extends VerificationToken {
 
   public PreRegistrationVerificationToken(
     String email, String username, Long groupId, Long projectId, Long questionnaireId,
-    String hashedVerificationCode, Instant expiresAt) {
+    String hashedVerificationCode, Instant expiresAt, String fullName) {
     super(TokenType.PRE_REGISTRATION, hashedVerificationCode, expiresAt);
-    this.email = email;
-    this.username = username;
+    this.email = email.trim();
+    this.username = username.trim();
     this.groupId = groupId;
     this.projectId = projectId;
     this.questionnaireId = questionnaireId;
+    if (fullName != null) {
+      this.fullName = fullName.trim();
+    }
   }
 
   @Override

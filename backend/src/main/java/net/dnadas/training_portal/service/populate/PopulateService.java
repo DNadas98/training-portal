@@ -60,13 +60,13 @@ public class PopulateService {
     defaultAdminInitializer.createDefaultSystemAdministratorAccount();
 
     if (applicationUserDao.count() > 1) {
-      log.warn("Database has already been populated with example data");
+      log.info("Database has already been populated with example data");
       return;
     }
-    log.warn("Database population with example data is in progress...");
+    log.info("Database population with example data is in progress...");
 
-    List<ApplicationUser> testUsers = createApplicationUsers(TEST_MEMBERS_COUNT);
-    List<ApplicationUser> testEditors = createEditors(TEST_EDITORS_COUNT);
+    List<ApplicationUser> testUsers = createApplicationUsers();
+    List<ApplicationUser> testEditors = createEditors();
     UserGroup userGroup = new UserGroup(
       "Test group 1", "Test group 1 description",
       EXAMPLE_DATA_POPULATED_MESSAGE,
@@ -99,7 +99,7 @@ public class PopulateService {
 
     populateEditorQuestionnaireSubmissions(testEditors, questionnaire);
 
-    log.warn("Database has been populated with example data successfully");
+    log.info("Database has been populated with example data successfully");
   }
 
   private void populateEditorQuestionnaireSubmissions(
@@ -123,7 +123,8 @@ public class PopulateService {
             q.getQuestionOrder(), q.getPoints(), 0, qs);
           sq.setSubmittedAnswers(q.getAnswers().stream()
             .map(a -> new SubmittedAnswer(a.getText(), a.getAnswerOrder(),
-              a.getAnswerOrder().equals(2)?SubmittedAnswerStatus.INCORRECT:SubmittedAnswerStatus.UNCHECKED, sq))
+              a.getAnswerOrder().equals(2) ? SubmittedAnswerStatus.INCORRECT :
+                SubmittedAnswerStatus.UNCHECKED, sq))
             .toList());
           return sq;
         }).toList());
@@ -161,13 +162,14 @@ public class PopulateService {
     return questionnaire;
   }
 
-  private List<ApplicationUser> createApplicationUsers(int i) {
+  private List<ApplicationUser> createApplicationUsers() {
     List<ApplicationUser> users = new ArrayList<>();
-    IntStream.range(0, i).parallel().forEach(index -> {
+    IntStream.range(0, TEST_MEMBERS_COUNT).parallel().forEach(index -> {
       ApplicationUser applicationUser = new ApplicationUser(
-        "Test User " + index,
+        getUsername("testUser", index, TEST_MEMBERS_COUNT),
         "user" + index + "@test.test",
-        passwordEncoder.encode("testuser" + index + "password"));
+        passwordEncoder.encode("testuser" + index + "password"),
+        "Test User " + index);
       ApplicationUser savedUser = applicationUserDao.save(applicationUser);
       synchronized (users) {
         users.add(savedUser);
@@ -176,18 +178,24 @@ public class PopulateService {
     return users;
   }
 
-  private List<ApplicationUser> createEditors(int i) {
+  private List<ApplicationUser> createEditors() {
     List<ApplicationUser> users = new ArrayList<>();
-    IntStream.range(0, i).parallel().forEach(index -> {
+    IntStream.range(0, TEST_EDITORS_COUNT).parallel().forEach(index -> {
       ApplicationUser applicationUser = new ApplicationUser(
-        "Test Editor " + index,
+        getUsername("testEditor", index, TEST_EDITORS_COUNT),
         "editor" + index + "@test.test",
-        passwordEncoder.encode("testeditor" + index + "password"));
+        passwordEncoder.encode("testeditor" + index + "password"),
+        "Test Editor " + index);
       ApplicationUser savedUser = applicationUserDao.save(applicationUser);
       synchronized (users) {
         users.add(savedUser);
       }
     });
     return users;
+  }
+
+  private String getUsername(String prefix, long index, long maxIndex) {
+    int totalDigits = String.valueOf(maxIndex).length();
+    return prefix + String.format("%0" + totalDigits + "d", index);
   }
 }

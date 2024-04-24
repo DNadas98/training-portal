@@ -48,6 +48,7 @@ export default function Register() {
       const formData = new FormData(event.currentTarget);
       const username = formData.get('username') as string;
       const email = formData.get('email') as string;
+      const fullName = formData.get('fullName') as string;
       const password = formData.get('password') as string;
       const confirmPassword = formData.get('confirmPassword') as string;
 
@@ -55,7 +56,7 @@ export default function Register() {
       if (!passwordIsValid) {
         return;
       }
-      const registerRequestDto: RegisterRequestDto = {username, email, password};
+      const registerRequestDto: RegisterRequestDto = {username, email, fullName, password};
       const response = await registerUser(registerRequestDto);
 
       if (response.error || response?.status > 399 || !response.message) {

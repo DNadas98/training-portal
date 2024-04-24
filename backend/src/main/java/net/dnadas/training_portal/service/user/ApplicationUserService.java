@@ -48,10 +48,10 @@ public class ApplicationUserService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  public void updateUsername(UserUsernameUpdateDto updateDto) {
+  public void updateFullName(UserFullNameUpdateDto updateDto) {
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
     verifyPassword(updateDto.password(), applicationUser);
-    applicationUser.setUsername(updateDto.username());
+    applicationUser.setFullName(updateDto.fullName());
     applicationUserDao.save(applicationUser);
   }
 
@@ -66,12 +66,7 @@ public class ApplicationUserService {
   @Transactional(rollbackFor = Exception.class)
   public void archiveOwnApplicationUser() {
     ApplicationUser user = userProvider.getAuthenticatedUser();
-    String archived = UUID.randomUUID() + "archived";
-    user.setUsername(archived);
-    user.setEmail(archived + "@" + archived + ".net");
-    user.setPassword("");
-    user.setEnabled(false);
-    applicationUserDao.save(user);
+    archiveUser(user);
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -81,12 +76,7 @@ public class ApplicationUserService {
     if (user.getGlobalRoles().contains(GlobalRole.ADMIN)) {
       throw new UnauthorizedException();
     }
-    String archived = UUID.randomUUID() + "archived";
-    user.setUsername(archived);
-    user.setEmail(archived + "@" + archived + ".net");
-    user.setPassword("");
-    user.setEnabled(false);
-    applicationUserDao.save(user);
+    archiveUser(user);
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -101,7 +91,7 @@ public class ApplicationUserService {
       verificationTokenService.verifyNoEmailChangeTokenWithId(applicationUser.getId());
 
       verificationTokenDto = verificationTokenService.saveEmailChangeVerificationToken(
-          updateDto, applicationUser);
+        updateDto, applicationUser);
 
       EmailRequestDto emailRequestDto = emailTemplateService.getEmailChangeVerificationEmailDto(
         verificationTokenDto, updateDto.email(), applicationUser.getActualUsername());
@@ -123,6 +113,16 @@ public class ApplicationUserService {
     user.setEmail(verificationToken.getNewEmail());
     applicationUserDao.save(user);
     verificationTokenService.deleteVerificationToken(verificationToken.getId());
+  }
+
+  private void archiveUser(ApplicationUser user) {
+    String archived = UUID.randomUUID() + "archived";
+    user.setUsername(archived);
+    user.setEmail(archived + "@" + archived + ".net");
+    user.setFullName("Archived User");
+    user.setPassword("");
+    user.setEnabled(false);
+    applicationUserDao.save(user);
   }
 
   private void verifyPassword(String password, ApplicationUser applicationUser) {

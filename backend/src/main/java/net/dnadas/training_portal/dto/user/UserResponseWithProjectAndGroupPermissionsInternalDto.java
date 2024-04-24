@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 public record UserResponseWithProjectAndGroupPermissionsInternalDto(
   @NotNull @Min(1) Long userId,
   @NotNull String username,
+  @NotNull String fullName,
   Boolean isAdmin,
   Boolean isCoordinator,
   Boolean isEditor,

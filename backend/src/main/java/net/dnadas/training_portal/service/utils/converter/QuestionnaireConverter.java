@@ -56,13 +56,13 @@ public class QuestionnaireConverter {
     final UserResponsePublicDto updatedByDto;
     ApplicationUser createdBy = questionnaire.getCreatedBy();
     if (createdBy == null) {
-      createdByDto = new UserResponsePublicDto(0L, "Removed User Account");
+      createdByDto = new UserResponsePublicDto(0L, "Removed User Account", "Removed User Account");
     } else {
       createdByDto = userConverter.toUserResponsePublicDto(createdBy);
     }
     ApplicationUser updatedBy = questionnaire.getUpdatedBy();
     if (updatedBy == null) {
-      updatedByDto = new UserResponsePublicDto(0L, "Removed User Account");
+      updatedByDto = new UserResponsePublicDto(0L, "Removed User Account", "Removed User Account");
     } else {
       updatedByDto = userConverter.toUserResponsePublicDto(updatedBy);
     }

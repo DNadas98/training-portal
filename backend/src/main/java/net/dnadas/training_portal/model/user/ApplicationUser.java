@@ -32,6 +32,9 @@ public class ApplicationUser implements UserDetails {
   @Column(nullable = false, unique = true)
   private String username;
 
+  @Column(nullable = false)
+  private String fullName;
+
   @Column(nullable = false, unique = true)
   private String email;
 
@@ -110,10 +113,11 @@ public class ApplicationUser implements UserDetails {
   @JoinColumn(name = "active_questionnaire_id")
   private Questionnaire activeQuestionnaire = null;
 
-  public ApplicationUser(String username, String email, String password) {
-    this.username = username;
-    this.email = email;
+  public ApplicationUser(String username, String email, String password, String fullName) {
+    this.username = username.trim();
+    this.email = email.trim();
     this.password = password;
+    this.fullName = fullName.trim();
     this.expired = false;
     this.locked = false;
     this.credentialsExpired = false;

@@ -90,7 +90,7 @@ public class AuthenticationService {
       verificationTokenDto);
     verificationTokenService.validateVerificationToken(verificationTokenDto, token);
     ApplicationUser user = new ApplicationUser(token.getUsername(), token.getEmail(),
-      token.getPassword());
+      token.getPassword(), token.getFullName());
     applicationUserDao.save(user);
     verificationTokenService.deleteVerificationToken(token.getId());
   }
@@ -116,7 +116,8 @@ public class AuthenticationService {
 
     return new LoginResponseDto(
       accessToken,
-      new UserInfoDto(user.getActualUsername(), user.getEmail(), user.getGlobalRoles()));
+      new UserInfoDto(
+        user.getActualUsername(), user.getEmail(), user.getFullName(), user.getGlobalRoles()));
   }
 
   private LoginResponseDto getLoginResponseWithActiveQuestionnaire(
@@ -125,7 +126,8 @@ public class AuthenticationService {
     UserGroup group = project.getUserGroup();
     return new LoginResponseDto(
       accessToken,
-      new UserInfoDto(user.getActualUsername(), user.getEmail(), user.getGlobalRoles()),
+      new UserInfoDto(
+        user.getActualUsername(), user.getEmail(), user.getFullName(), user.getGlobalRoles()),
       group.getId(), project.getId(), questionnaire.getId());
   }
 
@@ -143,7 +145,8 @@ public class AuthenticationService {
     String accessToken = jwtService.generateAccessToken(payload);
     return new RefreshResponseDto(
       accessToken,
-      new UserInfoDto(user.getActualUsername(), user.getEmail(), user.getGlobalRoles()));
+      new UserInfoDto(
+        user.getActualUsername(), user.getEmail(), user.getFullName(), user.getGlobalRoles()));
   }
 
   @Transactional(rollbackFor = Exception.class)

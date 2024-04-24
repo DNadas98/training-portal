@@ -90,7 +90,8 @@ public class VerificationTokenService {
     String hashedVerificationCode = getHashedVerificationCode(
       verificationCode);
     RegistrationToken registrationToken = new RegistrationToken(registerRequest.email(),
-      registerRequest.username(), hashedPassword, hashedVerificationCode);
+      registerRequest.username(), registerRequest.fullName(), hashedPassword,
+      hashedVerificationCode);
     RegistrationToken savedToken = registrationTokenDao.save(registrationToken);
     return new VerificationTokenDto(savedToken.getId(), verificationCode);
   }
@@ -145,7 +146,7 @@ public class VerificationTokenService {
     PreRegistrationVerificationToken preRegistrationVerificationToken =
       preRegistrationVerificationTokenDao.save(
         new PreRegistrationVerificationToken(userRequest.email(), userRequest.username(), groupId,
-          projectId, questionnaireId, hashedVerificationCode, expiresAt));
+          projectId, questionnaireId, hashedVerificationCode, expiresAt, userRequest.fullName()));
     preRegistrationVerificationTokenDao.save(preRegistrationVerificationToken);
     return new VerificationTokenDto(preRegistrationVerificationToken.getId(), verificationCode);
   }

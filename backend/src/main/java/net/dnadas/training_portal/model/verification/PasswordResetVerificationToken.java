@@ -18,7 +18,7 @@ public class PasswordResetVerificationToken extends VerificationToken {
 
   public PasswordResetVerificationToken(String email, String hashedVerificationCode) {
     super(TokenType.PASSWORD_RESET, hashedVerificationCode);
-    this.email = email;
+    this.email = email.trim();
   }
 
   @Override

@@ -5,5 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 public record PreRegisterUserInternalDto(
-  @NotNull @Length(min = 1, max = 50) String username, @NotNull @Email String email) {
+  @NotNull @Length(min = 1, max = 50) String username,
+  @NotNull @Email String email,
+  @Length(min = 1, max = 100) String fullName) {
 }

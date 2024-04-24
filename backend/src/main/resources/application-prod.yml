@@ -34,3 +34,4 @@ spring:
 logging:
   level:
     root: warn
+    net.dnadas: info

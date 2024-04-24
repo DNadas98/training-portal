@@ -1,5 +1,5 @@
 import {useNotification} from "../../../common/notification/context/NotificationProvider.tsx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {ApiResponseDto} from "../../../common/api/dto/ApiResponseDto.ts";
@@ -10,9 +10,12 @@ import {PreRegistrationCompleteRequestDto} from "../../dto/PreRegistrationComple
 import {AuthenticationDto} from "../../dto/AuthenticationDto.ts";
 import {useAuthentication} from "../../hooks/useAuthentication.ts";
 import SuccessfulLoginRedirect from "../../components/SuccessfulLoginRedirect.tsx";
+import {PreRegistrationDetailsResponseDto} from "../../dto/PreRegistrationDetailsResponseDto.ts";
 
 export default function InvitationRedirect() {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [username, setUsername] = useState<string>("");
+  const [fullNameDefaultValue, setFullNameDefaultValue] = useState<string>("");
   const [processError, setProcessError] = useState<null | string>(null);
   const notification = useNotification();
   const navigate = useNavigate();
@@ -24,10 +27,9 @@ export default function InvitationRedirect() {
   const [activeProjectId, setActiveProjectId] = useState<number | null>(null);
   const [activeQuestionnaireId, setActiveQuestionnaireId] = useState<number | null>(null);
 
-
-  const fetchVerification = async (code: string, id: string, password: string) => {
+  const fetchVerification = async (code: string, id: string, password: string, fullName?: string) => {
     const dto: PreRegistrationCompleteRequestDto = {
-      password: password
+      password: password, fullName: fullName?.length ? fullName : undefined
     }
     return await publicJsonFetch({
       path: `verification/invitation-accept?code=${code}&id=${id}`, method: "POST", body: dto
@@ -54,19 +56,19 @@ export default function InvitationRedirect() {
       event.preventDefault();
       const formData = new FormData(event.target);
       const password = formData.get("password") as string;
+      const fullNameInput = formData.get("fullName") as string | undefined;
       const confirmPassword = formData.get("confirmPassword") as string;
       if (password !== confirmPassword) {
-        notification.openNotification({
+        return notification.openNotification({
           type: "error", vertical: "top", horizontal: "center", message: "Passwords don't match"
         });
-        return;
       }
       const code = searchParams.get("code");
       const id = searchParams.get("id");
       if (!code?.length || !id?.length || isNaN(parseInt(id)) || parseInt(id) < 1) {
         return handleProcessError("The received verification code is missing or invalid");
       }
-      const response: ApiResponseDto = await fetchVerification(code, id, password);
+      const response: ApiResponseDto = await fetchVerification(code, id, password, fullNameInput);
       if (response.error || response?.status > 399 || !response.data) {
         return handleProcessError(response.error);
       }
@@ -87,6 +89,36 @@ export default function InvitationRedirect() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    async function fetchVerificationDetails() {
+      try {
+        const code = searchParams.get("code");
+        const id = searchParams.get("id");
+        if (!code?.length || !id?.length || isNaN(parseInt(id)) || parseInt(id) < 1) {
+          return handleProcessError("The received verification code is missing or invalid");
+        }
+        const response: ApiResponseDto = await publicJsonFetch({
+          path: `verification/invitation-accept?code=${code}&id=${id}`, method: "GET"
+        });
+        if (response.error || response?.status > 399 || !response.data) {
+          return handleProcessError(response.error);
+        }
+        const detailsResponse: PreRegistrationDetailsResponseDto = response.data;
+        if (detailsResponse.fullName) {
+          setFullNameDefaultValue(detailsResponse.fullName);
+        }
+        setUsername(detailsResponse.username);
+      } catch (e) {
+        handleProcessError();
+        clearSearchParams();
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchVerificationDetails().then();
+  }, []);
 
   return (
     loading
@@ -109,6 +141,10 @@ export default function InvitationRedirect() {
               </Typography>
               <Box sx={{padding: 2}} component={"form"} onSubmit={handleVerification}><Stack
                 spacing={2}>
+                <Typography>Username: {username}</Typography>
+                <TextField type={"text"} label={"Full Name"} name={"fullName"}
+                           defaultValue={fullNameDefaultValue}
+                           inputProps={{minLength: 8, maxLength: 50}} required/>
                 <TextField type={"password"} label={"Password"} name={"password"}
                            inputProps={{minLength: 8, maxLength: 50}} required/>
                 <TextField type={"password"} label={"Confirm Password"} name={"confirmPassword"}

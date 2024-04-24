@@ -4,5 +4,6 @@ import jakarta.validation.constraints.NotNull;
 
 public record UserResponsePublicDto(
   @NotNull Long userId,
-  @NotNull String username) {
+  @NotNull String username,
+  @NotNull String fullName) {
 }

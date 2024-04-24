@@ -14,6 +14,7 @@ import {
   Select,
   Stack,
   TextField,
+  Tooltip,
   Typography
 } from "@mui/material";
 import LoadingSpinner from "../../../../common/utils/components/LoadingSpinner.tsx";
@@ -34,8 +35,9 @@ import RichTextDisplay from "../../../../common/richTextEditor/RichTextDisplay.t
 import URLQueryPagination from "../../../../common/pagination/URLQueryPagination.tsx";
 import {ApiResponsePageableDto} from "../../../../common/api/dto/ApiResponsePageableDto.ts";
 import {QuestionnaireResponseEditorDto} from "../../../dto/QuestionnaireResponseEditorDto.ts";
-import {Downloading, FileDownload} from "@mui/icons-material";
+import {AccountBoxRounded, Downloading, FileDownload, MailOutlined,} from "@mui/icons-material";
 import useAuthFetch from "../../../../common/api/hooks/useAuthFetch.tsx";
+import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
 
 export default function QuestionnaireStatistics() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -61,6 +63,7 @@ export default function QuestionnaireStatistics() {
   const page = parseInt(searchParams.get('page') || '1', 10);
   const size = parseInt(searchParams.get('size') || '10', 10);
   const [usernameSearchValue, setUsernameSearchValue] = useState<string>("");
+  const dialog = useDialog();
 
   function handleErrorNotification(message: string) {
     notification.openNotification({
@@ -168,6 +171,15 @@ export default function QuestionnaireStatistics() {
     try {
       setDownloadLoading(true);
       const userTimezone = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
+      let fileName =
+        `questionnaire-statistics-${questionnaire?.name}-${getLocalizedDateTime(new Date())}-${displayedQuestionnaireStatus}`;
+      if (usernameSearchValue?.length) {
+        fileName = fileName.concat(`-searchValue-${usernameSearchValue.trim().toLowerCase()}`)
+      }
+
+      // @ts-expect-error replaceAll does in fact exist here on type string
+      fileName = fileName.trim().toLowerCase().replaceAll(" ", "_").replaceAll(".", "")
+        .concat(".xlsx");
       const response = await authFetch({
         path:
           `groups/${groupId}/projects/${projectId}/coordinator/questionnaires/${questionnaireId}/submissions/stats/excel?status=${displayedQuestionnaireStatus}&timeZone=${userTimezone}`,
@@ -180,7 +192,7 @@ export default function QuestionnaireStatistics() {
       const blob = await response?.blob();
       const link = document.createElement("a");
       link.href = window.URL.createObjectURL(blob);
-      link.setAttribute("download", "questionnaire-statistics.xlsx");
+      link.setAttribute("download", fileName);
       document.body.appendChild(link);
       link.click();
       link.parentNode?.removeChild(link);
@@ -198,6 +210,36 @@ export default function QuestionnaireStatistics() {
       stat.lastSubmissionId !== null && stat.lastSubmissionId !== undefined &&
       stat.lastSubmissionCreatedAt !== null && stat.lastSubmissionCreatedAt !== undefined &&
       stat.lastSubmissionReceivedPoints !== null && stat.lastSubmissionReceivedPoints !== undefined;
+  }
+
+  const handleContactClick = (data: QuestionnaireSubmissionStatisticsResponseDto) => {
+    dialog.openDialog({
+      oneActionOnly: true, confirmText: "Close", onConfirm: () => {
+      },
+      content: <Grid container spacing={2} alignItems={"center"} justifyContent={"space-between"}
+                     maxWidth={"fit-content"}>
+        <Grid item xs={12}>
+          <Stack spacing={1} direction={"row"} alignItems={"center"}>
+            <AccountBoxRounded/>
+            <Typography variant={"h6"}>{data.fullName}</Typography>
+          </Stack>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography>Username:</Typography>
+          <Typography>{data.username}</Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography>E-mail Address:</Typography>
+          <Tooltip title={"Copy to clipboard"}>
+            <Button
+              variant={"text"} sx={{textTransform: "none", padding: 0}}
+              onClick={() => navigator.clipboard.writeText(data.email).then()}>
+              {data.email}
+            </Button>
+          </Tooltip>
+        </Grid>
+      </Grid>
+    })
   }
 
   if (permissionsLoading || questionnaireLoading) {
@@ -303,6 +345,7 @@ export default function QuestionnaireStatistics() {
             <TableHead>
               <TableRow>
                 <TableCell>Username</TableCell>
+                <TableCell>Full Name</TableCell>
                 <TableCell>Max Date</TableCell>
                 <TableCell>Max Points</TableCell>
                 <TableCell>Last Date</TableCell>
@@ -323,6 +366,13 @@ export default function QuestionnaireStatistics() {
                       sx={{'&:last-child td, &:last-child th': {border: 0}}}
                     >
                       <TableCell>{stat.username}</TableCell>
+                      <TableCell>
+                        <Button color={"inherit"} variant={"text"} sx={{padding: 0, textTransform: "none"}}
+                                startIcon={<MailOutlined/>}
+                                onClick={() => handleContactClick(stat)}>
+                          {stat.fullName}
+                        </Button>
+                      </TableCell>
                       {hasValidSubmission(stat)
                         ? <>
                           <TableCell> {getLocalizedDateTime(new Date(stat.maxPointSubmissionCreatedAt as string))}</TableCell>

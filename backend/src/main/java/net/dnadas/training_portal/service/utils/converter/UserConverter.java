@@ -2,8 +2,6 @@ package net.dnadas.training_portal.service.utils.converter;
 
 import net.dnadas.training_portal.dto.user.UserResponsePrivateDto;
 import net.dnadas.training_portal.dto.user.UserResponsePublicDto;
-import net.dnadas.training_portal.dto.user.UserResponseWithPermissionsDto;
-import net.dnadas.training_portal.model.auth.PermissionType;
 import net.dnadas.training_portal.model.user.ApplicationUser;
 import org.springframework.stereotype.Service;
 
@@ -15,13 +13,7 @@ public class UserConverter {
 
   public UserResponsePublicDto toUserResponsePublicDto(ApplicationUser applicationUser) {
     return new UserResponsePublicDto(
-      applicationUser.getId(), applicationUser.getActualUsername());
-  }
-
-  public UserResponseWithPermissionsDto toUserResponseWithPermissionsDto(
-    ApplicationUser applicationUser, List<PermissionType> permissions) {
-    return new UserResponseWithPermissionsDto(
-      applicationUser.getId(), applicationUser.getActualUsername(), permissions);
+      applicationUser.getId(), applicationUser.getActualUsername(), applicationUser.getFullName());
   }
 
   public List<UserResponsePublicDto> toUserResponsePublicDtos(
@@ -32,11 +24,7 @@ public class UserConverter {
 
   public UserResponsePrivateDto toUserResponsePrivateDto(ApplicationUser applicationUser) {
     return new UserResponsePrivateDto(
-      applicationUser.getId(), applicationUser.getActualUsername());
-  }
-
-  public List<UserResponsePrivateDto> toUserResponsePrivateDtos(
-    List<ApplicationUser> applicationUsers) {
-    return applicationUsers.stream().map(this::toUserResponsePrivateDto).toList();
+      applicationUser.getId(), applicationUser.getActualUsername(), applicationUser.getEmail(),
+      applicationUser.getFullName());
   }
 }

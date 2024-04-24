@@ -13,6 +13,7 @@ export const AuthenticationContext = createContext<IAuthenticationContext>({
   logout: () => {
   },
   getUsername: () => undefined,
+  getFullName: () => undefined,
   getEmail: () => undefined,
   getRoles: () => undefined,
   getAccessToken: () => undefined
@@ -25,6 +26,7 @@ export function AuthenticationProvider({children}: AuthenticationProviderProps) 
     if (!authentication.accessToken || !authentication.userInfo
       || !authentication.userInfo.email?.length
       || !authentication.userInfo.username?.length
+      || !authentication.userInfo.fullName?.length
       || !authentication.userInfo.roles?.length
       || !authentication.userInfo?.roles?.includes(GlobalRole.USER)) {
       throw new Error("The received authentication is invalid");
@@ -44,6 +46,10 @@ export function AuthenticationProvider({children}: AuthenticationProviderProps) 
     return authentication.userInfo?.email;
   };
 
+  const getFullName = () => {
+    return authentication.userInfo?.fullName;
+  };
+
   const getRoles = () => {
     return authentication.userInfo?.roles;
   };
@@ -54,7 +60,7 @@ export function AuthenticationProvider({children}: AuthenticationProviderProps) 
 
   return (
     <AuthenticationContext.Provider
-      value={{authenticate, logout, getUsername, getEmail, getRoles, getAccessToken}}>
+      value={{authenticate, logout, getUsername, getEmail, getFullName, getRoles, getAccessToken}}>
       {children}
     </AuthenticationContext.Provider>
   );

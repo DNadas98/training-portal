@@ -1,18 +1,19 @@
 import {TextField} from "@mui/material";
 
-export default function UsernameInput() {
+export default function FullNameInput() {
   return (
 
     <TextField variant={"outlined"}
                color={"secondary"}
-               label={"Username"}
-               name={"username"}
+               label={"Full Name"}
+               name={"fullName"}
                type={"text"}
                autoFocus={true}
+               autoComplete={"name"}
                required
                inputProps={{
                  minLength: 1,
-                 maxLength: 50
+                 maxLength: 100
                }}/>
   )
 }

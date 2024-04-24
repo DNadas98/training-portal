@@ -2,8 +2,10 @@ package net.dnadas.training_portal.dto.auth;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
 
+@Getter
 public class LoginResponseDto {
   @NotNull
   @Length(min = 1)
@@ -30,26 +32,6 @@ public class LoginResponseDto {
     this.groupId = null;
     this.projectId = null;
     this.questionnaireId = null;
-  }
-
-  public String getAccessToken() {
-    return accessToken;
-  }
-
-  public UserInfoDto getUserInfo() {
-    return userInfo;
-  }
-
-  public Long getGroupId() {
-    return groupId;
-  }
-
-  public Long getProjectId() {
-    return projectId;
-  }
-
-  public Long getQuestionnaireId() {
-    return questionnaireId;
   }
 
   @Override

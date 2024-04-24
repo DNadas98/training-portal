@@ -74,16 +74,15 @@ public class CsvUtilsService {
    * @param csvFile         The CSV file to parse
    * @param delimiter       The delimiter to use
    * @param headers         The expected headers
-   * @param expectedColumns The expected number of columns
    * @return The records in the CSV file as a list of lists
    */
   public List<List<String>> parseCsv(
-    MultipartFile csvFile, String delimiter, List<String> headers, int expectedColumns) {
+    MultipartFile csvFile, String delimiter, List<String> headers) {
     List<List<String>> records = getRecords(csvFile, delimiter);
     if (!records.isEmpty() && !records.get(0).equals(headers)) {
       throw new InvalidFileException("CSV does not contain the correct headers.");
     }
-    validateRecords(records, expectedColumns);
+    validateRecords(records, headers.size());
     return records.subList(1, records.size());  // Skip headers
   }
 

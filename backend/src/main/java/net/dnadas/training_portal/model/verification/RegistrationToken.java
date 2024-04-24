@@ -18,15 +18,19 @@ public class RegistrationToken extends VerificationToken {
   private String email;
   @Column(nullable = false, unique = true)
   private String username;
+  @Column(nullable = false, unique = true)
+  private String fullName;
   @Column(nullable = false)
   private String password;
 
   public RegistrationToken(
-    String email, String username, String hashedPassword, String hashedVerificationCode) {
+    String email, String username, String fullName, String hashedPassword,
+    String hashedVerificationCode) {
     super(TokenType.REGISTRATION, hashedVerificationCode);
-    this.email = email;
-    this.username = username;
+    this.email = email.trim();
+    this.username = username.trim();
     this.password = hashedPassword;
+    this.fullName = fullName.trim();
   }
 
   @Override

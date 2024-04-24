@@ -55,11 +55,11 @@ public class CoordinatorQuestionnaireSubmissionController {
     @RequestParam String timeZone, HttpServletResponse response) {
     //TODO: sanitize search input
     try {
+      ZoneId zoneId = ZoneId.of(timeZone);
       response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
       response.setHeader(
         "Content-Disposition",
         "attachment; filename=\"questionnaire-statistics.xlsx\"");
-      ZoneId zoneId = ZoneId.of(timeZone);
       questionnaireStatisticsService.exportAllQuestionnaireSubmissionsToExcel(
         groupId, projectId, questionnaireId, status, search != null ? search : "", zoneId,
         response);

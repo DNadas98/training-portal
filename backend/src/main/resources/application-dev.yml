@@ -7,12 +7,12 @@ spring:
     username: devuser
     password: devpassword
   jpa:
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   mail:
     host: ${BACKEND_SMTP_HOST}
     port: ${BACKEND_SMTP_PORT}
@@ -33,5 +33,6 @@ spring:
 logging:
   level:
     root: warn
-    org.springframework: warn
-    org.hibernate.sql: trace
+    net.dnadas: info
+    #org.springframework: trace
+    #org.hibernate.sql: trace

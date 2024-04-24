@@ -1,4 +1,4 @@
-package net.dnadas.training_portal.service.auth;
+package net.dnadas.training_portal.service.user;
 
 import net.dnadas.training_portal.dto.email.EmailRequestDto;
 import net.dnadas.training_portal.dto.user.*;
@@ -13,8 +13,6 @@ import net.dnadas.training_portal.model.user.ApplicationUserDao;
 import net.dnadas.training_portal.model.verification.EmailChangeVerificationToken;
 import net.dnadas.training_portal.model.verification.EmailChangeVerificationTokenDao;
 import net.dnadas.training_portal.model.verification.RegistrationTokenDao;
-import net.dnadas.training_portal.service.user.ApplicationUserService;
-import net.dnadas.training_portal.service.user.UserProvider;
 import net.dnadas.training_portal.service.utils.converter.UserConverter;
 import net.dnadas.training_portal.service.utils.email.EmailService;
 import net.dnadas.training_portal.service.utils.email.EmailTemplateService;
@@ -65,9 +63,11 @@ class ApplicationUserServiceTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    ApplicationUser testUser1 = new ApplicationUser("test1", "test1@test.test", "testpassword1");
+    ApplicationUser testUser1 = new ApplicationUser(
+      "test1", "test1@test.test", "testpassword1", "Test 1");
     testUser1.setId(1L);
-    ApplicationUser testUser2 = new ApplicationUser("test2", "test2@test.test", "testpassword2");
+    ApplicationUser testUser2 = new ApplicationUser("test2", "test2@test.test", "testpassword2",
+      "Test 2");
     testUser2.setId(2L);
     testUsers.add(testUser1);
     testUsers.add(testUser2);
@@ -81,7 +81,8 @@ class ApplicationUserServiceTest {
   @Test
   void getOwnUserDetails_returns_correct_user() {
     ApplicationUser authenticatedUser = testUsers.get(0);
-    UserResponsePrivateDto expectedResponse = new UserResponsePrivateDto(1L, "testUser");
+    UserResponsePrivateDto expectedResponse = new UserResponsePrivateDto(testUsers.get(0).getId(),
+      testUsers.get(0).getUsername(), testUsers.get(0).getEmail(), testUsers.get(0).getFullName());
 
     when(userProvider.getAuthenticatedUser()).thenReturn(authenticatedUser);
     when(userConverter.toUserResponsePrivateDto(authenticatedUser)).thenReturn(expectedResponse);
@@ -95,7 +96,8 @@ class ApplicationUserServiceTest {
     when(applicationUserDao.findAll()).thenReturn(testUsers);
     List<UserResponsePublicDto> expectedResponse = new ArrayList<>();
     for (ApplicationUser user : testUsers) {
-      expectedResponse.add(new UserResponsePublicDto(user.getId(), user.getUsername()));
+      expectedResponse.add(
+        new UserResponsePublicDto(user.getId(), user.getUsername(), user.getFullName()));
     }
     when(userConverter.toUserResponsePublicDtos(testUsers)).thenReturn(expectedResponse);
     List<UserResponsePublicDto> actualResponse = applicationUserService.getAllApplicationUsers();
@@ -117,7 +119,8 @@ class ApplicationUserServiceTest {
   void getApplicationUserById_returns_correct_user() {
     Long userId = 1L;
     ApplicationUser user = testUsers.get(0);
-    UserResponsePrivateDto expectedResponse = new UserResponsePrivateDto(1L, "testUser");
+    UserResponsePrivateDto expectedResponse = new UserResponsePrivateDto(testUsers.get(0).getId(),
+      testUsers.get(0).getUsername(), testUsers.get(0).getEmail(), testUsers.get(0).getFullName());
 
     when(applicationUserDao.findById(userId)).thenReturn(java.util.Optional.of(user));
     when(userConverter.toUserResponsePrivateDto(user)).thenReturn(expectedResponse);
@@ -136,22 +139,22 @@ class ApplicationUserServiceTest {
   }
 
   @Test
-  void updateUsername_updates_username_when_password_correct() {
+  void updateFullName_updates_fullName_when_password_correct() {
     ApplicationUser authenticatedUser = testUsers.get(0);
-    UserUsernameUpdateDto updateDto = new UserUsernameUpdateDto("newUsername", "password");
+    UserFullNameUpdateDto updateDto = new UserFullNameUpdateDto("New Name", "password");
 
     when(userProvider.getAuthenticatedUser()).thenReturn(authenticatedUser);
     when(passwordEncoder.matches(updateDto.password(), authenticatedUser.getPassword())).thenReturn(
       true);
-    applicationUserService.updateUsername(updateDto);
+    applicationUserService.updateFullName(updateDto);
 
-    assertEquals(updateDto.username(), authenticatedUser.getActualUsername());
+    assertEquals(updateDto.fullName(), authenticatedUser.getFullName());
   }
 
   @Test
-  void updateUsername_throws_PasswordVerificationFailedException_when_password_incorrect() {
+  void updateFullName_throws_PasswordVerificationFailedException_when_password_incorrect() {
     ApplicationUser authenticatedUser = testUsers.get(0);
-    UserUsernameUpdateDto updateDto = new UserUsernameUpdateDto("newUsername", "password");
+    UserFullNameUpdateDto updateDto = new UserFullNameUpdateDto("New Name", "password");
 
     when(userProvider.getAuthenticatedUser()).thenReturn(authenticatedUser);
     when(passwordEncoder.matches(updateDto.password(), authenticatedUser.getPassword())).thenReturn(
@@ -159,7 +162,7 @@ class ApplicationUserServiceTest {
 
     assertThrows(
       PasswordVerificationFailedException.class,
-      () -> applicationUserService.updateUsername(updateDto));
+      () -> applicationUserService.updateFullName(updateDto));
   }
 
   @Test
@@ -201,6 +204,7 @@ class ApplicationUserServiceTest {
 
     assertTrue(authenticatedUser.getActualUsername().contains("archived"));
     assertTrue(authenticatedUser.getEmail().contains("archived"));
+    assertTrue(authenticatedUser.getFullName().toLowerCase().contains("archived"));
     assertEquals("", authenticatedUser.getPassword());
     assertFalse(authenticatedUser.isEnabled());
   }

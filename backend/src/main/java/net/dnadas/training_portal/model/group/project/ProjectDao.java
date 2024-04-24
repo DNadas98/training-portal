@@ -47,7 +47,7 @@ public interface ProjectDao extends JpaRepository<Project, Long> {
 
   @Query(
     "SELECT new net.dnadas.training_portal.dto.user.UserResponseWithProjectAndGroupPermissionsInternalDto(" +
-      "u.id, u.username, " +
+      "u.id, u.username, u.fullName, " +
       "CASE WHEN u MEMBER OF p.admins THEN TRUE ELSE FALSE END, " +
       "CASE WHEN u MEMBER OF p.coordinators THEN TRUE ELSE FALSE END, " +
       "CASE WHEN u MEMBER OF p.editors THEN TRUE ELSE FALSE END, " +
@@ -67,7 +67,7 @@ public interface ProjectDao extends JpaRepository<Project, Long> {
 
   @Query(
     "SELECT new net.dnadas.training_portal.dto.user.UserResponseWithProjectAndGroupPermissionsInternalDto(" +
-      "u.id, u.username, " +
+      "u.id, u.username, u.fullName, " +
       "CASE WHEN u MEMBER OF p.admins THEN TRUE ELSE FALSE END, " +
       "CASE WHEN u MEMBER OF p.coordinators THEN TRUE ELSE FALSE END, " +
       "CASE WHEN u MEMBER OF p.editors THEN TRUE ELSE FALSE END, " +
@@ -87,7 +87,7 @@ public interface ProjectDao extends JpaRepository<Project, Long> {
 
   @Query(
     "SELECT new net.dnadas.training_portal.dto.user.UserResponseWithProjectAndGroupPermissionsInternalDto(" +
-      "u.id, u.username, " +
+      "u.id, u.username, u.fullName, " +
       "CASE WHEN u MEMBER OF p.admins THEN TRUE ELSE FALSE END, " +
       "CASE WHEN u MEMBER OF p.coordinators THEN TRUE ELSE FALSE END, " +
       "CASE WHEN u MEMBER OF p.editors THEN TRUE ELSE FALSE END, " +
@@ -107,7 +107,7 @@ public interface ProjectDao extends JpaRepository<Project, Long> {
 
   @Query(
     "SELECT new net.dnadas.training_portal.dto.user.UserResponseWithProjectAndGroupPermissionsInternalDto(" +
-      "u.id, u.username, " +
+      "u.id, u.username, u.fullName, " +
       "CASE WHEN u MEMBER OF p.admins THEN TRUE ELSE FALSE END, " +
       "CASE WHEN u MEMBER OF p.coordinators THEN TRUE ELSE FALSE END, " +
       "CASE WHEN u MEMBER OF p.editors THEN TRUE ELSE FALSE END, " +

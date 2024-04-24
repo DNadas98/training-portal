@@ -3,9 +3,9 @@ package net.dnadas.training_portal.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.dto.user.UserEmailUpdateDto;
+import net.dnadas.training_portal.dto.user.UserFullNameUpdateDto;
 import net.dnadas.training_portal.dto.user.UserPasswordUpdateDto;
 import net.dnadas.training_portal.dto.user.UserResponsePrivateDto;
-import net.dnadas.training_portal.dto.user.UserUsernameUpdateDto;
 import net.dnadas.training_portal.service.user.ApplicationUserService;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -29,10 +29,10 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", userDetails));
   }
 
-  @PatchMapping("/username")
-  public ResponseEntity<?> updateUsername(
-    @RequestBody @Valid UserUsernameUpdateDto updateDto, Locale locale) {
-    applicationUserService.updateUsername(updateDto);
+  @PatchMapping("/fullName")
+  public ResponseEntity<?> updateFullName(
+    @RequestBody @Valid UserFullNameUpdateDto updateDto, Locale locale) {
+    applicationUserService.updateFullName(updateDto);
     return ResponseEntity.status(HttpStatus.OK).body(
       Map.of("message", messageSource.getMessage(
         "user.details.update.success", null, locale)));

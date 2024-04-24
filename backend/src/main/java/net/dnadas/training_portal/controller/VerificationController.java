@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.dto.auth.*;
 import net.dnadas.training_portal.dto.user.PreRegistrationCompleteInternalDto;
+import net.dnadas.training_portal.dto.user.PreRegistrationDetailsResponseDto;
 import net.dnadas.training_portal.dto.verification.VerificationTokenDto;
 import net.dnadas.training_portal.service.auth.AuthenticationService;
 import net.dnadas.training_portal.service.user.ApplicationUserService;
@@ -15,10 +16,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Locale;
 import java.util.Map;
@@ -67,6 +65,18 @@ public class VerificationController {
     return ResponseEntity.status(HttpStatus.OK).body(
       Map.of("message", messageSource.getMessage(
         "auth.password.reset.success", null, locale)));
+  }
+
+  @GetMapping("/invitation-accept")
+  public ResponseEntity<?> getPreRegistrationDetails(
+    @RequestParam(name = "code") UUID verificationCode,
+    @RequestParam(name = "id") @Min(1) Long verificationTokenId) {
+    PreRegistrationDetailsResponseDto registrationDetailsDto = preRegistrationService
+      .getPreRegistrationDetails(new @Valid VerificationTokenDto(
+        verificationTokenId, verificationCode));
+
+    return ResponseEntity.status(HttpStatus.OK).body(
+      Map.of("data", registrationDetailsDto));
   }
 
   @PostMapping("/invitation-accept")

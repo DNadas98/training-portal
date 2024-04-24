@@ -28,7 +28,6 @@ import java.util.List;
 public class ProjectAdminService {
   private final ProjectDao projectDao;
   private final ApplicationUserDao applicationUserDao;
-  private final UserConverter userConverter;
 
   @Transactional(readOnly = true)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ADMIN')")
@@ -203,6 +202,7 @@ public class ProjectAdminService {
         return new UserResponseWithPermissionsDto(
           user.userId(),
           user.username(),
+          user.fullName(),
           new ArrayList<>(permissions));
       });
   }

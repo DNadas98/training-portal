@@ -23,7 +23,7 @@ public class EmailChangeVerificationToken extends VerificationToken {
     String newEmail, Long userId, String hashedVerificationCode) {
     super(TokenType.EMAIL_CHANGE, hashedVerificationCode);
     this.userId = userId;
-    this.newEmail = newEmail;
+    this.newEmail = newEmail.trim();
   }
 
   @Override

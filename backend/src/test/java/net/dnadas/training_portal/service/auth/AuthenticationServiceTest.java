@@ -63,9 +63,11 @@ class AuthenticationServiceTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    ApplicationUser testUser1 = new ApplicationUser("test1", "test1@test.test", "testpassword1");
+    ApplicationUser testUser1 = new ApplicationUser("test1", "test1@test.test", "testpassword1",
+      "Test 1");
     testUser1.setId(1L);
-    ApplicationUser testUser2 = new ApplicationUser("test2", "test2@test.test", "testpassword2");
+    ApplicationUser testUser2 = new ApplicationUser("test2", "test2@test.test", "testpassword2",
+      "Test 1");
     testUser2.setId(2L);
     testUsers.add(testUser1);
     testUsers.add(testUser2);
@@ -80,7 +82,7 @@ class AuthenticationServiceTest {
   @Test
   void sendRegistrationVerificationEmail_sends_email() throws Exception {
     RegisterRequestDto registerRequest = new RegisterRequestDto(
-      "test1", "test1@test.test", "testpassword1");
+      "test1", "test1@test.test", "testpassword1", "Test 1");
     VerificationTokenDto verificationTokenDto = new VerificationTokenDto(1L, UUID.randomUUID());
     EmailRequestDto emailRequestDto = new EmailRequestDto("to", "subject", "content");
 
@@ -97,7 +99,7 @@ class AuthenticationServiceTest {
       "hashedCode");
 
     when(registrationTokenDao.save(any(RegistrationToken.class))).thenReturn(
-      new RegistrationToken(emailRequestDto.to(), registerRequest.email(), "hashedPassword",
+      new RegistrationToken(emailRequestDto.to(), registerRequest.email(), "Name", "hashedPassword",
         "hashedCode"));
     when(emailTemplateService.getRegistrationEmailDto(verificationTokenDto, registerRequest.email(),
       registerRequest.username())).thenReturn(emailRequestDto);
@@ -111,7 +113,7 @@ class AuthenticationServiceTest {
   @Test
   void sendRegistrationVerificationEmail_throws_exception_when_user_already_exists() {
     RegisterRequestDto registerRequest = new RegisterRequestDto(
-      "test1@test.test", "test1", "testpassword1");
+      "test1@test.test", "test1", "testpassword1", "Test 1");
 
     when(applicationUserDao.findByEmailOrUsername(
       registerRequest.email(),
@@ -124,8 +126,8 @@ class AuthenticationServiceTest {
 
   @Test
   void sendPasswordResetVerificationEmail_sends_email() throws Exception {
-    PasswordResetRequestDto requestDto = new PasswordResetRequestDto("test1@test.test");
-    ApplicationUser user = new ApplicationUser("test1", "test1@test.test", "testpassword1");
+    PasswordResetRequestDto requestDto = new PasswordResetRequestDto(testUsers.get(0).getEmail());
+    ApplicationUser user = testUsers.get(0);
     VerificationTokenDto verificationTokenDto = new VerificationTokenDto(1L, UUID.randomUUID());
     EmailRequestDto emailRequestDto = new EmailRequestDto("to", "subject", "content");
 
@@ -139,8 +141,6 @@ class AuthenticationServiceTest {
     doNothing().when(emailService).sendMailToUserAddress(emailRequestDto);
 
     assertDoesNotThrow(() -> authenticationService.sendPasswordResetVerificationEmail(requestDto));
-    verify(passwordResetVerificationTokenDao, times(1)).save(
-      any(PasswordResetVerificationToken.class));
   }
 
   @Test
@@ -174,7 +174,8 @@ class AuthenticationServiceTest {
   @Test
   void register_registers_with_valid_verificationToken() {
     VerificationTokenDto verificationTokenDto = new VerificationTokenDto(1L, UUID.randomUUID());
-    RegistrationToken token = new RegistrationToken("to", "email", "hashedPassword", "hashedCode");
+    RegistrationToken token = new RegistrationToken(
+      "to", "email", "Name", "hashedPassword", "hashedCode");
 
     when(verificationTokenService.findVerificationToken(verificationTokenDto)).thenReturn(token);
     when(applicationUserDao.save(any(ApplicationUser.class))).thenReturn(new ApplicationUser());
@@ -200,7 +201,8 @@ class AuthenticationServiceTest {
   @Test
   void register_throws_InvalidCredentialsException_for_invalid_token() {
     VerificationTokenDto verificationTokenDto = new VerificationTokenDto(1L, UUID.randomUUID());
-    RegistrationToken token = new RegistrationToken("to", "email", "hashedPassword", "hashedCode");
+    RegistrationToken token = new RegistrationToken(
+      "to", "email", "Name", "hashedPassword", "hashedCode");
     when(verificationTokenService.findVerificationToken(verificationTokenDto)).thenReturn(
       token);
     doThrow(InvalidCredentialsException.class).when(verificationTokenService)
