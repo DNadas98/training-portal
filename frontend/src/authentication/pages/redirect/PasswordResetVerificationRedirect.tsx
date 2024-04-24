@@ -4,9 +4,12 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {ApiResponseDto} from "../../../common/api/dto/ApiResponseDto.ts";
 import DialogAlert from "../../../common/utils/components/DialogAlert.tsx";
-import {Box, Button, Dialog, DialogContent, DialogTitle, Stack, TextField} from "@mui/material";
+import {Box, Button, Dialog, DialogContent, DialogTitle, Stack} from "@mui/material";
 import {PasswordResetDto} from "../../dto/PasswordResetDto.ts";
 import usePublicJsonFetch from "../../../common/api/hooks/usePublicJsonFetch.tsx";
+import {passwordRegex} from "../../../common/utils/regex.ts";
+import useLocalized from "../../../common/localization/hooks/useLocalized.tsx";
+import PasswordInput from "../../components/inputs/PasswordInput.tsx";
 
 export default function PasswordResetVerificationRedirect() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -15,6 +18,7 @@ export default function PasswordResetVerificationRedirect() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const publicJsonFetch = usePublicJsonFetch();
+  const localized=useLocalized();
 
   const fetchVerification = async (code: string, id: string, password: string) => {
     const dto: PasswordResetDto = {
@@ -53,6 +57,13 @@ export default function PasswordResetVerificationRedirect() {
       const formData = new FormData(event.target);
       const password = formData.get("password") as string;
       const confirmPassword = formData.get("confirmPassword") as string;
+      if (!passwordRegex.test(password)){
+        notification.openNotification({
+          type: "error", vertical: "top", horizontal: "center",
+          message: localized("inputs.password_invalid")
+        });
+        return;
+      }
       if (password !== confirmPassword) {
         notification.openNotification({
           type: "error", vertical: "top", horizontal: "center", message: "Passwords don't match"
@@ -92,10 +103,8 @@ export default function PasswordResetVerificationRedirect() {
           <DialogTitle>Enter New Password</DialogTitle>
           <DialogContent><Box sx={{padding: 2}} component={"form"} onSubmit={handleVerification}><Stack
             spacing={2}>
-            <TextField type={"password"} label={"Password"} name={"password"}
-                       inputProps={{minLength: 8, maxLength: 50}} required/>
-            <TextField type={"password"} label={"Confirm Password"} name={"confirmPassword"}
-                       inputProps={{minLength: 8, maxLength: 50}} required/>
+            <PasswordInput/>
+            <PasswordInput confirm={true}/>
             <Button type={"submit"}>Submit</Button>
           </Stack></Box></DialogContent>
         </Dialog>

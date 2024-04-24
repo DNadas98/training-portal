@@ -11,6 +11,8 @@ import useRefresh from "../../../authentication/hooks/useRefresh.ts";
 import {UserFullNameUpdateDto} from "../../dto/UserFullNameUpdateDto.ts";
 import {UserEmailUpdateDto} from "../../dto/UserEmailUpdateDto.ts";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
+import {passwordRegex} from "../../../common/utils/regex.ts";
+import useLocalized from "../../../common/localization/hooks/useLocalized.tsx";
 
 export default function Profile() {
   const [applicationUserDeleteLoading, setApplicationUserDeleteLoading] = useState<boolean>(false);
@@ -26,6 +28,7 @@ export default function Profile() {
   const refresh = useRefresh();
   const navigate = useNavigate();
   const [userDetailsUpdateLoading, setUserDetailsUpdateLoading] = useState<boolean>(false);
+  const localized = useLocalized();
 
   async function deleteApplicationUser(): Promise<void> {
     const defaultError =
@@ -71,6 +74,9 @@ export default function Profile() {
         fullName: formData.get("fullName") as string,
         password: formData.get("password") as string,
       }
+      if (!passwordRegex.test(dto.password)) {
+        return notifyOnError(localized("inputs.password_invalid"));
+      }
       const response = await authJsonFetch({
         path: `user/fullName`, method: "PATCH", body: dto
       });
@@ -100,9 +106,12 @@ export default function Profile() {
         password: formData.get("password") as string,
         newPassword: formData.get("newPassword") as string,
       }
+      if (!passwordRegex.test(dto.password) || !passwordRegex.test(dto.newPassword)) {
+        return notifyOnError(localized("inputs.password_invalid"));
+      }
       const confirmNewPassword = formData.get("confirmNewPassword") as any;
       if (dto.newPassword !== confirmNewPassword) {
-        return notifyOnError("New Password and Confirm New Password fields do not match");
+        return notifyOnError(localized("inputs.confirm_password_invalid"));
       }
       const response = await authJsonFetch({
         path: `user/password`, method: "PATCH", body: dto
@@ -132,6 +141,9 @@ export default function Profile() {
       const dto: UserEmailUpdateDto = {
         email: formData.get("email") as string,
         password: formData.get("password") as string,
+      }
+      if (!passwordRegex.test(dto.password)) {
+        return notifyOnError(localized("inputs.password_invalid"));
       }
       if (dto.email === email) {
         notifyOnError("The provided e-mail address matches your current e-mail address");
@@ -166,7 +178,7 @@ export default function Profile() {
   return userDetailsUpdateLoading || applicationUserDeleteLoading
     ? <LoadingSpinner/>
     : username && email && roles ? (
-      <ProfileDashboard fullName={fullName??""}
+      <ProfileDashboard fullName={fullName ?? ""}
                         username={username}
                         email={email}
                         roles={roles}

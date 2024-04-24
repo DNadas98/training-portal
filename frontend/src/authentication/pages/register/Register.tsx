@@ -4,16 +4,26 @@ import {FormEvent} from "react";
 import {RegisterRequestDto} from "../../dto/RegisterRequestDto.ts";
 import {useNavigate} from "react-router-dom";
 import usePublicJsonFetch from "../../../common/api/hooks/usePublicJsonFetch.tsx";
+import useLocalized from "../../../common/localization/hooks/useLocalized.tsx";
+import {passwordRegex} from "../../../common/utils/regex.ts";
 
 export default function Register() {
   const navigate = useNavigate();
   const notification = useNotification();
   const publicJsonFetch = usePublicJsonFetch();
+  const localized = useLocalized();
   const validatePassword = (password: string, confirmPassword: string) => {
+    if (!passwordRegex.test(password)) {
+      notification.openNotification({
+        type: "error", vertical: "top", horizontal: "center",
+        message: localized("inputs.password_invalid")
+      });
+      return false;
+    }
     if (password !== confirmPassword) {
       notification.openNotification({
         type: "error", vertical: "top", horizontal: "center",
-        message: "Passwords don't match",
+        message: localized("inputs.confirm_password_invalid"),
       });
       return false;
     }
@@ -74,5 +84,5 @@ export default function Register() {
 
   return (
     <RegisterCard onSubmit={handleSubmit}/>
-  )
+  );
 }

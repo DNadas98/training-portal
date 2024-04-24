@@ -64,7 +64,6 @@ export const DialogProvider = ({children}: DialogProviderProps) => {
         onClose={handleClose}
         hideBackdrop={false}
         fullWidth={dialogState.blockScreen}
-        maxWidth={dialogState.blockScreen ? "lg" : false}
         fullScreen={isSmallScreen}
       >
         <DialogContent>

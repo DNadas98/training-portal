@@ -39,6 +39,16 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
           }
         }
       },
+      MuiTypography: {
+        defaultProps: {
+          whiteSpace: "wrap",
+        },
+        styleOverrides: {
+          root: {
+            wordBreak: "break-word"
+          }
+        }
+      },
       MuiButton: {
         defaultProps: {
           color: "secondary",

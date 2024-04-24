@@ -7,6 +7,7 @@ import {AuthenticationDto} from "../../dto/AuthenticationDto.ts";
 import usePublicJsonFetch from "../../../common/api/hooks/usePublicJsonFetch.tsx";
 import SuccessfulLoginRedirect from "../../components/SuccessfulLoginRedirect.tsx";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
+import useLocalized from "../../../common/localization/hooks/useLocalized.tsx";
 
 export default function Login() {
   const notification = useNotification();
@@ -17,6 +18,7 @@ export default function Login() {
   const [activeGroupId, setActiveGroupId] = useState<number | null>(null);
   const [activeProjectId, setActiveProjectId] = useState<number | null>(null);
   const [activeQuestionnaireId, setActiveQuestionnaireId] = useState<number | null>(null);
+  const localized = useLocalized();
 
   const loginUser = async (loginRequestDto: LoginRequestDto) => {
     return await publicJsonFetch({
@@ -29,7 +31,7 @@ export default function Login() {
       type: "error",
       vertical: "top",
       horizontal: "center",
-      message: error ?? "An error has occurred during the sign up process",
+      message: error ?? localized("pages.sign_in.error.default"),
     });
   };
 
@@ -40,7 +42,6 @@ export default function Login() {
       const formData = new FormData(event.currentTarget);
       const email = formData.get('email') as string;
       const password = formData.get('password') as string;
-
       const loginRequestDto: LoginRequestDto = {email, password};
       const response = await loginUser(loginRequestDto);
 
@@ -60,8 +61,7 @@ export default function Login() {
       setActiveQuestionnaireId(questionnaireId);
       setIsLoggedIn(true);
     } catch (e) {
-      const errorMessage =
-        "An error has occurred during the sign in process";
+      const errorMessage = localized("pages.sign_in.error.default");
       handleError(errorMessage);
     } finally {
       setLoading(false);

@@ -13,6 +13,9 @@ import SuccessfulLoginRedirect from "../../components/SuccessfulLoginRedirect.ts
 import {PreRegistrationDetailsResponseDto} from "../../dto/PreRegistrationDetailsResponseDto.ts";
 import LegalPolicyCheckbox from "../../../common/utils/components/LegalPolicyCheckbox.tsx";
 import SiteInformation from "../../../common/utils/components/SiteInformation.tsx";
+import useLocalized from "../../../common/localization/hooks/useLocalized.tsx";
+import {passwordRegex} from "../../../common/utils/regex.ts";
+import PasswordInput from "../../components/inputs/PasswordInput.tsx";
 
 export default function InvitationRedirect() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -28,6 +31,7 @@ export default function InvitationRedirect() {
   const [activeGroupId, setActiveGroupId] = useState<number | null>(null);
   const [activeProjectId, setActiveProjectId] = useState<number | null>(null);
   const [activeQuestionnaireId, setActiveQuestionnaireId] = useState<number | null>(null);
+  const localized=useLocalized();
 
   const fetchVerification = async (code: string, id: string, password: string, fullName?: string) => {
     const dto: PreRegistrationCompleteRequestDto = {
@@ -60,6 +64,13 @@ export default function InvitationRedirect() {
       const password = formData.get("password") as string;
       const fullNameInput = formData.get("fullName") as string | undefined;
       const confirmPassword = formData.get("confirmPassword") as string;
+      if (!passwordRegex.test(password)){
+        notification.openNotification({
+          type: "error", vertical: "top", horizontal: "center",
+          message: localized("inputs.password_invalid")
+        });
+        return;
+      }
       if (password !== confirmPassword) {
         return notification.openNotification({
           type: "error", vertical: "top", horizontal: "center", message: "Passwords don't match"
@@ -149,10 +160,8 @@ export default function InvitationRedirect() {
                 <TextField type={"text"} label={"Full Name"} name={"fullName"}
                            defaultValue={fullNameDefaultValue}
                            inputProps={{minLength: 8, maxLength: 50}} required/>
-                <TextField type={"password"} label={"Password"} name={"password"}
-                           inputProps={{minLength: 8, maxLength: 50}} required/>
-                <TextField type={"password"} label={"Confirm Password"} name={"confirmPassword"}
-                           inputProps={{minLength: 8, maxLength: 50}} required/>
+                <PasswordInput/>
+                <PasswordInput confirm={true}/>
                 <Button type={"submit"}>Submit</Button>
               </Stack></Box>
             </Stack></DialogContent>

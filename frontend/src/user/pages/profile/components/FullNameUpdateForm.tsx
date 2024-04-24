@@ -1,4 +1,6 @@
-import {Box, Button, Stack, TextField} from "@mui/material";
+import {Box, Button, Stack} from "@mui/material";
+import FullNameInput from "../../../../authentication/components/inputs/FullNameInput.tsx";
+import PasswordInput from "../../../../authentication/components/inputs/PasswordInput.tsx";
 
 interface FullNameUpdateFormProps {
   fullName: string,
@@ -8,17 +10,8 @@ interface FullNameUpdateFormProps {
 export default function FullNameUpdateForm(props: FullNameUpdateFormProps) {
   return (<Box sx={{padding: 2}} component={"form"} onSubmit={props.handleFullNameUpdate}>
     <Stack spacing={2}>
-      <TextField name={"fullName"}
-                 type={"text"}
-                 label={"Full Name"}
-                 required
-                 defaultValue={props.fullName}
-                 inputProps={{minLength: 1, maxLength: 50}}/>
-      <TextField name={"password"}
-                 type={"password"}
-                 label={"Password"}
-                 required
-                 inputProps={{minLength: 8, maxLength: 50}}/>
+      <FullNameInput/>
+      <PasswordInput/>
       <Stack direction={"row"} spacing={2}>
         <Button type={"submit"} sx={{maxWidth: "fit-content"}} variant={"outlined"}>
           Change Full Name
