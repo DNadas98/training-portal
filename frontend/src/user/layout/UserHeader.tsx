@@ -23,7 +23,7 @@ export default function UserHeader() {
           : <MenuLarge items={loggedInMenuItems}/>
         }
         <MenuSmall items={accountMenuItems}
-                   title={(authentication.getUsername() as string)}
+                   title={(authentication.getFullName() as string)}
                    icon={<AccountBoxRounded/>}/>
         <LocaleMenu/>
         <ThemePaletteModeSwitch/>

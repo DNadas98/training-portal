@@ -15,7 +15,7 @@ export default function UserFooter() {
       <Toolbar sx={{justifyContent: "center", flexWrap: "wrap"}}>
         <MenuSmall items={loggedInMenuItems} icon={<MenuOutlined/>}/>
         <MenuSmall items={accountMenuItems}
-                   title={(authentication.getUsername() as string)}
+                   title={(authentication.getFullName() as string)}
                    icon={<AccountBoxRounded/>}/>
         <MenuSiteInfo/>
       </Toolbar>
