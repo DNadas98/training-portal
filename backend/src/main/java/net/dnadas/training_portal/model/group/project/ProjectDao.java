@@ -57,7 +57,7 @@ public interface ProjectDao extends JpaRepository<Project, Long> {
       "JOIN p.userGroup g " +
       "JOIN p.assignedMembers u " +
       "WHERE p.id = :projectId AND g.id = :groupId " +
-      "AND LOWER(u.username) LIKE %:search% " +
+      "AND (LOWER(u.username) LIKE %:search% OR LOWER(u.fullName) LIKE %:search% )" +
       "ORDER BY u.username ASC")
   Page<UserResponseWithProjectAndGroupPermissionsInternalDto> findMembersWithPermissionsByProjectIdAndGroupIdAndSearch(
     @Param("projectId") Long projectId,
@@ -77,7 +77,7 @@ public interface ProjectDao extends JpaRepository<Project, Long> {
       "JOIN p.userGroup g " +
       "JOIN p.editors u " +
       "WHERE p.id = :projectId AND g.id = :groupId " +
-      "AND LOWER(u.username) LIKE %:search% " +
+      "AND (LOWER(u.username) LIKE %:search% OR LOWER(u.fullName) LIKE %:search% )" +
       "ORDER BY u.username ASC")
   Page<UserResponseWithProjectAndGroupPermissionsInternalDto> findEditorsWithPermissionsByProjectIdAndGroupIdAndSearch(
     @Param("projectId") Long projectId,
@@ -97,7 +97,7 @@ public interface ProjectDao extends JpaRepository<Project, Long> {
       "JOIN p.userGroup g " +
       "JOIN p.admins u " +
       "WHERE p.id = :projectId AND g.id = :groupId " +
-      "AND LOWER(u.username) LIKE %:search% " +
+      "AND (LOWER(u.username) LIKE %:search% OR LOWER(u.fullName) LIKE %:search% )" +
       "ORDER BY u.username ASC")
   Page<UserResponseWithProjectAndGroupPermissionsInternalDto> findAdminsWithPermissionsByProjectIdAndGroupIdAndSearch(
     @Param("projectId") Long projectId,
@@ -117,7 +117,7 @@ public interface ProjectDao extends JpaRepository<Project, Long> {
       "JOIN p.userGroup g " +
       "JOIN p.coordinators u " +
       "WHERE p.id = :projectId AND g.id = :groupId " +
-      "AND LOWER(u.username) LIKE %:search% " +
+      "AND (LOWER(u.username) LIKE %:search% OR LOWER(u.fullName) LIKE %:search% )" +
       "ORDER BY u.username ASC")
   Page<UserResponseWithProjectAndGroupPermissionsInternalDto> findCoordinatorsWithPermissionsByProjectIdAndGroupIdAndSearch(
     @Param("projectId") Long projectId,

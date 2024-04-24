@@ -78,12 +78,12 @@ export default function CoordinatorQuestionnaireBrowser(props: CoordinatorQuesti
                       <Divider sx={{marginTop: 2, marginBottom: 2}}/>
                       <Typography variant={"body2"}>
                         Created
-                        at {getLocalizedDateTime(questionnaire.createdAt)} by {questionnaire.createdBy.username}
+                        at {getLocalizedDateTime(questionnaire.createdAt)} by {questionnaire.createdBy.fullName}
                       </Typography>
                       <Divider sx={{marginTop: 1, marginBottom: 1}}/>
                       <Typography variant={"body2"}>
                         Last updated
-                        at {getLocalizedDateTime(questionnaire.updatedAt)} by {questionnaire.updatedBy.username}
+                        at {getLocalizedDateTime(questionnaire.updatedAt)} by {questionnaire.updatedBy.fullName}
                       </Typography>
                       <Divider sx={{marginTop: 1, marginBottom: 1}}/>
                       <Typography>Status: {questionnaire.status}</Typography>

@@ -8,7 +8,7 @@ import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import {useNavigate} from "react-router-dom";
 import {UserPasswordUpdateDto} from "../../dto/UserPasswordUpdateDto.ts";
 import useRefresh from "../../../authentication/hooks/useRefresh.ts";
-import {UserUsernameUpdateDto} from "../../dto/UserUsernameUpdateDto.ts";
+import {UserFullNameUpdateDto} from "../../dto/UserFullNameUpdateDto.ts";
 import {UserEmailUpdateDto} from "../../dto/UserEmailUpdateDto.ts";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 
@@ -19,6 +19,7 @@ export default function Profile() {
   const dialog = useDialog();
   const notification = useNotification();
   const username = authentication.getUsername();
+  const fullName = authentication.getFullName();
   const roles = authentication.getRoles();
   const email = authentication.getEmail();
   const logout = useLogout();
@@ -50,28 +51,28 @@ export default function Profile() {
 
   function openDeleteApplicationUserDialog() {
     return dialog.openDialog({
-      content: "Do you really wish to erase all your user data permanently?",
+      content: "Do you really wish to archive your account and erase all your personal data permanently?",
       onConfirm: deleteApplicationUser
-    })
+    });
   }
 
-  const [usernameFormOpen, setUsernameFormOpen] = useState<boolean>(false);
+  const [fullNameFormOpen, setFullNameFormOpen] = useState<boolean>(false);
   const [emailFormOpen, setEmailFormOpen] = useState<boolean>(false);
   const [passwordFormOpen, setPasswordFormOpen] = useState<boolean>(false);
 
-  async function handleUsernameUpdate(event: any) {
+  async function handleFullNameUpdate(event: any) {
     const defaultError =
-      "Failed to update username.\n Please try again later, if the issue still persists, please contact our administrators";
+      "Failed to update full name.\n Please try again later, if the issue still persists, please contact our administrators";
     try {
       event.preventDefault();
       setUserDetailsUpdateLoading(true);
       const formData = new FormData(event.target);
-      const dto: UserUsernameUpdateDto = {
-        username: formData.get("username") as string,
+      const dto: UserFullNameUpdateDto = {
+        fullName: formData.get("fullName") as string,
         password: formData.get("password") as string,
       }
       const response = await authJsonFetch({
-        path: `user/username`, method: "PATCH", body: dto
+        path: `user/fullName`, method: "PATCH", body: dto
       });
       if (response?.status !== 200 || !response.message) {
         return notifyOnError(response?.error ?? defaultError);
@@ -79,7 +80,7 @@ export default function Profile() {
       notification.openNotification({
         type: "success", vertical: "top", horizontal: "center", message: response.message
       });
-      setUsernameFormOpen(false);
+      setFullNameFormOpen(false);
       await refresh();
     } catch (e) {
       return notifyOnError(defaultError);
@@ -165,16 +166,17 @@ export default function Profile() {
   return userDetailsUpdateLoading || applicationUserDeleteLoading
     ? <LoadingSpinner/>
     : username && email && roles ? (
-      <ProfileDashboard username={username}
+      <ProfileDashboard fullName={fullName??""}
+                        username={username}
                         email={email}
                         roles={roles}
                         onApplicationUserDelete={openDeleteApplicationUserDialog}
                         applicationUserDeleteLoading={applicationUserDeleteLoading}
-                        handleUsernameUpdate={handleUsernameUpdate}
+                        handleFullNameUpdate={handleFullNameUpdate}
                         handleUserEmailUpdate={handleUserEmailUpdate}
                         handleUserPasswordUpdate={handleUserPasswordUpdate}
-                        usernameFormOpen={usernameFormOpen}
-                        setUsernameFormOpen={setUsernameFormOpen}
+                        usernameFormOpen={fullNameFormOpen}
+                        setUsernameFormOpen={setFullNameFormOpen}
                         passwordFormOpen={passwordFormOpen}
                         setPasswordFormOpen={setPasswordFormOpen}
                         emailFormOpen={emailFormOpen}

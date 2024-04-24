@@ -306,7 +306,7 @@ export default function ProjectAssignedMembers() {
                 <Grid container spacing={2} alignItems={"center"} justifyContent={"center"}>
                   <Grid item xs={12} md={true}>
                     <TextField type={"search"}
-                               placeholder={"Search by username"}
+                               placeholder={"Search by username or full name"}
                                fullWidth
                                value={usernameSearchValue}
                                onChange={handleUserSearch}/>
@@ -344,6 +344,7 @@ export default function ProjectAssignedMembers() {
                     <TableHead>
                       <TableRow>
                         <TableCell>Username</TableCell>
+                        <TableCell>Full Name</TableCell>
                         <TableCell align="right">Member</TableCell>
                         <TableCell align="right">Editor</TableCell>
                         <TableCell align="right">Coordinator</TableCell>
@@ -362,6 +363,9 @@ export default function ProjectAssignedMembers() {
                             : isGroupAdminOrEditor(user.permissions)
                               ? " - Group Editor"
                               : ""}
+                          </TableCell>
+                          <TableCell component="th" scope="row">
+                            {user.fullName}
                           </TableCell>
                           <TableCell align="right" component="th" scope="row">
                             <Tooltip title={isGroupAdminOrEditor(user.permissions)

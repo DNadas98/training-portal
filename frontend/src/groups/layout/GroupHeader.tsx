@@ -90,7 +90,7 @@ export default function GroupHeader(props: GroupHeaderProps) {
         }
         <MenuSmall items={accountMenuItems}
                    icon={<AccountBoxRounded/>}
-                   title={(authentication.getUsername() as string)}/>
+                   title={(authentication.getFullName() as string)}/>
         <LocaleMenu/>
         <ThemePaletteModeSwitch/>
       </Toolbar>

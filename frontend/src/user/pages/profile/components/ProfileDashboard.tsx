@@ -1,18 +1,19 @@
 import {Button, Card, CardContent, CardHeader, Dialog, DialogContent, DialogTitle, Grid, Stack,} from "@mui/material";
 import {GlobalRole} from "../../../../authentication/dto/userInfo/GlobalRole.ts";
 import ProfileMainCard from "./ProfileMainCard.tsx";
-import UsernameUpdateForm from "./UsernameUpdateForm.tsx";
+import FullNameUpdateForm from "./FullNameUpdateForm.tsx";
 import PasswordUpdateForm from "./PasswordUpdateForm.tsx";
 import EmailUpdateForm from "./EmailUpdateForm.tsx";
 
 interface ProfileDashboardProps {
+  fullName: string,
   username: string,
   email: string,
   roles: GlobalRole[],
   onApplicationUserDelete: () => unknown,
   applicationUserDeleteLoading: boolean,
   onRequestsClick: () => void,
-  handleUsernameUpdate: (event: any) => Promise<void>,
+  handleFullNameUpdate: (event: any) => Promise<void>,
   handleUserPasswordUpdate: (event: any) => Promise<void>,
   handleUserEmailUpdate: (event: any) => Promise<void>,
   usernameFormOpen: boolean,
@@ -28,7 +29,8 @@ export default function ProfileDashboard(props: ProfileDashboardProps) {
     <Grid container justifyContent={"center"}>
       <Grid item xs={10} sm={5} mb={4} lg={3}>
         <Stack spacing={2}>
-          <ProfileMainCard username={props.username}
+          <ProfileMainCard fullName={props.fullName}
+                           username={props.username}
                            email={props.email}
                            roles={props.roles}
                            onRequestsClick={props.onRequestsClick}/>
@@ -46,7 +48,7 @@ export default function ProfileDashboard(props: ProfileDashboardProps) {
               <Stack spacing={2}>
                 <Button type={"button"} sx={{maxWidth: "fit-content"}}
                         onClick={() => props.setUsernameFormOpen(true)}>
-                  Change Username
+                  Change Full Name
                 </Button>
                 <Button type={"button"} sx={{maxWidth: "fit-content"}}
                         onClick={() => props.setEmailFormOpen(true)}>
@@ -66,9 +68,9 @@ export default function ProfileDashboard(props: ProfileDashboardProps) {
             </CardContent>
           </Card>
           <Dialog open={props.usernameFormOpen} onClose={() => props.setUsernameFormOpen(false)}>
-            <DialogTitle>Change Username</DialogTitle>
+            <DialogTitle>Change Full Name</DialogTitle>
             <DialogContent>
-              <UsernameUpdateForm handleUsernameUpdate={props.handleUsernameUpdate} username={props.username}/>
+              <FullNameUpdateForm handleFullNameUpdate={props.handleFullNameUpdate} fullName={props.fullName}/>
             </DialogContent>
           </Dialog>
           <Dialog open={props.emailFormOpen} onClose={() => props.setEmailFormOpen(false)}>

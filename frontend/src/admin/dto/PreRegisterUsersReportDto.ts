@@ -7,5 +7,6 @@ export interface PreRegisterUsersReportDto {
 
 interface PreRegisterUserInternalDto {
   username: string;
+  fullName:string;
   email: string;
 }

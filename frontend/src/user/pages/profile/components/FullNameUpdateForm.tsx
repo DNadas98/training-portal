@@ -1,18 +1,18 @@
 import {Box, Button, Stack, TextField} from "@mui/material";
 
-interface UsernameUpdateFormProps {
-  username: string,
-  handleUsernameUpdate: (event: any) => Promise<void>
+interface FullNameUpdateFormProps {
+  fullName: string,
+  handleFullNameUpdate: (event: any) => Promise<void>
 }
 
-export default function UsernameUpdateForm(props: UsernameUpdateFormProps) {
-  return (<Box sx={{padding: 2}} component={"form"} onSubmit={props.handleUsernameUpdate}>
+export default function FullNameUpdateForm(props: FullNameUpdateFormProps) {
+  return (<Box sx={{padding: 2}} component={"form"} onSubmit={props.handleFullNameUpdate}>
     <Stack spacing={2}>
-      <TextField name={"username"}
+      <TextField name={"fullName"}
                  type={"text"}
-                 label={"Username"}
+                 label={"Full Name"}
                  required
-                 defaultValue={props.username}
+                 defaultValue={props.fullName}
                  inputProps={{minLength: 1, maxLength: 50}}/>
       <TextField name={"password"}
                  type={"password"}
@@ -21,7 +21,7 @@ export default function UsernameUpdateForm(props: UsernameUpdateFormProps) {
                  inputProps={{minLength: 8, maxLength: 50}}/>
       <Stack direction={"row"} spacing={2}>
         <Button type={"submit"} sx={{maxWidth: "fit-content"}} variant={"outlined"}>
-          Change Username
+          Change Full Name
         </Button>
       </Stack>
     </Stack>
