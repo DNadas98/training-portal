@@ -319,7 +319,7 @@ export default function QuestionnaireStatistics() {
         <Grid item xs={12}><Grid container spacing={1}>
           <Grid item xs={12} sm={true}>
             <TextField type={"search"}
-                       placeholder={"Search by username"}
+                       placeholder={"Search by username or full name"}
                        fullWidth
                        onChange={handleStatisticsSearch}/>
           </Grid>
@@ -382,9 +382,9 @@ export default function QuestionnaireStatistics() {
                           <TableCell>{stat.submissionCount}</TableCell>
                         </>
                         : <>
-                          <TableCell>No questionnaire submissions found</TableCell>
-                          <TableCell></TableCell><TableCell></TableCell>
-                          <TableCell></TableCell><TableCell></TableCell>
+                          <TableCell>-</TableCell>
+                          <TableCell>-</TableCell><TableCell>-</TableCell>
+                          <TableCell>-</TableCell><TableCell>0</TableCell>
                         </>}
                     </TableRow>
                   ))
