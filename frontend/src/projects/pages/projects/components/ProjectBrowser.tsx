@@ -1,4 +1,15 @@
-import {Card, CardContent, CardHeader, Grid, IconButton, Stack, TextField, Tooltip} from "@mui/material";
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  Grid,
+  IconButton,
+  Stack,
+  TextField,
+  Tooltip
+} from "@mui/material";
 import ProjectList from "./ProjectList.tsx";
 import {FormEvent} from "react";
 import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
@@ -16,11 +27,16 @@ interface ProjectBrowserProps {
   handleJoinRequestClick: (projectId: number) => Promise<void>
   actionButtonDisabled: boolean;
   handleAddButtonClick: () => void;
+  handleBackClick: () => void;
   groupPermissions: PermissionType[];
 }
 
 export default function ProjectBrowser(props: ProjectBrowserProps) {
-  return (
+  return (<>
+    <Grid container spacing={2} justifyContent={"center"} alignItems={"top"} mb={2}>
+      <Grid item xs={10} sm={8} md={10} lg={8}>
+        <Card><CardActions><Button onClick={props.handleBackClick}>Back to group dashboard</Button></CardActions></Card>
+      </Grid></Grid>
     <Grid container spacing={2} justifyContent={"center"} alignItems={"top"}>
       <Grid item xs={10} sm={8} md={5} lg={4}>
         <Stack spacing={2}>
@@ -71,5 +87,5 @@ export default function ProjectBrowser(props: ProjectBrowserProps) {
         </Stack>
       </Grid>
     </Grid>
-  )
+  </>)
 }

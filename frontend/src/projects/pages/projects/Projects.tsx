@@ -149,6 +149,8 @@ export default function Projects() {
     navigate(`/groups/${groupId}/projects/create`);
   }
 
+  const handleBackClick=()=> navigate(`/groups/${groupId}`);
+
   if (permissionsLoading) {
     return <LoadingSpinner/>;
   } else if (!groupPermissions?.length) {
@@ -170,6 +172,7 @@ export default function Projects() {
                     handleJoinRequestClick={sendProjectJoinRequest}
                     actionButtonDisabled={actionButtonDisabled}
                     handleAddButtonClick={handleAddButtonClick}
+                    handleBackClick={handleBackClick}
                     groupPermissions={groupPermissions}/>
   )
 }

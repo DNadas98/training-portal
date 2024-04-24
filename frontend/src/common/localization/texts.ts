@@ -3,7 +3,9 @@ export const texts = {
     "site": {
       "administrator": "Administrator",
       "developer": "Developer",
-      "sourceCode": "Project Source Code"
+      "sourceCode": "Project Source Code",
+      "siteInfoText": "Site info text",
+      "legalPolicyText": "Legal policy text"
     },
     "menus": {
       "home": "Home",
@@ -14,7 +16,7 @@ export const texts = {
         "english": "English",
         "hungarian": "Hungarian"
       },
-      "siteInfo":"Site Info"
+      "siteInfo": "Site Info"
     },
     "pages": {
       "sign_in": {
@@ -27,14 +29,19 @@ export const texts = {
     "inputs": {
       "email": "E-mail address",
       "password": "Password",
-      "confirm_password": "Confirm Password"
+      "confirm_password": "Confirm Password",
+      "i_accept_the":"I have read and I accept the",
+      "legalPolicy":"Terms and Conditions",
+      "legalPolicy_hasNotRead_error":"Please open, and read the Terms and Conditions first!"
     }
   },
   "huHU": {
     "site": {
       "administrator": "Adminisztrátor",
       "developer": "Fejlesztő",
-      "sourceCode": "A project forráskódja"
+      "sourceCode": "A project forráskódja",
+      "siteInfoText": "Site info text",
+      "legalPolicyText": "Legal policy text"
     },
     "menus": {
       "home": "Főoldal",
@@ -45,7 +52,7 @@ export const texts = {
         "english": "Angol",
         "hungarian": "Magyar"
       },
-      "siteInfo":"Információk"
+      "siteInfo": "Információk"
     },
     "pages": {
       "sign_in": {
@@ -58,7 +65,10 @@ export const texts = {
     "inputs": {
       "email": "E-mail cím",
       "password": "Jelszó",
-      "confirm_password": "Jelszó megerősítés"
+      "confirm_password": "Jelszó megerősítés",
+      "i_accept_the":"Elolvastam, és elfogadom a",
+      "legalPolicy":"felhasználási feltételeket",
+      "legalPolicy_hasNotRead_error":"Kérjük elfogadás előtt nyissa meg, és olvassa el a felhasználási feltételeket!"
     }
   }
 }

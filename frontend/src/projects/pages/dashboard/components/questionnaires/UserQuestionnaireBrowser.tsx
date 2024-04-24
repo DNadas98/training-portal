@@ -34,13 +34,13 @@ export default function UserQuestionnaireBrowser(props: UserQuestionnaireBrowser
                 <Typography variant={"h6"}>Active Questionnaires</Typography>
               </Button>
             }/>
-            <CardContent>
-              <TextField variant={"standard"} type={"search"}
-                         label={"Search"}
-                         fullWidth
-                         onInput={props.handleQuestionnaireSearch}
-              />
-            </CardContent>
+            {/*<CardContent>*/}
+            {/*  <TextField variant={"standard"} type={"search"}*/}
+            {/*             label={"Search"}*/}
+            {/*             fullWidth*/}
+            {/*             onInput={props.handleQuestionnaireSearch}*/}
+            {/*  />*/}
+            {/*</CardContent>*/}
           </Card>
           <UserQuestionnaireList loading={props.questionnairesLoading}
                                  questionnaires={props.questionnaires}

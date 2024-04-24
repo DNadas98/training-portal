@@ -11,6 +11,8 @@ import {AuthenticationDto} from "../../dto/AuthenticationDto.ts";
 import {useAuthentication} from "../../hooks/useAuthentication.ts";
 import SuccessfulLoginRedirect from "../../components/SuccessfulLoginRedirect.tsx";
 import {PreRegistrationDetailsResponseDto} from "../../dto/PreRegistrationDetailsResponseDto.ts";
+import LegalPolicyCheckbox from "../../../common/utils/components/LegalPolicyCheckbox.tsx";
+import SiteInformation from "../../../common/utils/components/SiteInformation.tsx";
 
 export default function InvitationRedirect() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -135,12 +137,14 @@ export default function InvitationRedirect() {
                                      questionnaireId={activeQuestionnaireId}/>
           : <Dialog open={true}>
             <DialogTitle>Complete Your Registration</DialogTitle>
-            <DialogContent>
-              <Typography mb={2}>
-                Please enter a password to finalize your account registration!
+            <DialogContent><Stack spacing={2}>
+              <Typography>
+                Please enter a password to finalize your account registration! Please update your full name if necessary.
               </Typography>
+              <SiteInformation/>
               <Box sx={{padding: 2}} component={"form"} onSubmit={handleVerification}><Stack
                 spacing={2}>
+                <LegalPolicyCheckbox/>
                 <Typography>Username: {username}</Typography>
                 <TextField type={"text"} label={"Full Name"} name={"fullName"}
                            defaultValue={fullNameDefaultValue}
@@ -151,7 +155,7 @@ export default function InvitationRedirect() {
                            inputProps={{minLength: 8, maxLength: 50}} required/>
                 <Button type={"submit"}>Submit</Button>
               </Stack></Box>
-            </DialogContent>
+            </Stack></DialogContent>
           </Dialog>
   );
 }

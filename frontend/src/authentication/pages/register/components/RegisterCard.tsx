@@ -5,6 +5,8 @@ import EmailInput from "../../../components/inputs/EmailInput.tsx";
 import PasswordInput from "../../../components/inputs/PasswordInput.tsx";
 import {FormEvent} from "react";
 import FullNameInput from "../../../components/inputs/FullNameInput.tsx";
+import SiteInformation from "../../../../common/utils/components/SiteInformation.tsx";
+import LegalPolicyCheckbox from "../../../../common/utils/components/LegalPolicyCheckbox.tsx";
 
 interface RegisterCardProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
@@ -32,8 +34,11 @@ export default function RegisterCard({onSubmit}: RegisterCardProps) {
             </Typography>
           </Stack>
           <CardContent sx={{justifyContent: "center", textAlign: "center"}}>
+            <Stack spacing={2}>
+              <SiteInformation/>
             <form onSubmit={onSubmit}>
               <Stack spacing={2}>
+                <LegalPolicyCheckbox/>
                 <FullNameInput/>
                 <EmailInput/>
                 <UsernameInput/>
@@ -45,6 +50,7 @@ export default function RegisterCard({onSubmit}: RegisterCardProps) {
                 </Button>
               </Stack>
             </form>
+            </Stack>
           </CardContent>
         </Card>
       </Grid>
