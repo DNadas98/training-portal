@@ -14,7 +14,6 @@ import {
   Select,
   Stack,
   TextField,
-  Tooltip,
   Typography
 } from "@mui/material";
 import LoadingSpinner from "../../../../common/utils/components/LoadingSpinner.tsx";
@@ -38,6 +37,7 @@ import {QuestionnaireResponseEditorDto} from "../../../dto/QuestionnaireResponse
 import {AccountBoxRounded, Downloading, FileDownload, MailOutlined,} from "@mui/icons-material";
 import useAuthFetch from "../../../../common/api/hooks/useAuthFetch.tsx";
 import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
+import CopyButton from "../../../../common/utils/components/CopyButton.tsx";
 
 export default function QuestionnaireStatistics() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -230,13 +230,7 @@ export default function QuestionnaireStatistics() {
         </Grid>
         <Grid item xs={12}>
           <Typography>E-mail Address:</Typography>
-          <Tooltip title={"Copy to clipboard"}>
-            <Button
-              variant={"text"} sx={{textTransform: "none", padding: 0}}
-              onClick={() => navigator.clipboard.writeText(data.email).then()}>
-              {data.email}
-            </Button>
-          </Tooltip>
+            <CopyButton text={data.email}/>
         </Grid>
       </Grid>
     })

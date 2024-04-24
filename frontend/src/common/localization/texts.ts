@@ -1,6 +1,10 @@
 export const texts = {
   "enGB": {
-    "siteName": "Training Portal",
+    "site": {
+      "administrator": "Administrator",
+      "developer": "Developer",
+      "sourceCode": "Project Source Code"
+    },
     "menus": {
       "home": "Home",
       "sign_in": "Sign In",
@@ -9,7 +13,8 @@ export const texts = {
         "title": "Language",
         "english": "English",
         "hungarian": "Hungarian"
-      }
+      },
+      "siteInfo":"Site Info"
     },
     "pages": {
       "sign_in": {
@@ -26,7 +31,11 @@ export const texts = {
     }
   },
   "huHU": {
-    "siteName": "Training Portal",
+    "site": {
+      "administrator": "Adminisztrátor",
+      "developer": "Fejlesztő",
+      "sourceCode": "A project forráskódja"
+    },
     "menus": {
       "home": "Főoldal",
       "sign_in": "Bejelentkezés",
@@ -35,7 +44,8 @@ export const texts = {
         "title": "Nyelv",
         "english": "Angol",
         "hungarian": "Magyar"
-      }
+      },
+      "siteInfo":"Információk"
     },
     "pages": {
       "sign_in": {

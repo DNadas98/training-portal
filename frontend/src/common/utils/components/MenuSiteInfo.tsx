@@ -1,13 +1,18 @@
-import {Button, Divider, Menu, MenuItem, Link, Typography, Tooltip} from "@mui/material";
+import {Divider, Menu, MenuItem, Link, Typography, Tooltip, IconButton} from "@mui/material";
 import {MouseEventHandler, useState} from "react";
 import siteConfig from "../../config/siteConfig.ts";
+import useLocalized from "../../localization/hooks/useLocalized.tsx";
+import useLocaleContext from "../../localization/hooks/useLocaleContext.tsx";
+import CopyButton from "./CopyButton.tsx";
+import {InfoOutlined} from "@mui/icons-material";
 
 
 export default function MenuSiteInfo() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const siteName = siteConfig.siteName;
-  const currentYear = new Date().getFullYear();
+  const config = siteConfig;
+  const {locale} = useLocaleContext();
+  const localized = useLocalized();
 
   const handleMenu: MouseEventHandler<HTMLButtonElement> = (event) => {
     const target = event.currentTarget;
@@ -22,18 +27,14 @@ export default function MenuSiteInfo() {
     <>
       <Tooltip title={
         <Typography>
-          Site & Project Info
+          {localized("menus.siteInfo")}
         </Typography>}>
-        <Button
-          variant="text"
-          color="inherit"
+        <IconButton
           onClick={handleMenu}
-          sx={{wordBreak: "break-all", paddingTop: 1, backgroundColor: "transparent"}}
+          sx={{mr:1,color:"inherit",wordBreak: "break-all", paddingTop: 1, backgroundColor: "transparent"}}
         >
-          <Typography>
-            {currentYear}{" "}&copy;{" "}{siteName}
-          </Typography>
-        </Button>
+          <InfoOutlined/>
+        </IconButton>
       </Tooltip>
       <Menu
         id="menu-appbar"
@@ -50,32 +51,41 @@ export default function MenuSiteInfo() {
         open={open}
         onClose={handleClose}
       >
-        <Typography paddingLeft={2} paddingRight={2} paddingTop={1}>
-          Training Portal
-        </Typography>
-        <Typography variant={"body2"} paddingLeft={2} paddingRight={2} paddingTop={1} paddingBottom={1}>
-          Created by Dániel Nádas
+        <Typography variant={"h6"} paddingLeft={2} paddingRight={2} paddingTop={1}>
+          {config.siteName}
         </Typography>
         <Divider/>
-        <MenuItem component={Link} href={"https://dnadas.net"}
-                  rel={"noopener noreferrer"} target={"_blank"}>
-          Portfolio - dnadas.net
+        <Typography paddingLeft={2} paddingRight={2} paddingTop={1} paddingBottom={1}>
+          {localized("site.administrator")}
+        </Typography>
+        <Typography variant={"body2"} paddingLeft={2} paddingRight={2} paddingTop={1} paddingBottom={1}>
+          {locale?.startsWith("hu")
+          ? config.adminInfo.name_hu
+          : config.adminInfo.name_en}
+        </Typography>
+        <MenuItem>
+          <CopyButton text={config.adminInfo.mail}/>
         </MenuItem>
-        <MenuItem component={Link} href={"https://dnadas.net/contact"}
-                  rel={"noopener noreferrer"} target={"_blank"}>
-          Contacts - Dániel Nádas
+        <Divider/>
+        <Typography paddingLeft={2} paddingRight={2} paddingTop={1} paddingBottom={1}>
+          {localized("site.developer")}
+        </Typography>
+        <Typography paddingLeft={2} paddingRight={2} paddingTop={1} paddingBottom={1}>
+          {locale?.startsWith("hu")
+          ? config.developerInfo.name_hu
+          : config.developerInfo.name_en}
+        </Typography>
+        <MenuItem>
+          <CopyButton text={config.developerInfo.mail}/>
         </MenuItem>
-        <MenuItem component={Link} href={"https://github.com/DNadas98/training-portal/blob/master/README.md"}
+        <MenuItem component={Link} href={config.developerInfo.portfolioUrl}
                   rel={"noopener noreferrer"} target={"_blank"}>
-          Project Description
+          {config.developerInfo.portfolioUrl}
         </MenuItem>
-        <MenuItem component={Link} href={"https://github.com/DNadas98/training-portal"}
+        <Divider/>
+        <MenuItem component={Link} href={config.sourceCodeUrl}
                   rel={"noopener noreferrer"} target={"_blank"}>
-          Source Code
-        </MenuItem>
-        <MenuItem component={Link} href={"https://github.com/DNadas98/training-portal/issues"}
-                  rel={"noopener noreferrer"} target={"_blank"}>
-          Upcoming Features
+          {localized("site.sourceCode")}
         </MenuItem>
       </Menu>
     </>
