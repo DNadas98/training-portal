@@ -87,14 +87,12 @@ public class PreRegistrationService {
 
     List<PreRegisterUserInternalDto> userRequests = parsePreRegistrationCsv(usersCsv);
 
-    Map<String, ApplicationUser>
-      existingUsersEmailUserMap = getEmailUserMapOfExistingUsers(userRequests);
-
-    userRequests.forEach(userRequest -> {
+    for (PreRegisterUserInternalDto userRequest : userRequests) {
       try {
-        ApplicationUser existingUser = existingUsersEmailUserMap.get(userRequest.email());
+        ApplicationUser existingUser = applicationUserDao.findByEmailOrUsername(
+          userRequest.email(), userRequest.username()).orElse(null);
         if (existingUser != null) {
-          updateExistingUser(group, project, questionnaire, existingUser);
+          updateExistingUser(group, project, questionnaire, existingUser,userRequest.email(),userRequest.username());
           updatedUsers.add(userRequest);
         } else {
           handlePreRegistrationRequest(groupId, projectId, questionnaireId, userRequest,
@@ -104,17 +102,9 @@ public class PreRegistrationService {
       } catch (Exception e) {
         failedUsers.put(userRequest, e.getMessage());
       }
-    });
+    }
     return new PreRegisterUsersReportDto(
       userRequests.size(), updatedUsers, createdUsers, failedUsers);
-  }
-
-  private Map<String, ApplicationUser> getEmailUserMapOfExistingUsers(
-    List<PreRegisterUserInternalDto> userRequests) {
-    Map<String, ApplicationUser> existingUsersEmailUserMap = applicationUserDao.findAllByEmailIn(
-      userRequests.stream().map(PreRegisterUserInternalDto::email).toList()).stream().collect(
-      Collectors.toMap(ApplicationUser::getEmail, user -> user));
-    return existingUsersEmailUserMap;
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -202,12 +192,14 @@ public class PreRegistrationService {
   }
 
   private void updateExistingUser(
-    UserGroup group, Project project, Questionnaire questionnaire, ApplicationUser user) {
+    UserGroup group, Project project, Questionnaire questionnaire, ApplicationUser user,String email,String username) {
     group.addMember(user);
     userGroupDao.save(group);
     project.assignMember(user);
     projectDao.save(project);
     user.setActiveQuestionnaire(questionnaire);
+    user.setEmail(email);
+    user.setUsername(username);
     applicationUserDao.save(user);
   }
 

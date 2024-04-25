@@ -42,5 +42,4 @@ public interface ApplicationUserDao extends JpaRepository<ApplicationUser, Long>
 
   Optional<ApplicationUser> findByUsername(String username);
 
-  List<ApplicationUser> findAllByEmailIn(List<String> emails);
 }
