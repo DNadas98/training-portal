@@ -26,8 +26,7 @@ export default function UserQuestionnaireSubmissionBrowser(props: UserQuestionna
       {props.maxPointQuestionnaireSubmission
         ? <Grid item xs={10} sm={10} md={9} lg={8}> <Stack spacing={2}>
           <Card>
-            <CardHeader title={`${props.maxPointQuestionnaireSubmission.name} - Max Points`}
-                        sx={{textAlign: "center"}}/>
+            <CardHeader title={`${props.maxPointQuestionnaireSubmission.name} - Max Points`}/>
             <QuestionnaireSubmissionCard submission={props.maxPointQuestionnaireSubmission}/>
             <CardActions>
               <Button onClick={() => {

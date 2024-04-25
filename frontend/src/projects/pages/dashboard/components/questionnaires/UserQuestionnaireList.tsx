@@ -5,7 +5,6 @@ import {
   AccordionSummary,
   Button,
   Card,
-  CardContent,
   Grid,
   Stack,
   Typography
@@ -24,7 +23,7 @@ interface UserQuestionnaireListProps {
 }
 
 export default function UserQuestionnaireList(props: UserQuestionnaireListProps) {
-  const MAX_SUBMISSION_COUNT = 10
+  const MAX_SUBMISSION_COUNT = 10;
   return props.loading
     ? <LoadingSpinner/>
     : props.questionnaires?.length > 0
@@ -44,12 +43,13 @@ export default function UserQuestionnaireList(props: UserQuestionnaireListProps)
                   </Typography>
                 </Grid>
                 <Grid item xs={12} md={"auto"}>
-                  <Typography variant={"body1"} sx={{
-                    wordBreak: "break-word",
-                    paddingRight: 1
-                  }}>
-                    Past Submissions: {questionnaire.submissionCount}
-                  </Typography>
+                  {!props.maxPoints ?
+                    <Typography variant={"body1"} sx={{
+                      wordBreak: "break-word",
+                      paddingRight: 1
+                    }}>
+                      Past Submissions: {questionnaire.submissionCount}
+                    </Typography> : <></>}
                 </Grid>
               </Grid>
             </AccordionSummary>
@@ -60,6 +60,16 @@ export default function UserQuestionnaireList(props: UserQuestionnaireListProps)
               }}>
                 Max Points: {questionnaire.maxPoints}
               </Typography>
+              {props.maxPoints ? <Typography>
+                  Congratulations, you have achieved maximum points on this questionnarie!
+                </Typography>
+                : (questionnaire?.submissionCount && questionnaire.submissionCount >= MAX_SUBMISSION_COUNT)
+                  ? <Typography>
+                    You have reached the maximum stored questionnaire submission count, please view your past
+                    submissions
+                    and delete one in order to proceed!
+                  </Typography>
+                  : <></>}
               <RichTextDisplay content={questionnaire.description}/>
             </AccordionDetails>
             <AccordionActions>
@@ -85,20 +95,5 @@ export default function UserQuestionnaireList(props: UserQuestionnaireListProps)
               }</AccordionActions>
           </Accordion>
         </Card>;
-      })
-      : <Card>
-        <CardContent>
-          {props.maxPoints
-            ? <Typography>
-              {"You haven't submitted a questionnaire with maximum points for this project yet."}
-            </Typography>
-            : <Typography>
-              {"There are no submittable questionnaires available for this project right now."}
-            </Typography>
-          }
-
-        </CardContent>
-      </Card>;
-
-
+      }) : <></>
 }
