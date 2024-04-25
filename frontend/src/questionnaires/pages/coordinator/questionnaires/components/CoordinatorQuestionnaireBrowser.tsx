@@ -19,7 +19,7 @@ import {QuestionnaireResponseEditorDto} from "../../../../dto/QuestionnaireRespo
 import useLocalizedDateTime from "../../../../../common/localization/hooks/useLocalizedDateTime.tsx";
 import LoadingSpinner from "../../../../../common/utils/components/LoadingSpinner.tsx";
 import ExpandIcon from "../../../../../common/utils/components/ExpandIcon.tsx";
-import RichTextDisplay from "../../../../../common/richTextEditor/RichTextDisplay.tsx";
+//import RichTextDisplay from "../../../../../common/richTextEditor/RichTextDisplay.tsx";
 
 interface CoordinatorQuestionnaireBrowserProps {
   questionnairesLoading: boolean,
@@ -74,7 +74,7 @@ export default function CoordinatorQuestionnaireBrowser(props: CoordinatorQuesti
                       </Grid>
                     </AccordionSummary>
                     <AccordionDetails>
-                      <RichTextDisplay content={questionnaire.description}/>
+                      {/*<RichTextDisplay content={questionnaire.description}/>*/}
                       <Divider sx={{marginTop: 2, marginBottom: 2}}/>
                       <Typography variant={"body2"}>
                         Created

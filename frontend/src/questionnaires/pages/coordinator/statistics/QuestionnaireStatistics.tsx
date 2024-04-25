@@ -30,7 +30,7 @@ import {useLocation, useNavigate, useParams} from "react-router-dom";
 import usePermissions from "../../../../authentication/hooks/usePermissions.ts";
 import useLocalizedDateTime from "../../../../common/localization/hooks/useLocalizedDateTime.tsx";
 import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
-import RichTextDisplay from "../../../../common/richTextEditor/RichTextDisplay.tsx";
+//import RichTextDisplay from "../../../../common/richTextEditor/RichTextDisplay.tsx";
 import URLQueryPagination from "../../../../common/pagination/URLQueryPagination.tsx";
 import {ApiResponsePageableDto} from "../../../../common/api/dto/ApiResponsePageableDto.ts";
 import {QuestionnaireResponseEditorDto} from "../../../dto/QuestionnaireResponseEditorDto.ts";
@@ -255,7 +255,7 @@ export default function QuestionnaireStatistics() {
         <Grid item xs={12}>
           <Stack spacing={1} sx={{marginBottom: 2}}>
             <Typography variant={"h6"}>{questionnaire.name}</Typography>
-            <RichTextDisplay content={questionnaire.description}/>
+            {/*<RichTextDisplay content={questionnaire.description}/>*/}
           </Stack>
         </Grid>
         <Grid item xs={12} mb={2}>
