@@ -47,7 +47,6 @@ export default function QuestionnaireEditor() {
   const handleStatusChange =(newStatus)=> setStatus(newStatus);
 
   const handleNameChange = (newName:string) => {
-    console.log(newName)
     setName(newName);
   };
 

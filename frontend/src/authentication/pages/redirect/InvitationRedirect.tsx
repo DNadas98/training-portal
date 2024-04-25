@@ -77,13 +77,13 @@ export default function InvitationRedirect() {
       }
       if (password !== confirmPassword) {
         return notification.openNotification({
-          type: "error", vertical: "top", horizontal: "center", message: "Passwords don't match"
+          type: "error", vertical: "top", horizontal: "center", message: localized("inputs.confirm_password_invalid")
         });
       }
       const code = searchParams.get("code");
       const id = searchParams.get("id");
       if (!code?.length || !id?.length || isNaN(parseInt(id)) || parseInt(id) < 1) {
-        return handleProcessError("The received verification code is missing or invalid");
+        return handleProcessError(localized("common.error.redirect.code_invalid"));
       }
       const response: ApiResponseDto = await fetchVerification(code, id, password, fullNameInput);
       if (response.error || response?.status > 399 || !response.data) {
@@ -164,6 +164,7 @@ export default function InvitationRedirect() {
               <SiteInformation/>
               <Box sx={{pl: 2, pr: 2}} component={"form"} onSubmit={handleVerification}><Stack
                 spacing={2}>
+                <Typography>{localized("inputs.password_invalid")}</Typography>
                 <LegalPolicyCheckbox/>
                 <Typography>{localized("inputs.username")}: {username}</Typography>
                 <FullNameInput defaultValue={fullNameDefaultValue}/>
