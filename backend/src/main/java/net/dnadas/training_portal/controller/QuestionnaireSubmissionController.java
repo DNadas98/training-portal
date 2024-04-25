@@ -49,11 +49,10 @@ public class QuestionnaireSubmissionController {
   public ResponseEntity<?> submitQuestionnaire(
     @PathVariable Long groupId, @PathVariable Long projectId, @PathVariable Long questionnaireId,
     @RequestBody @Valid QuestionnaireSubmissionRequestDto submissionRequest, Locale locale) {
-    questionnaireSubmissionService.submitQuestionnaire(
+    Long submissionId = questionnaireSubmissionService.submitQuestionnaire(
       groupId, projectId, questionnaireId, submissionRequest);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of(
-      "message",
-      messageSource.getMessage("questionnaire.submitted.success", null, locale)));
+      "data", submissionId));
   }
 
   @GetMapping("/{submissionId}")

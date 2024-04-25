@@ -13,6 +13,7 @@ import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
 import useAuthJsonFetch from "../../../../common/api/hooks/useAuthJsonFetch.tsx";
 import RichTextDisplay from "../../../../common/richTextEditor/RichTextDisplay.tsx";
 import useLocalizedDateTime from "../../../../common/localization/hooks/useLocalizedDateTime.tsx";
+import QuestionnaireSubmissionDetails from "./components/QuestionnaireSubmissionDetails.tsx";
 
 export default function SubmitQuestionnaire() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -151,7 +152,7 @@ export default function SubmitQuestionnaire() {
         path: `groups/${groupId}/projects/${projectId}/questionnaires/${questionnaireId}/submissions`,
         method: "POST", body: formData
       });
-      if (!response?.status || response.status > 399 || !response?.message) {
+      if (!response?.status || response.status > 399 || !response?.data) {
         setQuestionnaire(undefined);
         notification.openNotification({
           type: "error", vertical: "top", horizontal: "center", message: response?.error ?? defaultError
@@ -159,11 +160,23 @@ export default function SubmitQuestionnaire() {
         return;
       }
 
-      notification.openNotification({
-        type: "success", vertical: "top", horizontal: "center", message: response.message
+      const submissionDetailsResponse = await authJsonFetch({
+        path: `groups/${groupId}/projects/${projectId}/questionnaires/${questionnaireId}/submissions/${response.data}`
       });
+      if (!submissionDetailsResponse || submissionDetailsResponse.status > 399 || !submissionDetailsResponse.data) {
+        notification.openNotification({
+          type: "error", vertical: "top", horizontal: "center", message: submissionDetailsResponse?.error ?? defaultError
+        });
+        return;
+      }
       localStorage.removeItem(LOCAL_STORAGE_KEY);
       navigateBack();
+      dialog.openDialog({
+        oneActionOnly: true, confirmText: "Close", content: <QuestionnaireSubmissionDetails
+          submission={submissionDetailsResponse.data}/>,
+        onConfirm: () => {
+        }, blockScreen: true
+      });
     } catch (e) {
       notification.openNotification({
         type: "error", vertical: "top", horizontal: "center", message: defaultError

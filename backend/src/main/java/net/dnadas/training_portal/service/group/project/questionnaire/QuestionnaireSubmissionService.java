@@ -81,7 +81,7 @@ public class QuestionnaireSubmissionService {
 
   @Transactional(rollbackFor = Exception.class)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
-  public void submitQuestionnaire(
+  public Long submitQuestionnaire(
     Long groupId, Long projectId, Long questionnaireId,
     QuestionnaireSubmissionRequestDto submissionRequest) {
     ApplicationUser user = userProvider.getAuthenticatedUser();
@@ -115,6 +115,7 @@ public class QuestionnaireSubmissionService {
       questionnaireSubmissionDao.delete(submission);
       throw new QuestionnaireSubmissionFailedException();
     }
+    return savedSubmission.getId();
   }
 
   @Transactional(readOnly = true)
