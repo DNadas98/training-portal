@@ -4,7 +4,8 @@ import useRefresh from "../../../authentication/hooks/useRefresh.ts";
 import useLogout from "../../../authentication/hooks/useLogout.ts";
 import useLocaleContext from "../../localization/hooks/useLocaleContext.tsx";
 import {ApiRequestDto} from "../dto/ApiRequestDto.ts";
-import {getRequestConfig, handleUnknownError} from "../utils/apiUtils.ts";
+import {getRequestConfig} from "../utils/apiUtils.ts";
+import useLocalized from "../../localization/hooks/useLocalized.tsx";
 
 export default function useAuthFetch() {
   const authentication = useAuthentication();
@@ -12,6 +13,7 @@ export default function useAuthFetch() {
   const refresh = useRefresh();
   const logout = useLogout();
   const {locale} = useLocaleContext();
+  const localized = useLocalized();
 
   const notifyAndLogout = async (
     httpResponse: Response, errorMessage: string | undefined = undefined) => {
@@ -20,7 +22,7 @@ export default function useAuthFetch() {
       message:
         errorMessage
         ?? httpResponse.status === 403
-          ? "Forbidden" : "Unauthorized"
+          ? localized("common.error.auth.access_denied") :  localized("common.error.auth.unauthorized")
     });
     return await logout();
   }
@@ -58,7 +60,11 @@ export default function useAuthFetch() {
       }
       return httpResponse;
     } catch (e) {
-      return handleUnknownError();
+      console.error(e);
+      return {
+        status: 500,
+        error: localized("common.error.fetch.unknown")
+      };
     }
   };
   return authFetch;

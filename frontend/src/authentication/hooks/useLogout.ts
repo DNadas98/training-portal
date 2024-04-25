@@ -14,7 +14,7 @@ export default function useLogout() {
       authentication.logout();
       navigate(willfulLogout ? "/" : "/login");
     } catch (e) {
-      console.error("Failed to log out");
+      console.error(e);
       throw e;
     }
   };

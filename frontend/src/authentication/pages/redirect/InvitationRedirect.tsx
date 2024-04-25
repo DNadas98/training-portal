@@ -4,7 +4,7 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx";
 import {ApiResponseDto} from "../../../common/api/dto/ApiResponseDto.ts";
 import DialogAlert from "../../../common/utils/components/DialogAlert.tsx";
-import {Box, Button, Dialog, DialogContent, DialogTitle, Stack, TextField, Typography} from "@mui/material";
+import {Box, Button, Dialog, DialogContent, Stack, Typography} from "@mui/material";
 import usePublicJsonFetch from "../../../common/api/hooks/usePublicJsonFetch.tsx";
 import {PreRegistrationCompleteRequestDto} from "../../dto/PreRegistrationCompleteRequestDto.ts";
 import {AuthenticationDto} from "../../dto/AuthenticationDto.ts";
@@ -16,6 +16,10 @@ import SiteInformation from "../../../common/utils/components/SiteInformation.ts
 import useLocalized from "../../../common/localization/hooks/useLocalized.tsx";
 import {passwordRegex} from "../../../common/utils/regex.ts";
 import PasswordInput from "../../components/inputs/PasswordInput.tsx";
+import LocaleMenu from "../../../common/menu/LocaleMenu.tsx";
+import HomeList from "../../../public/pages/home/components/HomeList.tsx";
+import IsSmallScreen from "../../../common/utils/IsSmallScreen.tsx";
+import FullNameInput from "../../components/inputs/FullNameInput.tsx";
 
 export default function InvitationRedirect() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -31,7 +35,8 @@ export default function InvitationRedirect() {
   const [activeGroupId, setActiveGroupId] = useState<number | null>(null);
   const [activeProjectId, setActiveProjectId] = useState<number | null>(null);
   const [activeQuestionnaireId, setActiveQuestionnaireId] = useState<number | null>(null);
-  const localized=useLocalized();
+  const localized = useLocalized();
+  const isSmallScreen = IsSmallScreen();
 
   const fetchVerification = async (code: string, id: string, password: string, fullName?: string) => {
     const dto: PreRegistrationCompleteRequestDto = {
@@ -43,8 +48,7 @@ export default function InvitationRedirect() {
   };
 
   const handleProcessError = (error: string | undefined = undefined) => {
-    const message = error ??
-      "An error has occurred during the registration process";
+    const message = error ?? "";
     setProcessError(message);
     clearSearchParams();
   };
@@ -64,7 +68,7 @@ export default function InvitationRedirect() {
       const password = formData.get("password") as string;
       const fullNameInput = formData.get("fullName") as string | undefined;
       const confirmPassword = formData.get("confirmPassword") as string;
-      if (!passwordRegex.test(password)){
+      if (!passwordRegex.test(password)) {
         notification.openNotification({
           type: "error", vertical: "top", horizontal: "center",
           message: localized("inputs.password_invalid")
@@ -109,7 +113,7 @@ export default function InvitationRedirect() {
         const code = searchParams.get("code");
         const id = searchParams.get("id");
         if (!code?.length || !id?.length || isNaN(parseInt(id)) || parseInt(id) < 1) {
-          return handleProcessError("The received verification code is missing or invalid");
+          return handleProcessError(localized("common.error.redirect.code_invalid"));
         }
         const response: ApiResponseDto = await publicJsonFetch({
           path: `verification/invitation-accept?code=${code}&id=${id}`, method: "GET"
@@ -124,7 +128,6 @@ export default function InvitationRedirect() {
         setUsername(detailsResponse.username);
       } catch (e) {
         handleProcessError();
-        clearSearchParams();
       } finally {
         setLoading(false);
       }
@@ -137,32 +140,36 @@ export default function InvitationRedirect() {
     loading
       ? <LoadingSpinner/>
       : processError
-        ? <DialogAlert title={`Error: ${processError}`} text={
-          "Return to the Home page or try again later.\n"
-          + "If the issue persists, please contact our support team."
+        ? <DialogAlert title={`${processError}`} text={
+          localized("common.error.redirect.unknown")
         } buttonText={"Home"} onClose={() => {
-          navigate("/", {replace: true})
+          navigate("/", {replace: true});
         }}/>
         : isLoggedIn
           ? <SuccessfulLoginRedirect groupId={activeGroupId} projectId={activeProjectId}
                                      questionnaireId={activeQuestionnaireId}/>
-          : <Dialog open={true}>
-            <DialogTitle>Complete Your Registration</DialogTitle>
-            <DialogContent><Stack spacing={2}>
-              <Typography>
-                Please enter a password to finalize your account registration! Please update your full name if necessary.
-              </Typography>
+          : <Dialog open={true} maxWidth={"lg"} fullScreen={isSmallScreen}>
+            <DialogContent><Stack spacing={1}>
+              <Stack spacing={1} direction={"row"} flexWrap={"wrap"} mb={2} alignItems={"flex-start"}
+                     justifyContent={"space-between"}>
+                <Typography variant={"h6"}>{localized("pages.pre_registration.title")}</Typography>
+                <LocaleMenu/>
+              </Stack>
+              <HomeList/>
+              <Stack spacing={0.5} sx={{pl: 2, pr: 2}}>
+                {localized("pages.pre_registration.info").split("\n").map((row, i) => <Typography key={i}>
+                  {row}
+                </Typography>)}
+              </Stack>
               <SiteInformation/>
-              <Box sx={{padding: 2}} component={"form"} onSubmit={handleVerification}><Stack
+              <Box sx={{pl: 2, pr: 2}} component={"form"} onSubmit={handleVerification}><Stack
                 spacing={2}>
                 <LegalPolicyCheckbox/>
-                <Typography>Username: {username}</Typography>
-                <TextField type={"text"} label={"Full Name"} name={"fullName"}
-                           defaultValue={fullNameDefaultValue}
-                           inputProps={{minLength: 8, maxLength: 50}} required/>
+                <Typography>{localized("inputs.username")}: {username}</Typography>
+                <FullNameInput defaultValue={fullNameDefaultValue}/>
                 <PasswordInput/>
                 <PasswordInput confirm={true}/>
-                <Button type={"submit"}>Submit</Button>
+                <Button type={"submit"}>{localized("pages.pre_registration.submit_button")}</Button>
               </Stack></Box>
             </Stack></DialogContent>
           </Dialog>

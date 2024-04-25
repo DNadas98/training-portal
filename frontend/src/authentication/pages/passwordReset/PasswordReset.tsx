@@ -4,16 +4,18 @@ import PasswordResetCard from "./components/PasswordResetCard.tsx";
 import {useNavigate} from "react-router-dom";
 import {PasswordResetRequestDto} from "../../dto/PasswordResetRequestDto.ts";
 import usePublicJsonFetch from "../../../common/api/hooks/usePublicJsonFetch.tsx";
+import useLocalized from "../../../common/localization/hooks/useLocalized.tsx";
 
 export default function PasswordReset() {
   const notification = useNotification();
   const navigate = useNavigate();
   const publicJsonFetch = usePublicJsonFetch();
+  const localized = useLocalized();
 
   const handleError = (error: string | undefined = undefined) => {
     notification.openNotification({
       type: "error", vertical: "top", horizontal: "center",
-      message: error ?? "An error has occurred during the password reset request process",
+      message: error ?? localized("pages.password_reset.error.default"),
     });
   };
 
@@ -35,9 +37,7 @@ export default function PasswordReset() {
       });
       navigate("/");
     } catch (e) {
-      const errorMessage =
-        "An error has occurred during the sign in process";
-      handleError(errorMessage);
+      handleError();
     }
   };
 

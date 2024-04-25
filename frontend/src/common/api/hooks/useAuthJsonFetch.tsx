@@ -5,7 +5,8 @@ import useLogout from "../../../authentication/hooks/useLogout.ts";
 import useLocaleContext from "../../localization/hooks/useLocaleContext.tsx";
 import {ApiRequestDto} from "../dto/ApiRequestDto.ts";
 import {ApiResponseDto} from "../dto/ApiResponseDto.ts";
-import {getRequestConfig, handleUnknownError, verifyHttpResponse} from "../utils/apiUtils.ts";
+import {getRequestConfig, verifyHttpResponse} from "../utils/apiUtils.ts";
+import useLocalized from "../../localization/hooks/useLocalized.tsx";
 
 export default function useAuthJsonFetch() {
   const notification = useNotification();
@@ -13,6 +14,7 @@ export default function useAuthJsonFetch() {
   const refresh = useRefresh();
   const logout = useLogout();
   const {locale} = useLocaleContext();
+  const localized = useLocalized();
 
   const notifyAndLogout = async (
     httpResponse: Response, errorMessage: string | undefined = undefined) => {
@@ -63,7 +65,11 @@ export default function useAuthJsonFetch() {
       };
       return apiResponse;
     } catch (e) {
-      return handleUnknownError();
+      console.error(e);
+      return {
+        status: 500,
+        error: localized("common.error.fetch.unknown")
+      };
     }
   };
   return authJsonFetch;

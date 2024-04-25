@@ -29,7 +29,7 @@ export function AuthenticationProvider({children}: AuthenticationProviderProps) 
       || !authentication.userInfo.fullName?.length
       || !authentication.userInfo.roles?.length
       || !authentication.userInfo?.roles?.includes(GlobalRole.USER)) {
-      throw new Error("The received authentication is invalid");
+      throw new Error();
     }
     setAuthentication(authentication);
   };

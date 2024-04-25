@@ -32,7 +32,9 @@ export function NotificationProvider({children}: NotificationProviderProps) {
    * @param newState {NotificationStateDto}
    */
   const openNotification = (newState: NotificationStateDto) => {
-    setNotificationState({...newState, open: true});
+    setNotificationState(() => {
+      return {...newState, open: true}
+    });
   };
 
   const handleClose = (_event?: React.SyntheticEvent | Event, reason?: string) => {

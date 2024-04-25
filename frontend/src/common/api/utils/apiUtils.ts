@@ -1,5 +1,4 @@
 import {ApiRequestDto} from "../dto/ApiRequestDto.ts";
-import {ApiResponseDto} from "../dto/ApiResponseDto.ts";
 import {SupportedLocaleType} from "../../localization/context/SupportedLocaleType.ts";
 
 function getFormattedLocale(locale) {
@@ -41,13 +40,3 @@ export function verifyHttpResponse(httpResponse: Response, contentType: string =
     throw new Error("Server response received in invalid format");
   }
 }
-
-export function handleUnknownError(): ApiResponseDto {
-  console.error("Failed to load requested resource");
-  return {
-    status: 500,
-    error: "An unknown error has occurred"
-  };
-}
-
-

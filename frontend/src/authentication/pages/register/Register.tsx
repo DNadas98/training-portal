@@ -41,7 +41,7 @@ export default function Register() {
       type: "error",
       vertical: "top",
       horizontal: "center",
-      message: error ?? "An error has occurred during the sign up process",
+      message: error ?? localized("pages.sign_up.error.default"),
     });
   };
 
@@ -56,11 +56,11 @@ export default function Register() {
     try {
       event.preventDefault();
       const formData = new FormData(event.currentTarget);
-      const username = formData.get('username') as string;
-      const email = formData.get('email') as string;
-      const fullName = formData.get('fullName') as string;
-      const password = formData.get('password') as string;
-      const confirmPassword = formData.get('confirmPassword') as string;
+      const username = formData.get("username") as string;
+      const email = formData.get("email") as string;
+      const fullName = formData.get("fullName") as string;
+      const password = formData.get("password") as string;
+      const confirmPassword = formData.get("confirmPassword") as string;
 
       const passwordIsValid = validatePassword(password, confirmPassword);
       if (!passwordIsValid) {
@@ -76,8 +76,7 @@ export default function Register() {
 
       handleSuccess(response.message);
     } catch (e) {
-      const errorMessage = "An error has occurred during the sign up process";
-      console.error(errorMessage);
+      const errorMessage = localized("pages.sign_up.error.default");
       handleError(errorMessage);
     }
   };

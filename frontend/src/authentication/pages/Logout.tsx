@@ -8,7 +8,7 @@ export default function Logout() {
   useEffect(() => {
     logout(true).then(() => {
       setLoading(false);
-    })
+    });
   }, []);
   return (loading ? <LoadingSpinner/> : null)
 }

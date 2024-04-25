@@ -1,19 +1,21 @@
 import {Button, Grid, Typography} from "@mui/material";
 import BackButton from "../../../common/utils/components/BackButton.tsx";
+import useLocalized from "../../../common/localization/hooks/useLocalized.tsx";
 
 function ErrorPage() {
+  const localized = useLocalized();
   return (
     <Grid container minHeight="100vh" minWidth={"100%"} textAlign={"left"}
           alignItems="center" justifyContent="center">
-      <Grid item>
+      <Grid item xs={10} lg={false}>
         <Typography variant="h4" gutterBottom>
-          An error has occurred.
+          {localized("pages.error.errorPage.p01") ?? "An error has occurred."}
         </Typography>
         <Typography variant="h6" gutterBottom>
-          Return to the homepage or try again later.
+          {localized("pages.error.errorPage.p02") ?? "Return to the homepage or try again later."}
         </Typography>
         <Typography>
-          If the issue persists, please contact our support team.
+          {localized("pages.error.errorPage.p03") ?? "If the issue persists, please contact our support team."}
         </Typography>
         <Grid container spacing={1} mt={1} textAlign={"left"}>
           <Grid item>

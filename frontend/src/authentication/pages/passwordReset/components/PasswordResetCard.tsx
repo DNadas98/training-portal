@@ -2,12 +2,14 @@ import {Avatar, Button, Card, CardContent, Grid, Stack, Typography} from "@mui/m
 import {Lock} from "@mui/icons-material";
 import EmailInput from "../../../components/inputs/EmailInput.tsx";
 import {FormEvent} from "react";
+import useLocalized from "../../../../common/localization/hooks/useLocalized.tsx";
 
 interface PasswordResetCardProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
 }
 
 export default function PasswordResetCard({onSubmit}: PasswordResetCardProps) {
+  const localized=useLocalized();
   return (
     <Grid container justifyContent={"center"}>
       <Grid item xs={10} sm={8} md={7} lg={6}>
@@ -24,7 +26,7 @@ export default function PasswordResetCard({onSubmit}: PasswordResetCardProps) {
               <Lock/>
             </Avatar>
             <Typography variant="h5" gutterBottom>
-              Request Password Reset
+              {localized("pages.password_reset.title")}
             </Typography>
           </Stack>
           <CardContent sx={{justifyContent: "center", textAlign: "center"}}>
@@ -41,7 +43,7 @@ export default function PasswordResetCard({onSubmit}: PasswordResetCardProps) {
                     <EmailInput/>
                     <Button type={"submit"}
                             variant={"contained"}>
-                      Send Reset E-mail
+                      {localized("pages.password_reset.submit_button")}
                     </Button>
                   </Stack>
                 </form>

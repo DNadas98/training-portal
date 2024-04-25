@@ -1,4 +1,4 @@
-import {Outlet} from "react-router-dom";
+import {Outlet, useNavigate} from "react-router-dom";
 
 import {GlobalRole} from "../dto/userInfo/GlobalRole.ts";
 import useLogout from "../hooks/useLogout.ts";
@@ -7,6 +7,7 @@ import useRefresh from "../hooks/useRefresh.ts";
 import LoadingSpinner from "../../common/utils/components/LoadingSpinner.tsx";
 import {useAuthentication} from "../hooks/useAuthentication.ts";
 import {useNotification} from "../../common/notification/context/NotificationProvider.tsx";
+import useLocalized from "../../common/localization/hooks/useLocalized.tsx";
 
 interface RequireAuthProps {
   allowedRoles: Array<GlobalRole>;
@@ -17,23 +18,17 @@ export default function RequireAuthentication({allowedRoles}: RequireAuthProps) 
   const [allowed, setAllowed] = useState(false);
   const authentication = useAuthentication();
   const notification = useNotification();
+  const localized = useLocalized();
   const refresh = useRefresh();
   const logout = useLogout();
+  const navigate = useNavigate();
 
   async function handleUnauthorized() {
-    notification.openNotification({
-      type: "error", vertical: "top", horizontal: "center",
-      message: "Unauthorized"
-    });
     await logout();
   }
 
   async function handleAccessDenied() {
-    notification.openNotification({
-      type: "error", vertical: "top", horizontal: "center",
-      message: "Access Denied"
-    });
-    await logout();
+    navigate(-1);
   }
 
   useEffect(() => {
@@ -45,13 +40,23 @@ export default function RequireAuthentication({allowedRoles}: RequireAuthProps) 
         if (refreshedRoles?.length) {
           roles = refreshedRoles;
         } else {
-          return await handleUnauthorized();
+          await handleUnauthorized();
+          notification.openNotification({
+            type: "error", vertical: "top", horizontal: "center",
+            message: localized("common.error.auth.unauthorized")
+          });
+          return;
         }
       }
       if (roles?.some(role => allowedRoles.includes(role))) {
         setAllowed(true);
       } else {
-        return await handleAccessDenied();
+        await handleAccessDenied();
+        notification.openNotification({
+          type: "error", vertical: "top", horizontal: "center",
+          message: localized("common.error.auth.access_denied")
+        });
+        return;
       }
     }
 

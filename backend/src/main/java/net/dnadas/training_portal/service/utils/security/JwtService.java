@@ -61,7 +61,7 @@ public class JwtService {
       Claims claims = extractAllClaimsFromToken(
         accessToken, accessTokenSecret, accessTokenAlgorithm);
       return getPayloadDto(claims);
-    } catch (JwtException e) {
+    } catch (Exception e) {
       throw new UnauthorizedException();
     }
   }
@@ -71,7 +71,7 @@ public class JwtService {
       Claims claims = extractAllClaimsFromToken(refreshToken, refreshTokenSecret,
         refreshTokenAlgorithm);
       return getPayloadDto(claims);
-    } catch (JwtException e) {
+    } catch (Exception e) {
       throw new UnauthorizedException();
     }
   }

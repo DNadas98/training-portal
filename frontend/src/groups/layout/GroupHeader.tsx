@@ -2,18 +2,14 @@ import {AppBar, Box, Divider, Stack, Toolbar, Typography, useTheme} from "@mui/m
 import ThemePaletteModeSwitch from "../../common/theme/components/ThemePaletteModeSwitch.tsx";
 import SiteLogo from "../../common/utils/components/SiteLogo.tsx";
 import MenuSmall from "../../common/utils/components/MenuSmall.tsx";
-import MenuLarge from "../../common/utils/components/MenuLarge.tsx";
-import {loggedInMenuItems} from "../../common/menu/loggedInMenuItems.tsx";
-import {useAuthentication} from "../../authentication/hooks/useAuthentication.ts";
-import {AccountBoxRounded, MenuOutlined} from "@mui/icons-material";
-import {accountMenuItems} from "../../common/menu/accountMenuItems.tsx";
 import {GroupResponsePublicDto} from "../dto/GroupResponsePublicDto.ts";
-import LocaleMenu from "../../common/localization/components/LocaleMenu.tsx";
-import IsSmallScreen from "../../common/utils/IsSmallScreen.tsx";
+import LocaleMenu from "../../common/menu/LocaleMenu.tsx";
 import useLocalizedDate from "../../common/localization/hooks/useLocalizedDate.tsx";
 import {ProjectResponsePublicDto} from "../../projects/dto/ProjectResponsePublicDto.ts";
 import {PermissionType} from "../../authentication/dto/PermissionType.ts";
 import {IMenuItem} from "../../common/menu/IMenuItem.ts";
+import LoggedInMenu from "../../common/menu/LoggedInMenu.tsx";
+import AccountMenu from "../../common/menu/AccountMenu.tsx";
 
 interface GroupHeaderProps {
   group: undefined | GroupResponsePublicDto,
@@ -25,8 +21,6 @@ interface GroupHeaderProps {
 
 export default function GroupHeader(props: GroupHeaderProps) {
   const theme = useTheme();
-  const isSmallScreen = IsSmallScreen();
-  const authentication = useAuthentication();
   const getLocalizedDate = useLocalizedDate();
 
   function getGroupMenuItems() {
@@ -84,13 +78,8 @@ export default function GroupHeader(props: GroupHeaderProps) {
       <Toolbar>
         <SiteLogo/>
         <Box flexGrow={1}></Box>
-        {isSmallScreen
-          ? <MenuSmall items={loggedInMenuItems} icon={<MenuOutlined/>}/>
-          : <MenuLarge items={loggedInMenuItems}/>
-        }
-        <MenuSmall items={accountMenuItems}
-                   icon={<AccountBoxRounded/>}
-                   title={(authentication.getFullName() as string)}/>
+        <LoggedInMenu/>
+        <AccountMenu/>
         <LocaleMenu/>
         <ThemePaletteModeSwitch/>
       </Toolbar>

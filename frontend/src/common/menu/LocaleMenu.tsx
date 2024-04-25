@@ -1,13 +1,13 @@
 import {useState} from 'react';
 import {Divider, IconButton, Menu, MenuItem, Typography} from '@mui/material';
 import {LanguageOutlined} from "@mui/icons-material";
-import useLocalized from "../hooks/useLocalized.tsx";
-import useLocaleContext from "../hooks/useLocaleContext.tsx";
+import useLocalized from "../localization/hooks/useLocalized.tsx";
+import useLocaleContext from "../localization/hooks/useLocaleContext.tsx";
 
 const LocaleMenu = () => {
   const {locale, setLocale} = useLocaleContext();
   const [anchorEl, setAnchorEl] = useState(null);
-  const getLocalized = useLocalized();
+  const localized = useLocalized();
 
   const handleOpenMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -29,15 +29,15 @@ const LocaleMenu = () => {
       open={Boolean(anchorEl)}
       onClose={handleCloseMenu}
     >
-      <Typography paddingLeft={2} paddingRight={2}>{getLocalized("menus.language.title")}</Typography>
+      <Typography paddingLeft={2} paddingRight={2}>{localized("menus.language.title")}</Typography>
       <Divider/>
       <MenuItem selected={locale.toString() === "enGB"}
                 onClick={() => handleLocaleChange("enGB")}>
-        {getLocalized("menus.language.english")}
+        {localized("menus.language.english")}
       </MenuItem>
       <MenuItem selected={locale.toString() === "huHU"}
                 onClick={() => handleLocaleChange("huHU")}>
-        {getLocalized("menus.language.hungarian")}
+        {localized("menus.language.hungarian")}
       </MenuItem>
     </Menu>
   </>);
