@@ -37,6 +37,10 @@ public class VerificationTokenService {
   public VerificationToken findVerificationToken(VerificationTokenDto tokenDto) {
     VerificationToken token = verificationTokenDao.findById(tokenDto.id()).orElseThrow(
       InvalidCredentialsException::new);
+    if (token.getVerificationCodeHash() == null || !tokenCodeEncoder.matches(
+      tokenDto.verificationCode().toString(), token.getVerificationCodeHash())) {
+      throw new InvalidCredentialsException();
+    }
     return token;
   }
 
@@ -143,11 +147,15 @@ public class VerificationTokenService {
     Long questionnaireId, Instant expiresAt) {
     UUID verificationCode = UUID.randomUUID();
     String hashedVerificationCode = getHashedVerificationCode(verificationCode);
-    PreRegistrationVerificationToken preRegistrationVerificationToken =
-      preRegistrationVerificationTokenDao.save(
-        new PreRegistrationVerificationToken(userRequest.email(), userRequest.username(), groupId,
-          projectId, questionnaireId, hashedVerificationCode, expiresAt, userRequest.fullName()));
-    preRegistrationVerificationTokenDao.save(preRegistrationVerificationToken);
-    return new VerificationTokenDto(preRegistrationVerificationToken.getId(), verificationCode);
+    PreRegistrationVerificationToken token =
+      new PreRegistrationVerificationToken(userRequest.email(), userRequest.username(), groupId,
+        projectId, questionnaireId, hashedVerificationCode, expiresAt, userRequest.fullName());
+    token.setCurrentCoordinatorFullName(userRequest.coordinatorName());
+    token.setHasExternalTestQuestionnaire(userRequest.hasExternalTestQuestionnaire());
+    token.setHasExternalTestFailure(userRequest.hasExternalTestFailure());
+    token.setGroupPermissions(userRequest.groupPermissions());
+    token.setProjectPermissions(userRequest.projectPermissions());
+    preRegistrationVerificationTokenDao.save(token);
+    return new VerificationTokenDto(token.getId(), verificationCode);
   }
 }

@@ -78,7 +78,6 @@ public class QuestionnaireSubmissionService {
       questionnaireSubmission.get(), questionnaireSubmission.get().getQuestionnaire()));
   }
 
-
   @Transactional(rollbackFor = Exception.class)
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
   public Long submitQuestionnaire(

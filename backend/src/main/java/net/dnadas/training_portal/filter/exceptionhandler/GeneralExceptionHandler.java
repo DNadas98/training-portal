@@ -13,6 +13,7 @@ import net.dnadas.training_portal.exception.group.project.UserAlreadyInProjectEx
 import net.dnadas.training_portal.exception.group.project.questionnaire.QuestionnaireAlreadyActivatedException;
 import net.dnadas.training_portal.exception.group.project.questionnaire.QuestionnaireNotFoundException;
 import net.dnadas.training_portal.exception.group.project.task.TaskNotFoundException;
+import net.dnadas.training_portal.exception.user.InvalidExpirationDateException;
 import net.dnadas.training_portal.exception.verification.VerificationTokenAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +52,14 @@ public class GeneralExceptionHandler {
       Map.of("error", "User is already assigned to the requested project"));
   }
 
+  @ExceptionHandler(InvalidExpirationDateException.class)
+  public ResponseEntity<?> handleInvalidExpirationDateException(
+    InvalidExpirationDateException e) {
+    String message = e.getMessage();
+    logger.error(message);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+      Map.of("error", message));
+  }
 
   // 401
 

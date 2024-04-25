@@ -86,7 +86,7 @@ public class VerificationController {
     @RequestBody @Valid PreRegistrationCompleteRequestDto requestDto,
     HttpServletResponse response) {
     PreRegistrationCompleteInternalDto registrationCompleteDto = preRegistrationService
-      .completePreRegistration(new @Valid VerificationTokenDto(
+      .processPreRegistration(new @Valid VerificationTokenDto(
         verificationTokenId, verificationCode), requestDto);
 
     LoginResponseDto loginResponse = authenticationService.login(new LoginRequestDto(

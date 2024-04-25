@@ -41,6 +41,18 @@ public class ApplicationUser implements UserDetails {
   @Column(nullable = false)
   private String password;
 
+  @Column(nullable = true)
+  private String currentCoordinatorFullName;
+
+  @Column(nullable = true)
+  private Boolean hasExternalTestQuestionnaire;
+
+  @Column(nullable = true)
+  private Boolean hasExternalTestFailure;
+
+  @Column(nullable = false)
+  private Boolean receivedSuccessfulCompletionEmail = false;
+
   @Column(nullable = false)
   private boolean expired;
 

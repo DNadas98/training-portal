@@ -1,13 +1,15 @@
 package net.dnadas.training_portal.model.verification;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.dnadas.training_portal.model.auth.PermissionType;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -21,8 +23,30 @@ public class PreRegistrationVerificationToken extends VerificationToken {
   @Column(nullable = false, unique = true)
   private String username;
 
-  @Column(nullable = true, unique = true)
+  @Column(nullable = true)
   private String fullName;
+
+  @Column(nullable = true)
+  private String currentCoordinatorFullName;
+
+  @Column(nullable = true)
+  private Boolean hasExternalTestQuestionnaire;
+
+  @Column(nullable = true)
+  private Boolean hasExternalTestFailure;
+
+
+  @ElementCollection(targetClass = PermissionType.class)
+  @CollectionTable(name = "token_group_permissions", joinColumns = @JoinColumn(name = "token_id"))
+  @Column(name = "permission", nullable = false)
+  @Enumerated(EnumType.STRING)
+  Set<PermissionType> groupPermissions = new HashSet<>();
+
+  @ElementCollection(targetClass = PermissionType.class)
+  @CollectionTable(name = "token_project_permissions", joinColumns = @JoinColumn(name = "token_id"))
+  @Column(name = "permission", nullable = false)
+  @Enumerated(EnumType.STRING)
+  Set<PermissionType> projectPermissions = new HashSet<>();
 
   @Column(nullable = false)
   private Long groupId;
