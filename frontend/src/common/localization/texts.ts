@@ -109,7 +109,7 @@ export const texts = {
       "administrator": "Adminisztrátor",
       "developer": "Fejlesztő",
       "sourceCode": "A project forráskódja",
-      "legalPolicyText": "A szolgáltatás használatával Ön elfogadja, hogy alkalmazásunk kezeli az Ön teljes nevét, és az e-mail címét.\nAdatait a rendszer kizárólag kapcsolattartásra, és az Ön adminisztrátorainak és koordinátorainak szóló statisztikák készítéséhez használjuk.\nAz e-mail címe kizárólag az Ön projektjeihez tartozó adminisztrátoroknak, illetve mentoroknak lesz látható.\nAdatait marketing célra egyáltalán nem használjuk, harmadik félnek semmilyen formában nem adjuk tovább."
+      "legalPolicyText": "A szolgáltatás használatával Ön elfogadja, hogy alkalmazásunk kezeli az Ön teljes nevét, és az e-mail címét.\nAdatait a rendszer kizárólag kapcsolattartásra, és az Ön adminisztrátorainak és mentorainak szóló statisztikák készítéséhez használjuk.\nAz e-mail címe kizárólag az Ön projektjeihez tartozó adminisztrátoroknak, illetve mentoroknak lesz látható.\nAdatait marketing célra egyáltalán nem használjuk, harmadik félnek semmilyen formában nem adjuk tovább."
     },
     "menus": {
       "home": "Főoldal",
