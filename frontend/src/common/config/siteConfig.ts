@@ -28,7 +28,7 @@ const siteConfig: ISiteConfig = {
   adminInfo: {
     name_en: "Ferenc Nádas",
     name_hu: "Nádas Ferenc",
-    mail: "ferenc.nadas@fnadas.net"
+    mail: "tesztsor@fnadas.net"
   },
   developerInfo: {
     name_en: "Dániel Nádas",
