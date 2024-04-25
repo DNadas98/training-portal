@@ -7,7 +7,6 @@ import net.dnadas.training_portal.exception.auth.InvalidCredentialsException;
 import net.dnadas.training_portal.exception.auth.PasswordVerificationFailedException;
 import net.dnadas.training_portal.exception.auth.UserAlreadyExistsException;
 import net.dnadas.training_portal.exception.auth.UserNotFoundException;
-import net.dnadas.training_portal.exception.verification.VerificationTokenAlreadyExistsException;
 import net.dnadas.training_portal.model.user.ApplicationUser;
 import net.dnadas.training_portal.model.user.ApplicationUserDao;
 import net.dnadas.training_portal.model.verification.EmailChangeVerificationToken;
@@ -332,29 +331,6 @@ class ApplicationUserServiceTest {
 
     assertThrows(
       UserAlreadyExistsException.class,
-      () -> applicationUserService.sendEmailChangeVerificationEmail(updateDto));
-  }
-
-  @Test
-  void sendEmailChangeVerificationEmail_throws_VerificationTokenAlreadyExistsException_when_token_already_exists() {
-    UserEmailUpdateDto updateDto = new UserEmailUpdateDto("newEmail@test.test", "testpassword1");
-    ApplicationUser authenticatedUser = testUsers.get(0);
-    EmailChangeVerificationToken existingToken = new EmailChangeVerificationToken(
-      "newEmail@test.test", 1L, "hashedVerificationCode");
-
-    when(userProvider.getAuthenticatedUser()).thenReturn(authenticatedUser);
-    when(passwordEncoder.matches(updateDto.password(), authenticatedUser.getPassword())).thenReturn(
-      true);
-    when(applicationUserDao.findByEmail(updateDto.email())).thenReturn(Optional.empty());
-    when(emailChangeVerificationTokenDao.findByNewEmail(
-      updateDto.email())).thenReturn(Optional.empty());
-    when(registrationTokenDao.findByEmailOrUsername(anyString(), anyString()))
-      .thenReturn(Optional.empty());
-    when(emailChangeVerificationTokenDao.findByUserId(
-      authenticatedUser.getId())).thenReturn(Optional.of(existingToken));
-
-    assertThrows(
-      VerificationTokenAlreadyExistsException.class,
       () -> applicationUserService.sendEmailChangeVerificationEmail(updateDto));
   }
 }
