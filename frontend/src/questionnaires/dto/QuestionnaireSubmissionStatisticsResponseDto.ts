@@ -4,12 +4,13 @@ export interface QuestionnaireSubmissionStatisticsResponseDto {
   maxPointSubmissionId: number;
   maxPointSubmissionCreatedAt: string;
   maxPointSubmissionReceivedPoints: number;
-  lastSubmissionId: number;
-  lastSubmissionCreatedAt: string;
-  lastSubmissionReceivedPoints: number;
   userId: number;
   username: string;
   fullName: string;
   email: string;
+  currentCoordinatorFullName: string;
+  hasExternalTestQuestionnaire: boolean;
+  hasExternalTestFailure: boolean;
+  receivedSuccessfulCompletionEmail: boolean;
   submissionCount: number;
 }

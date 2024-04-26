@@ -8,8 +8,9 @@ import {
   Card,
   CardContent,
   CardHeader,
-  debounce,
+  debounce, FormControl,
   Grid,
+  InputLabel,
   MenuItem,
   Select,
   Stack,
@@ -34,7 +35,7 @@ import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
 import URLQueryPagination from "../../../../common/pagination/URLQueryPagination.tsx";
 import {ApiResponsePageableDto} from "../../../../common/api/dto/ApiResponsePageableDto.ts";
 import {QuestionnaireResponseEditorDto} from "../../../dto/QuestionnaireResponseEditorDto.ts";
-import {AccountBoxRounded, Downloading, FileDownload, MailOutlined,} from "@mui/icons-material";
+import {AccountBoxRounded, Check, Close, Downloading, FileDownload, MailOutlined} from "@mui/icons-material";
 import useAuthFetch from "../../../../common/api/hooks/useAuthFetch.tsx";
 import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
 import CopyButton from "../../../../common/utils/components/CopyButton.tsx";
@@ -206,10 +207,7 @@ export default function QuestionnaireStatistics() {
   const hasValidSubmission = (stat: QuestionnaireSubmissionStatisticsResponseDto) => {
     return stat.maxPointSubmissionId !== null && stat.maxPointSubmissionId !== undefined &&
       stat.maxPointSubmissionCreatedAt !== null && stat.maxPointSubmissionCreatedAt !== undefined &&
-      stat.maxPointSubmissionReceivedPoints !== null && stat.maxPointSubmissionReceivedPoints !== undefined &&
-      stat.lastSubmissionId !== null && stat.lastSubmissionId !== undefined &&
-      stat.lastSubmissionCreatedAt !== null && stat.lastSubmissionCreatedAt !== undefined &&
-      stat.lastSubmissionReceivedPoints !== null && stat.lastSubmissionReceivedPoints !== undefined;
+      stat.maxPointSubmissionReceivedPoints !== null && stat.maxPointSubmissionReceivedPoints !== undefined;
   }
 
   const handleContactClick = (data: QuestionnaireSubmissionStatisticsResponseDto) => {
@@ -230,7 +228,7 @@ export default function QuestionnaireStatistics() {
         </Grid>
         <Grid item xs={12}>
           <Typography>E-mail Address:</Typography>
-            <CopyButton text={data.email}/>
+          <CopyButton text={data.email}/>
         </Grid>
       </Grid>
     })
@@ -255,7 +253,6 @@ export default function QuestionnaireStatistics() {
         <Grid item xs={12}>
           <Stack spacing={1} sx={{marginBottom: 2}}>
             <Typography variant={"h6"}>{questionnaire.name}</Typography>
-            {/*<RichTextDisplay content={questionnaire.description}/>*/}
           </Stack>
         </Grid>
         <Grid item xs={12} mb={2}>
@@ -310,41 +307,49 @@ export default function QuestionnaireStatistics() {
             </Button></Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12}><Grid container spacing={1}>
+        <Grid item xs={12}><Grid container spacing={2}>
           <Grid item xs={12} sm={true}>
-            <TextField type={"search"}
-                       placeholder={"Search by username or full name"}
-                       fullWidth
-                       onChange={handleStatisticsSearch}/>
-          </Grid>
-          <Grid item xs={12} sm={"auto"}>
-            <Select value={displayedQuestionnaireStatus} onChange={handleSetStatus}
-                    sx={{minWidth: 150}}>
-              <MenuItem value={QuestionnaireStatus.ACTIVE}><Typography>
-                Active
-              </Typography></MenuItem>
-              <MenuItem value={QuestionnaireStatus.TEST}><Typography>
-                Test
-              </Typography></MenuItem>
-            </Select>
+            <Stack direction={"row"} spacing={0.5} alignItems={"center"}>
+              <FormControl>
+                <InputLabel id="status_select_label">Status</InputLabel>
+                <Select labelId={"status_select_label"} label={"Status"} value={displayedQuestionnaireStatus}
+                        onChange={handleSetStatus}
+                        sx={{minWidth: 150}}>
+                  <MenuItem value={QuestionnaireStatus.ACTIVE}><Typography>
+                    Active
+                  </Typography></MenuItem>
+                  <MenuItem value={QuestionnaireStatus.TEST}><Typography>
+                    Test
+                  </Typography></MenuItem>
+                </Select>
+              </FormControl>
+            </Stack>
           </Grid>
           <Grid item xs={12} sm={"auto"}>
             <URLQueryPagination totalPages={totalPages} defaultPage={1}
                                 onPageChange={handlePageChange}
                                 onSizeChange={handleSizeChange}/>
           </Grid>
+          <Grid item xs={12} mb={2}>
+            <TextField type={"search"}
+                       placeholder={"Search by username, full name or coordinator name"}
+                       fullWidth
+                       onChange={handleStatisticsSearch}/>
+          </Grid>
         </Grid></Grid>
         <Grid item xs={12}><TableContainer component={Paper}>
-          <Table sx={{minWidth: 500}}>
+          <Table sx={{minWidth: 1000, overflowX: "scroll"}}>
             <TableHead>
               <TableRow>
                 <TableCell>Username</TableCell>
-                <TableCell>Full Name</TableCell>
+                <TableCell>Name</TableCell>
                 <TableCell>Max Date</TableCell>
                 <TableCell>Max Points</TableCell>
-                <TableCell>Last Date</TableCell>
-                <TableCell>Last Points</TableCell>
-                <TableCell>Past Submissions</TableCell>
+                <TableCell>Total Submissions</TableCell>
+                <TableCell>Coordinator</TableCell>
+                <TableCell>External Questionnaire</TableCell>
+                <TableCell>External Failure</TableCell>
+                <TableCell>Completion Email</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -356,23 +361,22 @@ export default function QuestionnaireStatistics() {
                 : questionnaireStatistics?.length
                   ? questionnaireStatistics.map((stat) => (
                     <TableRow
-                      key={`${stat.userId}-${stat.lastSubmissionId}-${stat.maxPointSubmissionId}`}
+                      key={`${stat.userId}-${stat.maxPointSubmissionId}`}
                       sx={{'&:last-child td, &:last-child th': {border: 0}}}
                     >
                       <TableCell>{stat.username}</TableCell>
                       <TableCell>
                         <Button color={"inherit"} variant={"text"} sx={{padding: 0, textTransform: "none"}}
-                                startIcon={<MailOutlined/>}
                                 onClick={() => handleContactClick(stat)}>
-                          {stat.fullName}
+                          <Stack spacing={0.5} alignItems={"center"} justifyContent={"left"}
+                                 direction={"row"}><MailOutlined/><Typography
+                            whiteSpace={"nowrap"}>{stat.fullName}</Typography></Stack>
                         </Button>
                       </TableCell>
                       {hasValidSubmission(stat)
                         ? <>
                           <TableCell> {getLocalizedDateTime(new Date(stat.maxPointSubmissionCreatedAt as string))}</TableCell>
                           <TableCell>{stat.maxPointSubmissionReceivedPoints} / {stat.questionnaireMaxPoints}</TableCell>
-                          <TableCell>{getLocalizedDateTime(new Date(stat.lastSubmissionCreatedAt as string))}</TableCell>
-                          <TableCell>{stat.lastSubmissionReceivedPoints} / {stat.questionnaireMaxPoints}</TableCell>
                           <TableCell>{stat.submissionCount}</TableCell>
                         </>
                         : <>
@@ -380,6 +384,11 @@ export default function QuestionnaireStatistics() {
                           <TableCell>-</TableCell><TableCell>-</TableCell>
                           <TableCell>-</TableCell><TableCell>0</TableCell>
                         </>}
+                      <TableCell><Typography
+                        whiteSpace={"nowrap"}>{stat.currentCoordinatorFullName}</Typography></TableCell>
+                      <TableCell>{stat.hasExternalTestQuestionnaire ? <Check/> : <Close/>}</TableCell>
+                      <TableCell>{stat.hasExternalTestFailure ? <Check/> : <Close/>}</TableCell>
+                      <TableCell>{stat.receivedSuccessfulCompletionEmail ? <Check/> : <Close/>}</TableCell>
                     </TableRow>
                   ))
                   : <TableRow>
