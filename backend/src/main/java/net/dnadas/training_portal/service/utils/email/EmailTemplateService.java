@@ -2,6 +2,8 @@ package net.dnadas.training_portal.service.utils.email;
 
 import net.dnadas.training_portal.dto.email.EmailRequestDto;
 import net.dnadas.training_portal.dto.verification.VerificationTokenDto;
+import net.dnadas.training_portal.model.group.project.Project;
+import net.dnadas.training_portal.model.user.ApplicationUser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -69,5 +71,14 @@ public class EmailTemplateService {
       "%s/redirect/invitation?code=%s&id=%s", verificationTokenDto);
     return new EmailRequestDto(email, "Registration verification to Training Portal",
       String.format(template, username, verificationUrl));
+  }
+
+  public EmailRequestDto getCompletionEmailDto(ApplicationUser user, Project project)
+    throws IOException {
+    String path = "templates/project_successful_completion_email.html";
+    String template = getTemplate(path);
+    return new EmailRequestDto(user.getEmail(),
+      "Successful completion of project " + project.getName() + " in Training Portal",
+      String.format(template, user.getFullName(), project.getName()));
   }
 }

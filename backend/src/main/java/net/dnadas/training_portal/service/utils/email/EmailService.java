@@ -9,6 +9,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class EmailService {
@@ -18,12 +20,28 @@ public class EmailService {
   private String systemSmtpAddress;
 
   public void sendMailToUserAddress(EmailRequestDto mailRequest) throws MessagingException {
+    MimeMessage message = getMimeMessage(mailRequest);
+    javaMailSender.send(message);
+  }
+
+  public void sendMailsToUserAddresses(List<EmailRequestDto> mailRequests)
+    throws MessagingException {
+    MimeMessage[] messages = new MimeMessage[mailRequests.size()];
+    int i = 0;
+    for (EmailRequestDto request : mailRequests) {
+      MimeMessage message = getMimeMessage(request);
+      messages[i++] = message;
+    }
+    javaMailSender.send(messages);
+  }
+
+  private MimeMessage getMimeMessage(EmailRequestDto request) throws MessagingException {
     MimeMessage message = javaMailSender.createMimeMessage();
     MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-    helper.setTo(mailRequest.to());
+    helper.setTo(request.to());
     helper.setFrom(systemSmtpAddress);
-    helper.setSubject(mailRequest.subject());
-    helper.setText(mailRequest.content(), true);
-    javaMailSender.send(message);
+    helper.setSubject(request.subject());
+    helper.setText(request.content(), true);
+    return message;
   }
 }

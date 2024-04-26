@@ -42,4 +42,18 @@ public interface ApplicationUserDao extends JpaRepository<ApplicationUser, Long>
 
   Optional<ApplicationUser> findByUsername(String username);
 
+  @Query("SELECT DISTINCT u FROM Project p " +
+    "JOIN p.assignedMembers u " +
+    "JOIN p.questionnaires q " +
+    "JOIN q.submissions qs " +
+    "WHERE p.id = :projectId " +
+    "AND p.userGroup.id = :groupId " +
+    "AND qs.maxPoints = qs.questionnaire.maxPoints " +
+    "AND u.receivedSuccessfulCompletionEmail = false " +
+    "AND u.hasExternalTestQuestionnaire = true " +
+    "AND u.hasExternalTestFailure = true " +
+    "ORDER BY u.username ASC")
+  List<ApplicationUser> findUsersWithCompletedRequirementsForProject(
+    Long groupId, Long projectId);
+
 }

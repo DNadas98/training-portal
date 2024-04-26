@@ -43,8 +43,8 @@ import ProjectAssignedMembers from "../../projects/pages/members/ProjectAssigned
 import CoordinatorQuestionnaires
   from "../../questionnaires/pages/coordinator/questionnaires/CoordinatorQuestionnaires.tsx";
 import AdminLayout from "../../admin/layout/AdminLayout.tsx";
-import UserPreRegistrationPage from "../../admin/pages/userPreRegistration/UserPreRegistrationPage.tsx";
 import InvitationRedirect from "../../authentication/pages/redirect/InvitationRedirect.tsx";
+import AdminDashboard from "../../admin/pages/adminDashboard/adminDashboard.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -209,7 +209,7 @@ const appRouter = createBrowserRouter([
       {
         element: <AdminLayout/>,
         children: [
-          {path: "", element: <UserPreRegistrationPage/>},
+          {path: "", element: <AdminDashboard/>},
           {path: "*", element: <NotFound/>}
         ]
       }

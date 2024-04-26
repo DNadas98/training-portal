@@ -12,10 +12,14 @@ import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx"
 import UserPreRegistrationReport from "./components/UserPreRegistrationReport.tsx";
 import {formatISO} from "date-fns";
 import useAuthFetch from "../../../common/api/hooks/useAuthFetch.tsx";
+import {Avatar, Button, Card, CardActions, CardHeader, Grid, Typography, useTheme} from "@mui/material";
+import {MailRounded} from "@mui/icons-material";
+import CompletionMailReport from "./components/CompletionMailReport.tsx";
+import {CompletionMailReportDto} from "../../dto/CompletionMailReportDto.ts";
 
 //TODO: add backend search filtering, pagination if necessary
 
-export default function UserPreRegistrationPage() {
+export default function AdminDashboard() {
   const [loading, setLoading] = useState<boolean>(false);
   const [downloadLoading, setDownloadLoading] = useState<boolean>(false);
   const [groupsLoading, setGroupsLoading] = useState<boolean>(true);
@@ -43,6 +47,7 @@ export default function UserPreRegistrationPage() {
   const navigate = useNavigate();
   const authJsonFetch = useAuthJsonFetch();
   const authFetch = useAuthFetch();
+  const theme = useTheme();
 
   const openErrorNotification = (message: string) => notification.openNotification({
     type: "error", vertical: "top", horizontal: "center", message: message
@@ -264,27 +269,80 @@ export default function UserPreRegistrationPage() {
     setExpiresAt(newValue);
   }
 
-  return loading ? <LoadingSpinner/> : <UserPreRegistrationForm
-    groups={groups.filter(group => group.name.trim().toLowerCase().includes(groupFilterValue))}
-    groupsLoading={groupsLoading}
-    selectedGroup={selectedGroup}
-    onGroupSelect={handleGroupSelect}
-    onGroupSearchInputChange={handleGroupSearchInputChange}
-    projects={projects.filter(project => project.name.trim().toLowerCase().includes(projectFilterValue))}
-    projectsLoading={projectsLoading}
-    selectedProject={selectedProject}
-    onProjectSelect={handleProjectSelect}
-    onProjectSearchInputChange={handleProjectSearchInputChange}
-    questionnaires={questionnaires.filter(questionnaire => questionnaire.name.trim().toLowerCase().includes(questionnaireFilterValue))}
-    questionnairesLoading={questionnairesLoading}
-    selectedQuestionnaire={selectedQuestionnaire}
-    onQuestionnaireSelect={handleQuestionnaireSelect}
-    onQuestionnaireSearchInputChange={handleQuestionnaireSearchInputChange}
-    selectedFile={selectedFile}
-    onFileSelect={handleFileSelect}
-    onSubmit={handleSubmit}
-    onBackClick={handleBackClick}
-    onDownloadTemplate={handleDownloadTemplate}
-    expiresAt={expiresAt}
-    onExpiresAtChange={handleExpirationChange}/>;
+  async function handleSendCompletionMail() {
+    const defaultError = "Failed to send successful completion e-mails";
+    try {
+      setLoading(true);
+      if (!selectedGroup || !selectedProject || !selectedQuestionnaire) {
+        openErrorNotification("Select a group, project and questionnaire first!")
+        return;
+      }
+      const response = await authJsonFetch({
+        path: `admin/completion-mail/groups/${selectedGroup.groupId}/projects/${selectedProject.projectId}`,
+        method: "POST"
+      });
+      if (!response || !response.data || response.status > 399) {
+        openErrorNotification(response?.error ?? defaultError);
+        return;
+      }
+      const reportDto: CompletionMailReportDto = response.data;
+      dialog.openDialog({
+        oneActionOnly: true, confirmText: "Ok", onConfirm: () => {
+        },
+        content: <CompletionMailReport
+          totalUsers={reportDto.totalUsers}
+          successful={reportDto.successful}
+          failed={reportDto.failed}/>
+      });
+    } catch (e) {
+      openErrorNotification(defaultError);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return loading ? <LoadingSpinner/> :
+    <Grid container justifyContent={"center"} alignItems={"center"} spacing={2}>
+      <Grid item xs={10} sm={8}>
+        <UserPreRegistrationForm
+          groups={groups.filter(group => group.name.trim().toLowerCase().includes(groupFilterValue))}
+          groupsLoading={groupsLoading}
+          selectedGroup={selectedGroup}
+          onGroupSelect={handleGroupSelect}
+          onGroupSearchInputChange={handleGroupSearchInputChange}
+          projects={projects.filter(project => project.name.trim().toLowerCase().includes(projectFilterValue))}
+          projectsLoading={projectsLoading}
+          selectedProject={selectedProject}
+          onProjectSelect={handleProjectSelect}
+          onProjectSearchInputChange={handleProjectSearchInputChange}
+          questionnaires={questionnaires.filter(questionnaire => questionnaire.name.trim().toLowerCase().includes(questionnaireFilterValue))}
+          questionnairesLoading={questionnairesLoading}
+          selectedQuestionnaire={selectedQuestionnaire}
+          onQuestionnaireSelect={handleQuestionnaireSelect}
+          onQuestionnaireSearchInputChange={handleQuestionnaireSearchInputChange}
+          selectedFile={selectedFile}
+          onFileSelect={handleFileSelect}
+          onSubmit={handleSubmit}
+          onBackClick={handleBackClick}
+          onDownloadTemplate={handleDownloadTemplate}
+          expiresAt={expiresAt}
+          onExpiresAtChange={handleExpirationChange}/>
+      </Grid>
+      <Grid item xs={10} sm={8}><Card>
+        <CardHeader title={"Send Successful Completion E-mails"}
+                    titleTypographyProps={{variant: "h6"}}
+                    subheader={<Typography variant={"body2"}>
+                      Please select the group, project and questionnaire in the form above!
+                    </Typography>}
+                    avatar={
+                      <Avatar variant={"rounded"} sx={{backgroundColor: theme.palette.primary.main}}>
+                        <MailRounded/>
+                      </Avatar>}/>
+        <CardActions>
+          <Button onClick={() => handleSendCompletionMail().then()}>
+            Send E-mails
+          </Button>
+        </CardActions>
+      </Card></Grid>
+    </Grid>;
 }
