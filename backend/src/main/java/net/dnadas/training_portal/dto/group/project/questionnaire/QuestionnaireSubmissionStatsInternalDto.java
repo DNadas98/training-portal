@@ -5,7 +5,11 @@ import java.time.Instant;
 public record QuestionnaireSubmissionStatsInternalDto(
   String questionnaireName, Integer questionnaireMaxPoints, Long maxPointSubmissionId,
   Instant maxPointSubmissionCreatedAt,
-  Integer maxPointSubmissionReceivedPoints, Long lastSubmissionId, Instant lastSubmissionCreatedAt,
-  Integer lastSubmissionReceivedPoints,
-  Long userId, String username, String fullName, String email, Long submissionCount) {
+  Integer maxPointSubmissionReceivedPoints,
+  Long userId, String username, String fullName, String email,
+  String currentCoordinatorFullName,
+  Boolean hasExternalTestQuestionnaire,
+  Boolean hasExternalTestFailure,
+  Boolean receivedSuccessfulCompletionEmail,
+  Long submissionCount) {
 }

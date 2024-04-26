@@ -65,14 +65,12 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
   @Query(
     value =
       "SELECT DISTINCT new net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionStatsInternalDto(" +
-        "q.name, q.maxPoints, " +
+        "q.name, " +
+        "(SELECT maxqs.maxPoints FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
         "(SELECT maxqs.id FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
         "(SELECT maxqs.createdAt FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
         "(SELECT maxqs.receivedPoints FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
-        "(SELECT lastqs.id FROM QuestionnaireSubmission lastqs WHERE lastqs.questionnaire.id = q.id AND lastqs.status = :status AND lastqs.user.id = u.id ORDER BY lastqs.createdAt DESC  LIMIT 1), " +
-        "(SELECT lastqs.createdAt FROM QuestionnaireSubmission lastqs WHERE lastqs.questionnaire.id = q.id AND lastqs.status = :status AND lastqs.user.id = u.id ORDER BY lastqs.createdAt DESC  LIMIT 1), " +
-        "(SELECT lastqs.receivedPoints FROM QuestionnaireSubmission lastqs WHERE lastqs.questionnaire.id = q.id AND lastqs.status = :status AND lastqs.user.id = u.id ORDER BY lastqs.createdAt DESC  LIMIT 1), " +
-        "u.id, u.username, u.fullName, u.email, " +
+        "u.id, u.username, u.fullName, u.email, u.currentCoordinatorFullName, u.hasExternalTestQuestionnaire, u.hasExternalTestFailure, u.receivedSuccessfulCompletionEmail, " +
         "(SELECT COUNT (DISTINCT qs1.id) FROM QuestionnaireSubmission qs1 WHERE qs1.questionnaire.id=q.id AND qs1.user.id = u.id AND qs1.status = :status)) " +
         "FROM Project p " +
         "INNER JOIN Questionnaire q ON q.id = :questionnaireId " +
@@ -80,7 +78,7 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
         "INNER JOIN qs.user u " +
         "WHERE p.id = :projectId " +
         "AND p.userGroup.id = :groupId " +
-        "AND (LOWER(u.username) LIKE %:searchValue% OR LOWER(u.fullName) LIKE %:searchValue%) " +
+        "AND (LOWER(u.username) LIKE %:searchValue% OR LOWER(u.fullName) LIKE %:searchValue% OR LOWER(u.currentCoordinatorFullName) LIKE %:searchValue%) " +
         "AND EXISTS (SELECT qs2 FROM QuestionnaireSubmission qs2 WHERE qs2.questionnaire.id = q.id AND qs2.user.id = u.id " +
         "AND qs2.status = :status) " +
         "ORDER BY u.username ASC",
@@ -91,7 +89,7 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
       "JOIN qs.user u " +
       "WHERE p.id = :projectId AND p.userGroup.id = :groupId AND q.id = :questionnaireId " +
       "AND qs.status = :status " +
-      "AND (LOWER(u.username) LIKE %:searchValue% OR LOWER(u.fullName) LIKE %:searchValue%) " +
+      "AND (LOWER(u.username) LIKE %:searchValue% OR LOWER(u.fullName) LIKE %:searchValue% OR LOWER(u.currentCoordinatorFullName) LIKE %:searchValue%) " +
       "AND EXISTS (SELECT 1 FROM QuestionnaireSubmission qs2 WHERE qs2.questionnaire.id = q.id AND qs2.user.id = u.id AND qs2.status = :status)"
   )
   Page<QuestionnaireSubmissionStatsInternalDto> getQuestionnaireSubmissionStatisticsByStatus(
@@ -105,10 +103,7 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
         "(SELECT maxqs.id FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
         "(SELECT maxqs.createdAt FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
         "(SELECT maxqs.receivedPoints FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
-        "(SELECT lastqs.id FROM QuestionnaireSubmission lastqs WHERE lastqs.questionnaire.id = q.id AND lastqs.status = :status AND lastqs.user.id = u.id ORDER BY lastqs.createdAt DESC  LIMIT 1), " +
-        "(SELECT lastqs.createdAt FROM QuestionnaireSubmission lastqs WHERE lastqs.questionnaire.id = q.id AND lastqs.status = :status AND lastqs.user.id = u.id ORDER BY lastqs.createdAt DESC  LIMIT 1), " +
-        "(SELECT lastqs.receivedPoints FROM QuestionnaireSubmission lastqs WHERE lastqs.questionnaire.id = q.id AND lastqs.status = :status AND lastqs.user.id = u.id ORDER BY lastqs.createdAt DESC  LIMIT 1), " +
-        "u.id, u.username, u.fullName, u.email, " +
+        "u.id, u.username, u.fullName, u.email, u.currentCoordinatorFullName, u.hasExternalTestQuestionnaire, u.hasExternalTestFailure, u.receivedSuccessfulCompletionEmail, " +
         "(SELECT COUNT (DISTINCT qs1.id) FROM QuestionnaireSubmission qs1 WHERE qs1.questionnaire.id=q.id AND qs1.user.id = u.id AND qs1.status = :status)) " +
         "FROM Project p " +
         "INNER JOIN Questionnaire q ON q.id = :questionnaireId " +
@@ -116,7 +111,7 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
         "INNER JOIN qs.user u " +
         "WHERE p.id = :projectId " +
         "AND p.userGroup.id = :groupId " +
-        "AND (LOWER(u.username) LIKE %:searchValue% OR LOWER(u.fullName) LIKE %:searchValue%) " +
+        "AND (LOWER(u.username) LIKE %:searchValue% OR LOWER(u.fullName) LIKE %:searchValue% OR LOWER(u.currentCoordinatorFullName) LIKE %:searchValue%) " +
         "AND EXISTS (SELECT qs2 FROM QuestionnaireSubmission qs2 WHERE qs2.questionnaire.id = q.id AND qs2.user.id = u.id " +
         "AND qs2.status = :status) " +
         "ORDER BY u.username ASC",
@@ -127,7 +122,7 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
       "JOIN qs.user u " +
       "WHERE p.id = :projectId AND p.userGroup.id = :groupId AND q.id = :questionnaireId " +
       "AND qs.status = :status " +
-      "AND (LOWER(u.username) LIKE %:searchValue% OR LOWER(u.fullName) LIKE %:searchValue%) " +
+      "AND (LOWER(u.username) LIKE %:searchValue% OR LOWER(u.fullName) LIKE %:searchValue% OR LOWER(u.currentCoordinatorFullName) LIKE %:searchValue%) " +
       "AND EXISTS (SELECT 1 FROM QuestionnaireSubmission qs2 WHERE qs2.questionnaire.id = q.id AND qs2.user.id = u.id AND qs2.status = :status)"
   )
   Stream<QuestionnaireSubmissionStatsInternalDto> streamQuestionnaireSubmissionStatisticsByStatus(
@@ -141,24 +136,21 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
         "(SELECT maxqs.id FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
         "(SELECT maxqs.createdAt FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
         "(SELECT maxqs.receivedPoints FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
-        "(SELECT lastqs.id FROM QuestionnaireSubmission lastqs WHERE lastqs.questionnaire.id = q.id AND lastqs.status = :status AND lastqs.user.id = u.id ORDER BY lastqs.createdAt DESC  LIMIT 1), " +
-        "(SELECT lastqs.createdAt FROM QuestionnaireSubmission lastqs WHERE lastqs.questionnaire.id = q.id AND lastqs.status = :status AND lastqs.user.id = u.id ORDER BY lastqs.createdAt DESC  LIMIT 1), " +
-        "(SELECT lastqs.receivedPoints FROM QuestionnaireSubmission lastqs WHERE lastqs.questionnaire.id = q.id AND lastqs.status = :status AND lastqs.user.id = u.id ORDER BY lastqs.createdAt DESC  LIMIT 1), " +
-        "u.id, u.username, u.fullName, u.email, " +
+        "u.id, u.username, u.fullName, u.email, u.currentCoordinatorFullName, u.hasExternalTestQuestionnaire, u.hasExternalTestFailure, u.receivedSuccessfulCompletionEmail, " +
         "(SELECT COUNT (DISTINCT qs1.id) FROM QuestionnaireSubmission qs1 WHERE qs1.questionnaire.id=q.id AND qs1.user.id = u.id AND qs1.status = :status)) " +
         "FROM Project p " +
         "INNER JOIN p.assignedMembers u " +
         "INNER JOIN Questionnaire q ON q.id = :questionnaireId " +
         "WHERE p.id = :projectId " +
         "AND p.userGroup.id = :groupId " +
-        "AND (LOWER(u.username) LIKE %:searchValue% OR LOWER(u.fullName) LIKE %:searchValue%) " +
+        "AND (LOWER(u.username) LIKE %:searchValue% OR LOWER(u.fullName) LIKE %:searchValue% OR LOWER(u.currentCoordinatorFullName) LIKE %:searchValue%) " +
         "AND p NOT MEMBER OF u.editorProjects " +
         "AND p NOT MEMBER OF u.adminProjects " +
         "AND p NOT MEMBER OF u.coordinatorProjects " +
         "ORDER BY u.username ASC",
     countQuery = "SELECT COUNT(DISTINCT u.id) " +
       "FROM Project p " +
-      "INNER JOIN p.assignedMembers u ON (LOWER(u.username) LIKE %:searchValue% OR LOWER(u.fullName) LIKE %:searchValue%) " +
+      "INNER JOIN p.assignedMembers u ON (LOWER(u.username) LIKE %:searchValue% OR LOWER(u.fullName) LIKE %:searchValue% OR LOWER(u.currentCoordinatorFullName) LIKE %:searchValue%) " +
       "WHERE p.id = :projectId AND p.userGroup.id = :groupId " +
       "AND p NOT MEMBER OF u.editorProjects " +
       "AND p NOT MEMBER OF u.adminProjects " +
@@ -175,24 +167,21 @@ public interface QuestionnaireSubmissionDao extends JpaRepository<QuestionnaireS
         "(SELECT maxqs.id FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
         "(SELECT maxqs.createdAt FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
         "(SELECT maxqs.receivedPoints FROM QuestionnaireSubmission maxqs WHERE maxqs.questionnaire.id = q.id AND maxqs.status = :status AND maxqs.user.id = u.id ORDER BY maxqs.receivedPoints DESC, maxqs.createdAt DESC LIMIT 1), " +
-        "(SELECT lastqs.id FROM QuestionnaireSubmission lastqs WHERE lastqs.questionnaire.id = q.id AND lastqs.status = :status AND lastqs.user.id = u.id ORDER BY lastqs.createdAt DESC  LIMIT 1), " +
-        "(SELECT lastqs.createdAt FROM QuestionnaireSubmission lastqs WHERE lastqs.questionnaire.id = q.id AND lastqs.status = :status AND lastqs.user.id = u.id ORDER BY lastqs.createdAt DESC  LIMIT 1), " +
-        "(SELECT lastqs.receivedPoints FROM QuestionnaireSubmission lastqs WHERE lastqs.questionnaire.id = q.id AND lastqs.status = :status AND lastqs.user.id = u.id ORDER BY lastqs.createdAt DESC  LIMIT 1), " +
-        "u.id, u.username, u.fullName, u.email, " +
+        "u.id, u.username, u.fullName, u.email, u.currentCoordinatorFullName, u.hasExternalTestQuestionnaire, u.hasExternalTestFailure, u.receivedSuccessfulCompletionEmail, " +
         "(SELECT COUNT (DISTINCT qs1.id) FROM QuestionnaireSubmission qs1 WHERE qs1.questionnaire.id=q.id AND qs1.user.id = u.id AND qs1.status = :status)) " +
         "FROM Project p " +
         "INNER JOIN p.assignedMembers u " +
         "INNER JOIN Questionnaire q ON q.id = :questionnaireId " +
         "WHERE p.id = :projectId " +
         "AND p.userGroup.id = :groupId " +
-        "AND (LOWER(u.username) LIKE %:searchValue% OR LOWER(u.fullName) LIKE %:searchValue%) " +
+        "AND (LOWER(u.username) LIKE %:searchValue% OR LOWER(u.fullName) LIKE %:searchValue% OR LOWER(u.currentCoordinatorFullName) LIKE %:searchValue%) " +
         "AND p NOT MEMBER OF u.editorProjects " +
         "AND p NOT MEMBER OF u.adminProjects " +
         "AND p NOT MEMBER OF u.coordinatorProjects " +
         "ORDER BY u.username ASC",
     countQuery = "SELECT COUNT(DISTINCT u.id) " +
       "FROM Project p " +
-      "INNER JOIN p.assignedMembers u ON (LOWER(u.username) LIKE %:searchValue% OR LOWER(u.fullName) LIKE %:searchValue%) " +
+      "INNER JOIN p.assignedMembers u ON (LOWER(u.username) LIKE %:searchValue% OR LOWER(u.fullName) LIKE %:searchValue% OR LOWER(u.currentCoordinatorFullName) LIKE %:searchValue%) " +
       "WHERE p.id = :projectId AND p.userGroup.id = :groupId " +
       "AND p NOT MEMBER OF u.editorProjects " +
       "AND p NOT MEMBER OF u.adminProjects " +

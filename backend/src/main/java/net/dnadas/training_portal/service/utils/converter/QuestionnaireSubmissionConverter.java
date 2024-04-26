@@ -52,29 +52,22 @@ public class QuestionnaireSubmissionConverter {
   public QuestionnaireSubmissionStatsResponseDto toQuestionnaireSubmissionStatsResponseDto(
     QuestionnaireSubmissionStatsInternalDto dto) {
     Instant maxPointSubmissionCreatedAt = dto.maxPointSubmissionCreatedAt();
-    String maxPointSubmissionCreatedAtResult;
+    String maxPointSubmissionCreatedAtDate;
     if (maxPointSubmissionCreatedAt == null) {
-      maxPointSubmissionCreatedAtResult = null;
+      maxPointSubmissionCreatedAtDate = null;
     } else {
-      maxPointSubmissionCreatedAtResult = dateTimeService.toDisplayedDate(
+      maxPointSubmissionCreatedAtDate = dateTimeService.toDisplayedDate(
         dto.maxPointSubmissionCreatedAt());
-    }
-    Instant lastSubmissionCreatedAt = dto.lastSubmissionCreatedAt();
-    String lastSubmissionCreatedAtResult;
-    if (lastSubmissionCreatedAt == null) {
-      lastSubmissionCreatedAtResult = null;
-    } else {
-      lastSubmissionCreatedAtResult = dateTimeService.toDisplayedDate(
-        dto.lastSubmissionCreatedAt());
     }
     return new QuestionnaireSubmissionStatsResponseDto(
       dto.questionnaireName(), dto.questionnaireMaxPoints(), dto.maxPointSubmissionId(),
-      maxPointSubmissionCreatedAtResult,
+      maxPointSubmissionCreatedAtDate,
       dto.maxPointSubmissionReceivedPoints(),
-      dto.lastSubmissionId(),
-      lastSubmissionCreatedAtResult,
-      dto.lastSubmissionReceivedPoints(),
-      dto.userId(), dto.username(), dto.fullName(), dto.email(), dto.submissionCount());
+      dto.userId(), dto.username(), dto.fullName(), dto.email(),
+      dto.currentCoordinatorFullName(),
+      dto.hasExternalTestQuestionnaire(), dto.hasExternalTestFailure(),
+      dto.receivedSuccessfulCompletionEmail(),
+      dto.submissionCount());
   }
 
   private SubmittedQuestionResponseDto toSubmittedQuestionResponseDto(

@@ -48,7 +48,7 @@ public class PreRegistrationService {
   private static final Integer RECEIVED_CSV_MAX_SIZE = 400000;
   private static final String RECEIVED_CSV_CONTENT_TYPE = "text/csv";
   private static final String CSV_DELIMITER = ",";
-  private static final List<String> CSV_HEADERS = List.of("Username", "Email", "Full Name",
+  private static final List<String> CSV_HEADERS = List.of("Username", "Full Name", "Email",
     "Group Permissions: available: " + PermissionType.GROUP_ADMIN.name() + " " +
       PermissionType.GROUP_EDITOR.name() + " and " + PermissionType.GROUP_MEMBER.name() +
       " default: " + PermissionType.GROUP_MEMBER.name(),
@@ -72,11 +72,11 @@ public class PreRegistrationService {
 
   public void getPreRegisterUsersCsvTemplate(OutputStream outputStream) throws IOException {
     List<List<String>> exampleData = List.of(
-      List.of("exampleUser1", "example1@example.com", "Example User 1", "GROUP_EDITOR",
+      List.of("exampleUser1", "Example User 1", "example1@example.com", "GROUP_EDITOR",
         "PROJECT_ASSIGNED_MEMBER&PROJECT_EDITOR&PROJECT_ADMIN", "NULL", "NULL", "NULL"),
-      List.of("exampleUser2", "example2@example.com", "Example User 2", "GROUP_MEMBER",
+      List.of("exampleUser2", "Example User 2", "example2@example.com", "GROUP_MEMBER",
         "PROJECT_ASSIGNED_MEMBER&PROJECT_COORDINATOR", "NULL", "NULL", "NULL"),
-      List.of("exampleUser3", "example3@example.com", "Example User 3", "GROUP_MEMBER",
+      List.of("exampleUser3", "Example User 3", "example3@example.com", "GROUP_MEMBER",
         "PROJECT_ASSIGNED_MEMBER", "Example Coordinator", "TRUE", "FALSE"));
     csvUtilsService.writeCsvToStream(exampleData, CSV_DELIMITER, CSV_HEADERS, outputStream);
   }

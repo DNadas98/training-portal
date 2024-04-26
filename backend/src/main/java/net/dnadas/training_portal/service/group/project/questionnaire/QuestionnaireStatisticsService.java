@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionStatsInternalDto;
 import net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireSubmissionStatsResponseDto;
-import net.dnadas.training_portal.model.group.project.questionnaire.QuestionnaireDao;
 import net.dnadas.training_portal.model.group.project.questionnaire.QuestionnaireStatus;
 import net.dnadas.training_portal.model.group.project.questionnaire.QuestionnaireSubmissionDao;
 import net.dnadas.training_portal.service.utils.converter.QuestionnaireSubmissionConverter;
@@ -51,9 +50,10 @@ public class QuestionnaireStatisticsService {
   }
 
   private static List<String> getQuestionnaireStatisticsColumns() {
-    return List.of("Username", "Full Name", "E-mail Address", "Max Points Submission Date",
-      "Max Points Submission Received Points", "Last Submission Date",
-      "Last Submission Received Points", "Questionnaire Total Points", "Total Submissions");
+    return List.of("Username", "Full Name", "E-mail Address", "Questionnaire Total Points",
+      "Max Points Submission Received Points", "Max Points Submission Date",
+      "Total Submissions", "Current Coordinator", "Has External Test Questionnaire",
+      "Has External Test Failure", "Received Successful Completion Email");
   }
 
   private static List<Function<QuestionnaireSubmissionStatsInternalDto, Object>> getQuestionnaireStatisticsValueExtractors(
@@ -62,16 +62,16 @@ public class QuestionnaireStatisticsService {
       QuestionnaireSubmissionStatsInternalDto::username,
       QuestionnaireSubmissionStatsInternalDto::fullName,
       QuestionnaireSubmissionStatsInternalDto::email,
+      QuestionnaireSubmissionStatsInternalDto::questionnaireMaxPoints,
+      QuestionnaireSubmissionStatsInternalDto::maxPointSubmissionReceivedPoints,
       dto -> dto.maxPointSubmissionCreatedAt() == null
         ? null
         : dateTimeFormatter.format(dto.maxPointSubmissionCreatedAt().atZone(timeZoneId)),
-      QuestionnaireSubmissionStatsInternalDto::maxPointSubmissionReceivedPoints,
-      dto -> dto.lastSubmissionCreatedAt() == null
-        ? null
-        : dateTimeFormatter.format(dto.lastSubmissionCreatedAt().atZone(timeZoneId)),
-      QuestionnaireSubmissionStatsInternalDto::lastSubmissionReceivedPoints,
-      QuestionnaireSubmissionStatsInternalDto::questionnaireMaxPoints,
-      QuestionnaireSubmissionStatsInternalDto::submissionCount
+      QuestionnaireSubmissionStatsInternalDto::submissionCount,
+      QuestionnaireSubmissionStatsInternalDto::currentCoordinatorFullName,
+      QuestionnaireSubmissionStatsInternalDto::hasExternalTestQuestionnaire,
+      QuestionnaireSubmissionStatsInternalDto::hasExternalTestFailure,
+      QuestionnaireSubmissionStatsInternalDto::receivedSuccessfulCompletionEmail
     );
   }
 

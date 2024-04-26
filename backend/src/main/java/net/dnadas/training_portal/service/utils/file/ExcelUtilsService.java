@@ -47,6 +47,7 @@ public class ExcelUtilsService {
           case Integer integer -> cell.setCellValue(integer);
           case Long l -> cell.setCellValue(l);
           case Double v -> cell.setCellValue(v);
+          case Boolean b -> cell.setCellValue(b);
           case LocalDateTime localDateTime -> {
             cell.setCellValue(localDateTime);
             cell.setCellStyle(dateCellStyle);
