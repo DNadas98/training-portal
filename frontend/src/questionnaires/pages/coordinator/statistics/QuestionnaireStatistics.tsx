@@ -183,11 +183,11 @@ export default function QuestionnaireStatistics() {
         .concat(".xlsx");
       const response = await authFetch({
         path:
-          `groups/${groupId}/projects/${projectId}/coordinator/questionnaires/${questionnaireId}/submissions/stats/excel?status=${displayedQuestionnaireStatus}&timeZone=${userTimezone}`,
+          `groups/${groupId}/projects/${projectId}/coordinator/questionnaires/${questionnaireId}/submissions/stats/excel?status=${displayedQuestionnaireStatus}&timeZone=${userTimezone}&search=${usernameSearchValue}`,
         contentType: "application/*"
       });
       if (!response || response.status > 399) {
-        handleErrorNotification(response?.error ?? "Failed to download template");
+        handleErrorNotification(response?.error ?? "Failed to download statistics");
         return;
       }
       const blob = await response?.blob();
@@ -198,7 +198,7 @@ export default function QuestionnaireStatistics() {
       link.click();
       link.parentNode?.removeChild(link);
     } catch (e) {
-      handleErrorNotification("Failed to download template");
+      handleErrorNotification("Failed to download statistics");
     } finally {
       setDownloadLoading(false);
     }
@@ -380,9 +380,7 @@ export default function QuestionnaireStatistics() {
                           <TableCell>{stat.submissionCount}</TableCell>
                         </>
                         : <>
-                          <TableCell>-</TableCell>
-                          <TableCell>-</TableCell><TableCell>-</TableCell>
-                          <TableCell>-</TableCell><TableCell>0</TableCell>
+                          <TableCell>-</TableCell><TableCell>-</TableCell><TableCell>0</TableCell>
                         </>}
                       <TableCell><Typography
                         whiteSpace={"nowrap"}>{stat.currentCoordinatorFullName}</Typography></TableCell>
