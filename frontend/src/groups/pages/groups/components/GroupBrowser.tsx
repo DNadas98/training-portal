@@ -4,6 +4,7 @@ import GroupList from "./GroupList.tsx";
 import {FormEvent} from "react";
 import AddIcon from "../../../../common/utils/components/AddIcon.tsx";
 import {Link} from "react-router-dom";
+import useLocalized from "../../../../common/localization/hooks/useLocalized.tsx";
 
 interface GroupBrowserProps {
   groupsWithUserLoading: boolean,
@@ -19,23 +20,24 @@ interface GroupBrowserProps {
 }
 
 export default function GroupBrowser(props: GroupBrowserProps) {
+  const localized = useLocalized();
   return (
     <Grid container spacing={2} justifyContent={"center"} alignItems={"top"}>
       <Grid item xs={10} sm={8} md={5} lg={4}>
         <Stack spacing={2}>
           <Card>
-            <CardHeader title={"Your groups"} sx={{textAlign: "center"}}/>
+            <CardHeader title={localized("pages.groups.browser.your_groups")}/>
             <CardContent>
               <Stack spacing={2} direction={"row"}>
                 {props.isGlobalAdmin
-                  ? <Tooltip title={"Add new group"} arrow>
+                  ? <Tooltip title={localized("pages.groups.browser.add_new_group")} arrow>
                     <IconButton component={Link} to={"/groups/create"}>
                       <AddIcon/>
                     </IconButton>
                   </Tooltip>
                   : <></>}
                 <TextField variant={"standard"} type={"search"}
-                           label={"Search"}
+                           label={localized("inputs.search")}
                            fullWidth
                            onInput={props.handleGroupsWithUserSearch}
                 />
@@ -44,7 +46,7 @@ export default function GroupBrowser(props: GroupBrowserProps) {
           </Card>
           <GroupList loading={props.groupsWithUserLoading}
                      groups={props.groupsWithUser}
-                     notFoundText={"We haven't found any groups."}
+                     notFoundText={localized("pages.groups.browser.groups_not_found")}
                      onActionButtonClick={props.handleViewDashboardClick}
                      userIsMember={true}
                      actionButtonDisabled={props.actionButtonDisabled}/>
@@ -53,17 +55,17 @@ export default function GroupBrowser(props: GroupBrowserProps) {
       <Grid item xs={10} sm={8} md={5} lg={4}>
         <Stack spacing={2}>
           <Card>
-            <CardHeader title={"Groups to join"} sx={{textAlign: "center"}}/>
+            <CardHeader title={localized("pages.groups.browser.groups_to_join")}/>
             <CardContent>
               <TextField variant={"standard"} type={"search"} fullWidth
-                         label={"Search"}
+                         label={localized("inputs.search")}
                          onInput={props.handleGroupsWithoutUserSearch}
               />
             </CardContent>
           </Card>
           <GroupList loading={props.groupsWithoutUserLoading}
                      groups={props.groupsWithoutUser}
-                     notFoundText={"We haven't found any groups to join."}
+                     notFoundText={localized("pages.groups.browser.groups_not_found")}
                      onActionButtonClick={props.handleJoinRequestClick}
                      userIsMember={false}
                      actionButtonDisabled={props.actionButtonDisabled}/>

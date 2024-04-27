@@ -108,6 +108,22 @@ export const texts = {
           }
         }
       },
+      "groups": {
+        "browser": {
+          "your_groups": "Your Groups",
+          "add_new_group": "Add New Group",
+          "view_dashboard": "View Dashboard",
+          "request_to_join": "Request to Join",
+          "groups_to_join": "Groups To Join",
+          "groups_not_found": "No groups were found",
+          "send_join_request_success": "Your request to join the selected group was sent successfully",
+          "error": {
+            "load_your_groups_default": "Failed to load your groups",
+            "load_groups_to_join_default": "Failed to load groups to join",
+            "send_join_request_default": "Failed to send join request"
+          }
+        },
+      },
       "error": {
         "not_found": {
           "text": "The page you are looking for does not exist."
@@ -130,6 +146,7 @@ export const texts = {
       "current_password": "Current Password",
       "new_password": "New Password",
       "confirm_new_password": "Confirm new password",
+      "search": "Search",
       "i_accept_the": "I have read and I accept the",
       "legalPolicy": "Terms and Conditions",
       "legalPolicy_hasNotRead_error": "Please open, and read the Terms and Conditions first!",
@@ -245,7 +262,7 @@ export const texts = {
           "change_email": "E-mail cím megváltoztatása",
           "change_password": "Jelszó megváltoztatása",
           "remove_user": "Összes személyes adat törlése",
-          "archive_user_confirmation": "Biztosan archiválja a felhasználóját és véglegesen kitörli minden személyes adatát?",
+          "archive_user_confirmation": "Biztosan archiválja a felhasználóját és véglegesen törli minden személyes adatát?",
           "error": {
             "update_password_default": "A jelszó megváltoztatása során hiba történt",
             "update_email_default": "Az e-mail cím megváltoztatása során hiba történt",
@@ -265,9 +282,25 @@ export const texts = {
             "group_default": "A csoport csatlakozási kérelmek betöltése során hiba történt",
             "group_delete_default": "A csoport csatlakozási kérelem törlése során hiba történt",
             "project_default": "A projek csatlakozási kérelmek betöltése során hiba történt",
-            "project_delete_default": "A projekt csatlakozási kérelem törlése során hiba történt",
+            "project_delete_default": "A projekt csatlakozási kérelem törlése során hiba történt"
           }
         }
+      },
+      "groups": {
+        "browser": {
+          "your_groups": "Az ön csoportjai",
+          "add_new_group": "Hozzon létre csoportot",
+          "view_dashboard": "Tovább a csoporthoz",
+          "request_to_join": "Csatlakozási kérelem küldése",
+          "groups_to_join": "Csoportok, amikhez csatlakozhat",
+          "groups_not_found": "Nem találtunk csoportokat",
+          "send_join_request_success": "A csatlakozási kérelme sikeresen beküldésre került",
+          "error": {
+            "load_your_groups_default": "A csoportjai betöltése során hiba történt.",
+            "load_groups_to_join_default": "A csoportok betöltése során hiba történt.",
+            "send_join_request_default": "A csatlakozási kérelem beküldése során hiba történt."
+          }
+        },
       },
       "error": {
         "not_found": {
@@ -291,6 +324,7 @@ export const texts = {
       "current_password": "Jelenlegi jelszó",
       "new_password": "Új jelszó",
       "confirm_new_password": "Új jelszó megerősítése",
+      "search": "Keresés",
       "i_accept_the": "Elolvastam, és elfogadom a",
       "legalPolicy": "felhasználási feltételeket",
       "legalPolicy_hasNotRead_error": "Kérjük elfogadás előtt nyissa meg, és olvassa el a felhasználási feltételeket!",

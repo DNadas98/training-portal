@@ -6,6 +6,7 @@ import {useNavigate} from "react-router-dom";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 import {useAuthentication} from "../../../authentication/hooks/useAuthentication.ts";
 import {GlobalRole} from "../../../authentication/dto/userInfo/GlobalRole.ts";
+import useLocalized from "../../../common/localization/hooks/useLocalized.tsx";
 
 export default function Groups() {
   const [groupsWithUserLoading, setGroupsWithUserLoading] = useState<boolean>(true);
@@ -17,8 +18,10 @@ export default function Groups() {
   const notification = useNotification();
   const navigate = useNavigate();
   const authentication = useAuthentication();
+  const localized = useLocalized();
 
   async function loadGroupsWithUser() {
+    const defaultError = localized("pages.groups.browser.error.load_your_groups_default");
     try {
       const response = await authJsonFetch({
         path: `groups?withUser=true`
@@ -26,19 +29,24 @@ export default function Groups() {
       if (!response?.status || response.status > 399 || !response?.data) {
         notification.openNotification({
           type: "error", vertical: "top", horizontal: "center",
-          message: `${response?.error ?? "Failed to load your groups"}`
+          message: `${response?.error ?? defaultError}`
         })
         return;
       }
       setGroupsWithUser(response.data as GroupResponsePublicDto[]);
     } catch (e) {
       setGroupsWithUser([]);
+      notification.openNotification({
+        type: "error", vertical: "top", horizontal: "center",
+        message: `${defaultError}`
+      })
     } finally {
       setGroupsWithUserLoading(false);
     }
   }
 
   async function loadGroupsWithoutUser() {
+    const defaultError = localized("pages.groups.browser.error.load_groups_to_join_default");
     try {
       const response = await authJsonFetch({
         path: `groups?withUser=false`
@@ -46,13 +54,17 @@ export default function Groups() {
       if (!response?.status || response.status > 399 || !response?.data) {
         notification.openNotification({
           type: "error", vertical: "top", horizontal: "center",
-          message: `${response?.error ?? "Failed to load groups to join"}`
+          message: `${response?.error ?? defaultError}`
         })
         return;
       }
       setGroupsWithoutUser(response.data as GroupResponsePublicDto[]);
     } catch (e) {
       setGroupsWithoutUser([]);
+      notification.openNotification({
+        type: "error", vertical: "top", horizontal: "center",
+        message: defaultError
+      })
     } finally {
       setGroupsWithoutUserLoading(false);
     }
@@ -91,6 +103,7 @@ export default function Groups() {
   const [actionButtonDisabled, setActionButtonDisabled] = useState(false);
 
   async function sendGroupJoinRequest(groupId: number) {
+    const defaultError=localized("pages.groups.browser.error.send_join_request_default");
     try {
       setActionButtonDisabled(true)
       const response = await authJsonFetch({
@@ -99,19 +112,19 @@ export default function Groups() {
       if (!response?.status || response.status > 399 || !response?.data) {
         notification.openNotification({
           type: "error", vertical: "top", horizontal: "center",
-          message: `${response?.error ?? "Failed to send join request"}`
+          message: `${response?.error ?? defaultError}`
         })
         return;
       }
       notification.openNotification({
         type: "success", vertical: "top", horizontal: "center",
-        message: "Your request to join the selected group was sent successfully"
+        message: localized("pages.groups.browser.send_join_request_success")
       });
       await loadGroupsWithoutUser();
     } catch (e) {
       notification.openNotification({
         type: "error", vertical: "top", horizontal: "center",
-        message: `Failed to send join request`
+        message: defaultError
       })
     } finally {
       setActionButtonDisabled(false);

@@ -55,6 +55,8 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
         },
         styleOverrides: {
           root: {
+            textAlign: "left",
+            wordBreak: "break-word",
             "&.Mui-disabled": {
               opacity: 1,
               color: "unset"

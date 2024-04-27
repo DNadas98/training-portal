@@ -14,6 +14,7 @@ import {GroupResponsePublicDto} from "../../../dto/GroupResponsePublicDto.ts";
 import ExpandIcon from "../../../../common/utils/components/ExpandIcon.tsx";
 import {Link} from "react-router-dom";
 import ForwardIcon from "../../../../common/utils/components/ForwardIcon.tsx";
+import useLocalized from "../../../../common/localization/hooks/useLocalized.tsx";
 
 interface GroupListProps {
   loading: boolean,
@@ -25,7 +26,7 @@ interface GroupListProps {
 }
 
 export default function GroupList(props: GroupListProps) {
-
+  const localized = useLocalized();
   return props.loading
     ? <LoadingSpinner/>
     : props.groups?.length > 0
@@ -36,8 +37,7 @@ export default function GroupList(props: GroupListProps) {
                      sx={{paddingTop: 0.5, paddingBottom: 0.5}}>
             <AccordionSummary expandIcon={<ExpandIcon/>}>
               {props.userIsMember
-                ? <Button component={Link} to={`/groups/${group.groupId}`}
-                          sx={{textTransform: "none"}}>
+                ? <Button component={Link} to={`/groups/${group.groupId}`}>
                   <Stack direction={"row"} alignItems={"center"} spacing={1}>
                     <Typography variant={"h6"} sx={{
                       wordBreak: "break-word",
@@ -64,12 +64,13 @@ export default function GroupList(props: GroupListProps) {
               </Typography>
             </AccordionDetails>
             <AccordionActions>
-              <Button sx={{textTransform: "none"}}
-                      disabled={props.actionButtonDisabled}
+              <Button disabled={props.actionButtonDisabled}
                       onClick={() => {
                         props.onActionButtonClick(group.groupId);
                       }}>
-                {props.userIsMember ? "View Dashboard" : "Request to join"}
+                {props.userIsMember
+                  ? localized("pages.groups.browser.view_dashboard")
+                  : localized("pages.groups.browser.request_to_join")}
               </Button>
             </AccordionActions>
           </Accordion>
