@@ -4,6 +4,7 @@ import ProfileMainCard from "./ProfileMainCard.tsx";
 import FullNameUpdateForm from "./FullNameUpdateForm.tsx";
 import PasswordUpdateForm from "./PasswordUpdateForm.tsx";
 import EmailUpdateForm from "./EmailUpdateForm.tsx";
+import useLocalized from "../../../../common/localization/hooks/useLocalized.tsx";
 
 interface ProfileDashboardProps {
   fullName: string,
@@ -16,8 +17,8 @@ interface ProfileDashboardProps {
   handleFullNameUpdate: (event: any) => Promise<void>,
   handleUserPasswordUpdate: (event: any) => Promise<void>,
   handleUserEmailUpdate: (event: any) => Promise<void>,
-  usernameFormOpen: boolean,
-  setUsernameFormOpen: (value: (((prevState: boolean) => boolean) | boolean)) => void,
+  fullNameFormOpen: boolean,
+  setFullNameFormOpen: (value: (((prevState: boolean) => boolean) | boolean)) => void,
   passwordFormOpen: boolean,
   setPasswordFormOpen: (value: (((prevState: boolean) => boolean) | boolean)) => void,
   emailFormOpen: boolean,
@@ -25,6 +26,7 @@ interface ProfileDashboardProps {
 }
 
 export default function ProfileDashboard(props: ProfileDashboardProps) {
+  const localized = useLocalized();
   return (
     <Grid container justifyContent={"center"}>
       <Grid item xs={10} sm={5} mb={4} lg={3}>
@@ -35,50 +37,51 @@ export default function ProfileDashboard(props: ProfileDashboardProps) {
                            roles={props.roles}
                            onRequestsClick={props.onRequestsClick}/>
           <Card>
-            <CardHeader title={"Groups and Projects"} titleTypographyProps={{variant: "h6"}}/>
+            <CardHeader title={localized("pages.user.profile.groups_and_projects")}
+                        titleTypographyProps={{variant: "h6"}}/>
             <CardContent> <Button sx={{maxWidth: "fit-content"}}
                                   onClick={props.onRequestsClick}
                                   variant={"text"}>
-              Manage Join Requests
+              {localized("pages.user.profile.manage_join_requests")}
             </Button> </CardContent>
           </Card>
           <Card>
-            <CardHeader title={"Manage User Details"} titleTypographyProps={{variant: "h6"}}/>
+            <CardHeader title={localized("pages.user.profile.user_details")} titleTypographyProps={{variant: "h6"}}/>
             <CardContent>
               <Stack spacing={2}>
                 <Button type={"button"} sx={{maxWidth: "fit-content"}}
-                        onClick={() => props.setUsernameFormOpen(true)}>
-                  Change Full Name
+                        onClick={() => props.setFullNameFormOpen(true)}>
+                  {localized("pages.user.profile.change_full_name")}
                 </Button>
                 <Button type={"button"} sx={{maxWidth: "fit-content"}}
                         onClick={() => props.setEmailFormOpen(true)}>
-                  Change E-mail Address
+                  {localized("pages.user.profile.change_email")}
                 </Button>
                 <Button type={"button"} sx={{maxWidth: "fit-content"}}
                         onClick={() => props.setPasswordFormOpen(true)}>
-                  Change Password
+                  {localized("pages.user.profile.change_password")}
                 </Button>
                 <Button type={"button"} sx={{maxWidth: "fit-content"}}
                         disabled={props.applicationUserDeleteLoading}
                         onClick={props.onApplicationUserDelete}
                         variant={"contained"} color={"error"}>
-                  Remove All User Data
+                  {localized("pages.user.profile.remove_user")}
                 </Button>
               </Stack>
             </CardContent>
           </Card>
-          <Dialog open={props.usernameFormOpen} onClose={() => props.setUsernameFormOpen(false)}>
-            <DialogTitle>Change Full Name</DialogTitle>
+          <Dialog open={props.fullNameFormOpen} onClose={() => props.setFullNameFormOpen(false)}>
+            <DialogTitle>{localized("pages.user.profile.change_full_name")}</DialogTitle>
             <DialogContent>
               <FullNameUpdateForm handleFullNameUpdate={props.handleFullNameUpdate} fullName={props.fullName}/>
             </DialogContent>
           </Dialog>
           <Dialog open={props.emailFormOpen} onClose={() => props.setEmailFormOpen(false)}>
-            <DialogTitle>Change E-mail Address</DialogTitle>
+            <DialogTitle>{localized("pages.user.profile.change_email")}</DialogTitle>
             <EmailUpdateForm handleUserEmailUpdate={props.handleUserEmailUpdate}/>
           </Dialog>
           <Dialog open={props.passwordFormOpen} onClose={() => props.setPasswordFormOpen(false)}>
-            <DialogTitle>Change Password</DialogTitle>
+            <DialogTitle>{localized("pages.user.profile.change_password")}</DialogTitle>
             <DialogContent>
               <PasswordUpdateForm handleUserPasswordUpdate={props.handleUserPasswordUpdate}/>
             </DialogContent>

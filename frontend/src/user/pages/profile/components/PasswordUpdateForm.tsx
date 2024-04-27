@@ -6,7 +6,7 @@ interface PasswordUpdateFormProps {
 }
 
 export default function PasswordUpdateForm(props: PasswordUpdateFormProps) {
-  const localized=useLocalized();
+  const localized = useLocalized();
   return (<Box sx={{padding: 2}} component={"form"} onSubmit={props.handleUserPasswordUpdate}>
     <Stack spacing={2}>
       <TextField name={"password"}
@@ -24,7 +24,7 @@ export default function PasswordUpdateForm(props: PasswordUpdateFormProps) {
                  required/>
       <Stack direction={"row"} spacing={2}>
         <Button type={"submit"} sx={{maxWidth: "fit-content"}} variant={"outlined"}>
-          Change Password
+          {localized("pages.user.profile.change_password")}
         </Button>
       </Stack>
     </Stack>

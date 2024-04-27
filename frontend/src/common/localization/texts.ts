@@ -74,6 +74,40 @@ export const texts = {
           }
         }
       },
+      "user": {
+        "profile": {
+          "roles": "Roles",
+          "groups_and_projects": "Groups and Projects",
+          "manage_join_requests": "Manage Join Requests",
+          "user_details": "User Details",
+          "change_full_name": "Change Full Name",
+          "change_email": "Change E-mail Address",
+          "change_password": "Change Password",
+          "remove_user": "Remove All User Data",
+          "archive_user_confirmation": "Do you really wish to archive your account and erase all your personal data permanently?",
+          "error": {
+            "update_password_default": "Failed to update password. Please try again later, if the issue still persists, please contact our administrators",
+            "update_email_default": "Failed to update e-mail address. Please try again later, if the issue still persists, please contact our administrators",
+            "update_email_matches_current": "The provided e-mail address matches your current e-mail address",
+            "update_full_name_default": "Failed to update full name. Please try again later, if the issue still persists, please contact our administrators",
+            "remove_user_default": "Failed to remove user data. Please try again later, if the issue still persists, please contact our administrators"
+          }
+        },
+        "requests": {
+          "group_title": "Group Join Requests",
+          "group_not_found": "No pending group join requests were found.",
+          "group_delete_confirm": "Do you really wish to delete this group join request?",
+          "project_title": "Project Join Requests",
+          "project_not_found": "No pending project join requests were found.",
+          "project_delete_confirm": "Do you really wish to delete this project join request?",
+          "error": {
+            "group_default": "Failed to load group join requests",
+            "group_delete_default": "Failed to delete group join request",
+            "project_default": "Failed to load project join requests",
+            "project_delete_default": "Failed to delete project join request",
+          }
+        }
+      },
       "error": {
         "not_found": {
           "text": "The page you are looking for does not exist."
@@ -109,20 +143,8 @@ export const texts = {
       "submit": "Submit",
       "confirm": "Confirm",
       "cancel": "Cancel",
+      "remove": "Remove",
       "errorTitle": "Error",
-      "colors": {
-        "dark": "Dark",
-        "light": "Light",
-        "black": "Black",
-        "white": "White",
-        "grey": "Grey",
-        "red": "Red",
-        "orange": "Orange",
-        "yellow": "Yellow",
-        "green": "Green",
-        "blue": "Blue",
-        "purple": "Purple"
-      },
       "error": {
         "redirect": {
           "code_invalid": "The received verification code is missing or invalid",
@@ -201,7 +223,7 @@ export const texts = {
       "redirect": {
         "email_change_verification": {
           "error": {
-            "default": "Az e-mail cím változtatás közben hiba történt."
+            "default": "Az e-mail cím változtatás során hiba történt."
           }
         },
         "password_reset_verification": {
@@ -209,7 +231,41 @@ export const texts = {
         },
         "registration_verification": {
           "error": {
-            "default": "A regisztráció megerősítése közben hiba történt."
+            "default": "A regisztráció megerősítése során hiba történt."
+          }
+        }
+      },
+      "user": {
+        "profile": {
+          "roles": "Jogosultságok",
+          "groups_and_projects": "Csoportok és projektek",
+          "manage_join_requests": "Csatlakozási kérelmek kezelése",
+          "user_details": "Felhasználói adatok",
+          "change_full_name": "Név megváltoztatása",
+          "change_email": "E-mail cím megváltoztatása",
+          "change_password": "Jelszó megváltoztatása",
+          "remove_user": "Összes személyes adat törlése",
+          "archive_user_confirmation": "Biztosan archiválja a felhasználóját és véglegesen kitörli minden személyes adatát?",
+          "error": {
+            "update_password_default": "A jelszó megváltoztatása során hiba történt",
+            "update_email_default": "Az e-mail cím megváltoztatása során hiba történt",
+            "update_email_matches_current": "A megadott e-mail cím egyezik a jelenlegi e-mail címével",
+            "update_full_name_default": "A név megváltoztatása során hiba történt",
+            "remove_user_default": "A felhasználói adatok törlése során hiba történt"
+          }
+        },
+        "requests": {
+          "group_title": "Csatlakozási kérelmek csoportokhoz",
+          "group_not_found": "Jelenleg nincs folyamatban lévő csatlakozási kérelme.",
+          "group_delete_confirm": "Biztosan törli ezt a csatlakozási kérelmet?",
+          "project_title": "Csatlakozási kérelmek projektekhez",
+          "project_not_found": "Jelenleg nincs folyamatban lévő csatlakozási kérelme.",
+          "project_delete_confirm": "Biztosan törli ezt a csatlakozási kérelmet?",
+          "error": {
+            "group_default": "A csoport csatlakozási kérelmek betöltése során hiba történt",
+            "group_delete_default": "A csoport csatlakozási kérelem törlése során hiba történt",
+            "project_default": "A projek csatlakozási kérelmek betöltése során hiba történt",
+            "project_delete_default": "A projekt csatlakozási kérelem törlése során hiba történt",
           }
         }
       },
@@ -249,19 +305,6 @@ export const texts = {
       "confirm": "Megerősítés",
       "cancel": "Mégsem",
       "errorTitle": "Hiba",
-      "colors": {
-        "dark": "Sötét",
-        "light": "Világos",
-        "black": "Fekete",
-        "white": "Fehér",
-        "grey": "Szürke",
-        "red": "Vörös",
-        "orange": "Narancssárga",
-        "yellow": "Sárga",
-        "green": "Zöld",
-        "blue": "Kék",
-        "purple": "Lila"
-      },
       "error": {
         "redirect": {
           "code_invalid": "Hiányzó, vagy érvénytelen megerősítő kód",

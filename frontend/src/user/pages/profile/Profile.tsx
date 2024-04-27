@@ -32,7 +32,7 @@ export default function Profile() {
 
   async function deleteApplicationUser(): Promise<void> {
     const defaultError =
-      "Failed to remove user data.\n Please try again later, if the issue still persists, please contact our administrators";
+      localized("pages.user.profile.error.remove_user_default");
     try {
       setApplicationUserDeleteLoading(true);
       const response = await authJsonFetch({
@@ -54,7 +54,7 @@ export default function Profile() {
 
   function openDeleteApplicationUserDialog() {
     return dialog.openDialog({
-      content: "Do you really wish to archive your account and erase all your personal data permanently?",
+      content: localized("pages.user.profile.archive_user_confirmation"),
       onConfirm: deleteApplicationUser
     });
   }
@@ -64,8 +64,7 @@ export default function Profile() {
   const [passwordFormOpen, setPasswordFormOpen] = useState<boolean>(false);
 
   async function handleFullNameUpdate(event: any) {
-    const defaultError =
-      "Failed to update full name.\n Please try again later, if the issue still persists, please contact our administrators";
+    const defaultError = localized("pages.user.profile.error.update_full_name_default");
     try {
       event.preventDefault();
       setUserDetailsUpdateLoading(true);
@@ -96,8 +95,7 @@ export default function Profile() {
   }
 
   async function handleUserPasswordUpdate(event: any) {
-    const defaultError =
-      "Failed to update password.\n Please try again later, if the issue still persists, please contact our administrators";
+    const defaultError = localized("pages.user.profile.error.update_password_default");
     try {
       event.preventDefault();
       setUserDetailsUpdateLoading(true);
@@ -132,8 +130,7 @@ export default function Profile() {
   }
 
   async function handleUserEmailUpdate(event: any) {
-    const defaultError =
-      "Failed to update e-mail address.\n Please try again later, if the issue still persists, please contact our administrators";
+    const defaultError = localized("pages.user.profile.error.update_email_default");
     try {
       event.preventDefault();
       setUserDetailsUpdateLoading(true);
@@ -146,7 +143,7 @@ export default function Profile() {
         return notifyOnError(localized("inputs.password_invalid"));
       }
       if (dto.email === email) {
-        notifyOnError("The provided e-mail address matches your current e-mail address");
+        notifyOnError(localized("update_email_matches_current"));
         setEmailFormOpen(false);
       }
       const response = await authJsonFetch({
@@ -187,8 +184,8 @@ export default function Profile() {
                         handleFullNameUpdate={handleFullNameUpdate}
                         handleUserEmailUpdate={handleUserEmailUpdate}
                         handleUserPasswordUpdate={handleUserPasswordUpdate}
-                        usernameFormOpen={fullNameFormOpen}
-                        setUsernameFormOpen={setFullNameFormOpen}
+                        fullNameFormOpen={fullNameFormOpen}
+                        setFullNameFormOpen={setFullNameFormOpen}
                         passwordFormOpen={passwordFormOpen}
                         setPasswordFormOpen={setPasswordFormOpen}
                         emailFormOpen={emailFormOpen}

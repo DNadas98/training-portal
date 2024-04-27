@@ -7,6 +7,7 @@ import {GroupJoinRequestResponseDto} from "../../../groups/dto/requests/GroupJoi
 import {ProjectJoinRequestResponseDto} from "../../../projects/dto/requests/ProjectJoinRequestResponseDto.ts";
 import {Button, Card, CardContent, CardHeader, Grid, List, ListItem, Stack, Typography} from "@mui/material";
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
+import useLocalized from "../../../common/localization/hooks/useLocalized.tsx";
 
 export default function UserJoinRequests() {
   const dialog = useDialog();
@@ -17,6 +18,7 @@ export default function UserJoinRequests() {
   const authJsonFetch = useAuthJsonFetch();
   const notification = useNotification();
   const navigate = useNavigate();
+  const localized = useLocalized();
 
   function handleErrorNotification(message: string) {
     notification.openNotification({
@@ -26,7 +28,7 @@ export default function UserJoinRequests() {
   }
 
   async function loadGroupJoinRequests() {
-    const defaultError = `Failed to load group join requests`;
+    const defaultError = localized("pages.user.requests.error.group_default");
     try {
       setGroupJoinRequestsLoading(true);
       const response = await authJsonFetch({
@@ -46,7 +48,7 @@ export default function UserJoinRequests() {
   }
 
   async function loadProjectJoinRequests() {
-    const defaultError = `Failed to load project join requests`;
+    const defaultError = localized("pages.user.requests.error.project_default");
     try {
       setProjectJoinRequestsLoading(true);
       const response = await authJsonFetch({
@@ -71,7 +73,7 @@ export default function UserJoinRequests() {
   }, []);
 
   async function deleteGroupJoinRequest(requestId: number) {
-    const defaultError = "Failed to delete group join request";
+    const defaultError = localized("pages.user.requests.error.group_delete_default");
     try {
       setGroupJoinRequestsLoading(true);
       const response = await authJsonFetch({
@@ -93,7 +95,7 @@ export default function UserJoinRequests() {
   }
 
   async function deleteProjectJoinRequest(requestId: number) {
-    const defaultError = "Failed to delete project join request";
+    const defaultError = localized("pages.user.requests.error.project_delete_default");
     try {
       setProjectJoinRequestsLoading(true);
       const response = await authJsonFetch({
@@ -116,7 +118,7 @@ export default function UserJoinRequests() {
 
   function handleGroupJoinRequestDeleteClick(requestId: number) {
     dialog.openDialog({
-      content: "Do you really wish to delete this group join request?",
+      content: localized("pages.user.requests.group_delete_confirm"),
       onConfirm: async () => {
         await deleteGroupJoinRequest(requestId);
       }
@@ -125,7 +127,7 @@ export default function UserJoinRequests() {
 
   function handleProjectJoinRequestDeleteClick(requestId: number) {
     dialog.openDialog({
-      content: "Do you really wish to delete this project join request?",
+      content: localized("pages.user.requests.project_delete_confirm"),
       onConfirm: async () => {
         await deleteProjectJoinRequest(requestId);
       }
@@ -134,9 +136,9 @@ export default function UserJoinRequests() {
 
   return (<Grid container alignItems={"center"} justifyContent={"center"}> <Grid item xs={10}> <Stack spacing={2}>
     <Card elevation={10}>
-      <CardHeader title={"Group Join Requests"} titleTypographyProps={{variant: "h5"}}/>
+      <CardHeader title={localized("pages.user.requests.group_title")} titleTypographyProps={{variant: "h5"}}/>
       <CardContent>{groupJoinRequestsLoading ? <LoadingSpinner/> : !groupJoinRequests?.length
-        ? <Typography variant={"body1"}>No pending group join requests were found.</Typography>
+        ? <Typography variant={"body1"}>{localized("pages.user.requests.group_not_found")}</Typography>
         : <List>{groupJoinRequests.map(request => {
           return <ListItem key={request.requestId}><Card elevation={10} sx={{width: "100%"}}>
             <CardContent><Stack spacing={1}>
@@ -145,7 +147,7 @@ export default function UserJoinRequests() {
               <Button sx={{maxWidth: "fit-content"}} color={"error"} variant={"contained"} onClick={async () => {
                 handleGroupJoinRequestDeleteClick(request.requestId);
               }}>
-                Remove
+                {localized("common.remove")}
               </Button>
             </Stack></CardContent>
           </Card> </ListItem>
@@ -154,9 +156,9 @@ export default function UserJoinRequests() {
       } </CardContent>
     </Card>
     <Card elevation={10}>
-      <CardHeader title={"Project Join Requests"} titleTypographyProps={{variant: "h5"}}/>
+      <CardHeader title={localized("pages.user.requests.project_title")} titleTypographyProps={{variant: "h5"}}/>
       <CardContent>{projectJoinRequestsLoading ? <LoadingSpinner/> : !projectJoinRequests?.length
-        ? <Typography variant={"body1"}>No pending project join requests were found.</Typography>
+        ? <Typography variant={"body1"}>{localized("pages.user.requests.project_not_found")}</Typography>
         : <List>{projectJoinRequests.map(request => {
           return <ListItem key={request.requestId}><Card elevation={10} sx={{width: "100%"}}>
             <CardContent><Stack spacing={1}>
@@ -165,7 +167,7 @@ export default function UserJoinRequests() {
               <Button sx={{maxWidth: "fit-content"}} color={"error"} variant={"contained"} onClick={async () => {
                 handleProjectJoinRequestDeleteClick(request.requestId);
               }}>
-                Remove
+                {localized("common.remove")}
               </Button>
             </Stack></CardContent>
           </Card></ListItem>
@@ -179,12 +181,12 @@ export default function UserJoinRequests() {
           <Button onClick={() => {
             navigate("/groups")
           }}>
-            Groups
+            {localized("menus.groups")}
           </Button>
           <Button onClick={() => {
             navigate("/user")
           }}>
-            Profile
+            {localized("menus.profile")}
           </Button>
         </Stack>
       </CardContent>
