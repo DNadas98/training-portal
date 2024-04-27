@@ -80,7 +80,7 @@ export default function MenuSiteInfo() {
         </MenuItem>
         <MenuItem component={Link} href={config.developerInfo.portfolioUrl}
                   rel={"noopener noreferrer"} target={"_blank"}>
-          {config.developerInfo.portfolioUrl}
+          {config.developerInfo.portfolioTitle}
         </MenuItem>
         <Divider/>
         <MenuItem component={Link} href={config.sourceCodeUrl}

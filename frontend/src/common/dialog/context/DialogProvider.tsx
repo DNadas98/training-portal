@@ -2,6 +2,7 @@ import React, {createContext, ReactNode, useContext, useState} from "react";
 import {Button, Dialog, DialogActions, DialogContent} from "@mui/material";
 import {DialogStateDto} from "../dto/DialogStateDto.ts";
 import IsSmallScreen from "../../utils/IsSmallScreen.tsx";
+import useLocalized from "../../localization/hooks/useLocalized.tsx";
 
 interface DialogContextType {
   openDialog: (newDialogState: DialogStateDto) => void;
@@ -22,11 +23,12 @@ interface DialogProviderProps {
 }
 
 export const DialogProvider = ({children}: DialogProviderProps) => {
+  const localized=useLocalized();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const initialState: DialogStateDto = {
     content: "",
-    confirmText: "Confirm",
-    cancelText: "Cancel",
+    confirmText: localized("common.confirm"),
+    cancelText: localized("common.cancel"),
     onConfirm: () => {
     },
     blockScreen: false,
@@ -38,8 +40,8 @@ export const DialogProvider = ({children}: DialogProviderProps) => {
   const openDialog = (newDialogState: DialogStateDto) => {
     setDialogState({
       content: newDialogState.content,
-      confirmText: newDialogState.confirmText ?? "Confirm",
-      cancelText: newDialogState.cancelText ?? "Cancel",
+      confirmText: newDialogState.confirmText ?? localized("common.confirm"),
+      cancelText: newDialogState.cancelText ?? localized("common.cancel"),
       onConfirm: newDialogState.onConfirm,
       blockScreen: newDialogState.blockScreen === true,
       oneActionOnly: newDialogState.oneActionOnly === true

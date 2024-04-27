@@ -5,6 +5,7 @@ import LoadingSpinner from "../../../common/utils/components/LoadingSpinner.tsx"
 import {ApiResponseDto} from "../../../common/api/dto/ApiResponseDto.ts";
 import DialogAlert from "../../../common/utils/components/DialogAlert.tsx";
 import usePublicJsonFetch from "../../../common/api/hooks/usePublicJsonFetch.tsx";
+import useLocalized from "../../../common/localization/hooks/useLocalized.tsx";
 
 export default function RegisterVerificationRedirect() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -13,7 +14,7 @@ export default function RegisterVerificationRedirect() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const publicJsonFetch = usePublicJsonFetch();
-
+  const localized = useLocalized();
   const fetchVerification = async (code: string, id: string) => {
     return await publicJsonFetch({
       path: `verification/registration?code=${code}&id=${id}`, method: "POST"
@@ -21,8 +22,7 @@ export default function RegisterVerificationRedirect() {
   };
 
   const handleError = (error: string | undefined = undefined) => {
-    const message = error ??
-      "An error has occurred during the sign up verification process";
+    const message = error ?? localized("pages.redirect.registration_verification.error.default");
     setError(message);
   };
 
@@ -38,7 +38,7 @@ export default function RegisterVerificationRedirect() {
       const code = searchParams.get("code");
       const id = searchParams.get("id");
       if (!code?.length || !id?.length || isNaN(parseInt(id)) || parseInt(id) < 1) {
-        return handleError("The received verification code is missing or invalid");
+        return handleError(localized("common.error.redirect.code_invalid"));
       }
 
       const response: ApiResponseDto = await fetchVerification(code, id);
@@ -69,10 +69,9 @@ export default function RegisterVerificationRedirect() {
     loading
       ? <LoadingSpinner/>
       : error
-        ? <DialogAlert title={`Error: ${error}`} text={
-          "Return to the Home page or try again later.\n"
-          + "If the issue persists, please contact our support team."
-        } buttonText={"Home"} onClose={handleDialog}/>
+        ? <DialogAlert title={`${localized("common.errorTitle")}: ${error}`} text={
+          localized("common.error.redirect.unknown")
+        } buttonText={localized("menus.home")} onClose={handleDialog}/>
         : <></>
   );
 }

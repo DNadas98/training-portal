@@ -17,7 +17,8 @@ interface developerInfo {
   readonly name_en: string,
   readonly name_hu: string,
   readonly mail: string,
-  readonly portfolioUrl: string
+  readonly portfolioUrl: string,
+  readonly portfolioTitle: string
 }
 
 const siteConfig: ISiteConfig = {
@@ -34,7 +35,8 @@ const siteConfig: ISiteConfig = {
     name_en: "Dániel Nádas",
     name_hu: "Nádas Dániel",
     mail: "daniel.nadas@dnadas.net",
-    portfolioUrl: "https://dnadas.net"
+    portfolioUrl: "https://dnadas.net",
+    portfolioTitle: "dnadas.net"
   }
 };
 export default siteConfig;

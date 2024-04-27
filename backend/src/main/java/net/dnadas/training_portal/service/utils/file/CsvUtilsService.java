@@ -71,9 +71,9 @@ public class CsvUtilsService {
   /**
    * Parses a CSV file and returns the records.
    *
-   * @param csvFile         The CSV file to parse
-   * @param delimiter       The delimiter to use
-   * @param headers         The expected headers
+   * @param csvFile   The CSV file to parse
+   * @param delimiter The delimiter to use
+   * @param headers   The expected headers
    * @return The records in the CSV file as a list of lists
    */
   public List<List<String>> parseCsv(

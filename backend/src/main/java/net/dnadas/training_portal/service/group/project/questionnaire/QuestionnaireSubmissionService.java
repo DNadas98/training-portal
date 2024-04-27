@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class QuestionnaireSubmissionService {
+  private static final int MAX_MEMBER_QUESTIONNAIRE_SUBMISSION_COUNT = 10;
   private final QuestionnaireDao questionnaireDao;
   private final QuestionnaireSubmissionDao questionnaireSubmissionDao;
   private final SubmittedQuestionDao submittedQuestionDao;
@@ -30,7 +31,6 @@ public class QuestionnaireSubmissionService {
   private final QuestionnaireSubmissionConverter questionnaireSubmissionConverter;
   private final UserProvider userProvider;
   private final ProjectService projectService;
-  private static final int MAX_MEMBER_QUESTIONNAIRE_SUBMISSION_COUNT = 10;
 
   @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_ASSIGNED_MEMBER')")
   public Page<QuestionnaireSubmissionResponseDto> getOwnQuestionnaireSubmissions(

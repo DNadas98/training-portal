@@ -36,19 +36,6 @@ public class QuestionnaireStatisticsService {
   private final QuestionnaireSubmissionConverter questionnaireSubmissionConverter;
   private final ExcelUtilsService excelUtilsService;
 
-  @Transactional(readOnly = true)
-  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_COORDINATOR')")
-  public Page<QuestionnaireSubmissionStatsResponseDto> getQuestionnaireSubmissionStatistics(
-    Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status,
-    Pageable pageable, String searchInput) {
-    if (!status.equals(QuestionnaireStatus.ACTIVE)) {
-      return getStatisticsByStatus(groupId, projectId, questionnaireId, status, pageable,
-        searchInput);
-    }
-    return getStatisticsWithNonSubmittersByStatus(groupId, projectId, questionnaireId, status,
-      pageable, searchInput);
-  }
-
   private static List<String> getQuestionnaireStatisticsColumns() {
     return List.of("Username", "Full Name", "E-mail Address", "Questionnaire Total Points",
       "Max Points Submission Received Points", "Max Points Submission Date",
@@ -73,6 +60,19 @@ public class QuestionnaireStatisticsService {
       QuestionnaireSubmissionStatsInternalDto::hasExternalTestFailure,
       QuestionnaireSubmissionStatsInternalDto::receivedSuccessfulCompletionEmail
     );
+  }
+
+  @Transactional(readOnly = true)
+  @PreAuthorize("hasPermission(#projectId, 'Project', 'PROJECT_COORDINATOR')")
+  public Page<QuestionnaireSubmissionStatsResponseDto> getQuestionnaireSubmissionStatistics(
+    Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status,
+    Pageable pageable, String searchInput) {
+    if (!status.equals(QuestionnaireStatus.ACTIVE)) {
+      return getStatisticsByStatus(groupId, projectId, questionnaireId, status, pageable,
+        searchInput);
+    }
+    return getStatisticsWithNonSubmittersByStatus(groupId, projectId, questionnaireId, status,
+      pageable, searchInput);
   }
 
   /**

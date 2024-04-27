@@ -7,9 +7,9 @@ import useLocalized from "../../localization/hooks/useLocalized.tsx";
 export default function usePublicJsonFetch() {
   const {locale} = useLocaleContext();
   const localized = useLocalized();
-  const defaultError = localized("common.error.fetch.unknown");
 
   const publicJsonFetch = async (request: ApiRequestDto): Promise<ApiResponseDto> => {
+    const defaultError = localized("common.error.fetch.unknown");
     try {
       const requestConfig = getRequestConfig(request, locale, "application/json");
       const baseUrl = import.meta.env.VITE_API_BASE_URL;

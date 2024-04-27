@@ -27,6 +27,7 @@ export default function useAuthFetch() {
     return await logout();
   }
   const authFetch = async (request: ApiRequestDto):Promise<any>=> {
+    const defaultError = localized("common.error.fetch.unknown");
     try {
       const requestConfig = getRequestConfig(request, locale, request.contentType??null);
       const accessToken = authentication.getAccessToken();
@@ -63,7 +64,7 @@ export default function useAuthFetch() {
       console.error(e);
       return {
         status: 500,
-        error: localized("common.error.fetch.unknown")
+        error: defaultError
       };
     }
   };

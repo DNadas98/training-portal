@@ -4,10 +4,10 @@ package net.dnadas.training_portal.dto.group.project.questionnaire;
  * DTO for Questionnaire Statistics
  *
  * @param questionnaireName
- * @param questionnaireMaxPoints NULLABLE
- * @param maxPointSubmissionId NULLABLE
- * @param maxPointSubmissionCreatedAt NULLABLE
- * @param maxPointSubmissionReceivedPoints NULLABLE
+ * @param questionnaireMaxPoints            NULLABLE
+ * @param maxPointSubmissionId              NULLABLE
+ * @param maxPointSubmissionCreatedAt       NULLABLE
+ * @param maxPointSubmissionReceivedPoints  NULLABLE
  * @param userId
  * @param username
  * @param fullName

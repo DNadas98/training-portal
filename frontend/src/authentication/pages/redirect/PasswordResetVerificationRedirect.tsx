@@ -18,7 +18,7 @@ export default function PasswordResetVerificationRedirect() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const publicJsonFetch = usePublicJsonFetch();
-  const localized=useLocalized();
+  const localized = useLocalized();
 
   const fetchVerification = async (code: string, id: string, password: string) => {
     const dto: PasswordResetDto = {
@@ -31,7 +31,7 @@ export default function PasswordResetVerificationRedirect() {
 
   const handleProcessError = (error: string | undefined = undefined) => {
     const message = error ??
-      "An error has occurred during the password reset verification process";
+      localized("pages.redirect.password_reset.error.default");
     setProcessError(message);
     clearSearchParams();
   };
@@ -57,7 +57,7 @@ export default function PasswordResetVerificationRedirect() {
       const formData = new FormData(event.target);
       const password = formData.get("password") as string;
       const confirmPassword = formData.get("confirmPassword") as string;
-      if (!passwordRegex.test(password)){
+      if (!passwordRegex.test(password)) {
         notification.openNotification({
           type: "error", vertical: "top", horizontal: "center",
           message: localized("inputs.password_invalid")
@@ -66,14 +66,14 @@ export default function PasswordResetVerificationRedirect() {
       }
       if (password !== confirmPassword) {
         notification.openNotification({
-          type: "error", vertical: "top", horizontal: "center", message: "Passwords don't match"
+          type: "error", vertical: "top", horizontal: "center", message: localized("inputs.confirm_password_invalid")
         });
         return;
       }
       const code = searchParams.get("code");
       const id = searchParams.get("id");
       if (!code?.length || !id?.length || isNaN(parseInt(id)) || parseInt(id) < 1) {
-        return handleProcessError("The received verification code is missing or invalid");
+        return handleProcessError(localized("common.error.redirect.code_invalid"));
       }
       const response: ApiResponseDto = await fetchVerification(code, id, password);
       if (response.error || response?.status > 399 || !response.message) {
@@ -93,19 +93,18 @@ export default function PasswordResetVerificationRedirect() {
     loading
       ? <LoadingSpinner/>
       : processError
-        ? <DialogAlert title={`Error: ${processError}`} text={
-          "Return to the Home page or try again later.\n"
-          + "If the issue persists, please contact our support team."
-        } buttonText={"Home"} onClose={() => {
+        ? <DialogAlert title={`${localized("common.errorTitle")}: ${processError}`} text={
+          localized("common.error.redirect.unknown")
+        } buttonText={localized("menus.home")} onClose={() => {
           navigate("/", {replace: true})
         }}/>
         : <Dialog open={true}>
-          <DialogTitle>Enter New Password</DialogTitle>
+          <DialogTitle>{localized("pages.redirect.password_reset_verification.enter_new_password")}</DialogTitle>
           <DialogContent><Box sx={{padding: 2}} component={"form"} onSubmit={handleVerification}><Stack
             spacing={2}>
             <PasswordInput/>
             <PasswordInput confirm={true}/>
-            <Button type={"submit"}>Submit</Button>
+            <Button type={"submit"}>{localized("common.submit")}</Button>
           </Stack></Box></DialogContent>
         </Dialog>
   );

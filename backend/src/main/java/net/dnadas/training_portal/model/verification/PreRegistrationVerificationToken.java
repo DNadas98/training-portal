@@ -17,37 +17,28 @@ import java.util.Set;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 public class PreRegistrationVerificationToken extends VerificationToken {
-  @Column(nullable = false, unique = true)
-  private String email;
-
-  @Column(nullable = false, unique = true)
-  private String username;
-
-  @Column(nullable = true)
-  private String fullName;
-
-  @Column(nullable = true)
-  private String currentCoordinatorFullName;
-
-  @Column(nullable = true)
-  private Boolean hasExternalTestQuestionnaire;
-
-  @Column(nullable = true)
-  private Boolean hasExternalTestFailure;
-
-
   @ElementCollection(targetClass = PermissionType.class)
   @CollectionTable(name = "token_group_permissions", joinColumns = @JoinColumn(name = "token_id"))
   @Column(name = "permission", nullable = false)
   @Enumerated(EnumType.STRING)
   Set<PermissionType> groupPermissions = new HashSet<>();
-
   @ElementCollection(targetClass = PermissionType.class)
   @CollectionTable(name = "token_project_permissions", joinColumns = @JoinColumn(name = "token_id"))
   @Column(name = "permission", nullable = false)
   @Enumerated(EnumType.STRING)
   Set<PermissionType> projectPermissions = new HashSet<>();
-
+  @Column(nullable = false, unique = true)
+  private String email;
+  @Column(nullable = false, unique = true)
+  private String username;
+  @Column(nullable = true)
+  private String fullName;
+  @Column(nullable = true)
+  private String currentCoordinatorFullName;
+  @Column(nullable = true)
+  private Boolean hasExternalTestQuestionnaire;
+  @Column(nullable = true)
+  private Boolean hasExternalTestFailure;
   @Column(nullable = false)
   private Long groupId;
 

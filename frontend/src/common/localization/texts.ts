@@ -59,6 +59,21 @@ export const texts = {
           "default": "An error has occurred during the registration process"
         }
       },
+      "redirect": {
+        "email_change_verification": {
+          "error": {
+            "default": "An error has occurred during the e-mail change verification process"
+          }
+        },
+        "password_reset_verification": {
+          "enter_new_password": "Enter new password!"
+        },
+        "registration_verification": {
+          "error": {
+            "default": "An error has occurred during the sign up verification process"
+          }
+        }
+      },
       "error": {
         "not_found": {
           "text": "The page you are looking for does not exist."
@@ -83,12 +98,31 @@ export const texts = {
       "confirm_new_password": "Confirm new password",
       "i_accept_the": "I have read and I accept the",
       "legalPolicy": "Terms and Conditions",
-      "legalPolicy_hasNotRead_error": "Please open, and read the Terms and Conditions first!"
+      "legalPolicy_hasNotRead_error": "Please open, and read the Terms and Conditions first!",
+      "start_date": "Start Date",
+      "deadline": "Deadline"
     },
     "common": {
       "accept": "Accept",
       "close": "Close",
       "back": "Back",
+      "submit": "Submit",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "errorTitle": "Error",
+      "colors": {
+        "dark": "Dark",
+        "light": "Light",
+        "black": "Black",
+        "white": "White",
+        "grey": "Grey",
+        "red": "Red",
+        "orange": "Orange",
+        "yellow": "Yellow",
+        "green": "Green",
+        "blue": "Blue",
+        "purple": "Purple"
+      },
       "error": {
         "redirect": {
           "code_invalid": "The received verification code is missing or invalid",
@@ -164,6 +198,21 @@ export const texts = {
           "default": "A regisztráció véglegesítése során hiba történt"
         }
       },
+      "redirect": {
+        "email_change_verification": {
+          "error": {
+            "default": "Az e-mail cím változtatás közben hiba történt."
+          }
+        },
+        "password_reset_verification": {
+          "enter_new_password": "Írja be az új jelszavát!"
+        },
+        "registration_verification": {
+          "error": {
+            "default": "A regisztráció megerősítése közben hiba történt."
+          }
+        }
+      },
       "error": {
         "not_found": {
           "text": "A keresett oldal nem található."
@@ -188,12 +237,31 @@ export const texts = {
       "confirm_new_password": "Új jelszó megerősítése",
       "i_accept_the": "Elolvastam, és elfogadom a",
       "legalPolicy": "felhasználási feltételeket",
-      "legalPolicy_hasNotRead_error": "Kérjük elfogadás előtt nyissa meg, és olvassa el a felhasználási feltételeket!"
+      "legalPolicy_hasNotRead_error": "Kérjük elfogadás előtt nyissa meg, és olvassa el a felhasználási feltételeket!",
+      "start_date": "Kezdés Dátuma",
+      "deadline": "Határidő"
     },
     "common": {
       "accept": "Elfogadás",
       "close": "Bezárás",
       "back": "Vissza",
+      "submit": "Submit",
+      "confirm": "Megerősítés",
+      "cancel": "Mégsem",
+      "errorTitle": "Hiba",
+      "colors": {
+        "dark": "Sötét",
+        "light": "Világos",
+        "black": "Fekete",
+        "white": "Fehér",
+        "grey": "Szürke",
+        "red": "Vörös",
+        "orange": "Narancssárga",
+        "yellow": "Sárga",
+        "green": "Zöld",
+        "blue": "Kék",
+        "purple": "Lila"
+      },
       "error": {
         "redirect": {
           "code_invalid": "Hiányzó, vagy érvénytelen megerősítő kód",

@@ -77,7 +77,8 @@ public class EmailTemplateService {
     throws IOException {
     String path = "templates/project_successful_completion_email.html";
     String template = getTemplate(path);
-    return new EmailRequestDto(user.getEmail(),
+    return new EmailRequestDto(
+      user.getEmail(),
       "Successful completion of project " + project.getName() + " in Training Portal",
       String.format(template, user.getFullName(), project.getName()));
   }
