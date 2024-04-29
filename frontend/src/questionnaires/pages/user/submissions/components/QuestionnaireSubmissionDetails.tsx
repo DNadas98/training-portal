@@ -23,7 +23,7 @@ const QuestionnaireSubmissionDetails = (props: QuestionnaireSubmissionDetailsPro
           <CardContent>
             <Stack spacing={2}>
               <Stack direction={"row"} spacing={1} alignItems={"baseline"}>
-                <Typography>{question.order}.</Typography>
+                <Typography whiteSpace={"nowrap"} sx={{wordBreak:"keep-all"}}>{question.order}.</Typography>
                 <RichTextDisplay content={question.text}/>
               </Stack>
               <Typography variant={"body2"}>

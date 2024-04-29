@@ -261,11 +261,12 @@ export default function SubmitQuestionnaire() {
               <Card key={question.id}>
                 <CardContent>
                   <Stack direction={"row"} spacing={1} alignItems={"baseline"}>
-                    <Typography>{question.order}.</Typography>
+                    <Typography whiteSpace={"nowrap"} sx={{wordBreak:"keep-all"}}>{question.order}.</Typography>
                     <RichTextDisplay content={question.text}/>
                   </Stack>
-                  <Typography variant={"body2"} gutterBottom>Max
-                    points: {question.points}</Typography>
+                  <Typography variant={"body2"} gutterBottom>
+                    Max points: {question.points}
+                  </Typography>
                   {question.answers.map(answer => {
                     return <Grid container key={answer.id} spacing={1}
                                  justifyContent={"center"} alignItems={"baseline"}>
