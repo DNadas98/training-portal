@@ -74,7 +74,11 @@ export default function UserQuestionnaireSubmissionBrowser(props: UserQuestionna
             <CardContent sx={{justifyContent: "center"}}>
               <BackButton text={localized("back_to_questionnaires")}/>
             </CardContent>
-          </Card> : <></>}
+          </Card> : <Card><CardActions>
+            <Button sx={{width: "fit-content"}} onClick={props.handleBackClick}>
+              {localized("questionnaire.back_to_questionnaires")}
+            </Button>
+          </CardActions></Card>}
       </Grid>
     </Grid>
   );
