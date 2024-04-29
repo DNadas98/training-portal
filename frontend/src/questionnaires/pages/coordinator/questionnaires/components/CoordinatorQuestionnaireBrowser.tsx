@@ -20,6 +20,8 @@ import useLocalizedDateTime from "../../../../../common/localization/hooks/useLo
 import LoadingSpinner from "../../../../../common/utils/components/LoadingSpinner.tsx";
 import ExpandIcon from "../../../../../common/utils/components/ExpandIcon.tsx";
 //import RichTextDisplay from "../../../../../common/richTextEditor/RichTextDisplay.tsx";
+import useLocalized from "../../../../../common/localization/hooks/useLocalized.tsx";
+
 
 interface CoordinatorQuestionnaireBrowserProps {
   questionnairesLoading: boolean,
@@ -31,15 +33,16 @@ interface CoordinatorQuestionnaireBrowserProps {
 
 export default function CoordinatorQuestionnaireBrowser(props: CoordinatorQuestionnaireBrowserProps) {
   const getLocalizedDateTime = useLocalizedDateTime();
+  const localized = useLocalized();
   return (
     <Grid container spacing={2} justifyContent={"center"} alignItems={"top"}>
       <Grid item xs={10} sm={10} md={9} lg={8}>
         <Stack spacing={2}>
           <Card>
-            <CardHeader title={"Questionnaire Statistics"} sx={{textAlign: "center"}}/>
+            <CardHeader title={localized("statistics.questionnaire_statistics")} sx={{textAlign: "center"}}/>
             <CardContent>
               <TextField variant={"standard"} type={"search"}
-                         label={"Search"}
+                         label={localized("inputs.search")}
                          fullWidth
                          onInput={props.handleQuestionnaireSearch}
               />
@@ -68,7 +71,7 @@ export default function CoordinatorQuestionnaireBrowser(props: CoordinatorQuesti
                             wordBreak: "break-word",
                             paddingRight: 1
                           }}>
-                            Max Points: {questionnaire.maxPoints}
+                            {localized("questionnaire.max_points")}: {questionnaire.maxPoints}
                           </Typography>
                         </Grid>
                       </Grid>
@@ -77,25 +80,23 @@ export default function CoordinatorQuestionnaireBrowser(props: CoordinatorQuesti
                       {/*<RichTextDisplay content={questionnaire.description}/>*/}
                       <Divider sx={{marginTop: 2, marginBottom: 2}}/>
                       <Typography variant={"body2"}>
-                        Created
-                        at {getLocalizedDateTime(questionnaire.createdAt)} by {questionnaire.createdBy.fullName}
+                        {localized("statistics.created_at")}: {getLocalizedDateTime(questionnaire.createdAt)} by {questionnaire.createdBy.fullName}
                       </Typography>
                       <Divider sx={{marginTop: 1, marginBottom: 1}}/>
                       <Typography variant={"body2"}>
-                        Last updated
-                        at {getLocalizedDateTime(questionnaire.updatedAt)} by {questionnaire.updatedBy.fullName}
+                        {localized("statistics.updated_at")}: {getLocalizedDateTime(questionnaire.updatedAt)} by {questionnaire.updatedBy.fullName}
                       </Typography>
                       <Divider sx={{marginTop: 1, marginBottom: 1}}/>
-                      <Typography>Status: {questionnaire.status}</Typography>
+                      <Typography>{localized("statistics.status")}: {questionnaire.status.toString() === "ACTIVE" ? localized("statistics.active") : localized("statistics.test")}</Typography>
                     </AccordionDetails>
                     <AccordionActions>
                       <Stack spacing={2} width={"100%"}>
                         <Button sx={{textTransform: "none", width: "fit-content"}}
-                                variant={"outlined"}
+                                variant={"contained"}
                                 onClick={() => {
                                   props.handleStatisticClick(questionnaire.id);
                                 }}>
-                          Statistics
+                          {localized("statistics.statistics")}
                         </Button>
                       </Stack>
                     </AccordionActions>
@@ -105,14 +106,14 @@ export default function CoordinatorQuestionnaireBrowser(props: CoordinatorQuesti
               : <Card>
                 <CardContent>
                   <Typography>
-                    {"No questionnaires were found for this project."}
+                    {localized("questionnaire.no_questionnaires_found")}
                   </Typography>
                 </CardContent>
               </Card>
           }
           <Card><CardActions>
             <Button sx={{width:"fit-content"}} onClick={props.handleBackClick}>
-              Back to project
+              {localized("statistics.back_to_project")}
             </Button>
           </CardActions></Card>
         </Stack>

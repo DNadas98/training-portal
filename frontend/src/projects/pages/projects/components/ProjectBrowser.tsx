@@ -15,6 +15,7 @@ import {FormEvent} from "react";
 import {PermissionType} from "../../../../authentication/dto/PermissionType.ts";
 import AddIcon from "../../../../common/utils/components/AddIcon.tsx";
 import {ProjectResponsePublicDto} from "../../../dto/ProjectResponsePublicDto.ts";
+import useLocalized from "../../../../common/localization/hooks/useLocalized.tsx";
 
 interface ProjectBrowserProps {
   projectsWithUserLoading: boolean,
@@ -32,16 +33,18 @@ interface ProjectBrowserProps {
 }
 
 export default function ProjectBrowser(props: ProjectBrowserProps) {
+  const localized = useLocalized();
   return (<>
     <Grid container spacing={2} justifyContent={"center"} alignItems={"top"} mb={2}>
       <Grid item xs={10} sm={8} md={10} lg={8}>
-        <Card><CardActions><Button onClick={props.handleBackClick}>Back to group dashboard</Button></CardActions></Card>
+        <Card><CardActions><Button
+          onClick={props.handleBackClick}>{localized("pages.projects.back_to_group_dashboard")}</Button></CardActions></Card>
       </Grid></Grid>
     <Grid container spacing={2} justifyContent={"center"} alignItems={"top"}>
       <Grid item xs={10} sm={8} md={5} lg={4}>
         <Stack spacing={2}>
           <Card>
-            <CardHeader title={"Your projects"} sx={{textAlign: "center"}}/>
+            <CardHeader title={localized("pages.projects.your_projects")}/>
             <CardContent>
               <Stack direction={"row"} spacing={1} alignItems={"baseline"}>
                 {props.groupPermissions.includes(PermissionType.GROUP_ADMIN) &&
@@ -52,7 +55,7 @@ export default function ProjectBrowser(props: ProjectBrowserProps) {
                   </Tooltip>
                 }
                 <TextField variant={"standard"} type={"search"}
-                           label={"Search"}
+                           label={localized("inputs.search")}
                            fullWidth
                            onInput={props.handleProjectsWithUserSearch}
                 />
@@ -61,7 +64,7 @@ export default function ProjectBrowser(props: ProjectBrowserProps) {
           </Card>
           <ProjectList loading={props.projectsWithUserLoading}
                        projects={props.projectsWithUser}
-                       notFoundText={"We haven't found any projects."}
+                       notFoundText={localized("pages.projects.not_found")}
                        onActionButtonClick={props.handleViewDashboardClick}
                        userIsMember={true}
                        actionButtonDisabled={props.actionButtonDisabled}/>
@@ -70,17 +73,17 @@ export default function ProjectBrowser(props: ProjectBrowserProps) {
       <Grid item xs={10} sm={8} md={5} lg={4}>
         <Stack spacing={2}>
           <Card>
-            <CardHeader title={"Projects to join"} sx={{textAlign: "center"}}/>
+            <CardHeader title={localized("pages.projects.projects_to_join")}/>
             <CardContent>
               <TextField variant={"standard"} type={"search"} fullWidth
-                         label={"Search"}
+                         label={localized("inputs.search")}
                          onInput={props.handleProjectsWithoutUserSearch}
               />
             </CardContent>
           </Card>
           <ProjectList loading={props.projectsWithoutUserLoading}
                        projects={props.projectsWithoutUser}
-                       notFoundText={"We haven't found any projects to join."}
+                       notFoundText={localized("pages.projects.not_found")}
                        onActionButtonClick={props.handleJoinRequestClick}
                        userIsMember={false}
                        actionButtonDisabled={props.actionButtonDisabled}/>

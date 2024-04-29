@@ -18,8 +18,8 @@ import {memo, useCallback, useState} from "react";
 import {QuestionRequestDto} from "../../../../dto/QuestionRequestDto.ts";
 import {AnswerRequestDto} from "../../../../dto/AnswerRequestDto.ts";
 import {v4 as uuidv4} from "uuid";
-import RichTextDynamicEditor from "../../../../../common/richTextEditor/RichTextDynamicEditor.tsx";
 import RichTextEditorControlled from "../../../../../common/richTextEditor/RichTextEditorControlled.tsx";
+import useLocalized from "../../../../../common/localization/hooks/useLocalized.tsx";
 
 interface QuestionItemProps {
   question: QuestionRequestDto;
@@ -34,6 +34,7 @@ const QuestionItem = memo((props: QuestionItemProps) => {
   const [type, setType] = useState(props.question?.type ?? QuestionType.RADIO);
   const [points, setPoints] = useState<number>(props.question.points ?? 1);
   const [answers, setAnswers] = useState<AnswerRequestDto[]>(props.question.answers);
+  const localized = useLocalized();
 
   const handleTextChange = useCallback((changedText: string) => {
     setText(changedText);
@@ -141,7 +142,7 @@ const QuestionItem = memo((props: QuestionItemProps) => {
               <Grid container spacing={2} alignItems={"center"}>
                 <Grid item>
                   <Typography sx={{whiteSpace: "nowrap"}}>
-                    Max Points:
+                    {localized("questionnaire.max_points")}:
                   </Typography>
                 </Grid>
                 <Grid item>

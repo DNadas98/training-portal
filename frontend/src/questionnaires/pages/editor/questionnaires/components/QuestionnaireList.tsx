@@ -16,6 +16,7 @@ import {QuestionnaireResponseEditorDto} from "../../../../dto/QuestionnaireRespo
 import {QuestionnaireStatus} from "../../../../dto/QuestionnaireStatus.ts";
 import useLocalizedDateTime from "../../../../../common/localization/hooks/useLocalizedDateTime.tsx";
 import RichTextDisplay from "../../../../../common/richTextEditor/RichTextDisplay.tsx";
+import useLocalized from "../../../../../common/localization/hooks/useLocalized.tsx";
 
 interface QuestionnaireListProps {
   loading: boolean,
@@ -29,6 +30,7 @@ interface QuestionnaireListProps {
 
 export default function QuestionnaireList(props: QuestionnaireListProps) {
   const getLocalizedDateTime = useLocalizedDateTime();
+  const localized = useLocalized();
   return props.loading
     ? <LoadingSpinner/>
     : props.questionnaires?.length > 0
@@ -52,7 +54,7 @@ export default function QuestionnaireList(props: QuestionnaireListProps) {
                     wordBreak: "break-word",
                     paddingRight: 1
                   }}>
-                    Max Points: {questionnaire.maxPoints}
+                    {localized("questionnaire.max_points")}: {questionnaire.maxPoints}
                   </Typography>
                 </Grid>
               </Grid>
@@ -114,7 +116,7 @@ export default function QuestionnaireList(props: QuestionnaireListProps) {
                               onClick={() => {
                                 props.onViewTestsClick(questionnaire.id);
                               }}>
-                        View Past Submissions
+                        {localized("inputs.view_past_submission")}
                       </Button>
                     </Grid>
                   </>

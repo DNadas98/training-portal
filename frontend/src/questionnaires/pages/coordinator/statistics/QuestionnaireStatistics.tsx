@@ -8,7 +8,8 @@ import {
   Card,
   CardContent,
   CardHeader,
-  debounce, FormControl,
+  debounce,
+  FormControl,
   Grid,
   InputLabel,
   MenuItem,
@@ -39,6 +40,8 @@ import {AccountBoxRounded, Check, Close, Downloading, FileDownload, MailOutlined
 import useAuthFetch from "../../../../common/api/hooks/useAuthFetch.tsx";
 import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
 import CopyButton from "../../../../common/utils/components/CopyButton.tsx";
+import useLocalized from "../../../../common/localization/hooks/useLocalized.tsx";
+
 
 export default function QuestionnaireStatistics() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -66,6 +69,8 @@ export default function QuestionnaireStatistics() {
   const [usernameSearchValue, setUsernameSearchValue] = useState<string>("");
   const dialog = useDialog();
 
+  const localized = useLocalized();
+
   function handleErrorNotification(message: string) {
     notification.openNotification({
       type: "error", vertical: "top", horizontal: "center", message: message
@@ -73,6 +78,7 @@ export default function QuestionnaireStatistics() {
   }
 
   async function loadQuestionnaire() {
+    const defaultError = localized("questionnaire.failed_to_load_questionnaire_error");
     try {
       setQuestionnaireLoading(true);
       const response = await authJsonFetch({
@@ -83,8 +89,7 @@ export default function QuestionnaireStatistics() {
       if (!response || !response?.status || !response.data || response.status > 399) {
         setQuestionnaire(undefined);
         notification.openNotification({
-          type: "error", vertical: "top", horizontal: "center",
-          message: response?.error ?? "Failed to load questionnaire"
+          type: "error", vertical: "top", horizontal: "center", message: response?.error ?? defaultError
         });
         return;
       }
@@ -92,8 +97,7 @@ export default function QuestionnaireStatistics() {
     } catch (e) {
       setQuestionnaire(undefined)
       notification.openNotification({
-        type: "error", vertical: "top", horizontal: "center",
-        message: "Failed to load questionnaire statistics"
+        type: "error", vertical: "top", horizontal: "center", message: defaultError
       });
     } finally {
       setQuestionnaireLoading(false);
@@ -101,6 +105,7 @@ export default function QuestionnaireStatistics() {
   }
 
   async function loadQuestionnaireStatistics(search: string, currentPage: number, currentSize: number, currentStatus: QuestionnaireStatus) {
+    const defaultError = localized("statistics.failed_to_load_statistics_error");
     try {
       setQuestionnaireStatisticsLoading(true);
       const usernameSearchEncoded = encodeURIComponent(search ?? "");
@@ -113,7 +118,7 @@ export default function QuestionnaireStatistics() {
         setQuestionnaireStatistics([]);
         notification.openNotification({
           type: "error", vertical: "top", horizontal: "center",
-          message: response?.error ?? "Failed to load questionnaire statistics"
+          message: response?.error ?? defaultError
         });
         return;
       }
@@ -130,7 +135,7 @@ export default function QuestionnaireStatistics() {
       setQuestionnaireStatistics([]);
       notification.openNotification({
         type: "error", vertical: "top", horizontal: "center",
-        message: "Failed to load questionnaire statistics"
+        message: defaultError
       });
     } finally {
       setQuestionnaireStatisticsLoading(false);
@@ -169,6 +174,7 @@ export default function QuestionnaireStatistics() {
   }
 
   const handleExcelDownload = async () => {
+    const defaultError = localized("statistics.failed_to_download_statistics_error");
     try {
       setDownloadLoading(true);
       const userTimezone = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -187,7 +193,7 @@ export default function QuestionnaireStatistics() {
         contentType: "application/*"
       });
       if (!response || response.status > 399) {
-        handleErrorNotification(response?.error ?? "Failed to download statistics");
+        handleErrorNotification(response?.error ?? defaultError);
         return;
       }
       const blob = await response?.blob();
@@ -198,7 +204,7 @@ export default function QuestionnaireStatistics() {
       link.click();
       link.parentNode?.removeChild(link);
     } catch (e) {
-      handleErrorNotification("Failed to download statistics");
+      handleErrorNotification(defaultError);
     } finally {
       setDownloadLoading(false);
     }
@@ -237,18 +243,18 @@ export default function QuestionnaireStatistics() {
   if (permissionsLoading || questionnaireLoading) {
     return <LoadingSpinner/>;
   } else if ((!projectPermissions?.length) || !projectPermissions.includes(PermissionType.PROJECT_COORDINATOR)) {
-    handleErrorNotification("Access Denied: Insufficient permissions");
+    handleErrorNotification(localized("common.auth.access_denied"));
     navigate(`/groups/${groupId}/projects/${projectId}/editor/questionnaires`, {replace: true});
     return <></>;
   } else if (!questionnaire) {
-    handleErrorNotification("Failed to load questionnaire");
+    handleErrorNotification(localized("questionnaire.failed_to_load_questionnaire_error"));
     navigate(`/groups/${groupId}/projects/${projectId}/coordinator/questionnaires`, {replace: true});
     return <></>;
   }
 
   return (
     <Grid container justifyContent={"center"} alignItems={"center"}><Grid item xs={11}><Card>
-      <CardHeader title={"Questionnaire Statistics"}/>
+      <CardHeader title={localized("statistics.questionnaire_statistics")}/>
       <CardContent><Grid container>
         <Grid item xs={12}>
           <Stack spacing={1} sx={{marginBottom: 2}}>
@@ -259,24 +265,22 @@ export default function QuestionnaireStatistics() {
           <Grid container spacing={2} alignItems={"left"} justifyContent={"left"}>
             <Grid item xs={12} md={"auto"}>
               <Typography variant={"body2"}>
-                Created
-                By {questionnaire.createdBy.username} at {getLocalizedDateTime(new Date(questionnaire.createdAt))}
+                {localized("statistics.created_by")}: {questionnaire.createdBy.username} - {getLocalizedDateTime(new Date(questionnaire.createdAt))}
               </Typography>
             </Grid>
             <Grid item xs={12} md={"auto"}>
               <Typography variant={"body2"}>
-                Last Updated
-                By {questionnaire.updatedBy.username} at {getLocalizedDateTime(new Date(questionnaire.updatedAt))}
+                {localized("statistics.updated_by")}: {questionnaire.updatedBy.username} - {getLocalizedDateTime(new Date(questionnaire.updatedAt))}
               </Typography>
             </Grid>
             <Grid item xs={12} md={"auto"}>
               <Typography variant={"body2"}>
-                Current Status: {questionnaire.status}
+                {localized("statistics.status")}: {questionnaire.status.toString() === "ACTIVE" ? localized("statistics.active") : localized("statistics.test")}
               </Typography>
             </Grid>
             <Grid item xs={12} md={"auto"}>
               <Typography variant={"body2"}>
-                Max Points: {questionnaire.maxPoints}
+                {localized("questionnaire.max_points")}: {questionnaire.maxPoints}
               </Typography>
             </Grid>
           </Grid>
@@ -290,20 +294,20 @@ export default function QuestionnaireStatistics() {
                           disabled
                           sx={{minWidth: 220}}
                           startIcon={<Downloading/>}>
-                  Exporting Data ...
+                  {localized("statistics.exporting")}
                 </Button>
                 : <Button variant={"contained"} color={"success"}
                           onClick={handleExcelDownload}
                           sx={{minWidth: 220}}
                           startIcon={<FileDownload/>}>
-                  Export to Excel
+                  {localized("statistics.export_to_excel")}
                 </Button>}
             </Grid>
             <Grid item><Button onClick={() => {
               navigate(`/groups/${groupId}/projects/${projectId}/coordinator/questionnaires`);
             }}
                                sx={{width: "fit-content"}} variant={"outlined"}>
-              Back To Questionnaires
+              {localized("questionnaire.back_to_questionnaires")}
             </Button></Grid>
           </Grid>
         </Grid>
@@ -311,15 +315,15 @@ export default function QuestionnaireStatistics() {
           <Grid item xs={12} sm={true}>
             <Stack direction={"row"} spacing={0.5} alignItems={"center"}>
               <FormControl>
-                <InputLabel id="status_select_label">Status</InputLabel>
+                <InputLabel id="status_select_label">{localized("statistics.status")}</InputLabel>
                 <Select labelId={"status_select_label"} label={"Status"} value={displayedQuestionnaireStatus}
                         onChange={handleSetStatus}
                         sx={{minWidth: 150}}>
                   <MenuItem value={QuestionnaireStatus.ACTIVE}><Typography>
-                    Active
+                    {localized("statistics.active")}
                   </Typography></MenuItem>
                   <MenuItem value={QuestionnaireStatus.TEST}><Typography>
-                    Test
+                    {localized("statistics.test")}
                   </Typography></MenuItem>
                 </Select>
               </FormControl>
@@ -332,7 +336,7 @@ export default function QuestionnaireStatistics() {
           </Grid>
           <Grid item xs={12} mb={2}>
             <TextField type={"search"}
-                       placeholder={"Search by username, full name or coordinator name"}
+                       placeholder={localized("statistics.statistics_search_by")}
                        fullWidth
                        onChange={handleStatisticsSearch}/>
           </Grid>
@@ -341,15 +345,15 @@ export default function QuestionnaireStatistics() {
           <Table sx={{minWidth: 1000, overflowX: "scroll"}}>
             <TableHead>
               <TableRow>
-                <TableCell>Username</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Max Date</TableCell>
-                <TableCell>Max Points</TableCell>
-                <TableCell>Total Submissions</TableCell>
-                <TableCell>Coordinator</TableCell>
-                <TableCell>External Questionnaire</TableCell>
-                <TableCell>External Failure</TableCell>
-                <TableCell>Completion Email</TableCell>
+                <TableCell>{localized("statistics.username")}</TableCell>
+                <TableCell>{localized("statistics.name")}</TableCell>
+                <TableCell>{localized("statistics.max_date")}</TableCell>
+                <TableCell>{localized("statistics.max_points")}</TableCell>
+                <TableCell>{localized("statistics.total_submissions")}</TableCell>
+                <TableCell>{localized("statistics.coordinator")}</TableCell>
+                <TableCell>{localized("statistics.external_questionnaire")}</TableCell>
+                <TableCell>{localized("statistics.external_failure")}</TableCell>
+                <TableCell>{localized("statistics.completion_email")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -390,7 +394,7 @@ export default function QuestionnaireStatistics() {
                     </TableRow>
                   ))
                   : <TableRow>
-                    <TableCell>No filled out questionnaires were found</TableCell>
+                    <TableCell>{localized("statistics.no_found")}</TableCell>
                   </TableRow>}
             </TableBody>
           </Table>

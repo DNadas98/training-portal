@@ -34,6 +34,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import {ApiResponsePageableDto} from "../../../common/api/dto/ApiResponsePageableDto.ts";
 import URLQueryPagination from "../../../common/pagination/URLQueryPagination.tsx";
+import useLocalized from "../../../common/localization/hooks/useLocalized.tsx";
 
 
 export default function ProjectAssignedMembers() {
@@ -60,6 +61,7 @@ export default function ProjectAssignedMembers() {
   const size = parseInt(searchParams.get('size') || '10', 10);
   const [usernameSearchValue, setUsernameSearchValue] = useState<string>("");
 
+  const localized = useLocalized();
 
   function handleErrorNotification(message?: string) {
     notification.openNotification({
@@ -285,10 +287,10 @@ export default function ProjectAssignedMembers() {
         <CardContent>
           <Typography gutterBottom>{project.description}</Typography>
           <Typography>
-            Start Date: {getLocalizedDateTime(project.startDate)}
+            {localized("inputs.start_date")}: {getLocalizedDateTime(project.startDate)}
           </Typography>
           <Typography>
-            Deadline: {getLocalizedDateTime(project.deadline)}
+            {localized("inputs.deadline")}: {getLocalizedDateTime(project.deadline)}
           </Typography>
         </CardContent>
         <CardActions>

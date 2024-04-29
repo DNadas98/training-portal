@@ -1,10 +1,12 @@
 import {Button, Tooltip} from "@mui/material";
+import useLocalized from "../../../common/localization/hooks/useLocalized.tsx";
 
 interface CopyButtonProps{
   text:string
 }
 export default function CopyButton(props:CopyButtonProps){
-  return (<Tooltip title={"Copy to clipboard"} arrow={true}>
+  const localized = useLocalized();
+  return (<Tooltip title={localized("common.copy_to_clipboard")} arrow={true}>
     <Button
     variant={"text"} sx={{textTransform: "none", padding: 0}}
     onClick={() => navigator.clipboard.writeText(props.text).then()}>

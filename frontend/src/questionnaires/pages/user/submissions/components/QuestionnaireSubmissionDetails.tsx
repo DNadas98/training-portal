@@ -4,6 +4,7 @@ import {SubmittedAnswerStatus} from "../../../../dto/SubmittedAnswerStatus.ts";
 import {QuestionType} from "../../../../dto/QuestionType.ts";
 import {QuestionnaireSubmissionResponseDetailsDto} from "../../../../dto/QuestionnaireSubmissionResponseDetailsDto.ts";
 import QuestionnaireSubmissionCard from "./QuestionnaireSubmissionCard.tsx";
+import useLocalized from "../../../../../common/localization/hooks/useLocalized.tsx";
 
 interface QuestionnaireSubmissionDetailsProps {
   submission: QuestionnaireSubmissionResponseDetailsDto,
@@ -11,6 +12,7 @@ interface QuestionnaireSubmissionDetailsProps {
 
 const QuestionnaireSubmissionDetails = (props: QuestionnaireSubmissionDetailsProps) => {
   const theme = useTheme();
+  const localized = useLocalized();
   return (<Card>
     <CardHeader title={props.submission.name}/>
     <QuestionnaireSubmissionCard submission={props.submission}/>
@@ -25,7 +27,7 @@ const QuestionnaireSubmissionDetails = (props: QuestionnaireSubmissionDetailsPro
                 <RichTextDisplay content={question.text}/>
               </Stack>
               <Typography variant={"body2"}>
-                Received Points: <strong> {question.receivedPoints} / {question.maxPoints}</strong>
+                {localized("questionnaire.received_points")}: <strong> {question.receivedPoints} / {question.maxPoints}</strong>
               </Typography>
               {question.answers.map(answer => (
                 <Grid container key={answer.id} spacing={1}

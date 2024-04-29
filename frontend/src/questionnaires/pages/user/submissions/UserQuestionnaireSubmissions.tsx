@@ -11,6 +11,7 @@ import {ApiResponsePageableDto} from "../../../../common/api/dto/ApiResponsePage
 import {useDialog} from "../../../../common/dialog/context/DialogProvider.tsx";
 import QuestionnaireSubmissionDetails from "./components/QuestionnaireSubmissionDetails.tsx";
 import {QuestionnaireSubmissionResponseDetailsDto} from "../../../dto/QuestionnaireSubmissionResponseDetailsDto.ts";
+import useLocalized from "../../../../common/localization/hooks/useLocalized.tsx";
 
 export default function UserQuestionnaireSubmissions() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -34,9 +35,12 @@ export default function UserQuestionnaireSubmissions() {
   const page = searchParams.get('page') || '1';
   const size = searchParams.get('size') || '10';
 
+  const localized = useLocalized();
+
   const loadQuestionnaireSubmissions = async () => {
+    const defaultError = localized("questionnaire.failed_to_load_submissions_error");
     try {
-      if (!isValidId(groupId) || !isValidId(projectId)) {
+      if (!isValidId(groupId) || !isValidId(projectId) || !isValidId(questionnaireId)) {
         setQuestionnaireSubmissions([]);
         return;
       }
@@ -48,7 +52,7 @@ export default function UserQuestionnaireSubmissions() {
       if (!response?.status || response.status > 399 || !response?.data) {
         notification.openNotification({
           type: "error", vertical: "top", horizontal: "center",
-          message: `${response?.error ?? "Failed to load questionnaire submissions"}`
+          message: `${response?.error ?? defaultError}`
         });
         setQuestionnaireSubmissions([]);
         return;
@@ -59,6 +63,10 @@ export default function UserQuestionnaireSubmissions() {
       if (!isNaN(totalPageCount))
         setTotalPages(totalPageCount);
     } catch (e) {
+      notification.openNotification({
+        type: "error", vertical: "top", horizontal: "center",
+        message: defaultError
+      });
       setQuestionnaireSubmissions([]);
     } finally {
       setQuestionnaireSubmissionsLoading(false);
@@ -88,6 +96,7 @@ export default function UserQuestionnaireSubmissions() {
   };
 
   const handleQuestionnaireSubmissionSelect = async (id: number) => {
+    const defaultError = localized("questionnaire.failed_to_load_selected_submission_error");
     try {
       if (!isValidId(groupId) || !isValidId(projectId) || !isValidId(questionnaireId)) {
         return;
@@ -98,8 +107,7 @@ export default function UserQuestionnaireSubmissions() {
       });
       if (!response?.status || response.status > 399 || !response?.data) {
         notification.openNotification({
-          type: "error", vertical: "top", horizontal: "center", message:
-            response?.error ?? "Failed to load selected questionnaire submission"
+          type: "error", vertical: "top", horizontal: "center", message: response?.error ?? defaultError
         });
         return;
       }
@@ -107,12 +115,11 @@ export default function UserQuestionnaireSubmissions() {
         content: <QuestionnaireSubmissionDetails
           submission={response.data as QuestionnaireSubmissionResponseDetailsDto}/>,
         onConfirm: () => {
-        }, confirmText: "Close", oneActionOnly: true, blockScreen: true
+        }, confirmText: localized("common.close"), oneActionOnly: true, blockScreen: true
       });
     } catch (e) {
       notification.openNotification({
-        type: "error", vertical: "top", horizontal: "center", message:
-          "Failed to load selected questionnaire submission"
+        type: "error", vertical: "top", horizontal: "center", message: defaultError
       });
     } finally {
       setSelectedQuestionnaireSubmissionLoading(false);
@@ -129,6 +136,7 @@ export default function UserQuestionnaireSubmissions() {
 
 
   async function deleteSubmission(submissionId: number) {
+    const defaultError = localized("questionnaire.failed_to_delete_submission_error");
     try {
       setQuestionnaireSubmissionsLoading(true);
       const response = await authJsonFetch({
@@ -138,8 +146,7 @@ export default function UserQuestionnaireSubmissions() {
       });
       if (!response?.status || response.status > 399 || !response?.message) {
         notification.openNotification({
-          type: "error", vertical: "top", horizontal: "center",
-          message: `${response?.error ?? "Failed to delete questionnaire submission"}`
+          type: "error", vertical: "top", horizontal: "center", message: `${response?.error ?? defaultError}`
         });
         return;
       }
@@ -151,8 +158,7 @@ export default function UserQuestionnaireSubmissions() {
       loadQuestionnaireSubmissions();
     } catch (e) {
       notification.openNotification({
-        type: "error", vertical: "top", horizontal: "center",
-        message: "Failed to delete questionnaire submission"
+        type: "error", vertical: "top", horizontal: "center", message: defaultError
       });
       return;
     } finally {
@@ -162,7 +168,7 @@ export default function UserQuestionnaireSubmissions() {
 
   const handleDeleteClick = (submissionId: number) => {
     dialog.openDialog({
-      content: "Are you sure, you would like to delete this questionnaire submission?",
+      content: localized("questionnaire.sure_delete_submission"),
       onConfirm: () => deleteSubmission(submissionId)
     });
   }
@@ -172,7 +178,7 @@ export default function UserQuestionnaireSubmissions() {
   } else if (!projectPermissions.length) {
     notification.openNotification({
       type: "error", vertical: "top", horizontal: "center",
-      message: "Access Denied: Insufficient permissions"
+      message: localized("common.auth.access_denied")
     });
     navigate(`/groups/${groupId}/projects`);
     return <></>;

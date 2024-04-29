@@ -1,8 +1,9 @@
-import {  CardContent,  Divider,  Grid,  Stack,  Typography} from "@mui/material";
+import {CardContent, Divider, Grid, Stack, Typography} from "@mui/material";
 import useLocalizedDateTime from "../../../../../common/localization/hooks/useLocalizedDateTime.tsx";
 import {QuestionnaireSubmissionResponseEditorDto} from "../../../../dto/QuestionnaireSubmissionResponseEditorDto.ts";
 import IsSmallScreen from "../../../../../common/utils/IsSmallScreen.tsx";
 import {QuestionnaireSubmissionResponseDto} from "../../../../dto/QuestionnaireSubmissionResponseDto.ts";
+import useLocalized from "../../../../../common/localization/hooks/useLocalized.tsx";
 
 interface QuestionnaireSubmissionCardProps {
   submission: QuestionnaireSubmissionResponseEditorDto | QuestionnaireSubmissionResponseDto;
@@ -10,13 +11,14 @@ interface QuestionnaireSubmissionCardProps {
 
 export default function QuestionnaireSubmissionCard(props: QuestionnaireSubmissionCardProps) {
   const getLocalizedDateTime = useLocalizedDateTime();
+  const localized = useLocalized();
   const isSmallScreen = IsSmallScreen();
   return <CardContent key={props.submission.id}>
     <Stack spacing={0.5} width={"100%"}>
       <Grid container alignItems={"baseline"} spacing={1} justifyContent={"left"}>
         <Grid item xs={12} sm={"auto"}>
           <Typography variant={"h6"}>
-            {props.submission.receivedPoints} / {props.submission.maxPoints} Points
+            {props.submission.receivedPoints} / {props.submission.maxPoints} {localized("common.points")}
           </Typography>
         </Grid>
         {!isSmallScreen ? <Grid item><Divider variant={"fullWidth"} orientation={"vertical"}/></Grid> : <></>}
@@ -34,7 +36,7 @@ export default function QuestionnaireSubmissionCard(props: QuestionnaireSubmissi
             <Typography variant={"body1"} sx={{
               wordBreak: "break-word",
               paddingRight: 1
-            }}> Submitted Status: {props.submission.status}
+            }}> {localized("common.status")}: {props.submission.status}
             </Typography>
           </Grid>
           : <></>}

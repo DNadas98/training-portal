@@ -10,6 +10,7 @@ import {PermissionType} from "../../authentication/dto/PermissionType.ts";
 import {IMenuItem} from "../../common/menu/IMenuItem.ts";
 import LoggedInMenu from "../../common/menu/LoggedInMenu.tsx";
 import AccountMenu from "../../common/menu/AccountMenu.tsx";
+import useLocalized from "../../common/localization/hooks/useLocalized.tsx";
 
 interface GroupHeaderProps {
   group: undefined | GroupResponsePublicDto,
@@ -22,10 +23,11 @@ interface GroupHeaderProps {
 export default function GroupHeader(props: GroupHeaderProps) {
   const theme = useTheme();
   const getLocalizedDate = useLocalizedDate();
+  const localized = useLocalized();
 
   function getGroupMenuItems() {
-    const items: IMenuItem[] = [{path: `/groups/${props?.group?.groupId}`, title: "Group Dashboard"},
-      {path: `/groups/${props?.group?.groupId}/projects`, title: "Projects"}];
+    const items: IMenuItem[] = [{path: `/groups/${props?.group?.groupId}`, title: localized("menus.group_dashboard")},
+      {path: `/groups/${props?.group?.groupId}/projects`, title: localized("menus.projects")}];
     if (props.groupPermissions.includes(PermissionType.GROUP_EDITOR)) {
       items.push({
         path: `/groups/${props?.group?.groupId}/update`, title: "Update Details"
@@ -42,32 +44,32 @@ export default function GroupHeader(props: GroupHeaderProps) {
   function getProjectMenuItems() {
     const items: IMenuItem[] = [{
       path: `/groups/${props?.group?.groupId}/projects/${props?.project?.projectId}`,
-      title: "Project Dashboard"
+      title: localized("menus.project_dashboard")
     }];
     if (props.projectPermissions.includes(PermissionType.PROJECT_EDITOR)) {
       items.push({
         path: `/groups/${props?.group?.groupId}/projects/${props?.project?.projectId}/editor/questionnaires`,
-        title: "Edit Questionnaires"
+        title: localized("menus.edit_questionnaires")
       });
     }
     if (props.projectPermissions.includes(PermissionType.PROJECT_COORDINATOR)) {
       items.push({
         path: `/groups/${props?.group?.groupId}/projects/${props?.project?.projectId}/coordinator/questionnaires`,
-        title: "Questionnaire Statistics"
+        title: localized("menus.questionnaire_statistics")
       });
     }
     if (props.projectPermissions.includes(PermissionType.PROJECT_ADMIN)) {
       items.push({
         path: `/groups/${props?.group?.groupId}/projects/${props?.project?.projectId}/requests`,
-        title: "Join Requests"
+        title: localized("menus.join_requests")
       });
       items.push({
         path: `/groups/${props?.group?.groupId}/projects/${props?.project?.projectId}/members`,
-        title: "Assigned Members"
+        title: localized("menus.assigned_members")
       });
       items.push({
         path: `/groups/${props?.group?.groupId}/projects/${props?.project?.projectId}/update`,
-        title: "Update Details"
+        title: localized("menus.update_details")
       });
     }
     return items;

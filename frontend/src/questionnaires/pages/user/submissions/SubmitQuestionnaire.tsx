@@ -14,6 +14,7 @@ import useAuthJsonFetch from "../../../../common/api/hooks/useAuthJsonFetch.tsx"
 import RichTextDisplay from "../../../../common/richTextEditor/RichTextDisplay.tsx";
 import useLocalizedDateTime from "../../../../common/localization/hooks/useLocalizedDateTime.tsx";
 import QuestionnaireSubmissionDetails from "./components/QuestionnaireSubmissionDetails.tsx";
+import useLocalized from "../../../../common/localization/hooks/useLocalized.tsx";
 
 export default function SubmitQuestionnaire() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -30,6 +31,8 @@ export default function SubmitQuestionnaire() {
   const questionnaireId = useParams()?.questionnaireId;
 
   const getLocalizedDateTime = useLocalizedDateTime();
+
+  const localized = useLocalized();
 
   const [formData, setFormData] = useState<QuestionnaireSubmissionRequestDto>({
     questionnaireId: questionnaireId as string,
@@ -51,10 +54,11 @@ export default function SubmitQuestionnaire() {
   };
 
   const loadQuestionnaire = async () => {
+    const defaultMessage = localized("questionnaire.failed_to_load_questionnaire_error");
     try {
       if (!isValidId(groupId) || !isValidId(projectId) || !isValidId(questionnaireId)) {
         setQuestionnaire(undefined);
-        setQuestionnaireError("Questionnaire with the provided details was not found");
+        setQuestionnaireError(localized("questionnaire.questionnaire_not_found"));
         return;
       }
       const path = projectPermissions.includes(PermissionType.PROJECT_EDITOR)
@@ -64,7 +68,7 @@ export default function SubmitQuestionnaire() {
       const response = await authJsonFetch({path});
       if (!response?.status || response.status > 399 || !response?.data) {
         setQuestionnaire(undefined);
-        setQuestionnaireError(response?.error ?? "Failed to load questionnaire");
+        setQuestionnaireError(response?.error ?? defaultMessage);
         return;
       }
       const fetchedQuestionnaire = response.data as QuestionnaireResponseDetailsDto;
@@ -81,7 +85,7 @@ export default function SubmitQuestionnaire() {
         if (parsedData.questions.some(question => question.checkedAnswers.length > 0)) {
           notification.openNotification({
             type: "info", vertical: "top", horizontal: "center",
-            message: `Questionnaire submission restored: ${storeUpdateTimeString}`
+            message: `${localized("questionnaire.submission_restored")}: ${storeUpdateTimeString}`
           });
         }
       } else {
@@ -97,7 +101,7 @@ export default function SubmitQuestionnaire() {
       setQuestionnaireError(undefined);
     } catch (e) {
       setQuestionnaire(undefined);
-      setQuestionnaireError("Failed to load questionnaire");
+      setQuestionnaireError(defaultMessage);
     } finally {
       setLoading(false);
     }
@@ -134,7 +138,7 @@ export default function SubmitQuestionnaire() {
 
   async function submitQuestionnaire(event) {
     event.preventDefault();
-    const defaultError = "Failed to submit questionnaire, please try again later! If the issue still persist, please contact the administrators!";
+    const defaultError = localized("questionnaire.failed_to_submit_questionnaire_error");
     try {
       setLoading(true);
       if (formData.questions.some((question) => {
@@ -142,8 +146,7 @@ export default function SubmitQuestionnaire() {
           && !question.checkedAnswers.length;
       })) {
         notification.openNotification({
-          type: "error", vertical: "top", horizontal: "center",
-          message: "Please ensure all questions with radio options are answered before proceeding."
+          type: "error", vertical: "top", horizontal: "center", message: localized("questionnaire.all_radio_button")
         });
         return;
       }
@@ -165,14 +168,17 @@ export default function SubmitQuestionnaire() {
       });
       if (!submissionDetailsResponse || submissionDetailsResponse.status > 399 || !submissionDetailsResponse.data) {
         notification.openNotification({
-          type: "error", vertical: "top", horizontal: "center", message: submissionDetailsResponse?.error ?? defaultError
+          type: "error",
+          vertical: "top",
+          horizontal: "center",
+          message: submissionDetailsResponse?.error ?? defaultError
         });
         return;
       }
       localStorage.removeItem(LOCAL_STORAGE_KEY);
       navigateBack();
       dialog.openDialog({
-        oneActionOnly: true, confirmText: "Close", content: <QuestionnaireSubmissionDetails
+        oneActionOnly: true, confirmText: localized("common.close"), content: <QuestionnaireSubmissionDetails
           submission={submissionDetailsResponse.data}/>,
         onConfirm: () => {
         }, blockScreen: true
@@ -188,9 +194,9 @@ export default function SubmitQuestionnaire() {
 
   function handleExitClick() {
     dialog.openDialog({
-      content: "Are you sure you would like to exit without completing the questionnaire? You will have to start again next time.",
-      confirmText: "Yes, exit without saving",
-      cancelText: "No, continue the questionnaire",
+      content: localized("questionnaire.exit_without_completing"),
+      confirmText: localized("questionnaire.exit_without_saving"),
+      cancelText: localized("questionnaire.no_continue"),
       onConfirm: () => {
         localStorage.removeItem(LOCAL_STORAGE_KEY);
         navigateBack();
@@ -210,14 +216,14 @@ export default function SubmitQuestionnaire() {
   } else if (!projectPermissions.length) {
     notification.openNotification({
       type: "error", vertical: "top", horizontal: "center",
-      message: "Access Denied: Insufficient permissions"
+      message: localized("common.auth.access_denied")
     });
     navigate(`/groups/${groupId}/projects/${projectId}`);
     return <></>;
   } else if (!questionnaire) {
     notification.openNotification({
       type: "error", vertical: "top", horizontal: "center",
-      message: questionnaireError ?? "Failed to load questionnaire"
+      message: questionnaireError ?? localized("questionnaire.failed_to_load_questionnaire_error")
     });
     navigate(`/groups/${groupId}/projects/${projectId}`);
     return <></>;
@@ -241,7 +247,7 @@ export default function SubmitQuestionnaire() {
                 wordBreak: "break-word",
                 paddingRight: 1
               }}>
-                Max Points: {questionnaire.maxPoints}
+                {localized("questionnaire.max_points")}: {questionnaire.maxPoints}
               </Typography>
             </Grid>
           </Grid>
@@ -293,12 +299,12 @@ export default function SubmitQuestionnaire() {
           <Card> <CardActions><Grid container spacing={2}>
             <Grid item xs={12} md={"auto"}>
               <Button sx={{width: "fit-content"}} variant={"contained"} type={"submit"}>
-                Submit questionnaire
+                {localized("questionnaire.submit_questionnaire")}
               </Button>
             </Grid>
             <Grid item xs={12} md={"auto"}>
               <Button sx={{width: "fit-content"}} variant={"outlined"} onClick={handleExitClick}>
-                Exit without saving
+                {localized("questionnaire.exit_without_saving")}
               </Button>
             </Grid>
           </Grid> </CardActions> </Card>

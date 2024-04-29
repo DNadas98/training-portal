@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -36,11 +37,17 @@ public class QuestionnaireStatisticsService {
   private final QuestionnaireSubmissionConverter questionnaireSubmissionConverter;
   private final ExcelUtilsService excelUtilsService;
 
-  private static List<String> getQuestionnaireStatisticsColumns() {
+  private static List<String> getQuestionnaireStatisticsColumns(Locale locale) {
+    if (locale.getLanguage().equals("hu")) {
+      return List.of("Felhasználónév", "Teljes név", "E-mail cím", "Teszt összpontszám",
+        "Legjobb kitöltés pontszáma", "Legjobb kitöltés dátuma", "Kitöltések száma",
+        "Jelenlegi koordinátor", "Van külső teszt kérdőíve", "Van külső teszt hibája",
+        "Kapott sikeres befejezési e-mailt");
+    }
     return List.of("Username", "Full Name", "E-mail Address", "Questionnaire Total Points",
-      "Max Points Submission Received Points", "Max Points Submission Date",
-      "Total Submissions", "Current Coordinator", "Has External Test Questionnaire",
-      "Has External Test Failure", "Received Successful Completion Email");
+      "Best Submission Received Points", "Best Submission Date", "Total Submissions",
+      "Current Coordinator", "Has External Test Questionnaire", "Has External Test Failure",
+      "Received Successful Completion Email");
   }
 
   private static List<Function<QuestionnaireSubmissionStatsInternalDto, Object>> getQuestionnaireStatisticsValueExtractors(
@@ -83,11 +90,12 @@ public class QuestionnaireStatisticsService {
    * @param questionnaireId The questionnaire ID.
    * @param status          The status of the questionnaire.
    * @param response        The HttpServletResponse object needed for the output stream.
+   * @param locale          The locale of the user.
    */
   @Transactional(readOnly = true)
   public void exportAllQuestionnaireSubmissionsToExcel(
     Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status, String search,
-    ZoneId timeZoneId, HttpServletResponse response) throws IOException {
+    ZoneId timeZoneId, HttpServletResponse response, Locale locale) throws IOException {
     try (SXSSFWorkbook workbook = excelUtilsService.createWorkbook();
          OutputStream outputStream = response.getOutputStream();
          Stream<QuestionnaireSubmissionStatsInternalDto> dtos = getQuestionnaireStatisticsOutputStream(
@@ -95,7 +103,7 @@ public class QuestionnaireStatisticsService {
          )) {
       Sheet sheet = excelUtilsService.createSheet(workbook, "Statistics");
       CellStyle dateCellStyle = excelUtilsService.createDateCellStyle(workbook);
-      List<String> columns = getQuestionnaireStatisticsColumns();
+      List<String> columns = getQuestionnaireStatisticsColumns(locale);
       excelUtilsService.createHeaderRow(sheet, columns);
       List<Function<QuestionnaireSubmissionStatsInternalDto, Object>>
         valueExtractors = getQuestionnaireStatisticsValueExtractors(timeZoneId);

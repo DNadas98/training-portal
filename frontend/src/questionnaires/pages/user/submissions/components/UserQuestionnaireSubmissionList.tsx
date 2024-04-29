@@ -1,6 +1,8 @@
 import {Button, Card, CardActions, CardContent, Typography} from "@mui/material";
 import {QuestionnaireSubmissionResponseDto} from "../../../../dto/QuestionnaireSubmissionResponseDto.ts";
 import QuestionnaireSubmissionCard from "./QuestionnaireSubmissionCard.tsx";
+import useLocalized from "../../../../../common/localization/hooks/useLocalized.tsx";
+
 
 interface UserQuestionnaireSubmissionListProps {
   maxPoints: boolean,
@@ -13,6 +15,7 @@ interface UserQuestionnaireSubmissionListProps {
 }
 
 export default function UserQuestionnaireSubmissionList(props: UserQuestionnaireSubmissionListProps) {
+  const localized = useLocalized();
   return(<>
     {props.questionnaireSubmissions?.length > 0
       ? props.questionnaireSubmissions.map((submission) => {
@@ -23,13 +26,13 @@ export default function UserQuestionnaireSubmissionList(props: UserQuestionnaire
               props.onSelectClick(submission.id)
             }}
                     disabled={props.selectedQuestionnaireSubmissionLoading}>
-              View Details
+              {localized("questionnaire.view_details")}
             </Button>
             <Button onClick={() => {
               props.onDeleteClick(submission.id)
             }}
                     color={"error"}>
-              Delete
+              {localized("inputs.delete")}
             </Button>
           </CardActions>
         </Card>;
@@ -38,10 +41,10 @@ export default function UserQuestionnaireSubmissionList(props: UserQuestionnaire
         <CardContent>
           {props.maxPoints
             ? <Typography>
-              {"You haven't achieved maximum points on this questionnaire yet."}
+              {localized("not_max_points")}
             </Typography>
             : <Typography>
-              {"You haven't submitted this questionnaire yet."}
+              {localized("not_send_questionnaire")}
             </Typography>
           }
         </CardContent>

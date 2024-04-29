@@ -12,6 +12,7 @@ import useLocalizedDateTime from "../../../common/localization/hooks/useLocalize
 import RichTextDisplay from "../../../common/richTextEditor/RichTextDisplay.tsx";
 import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import UserQuestionnaires from "./components/questionnaires/UserQuestionnaires.tsx";
+import useLocalized from "../../../common/localization/hooks/useLocalized.tsx";
 
 export default function ProjectDashboard() {
   const {loading: permissionsLoading, projectPermissions} = usePermissions();
@@ -25,11 +26,12 @@ export default function ProjectDashboard() {
   const navigate = useNavigate();
   const getLocalizedDateTime = useLocalizedDateTime();
   const dialog = useDialog();
+  const localized = useLocalized();
 
   function handleErrorNotification(message?: string) {
     notification.openNotification({
       type: "error", vertical: "top", horizontal: "center",
-      message: `${message ?? "Failed to load project"}`
+      message: `${message ?? localized("pages.project_dashboard.error.failed_to_load_project_error")}`
     });
   }
 
@@ -37,7 +39,7 @@ export default function ProjectDashboard() {
     try {
       setProjectLoading(true);
       if (!isValidId(groupId) || !isValidId(projectId)) {
-        setProjectError("The provided group or project ID is invalid");
+        setProjectError("common.error.fetch.ids_invalid");
         setProjectLoading(false);
         return;
       }
@@ -45,7 +47,7 @@ export default function ProjectDashboard() {
         path: `groups/${groupId}/projects/${projectId}/details`
       });
       if (!response?.status || response.status > 404 || !response?.data) {
-        setProjectError(response?.error ?? `Failed to load project`);
+        setProjectError(response?.error ?? localized("pages.project_dashboard.error.failed_to_load_project_error"));
         return handleErrorNotification(response?.error);
       }
       const projectData = {
@@ -56,7 +58,7 @@ export default function ProjectDashboard() {
       setProject(projectData as ProjectResponseDetailsDto);
     } catch (e) {
       setProject(undefined);
-      setProjectError("Failed to load project");
+      setProjectError(localized("pages.project_dashboard.error.failed_to_load_project_error"));
       handleErrorNotification();
     } finally {
       setProjectLoading(false);
@@ -87,7 +89,6 @@ export default function ProjectDashboard() {
     try {
       setProjectLoading(true);
       if (!isValidId(groupId) || !isValidId(projectId)) {
-        setProjectError("The provided group or project ID is invalid");
         setProjectLoading(false);
         return;
       }
@@ -95,17 +96,17 @@ export default function ProjectDashboard() {
         path: `groups/${groupId}/projects/${projectId}`, method: "DELETE"
       });
       if (!response?.status || response.status > 404 || !response?.message) {
-        return handleErrorNotification(response?.error ?? "Failed to remove project data");
+        return handleErrorNotification(response?.error ?? localized("pages.project_dashboard.error.failed_to_remove_error"));
       }
 
       setProject(undefined);
       notification.openNotification({
         type: "success", vertical: "top", horizontal: "center",
-        message: response.message ?? "All project data has been removed successfully"
+        message: response.message ?? localized("pages.project_dashboard.remove_success")
       });
       navigate(`/groups/${groupId}`, {replace: true});
     } catch (e) {
-      handleErrorNotification("Failed to remove project data");
+      handleErrorNotification(localized("pages.project_dashboard.error.failed_to_remove_error"));
     } finally {
       setProjectLoading(false);
     }
@@ -113,8 +114,8 @@ export default function ProjectDashboard() {
 
   function handleDeleteClick() {
     dialog.openDialog({
-      content: "Do you really wish to remove all project data, including all questionnaires and questionnaire submissions? This action is irreversible.",
-      confirmText: "Yes, delete this project", onConfirm: deleteProject
+      content: localized("pages.project_dashboard.remove_confirm_message"),
+      confirmText: localized("pages.project_dashboard.remove_confirm_button"), onConfirm: deleteProject
     });
   }
 
@@ -125,7 +126,7 @@ export default function ProjectDashboard() {
   if (permissionsLoading || projectLoading) {
     return <LoadingSpinner/>;
   } else if ((!projectPermissions?.length) || !project) {
-    handleErrorNotification(projectError ?? "Access Denied: Insufficient permissions");
+    handleErrorNotification(projectError ?? localized("common.auth.access_denied"));
     navigate(`/groups/${groupId}/projects`, {replace: true});
     return <></>;
   }
@@ -139,15 +140,15 @@ export default function ProjectDashboard() {
             <RichTextDisplay content={project.detailedDescription}/>
           </Stack>
           <Typography>
-            Start Date: {getLocalizedDateTime(project.startDate)}
+            {localized("inputs.start_date")}: {getLocalizedDateTime(project.startDate)}
           </Typography>
           <Typography>
-            Deadline: {getLocalizedDateTime(project.deadline)}
+            {localized("inputs.deadline")}: {getLocalizedDateTime(project.deadline)}
           </Typography>
         </CardContent>
         <CardActions> <Stack spacing={0.5}>
           <Button sx={{width: "fit-content"}} onClick={() => navigate(`/groups/${groupId}/projects`)}>
-            Back to projects
+            {localized("inputs.back_to_projects")}
           </Button>
         </Stack></CardActions>
       </Card> </Grid>
@@ -168,10 +169,11 @@ export default function ProjectDashboard() {
           }
           {(projectPermissions.includes(PermissionType.PROJECT_COORDINATOR))
             && <Grid item xs={12} md={true}><Card sx={{minHeight: "100%", minWidth: "100%"}}>
-              <CardHeader title={"Coordinator Actions"} titleTypographyProps={{variant: "h6"}}/>
+              <CardHeader title={localized("statistics.cordinator_actions")} titleTypographyProps={{variant: "h6"}}/>
               <CardActions> <Stack spacing={0.5}>
-                <Button sx={{width: "fit-content", textAlign: "left"}} onClick={handleCoordinatorQuestionnairesClick}>
-                  View questionnaire Statistics
+                <Button sx={{width: "fit-content", textAlign: "left"}} variant={"text"}
+                        onClick={handleCoordinatorQuestionnairesClick}>
+                  {localized("statistics.view_statistics")}
                 </Button>
               </Stack></CardActions>
             </Card> </Grid>

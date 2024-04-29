@@ -14,6 +14,7 @@ import ExpandIcon from "../../../../common/utils/components/ExpandIcon.tsx";
 import useLocalizedDateTime from "../../../../common/localization/hooks/useLocalizedDateTime.tsx";
 import {ProjectResponsePublicDto} from "../../../dto/ProjectResponsePublicDto.ts";
 import ForwardIcon from "../../../../common/utils/components/ForwardIcon.tsx";
+import useLocalized from "../../../../common/localization/hooks/useLocalized.tsx";
 
 interface ProjectListProps {
   loading: boolean,
@@ -26,6 +27,7 @@ interface ProjectListProps {
 
 export default function ProjectList(props: ProjectListProps) {
   const getLocalizedDateTime = useLocalizedDateTime();
+  const localized = useLocalized();
   return props.loading
     ? <LoadingSpinner/>
     : props.projects?.length > 0
@@ -78,7 +80,7 @@ export default function ProjectList(props: ProjectListProps) {
                       onClick={() => {
                         props.onActionButtonClick(project.projectId);
                       }}>
-                {props.userIsMember ? "View Dashboard" : "Request to join"}
+                {props.userIsMember ? localized("pages.projects.view_dashboard") : localized("pages.projects.request_to_join")}
               </Button>
             </AccordionActions>
           </Accordion>

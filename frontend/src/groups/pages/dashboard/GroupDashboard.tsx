@@ -12,6 +12,7 @@ import {useAuthentication} from "../../../authentication/hooks/useAuthentication
 import {GlobalRole} from "../../../authentication/dto/userInfo/GlobalRole.ts";
 import {useDialog} from "../../../common/dialog/context/DialogProvider.tsx";
 import RichTextDisplay from "../../../common/richTextEditor/RichTextDisplay.tsx";
+import useLocalized from "../../../common/localization/hooks/useLocalized.tsx";
 
 export default function GroupDashboard() {
   const {loading, groupPermissions} = usePermissions();
@@ -24,6 +25,7 @@ export default function GroupDashboard() {
   const navigate = useNavigate();
   const authentication = useAuthentication();
   const dialog = useDialog();
+  const localized = useLocalized();
 
   function handleErrorNotification(message?: string) {
     notification.openNotification({
@@ -122,7 +124,7 @@ export default function GroupDashboard() {
           </Stack>
         </CardContent>
         <CardActions>
-          <Button onClick={handleProjectsClick}>View projects</Button>
+          <Button onClick={handleProjectsClick}>{localized("pages.projects.view_projects")}</Button>
         </CardActions>
       </Card></Grid>
       <Grid item xs={10}>

@@ -5,6 +5,7 @@ import QuestionnaireSubmissionCard from "./QuestionnaireSubmissionCard.tsx";
 import BackButton from "../../../../../common/utils/components/BackButton.tsx";
 import URLQueryPagination from "../../../../../common/pagination/URLQueryPagination.tsx";
 import {MouseEventHandler} from "react";
+import useLocalized from "../../../../../common/localization/hooks/useLocalized.tsx";
 
 interface UserQuestionnaireSubmissionBrowserProps {
   questionnaireSubmissions: QuestionnaireSubmissionResponseDto[],
@@ -21,19 +22,21 @@ interface UserQuestionnaireSubmissionBrowserProps {
 }
 
 export default function UserQuestionnaireSubmissionBrowser(props: UserQuestionnaireSubmissionBrowserProps) {
+  const localized = useLocalized();
   return (
     <Grid container spacing={2} justifyContent={"center"} alignItems={"top"}>
       {props.maxPointQuestionnaireSubmission
         ? <Grid item xs={10} sm={10} md={9} lg={8}> <Stack spacing={2}>
           <Card>
-            <CardHeader title={`${props.maxPointQuestionnaireSubmission.name} - Max Points`}/>
+            <CardHeader
+              title={`${props.maxPointQuestionnaireSubmission.name} - ${localized("questionnaire.max_points")}`}/>
             <QuestionnaireSubmissionCard submission={props.maxPointQuestionnaireSubmission}/>
             <CardActions>
               <Button onClick={() => {
                 props.onQuestionnaireSubmissionSelectClick(props.maxPointQuestionnaireSubmission.id)
               }}
                       disabled={props.selectedQuestionnaireSubmissionLoading}>
-                View Details
+                {localized("common.view_details")}
               </Button>
             </CardActions>
           </Card>
@@ -61,15 +64,15 @@ export default function UserQuestionnaireSubmissionBrowser(props: UserQuestionna
                                              onDeleteClick={props.onDeleteClick}/>
             <Card><CardActions>
               <Button sx={{width: "fit-content"}} onClick={props.handleBackClick}>
-                Back To Questionnaires
+                {localized("questionnaire.back_to_questionnaires")}
               </Button>
             </CardActions></Card>
           </Stack>
           : !props.maxPointQuestionnaireSubmission ? <Card>
-            <CardHeader title={"No submissions were found for this questionnaire."}
+            <CardHeader title={localized("questionnaire.no_submissions_found")}
                         sx={{textAlign: "center"}}/>
             <CardContent sx={{justifyContent: "center"}}>
-              <BackButton text={"Back to questionnaires"}/>
+              <BackButton text={localized("back_to_questionnaires")}/>
             </CardContent>
           </Card> : <></>}
       </Grid>

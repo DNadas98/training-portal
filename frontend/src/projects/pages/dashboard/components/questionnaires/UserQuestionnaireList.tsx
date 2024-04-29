@@ -13,6 +13,7 @@ import ExpandIcon from "../../../../../common/utils/components/ExpandIcon.tsx";
 import LoadingSpinner from "../../../../../common/utils/components/LoadingSpinner.tsx";
 import {QuestionnaireResponseDto} from "../../../../../questionnaires/dto/QuestionnaireResponseDto.ts";
 import RichTextDisplay from "../../../../../common/richTextEditor/RichTextDisplay.tsx";
+import useLocalized from "../../../../../common/localization/hooks/useLocalized.tsx";
 
 interface UserQuestionnaireListProps {
   loading: boolean,
@@ -24,6 +25,7 @@ interface UserQuestionnaireListProps {
 
 export default function UserQuestionnaireList(props: UserQuestionnaireListProps) {
   const MAX_SUBMISSION_COUNT = 10;
+  const localized = useLocalized();
   return props.loading
     ? <LoadingSpinner/>
     : props.questionnaires?.length > 0
@@ -48,7 +50,7 @@ export default function UserQuestionnaireList(props: UserQuestionnaireListProps)
                       wordBreak: "break-word",
                       paddingRight: 1
                     }}>
-                      Past Submissions: {questionnaire.submissionCount}
+                      {localized("questionnaire.past_submission")}: {questionnaire.submissionCount}
                     </Typography> : <></>}
                 </Grid>
               </Grid>
@@ -58,16 +60,14 @@ export default function UserQuestionnaireList(props: UserQuestionnaireListProps)
                 wordBreak: "break-word",
                 paddingRight: 1
               }}>
-                Max Points: {questionnaire.maxPoints}
+                {localized("questionnaire.max_points")}: {questionnaire.maxPoints}
               </Typography>
               {props.maxPoints ? <Typography>
-                  Congratulations, you have achieved maximum points on this questionnarie!
+                  {localized("questionnaire.max_achieved")}
                 </Typography>
                 : (questionnaire?.submissionCount && questionnaire.submissionCount >= MAX_SUBMISSION_COUNT)
                   ? <Typography>
-                    You have reached the maximum stored questionnaire submission count, please view your past
-                    submissions
-                    and delete one in order to proceed!
+                    {localized("questionnaire.max_submission_count_reached")}
                   </Typography>
                   : <></>}
               <RichTextDisplay content={questionnaire.description}/>
@@ -77,19 +77,19 @@ export default function UserQuestionnaireList(props: UserQuestionnaireListProps)
                 ? <Button sx={{width: "fit-content"}} onClick={() => {
                   props.handlePastSubmissionsClick(questionnaire.id);
                 }}>
-                  View past submissions
+                  {localized("inputs.view_past_submission")}
                 </Button>
                 : <Stack spacing={0.5} width={"100%"}>
                   {Number(questionnaire.submissionCount) < MAX_SUBMISSION_COUNT ?
-                    <Button sx={{width: "fit-content", textAlign: "left"}} onClick={() => {
+                    <Button sx={{width: "fit-content", textAlign: "left"}} variant={"contained"} onClick={() => {
                       props.handleFillOutClick(questionnaire.id);
                     }}>
-                      Fill out this questionnaire
+                      {localized("questionnaire.fill_out_this_questionnaire")}
                     </Button> : <></>}
                   <Button sx={{width: "fit-content"}} onClick={() => {
                     props.handlePastSubmissionsClick(questionnaire.id);
                   }}>
-                    View past submissions
+                    {localized("inputs.view_past_submission")}
                   </Button>
                 </Stack>
               }</AccordionActions>

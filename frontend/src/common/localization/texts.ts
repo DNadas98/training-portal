@@ -19,7 +19,14 @@ export const texts = {
       "profile": "Profile",
       "join_requests": "Join Requests",
       "groups": "Groups",
-      "siteInfo": "Site Info"
+      "siteInfo": "Site Info",
+      "group_dashboard": "Group Dashboard",
+      "projects": "Projects",
+      "update_details": "Update Details",
+      "assigned_members": "Assigned Members",
+      "questionnaire_statistics": "Questionnaire Statistics",
+      "edit_questionnaires": "Edit Questionnaires",
+      "project_dashboard": "Project Dashboard"
     },
     "pages": {
       "home": {
@@ -124,6 +131,24 @@ export const texts = {
           }
         },
       },
+      "projects": {
+        "your_projects": "Your projects",
+        "projects_to_join": "Projects to join",
+        "view_dashboard": "View Dashboard",
+        "request_to_join": "Request to Join",
+        "back_to_group_dashboard": "Back to group dashboard",
+        "not_found": "No projects were found",
+        "view_projects": "View projects"
+      },
+      "project_dashboard": {
+        "remove_confirm_message": "Do you really wish to remove all project data, including all questionnaires and questionnaire submissions? This action is irreversible.",
+        "remove_confirm_button": "Yes, delete this project",
+        "remove_success": "All project data has been removed successfully",
+        "error": {
+          "failed_to_load_project_error": "Failed to load project",
+          "failed_to_remove_error": "Failed to remove project data"
+        }
+      },
       "error": {
         "not_found": {
           "text": "The page you are looking for does not exist."
@@ -134,6 +159,63 @@ export const texts = {
           "p03": "If the issue persists, please contact our support team."
         }
       }
+    },
+    "questionnaire": {
+      "max_achieved": "Congratulations, you have achieved maximum points on this questionnarie!",
+      "max_submission_count_reached": "You have reached the maximum stored questionnaire submission count, please view your past submissions and delete one in order to proceed!",
+      "past_submission": "Past submission",
+      "fill_out_this_questionnaire": "Fill out this questionnaire",
+      "view_details": "View Details",
+      "not_max_points": "You haven't achieved maximum points on this questionnaire yet.",
+      "not_send_questionnaire": "You haven't submitted this questionnaire yet.",
+      "back_to_questionnaires": "Back to questionnaires",
+      "max_points": "Max Points",
+      "submit_questionnaire": "Submit questionnaire",
+      "exit_without_saving": "Yes, exit without saving",
+      "received_points": "Received Points",
+      "all_radio_button": "Please ensure all questions with radio options are answered before proceeding.",
+      "sure_delete_submission": "Are you sure, you would like to delete this questionnaire submission?",
+      "exit_without_completing": "Are you sure you would like to exit without completing the questionnaire? You will have to start again next time.",
+      "no_continue": "No, continue the questionnaire",
+      "submission_restored": "Questionnaire submission restored",
+      "failed_to_load_questionnaire_error": "Failed to load questionnaire",
+      "failed_to_load_questionnaires_error": "Failed to load questionnaires",
+      "questionnaire_not_found": "Questionnaire not found",
+      "no_questionnaires_found": "No questionnaires found for this project",
+      "no_submissions_found": "No submissions were found for this questionnaire",
+      "failed_to_load_submissions_error": "Failed to load questionnaire submissions",
+      "failed_to_load_selected_submission_error": "Failed to load selected questionnaire submission",
+      "failed_to_delete_submission_error": "Failed to delete questionnaire submission",
+      "failed_to_submit_questionnaire_error": "Failed to submit questionnaire"
+    },
+    "statistics": {
+      "questionnaire_statistics": "Questionnaire Statistics",
+      "created_at": "Created at",
+      "updated_at": "Last updated at",
+      "status": "Status",
+      "active": "Active",
+      "test": "Test",
+      "statistics": "Statistics",
+      "back_to_project": "Back to project",
+      "coordinator_actions": "Coordinator Actions",
+      "view_statistics": "View questionnaire Statistics",
+      "created_by": "Created by",
+      "updated_by": "Updated by",
+      "export_to_excel": "Export to Excel",
+      "exporting": "Exporting...",
+      "statistics_search_by": "Search by username, full name or coordinator name",
+      "username": "Username",
+      "name": "Name",
+      "max_date": "Max Date",
+      "max_points": "Max Points",
+      "total_submissions": "Total Submissions",
+      "coordinator": "Coordinator",
+      "external_questionnaire": "External Questionnaire",
+      "external_failure": "External Failure",
+      "completion_email": "Completion Email",
+      "no_found": "No filled out questionnaires were found",
+      "failed_to_load_statistics_error": "Failed to load questionnaire statistics",
+      "failed_to_download_statistics_error": "Failed to download statistics"
     },
     "inputs": {
       "fullName": "Full Name",
@@ -151,7 +233,10 @@ export const texts = {
       "legalPolicy": "Terms and Conditions",
       "legalPolicy_hasNotRead_error": "Please open, and read the Terms and Conditions first!",
       "start_date": "Start Date",
-      "deadline": "Deadline"
+      "deadline": "Deadline",
+      "back_to_projects": "Back to projects",
+      "view_past_submission": "View Past Submissions",
+      "delete": "Delete"
     },
     "common": {
       "accept": "Accept",
@@ -161,6 +246,10 @@ export const texts = {
       "confirm": "Confirm",
       "cancel": "Cancel",
       "remove": "Remove",
+      "copy_to_clipboard": "Copy to clipboard",
+      "points": "Points",
+      "status": "Status",
+      "view_details": "View Details",
       "errorTitle": "Error",
       "error": {
         "redirect": {
@@ -168,7 +257,8 @@ export const texts = {
           "unknown": "Return to the Home page or try again later. If the issue persists, please contact our support team."
         },
         "fetch": {
-          "unknown": "Failed to load the requested resource. An error has occurred"
+          "unknown": "Failed to load the requested resource. An error has occurred",
+          "ids_invalid": "One or more of the provided ID-s are invalid"
         },
         "auth": {
           "unauthorized": "Unauthorized",
@@ -181,8 +271,8 @@ export const texts = {
     "site": {
       "administrator": "Adminisztrátor",
       "developer": "Fejlesztő",
-      "sourceCode": "A project forráskódja",
-      "legalPolicyText": "A szolgáltatás használatával Ön elfogadja, hogy alkalmazásunk kezeli az Ön teljes nevét, és az e-mail címét.\nAdatait a rendszer kizárólag kapcsolattartásra, és az Ön adminisztrátorainak és mentorainak szóló statisztikák készítéséhez használjuk.\nAz e-mail címe kizárólag az Ön projektjeihez tartozó adminisztrátoroknak, illetve mentoroknak lesz látható.\nAdatait marketing célra egyáltalán nem használjuk, harmadik félnek semmilyen formában nem adjuk tovább."
+      "sourceCode": "A projekt forráskódja",
+      "legalPolicyText": "A szolgáltatás használatával Ön elfogadja, hogy alkalmazásunk kezeli az Ön teljes nevét, és az e-mail címét.\nAdatait a rendszer kizárólag kapcsolattartásra, és a tesztsor kitöltésekről készült belső statisztikához használja.\nAz e-mail címe és a teljes neve kizárólag az Ön mentorainak lesz látható.\nAdatait marketing célra egyáltalán nem használjuk, harmadik félnek semmilyen formában nem adjuk tovább."
     },
     "menus": {
       "home": "Főoldal",
@@ -195,15 +285,22 @@ export const texts = {
         "hungarian": "Magyar"
       },
       "profile": "Profil",
-      "join_requests": "Jelentkezési kérelmek",
-      "groups": "Csoportok",
-      "siteInfo": "Információk"
+      "join_requests": "Csatlakozási kérelmek",
+      "groups": "Témacsoportok",
+      "siteInfo": "Információk",
+      "group_dashboard": "Témacsoport leírása",
+      "projects": "Projektek listája",
+      "update_details": "Leírás módosítása",
+      "assigned_members": "Csatlakozott userek",
+      "questionnaire_statistics": "Kitöltések statisztikája",
+      "edit_questionnaires": "Feladatsor szerkesztése",
+      "project_dashboard": "Projekt leírása"
     },
     "pages": {
       "home": {
-        "p01": "Regisztráljon és jelentkezzen be",
-        "p02": "Jelentkezzen csoportokba és projektekbe",
-        "p03": "Tanulmányozza az oktatási anyagokat, majd töltse ki a hozzájuk tartozó teszteket"
+        "p01": "Regisztráljon oldalunkon, és jelentkezzen be!",
+        "p02": "Csatlakozzon témacsoportokhoz, illetve projektekhez!",
+        "p03": "Tanulmányozza át az oktatási anyagokat, majd töltse ki a felkészültségét mérő teszteket!"
       },
       "sign_in": {
         "title": "Bejelentkezés",
@@ -231,7 +328,7 @@ export const texts = {
       },
       "pre_registration": {
         "title": "Üdvözöljük a tesztsor.hu oldalán!",
-        "info": "Önt mentora meghívta a tesztsor.hu felhasználói közé.\nEzen a felületen oktatási anyagokat talál, valamint a felkészültségét mérő tesztsort tölthet ki.\nFelhasználóneve jelen esetben egy előre regisztrált azonosító, amit a csoportja specifikációi alapján hoztak létre.\nRegisztrációja megerősítéséhez, a belépéshez illetve a későbbi használathoz létre kell hoznia egy jelszót, illetve amennyiben szükséges, módosíthatja a teljes nevét.\nA későbbiekben az e-mail címével, illetve a most beállított jelszavával fog tudni belépni.",
+        "info": "Önt mentora meghívta a tesztsor.hu felhasználói közé.\nEzen a felületen oktatási anyagokat talál, valamint a felkészültségét mérő tesztsort tölthet ki.\nFelhasználóneve előre be lett állítva, a teljes nevét ha szükséges, módosíthatja.\nA belépéshez, illetve a későbbi használathoz, létre kell hoznia egy jelszót.\nA későbbiekben az e-mail címével, illetve a most beállított jelszavával fog tudni belépni.",
         "submit_button": "Beküldés",
         "error": {
           "default": "A regisztráció véglegesítése során hiba történt"
@@ -288,12 +385,12 @@ export const texts = {
       },
       "groups": {
         "browser": {
-          "your_groups": "Az ön csoportjai",
+          "your_groups": "Az Ön témacsoportjai",
           "add_new_group": "Hozzon létre csoportot",
-          "view_dashboard": "Tovább a csoporthoz",
+          "view_dashboard": "Tovább a csoportleíráshoz",
           "request_to_join": "Csatlakozási kérelem küldése",
           "groups_to_join": "Csoportok, amikhez csatlakozhat",
-          "groups_not_found": "Nem találtunk csoportokat",
+          "groups_not_found": "Nem találhatók ilyen témacsoportok",
           "send_join_request_success": "A csatlakozási kérelme sikeresen beküldésre került",
           "error": {
             "load_your_groups_default": "A csoportjai betöltése során hiba történt.",
@@ -301,6 +398,15 @@ export const texts = {
             "send_join_request_default": "A csatlakozási kérelem beküldése során hiba történt."
           }
         },
+      },
+      "projects": {
+        "your_projects": "Az Ön projektjei",
+        "projects_to_join": "Projektek, amikhez csatlakozhat",
+        "view_dashboard": "Tovább a projekt leírásához",
+        "request_to_join": "Csatlakozási kérelem küldése",
+        "not_found": "Nem találhatók ilyen projektek",
+        "back_to_group_dashboard": "Vissza a témacsoport leírásához",
+        "view_projects": "Tovább a projektlistához"
       },
       "error": {
         "not_found": {
@@ -312,6 +418,64 @@ export const texts = {
           "p03": "Ha a probléma továbbra is fennáll, kérjük vegye fel a kapcsolatot az adminisztátorokkal."
         }
       }
+    },
+    "questionnaire": {
+      "max_achieved": "Gratulálunk, ön maximális pontszámot ért el ezen a teszten!",
+      "max_submission_count_reached": "Ön elérte a tárolt tesztkitöltések maximális számát, kérjük töröljön egy korábbi kitöltést a továbblépéshez!",
+      "past_submission": "Korábbi kitöltések száma",
+      "fill_out_this_questionnaire": "A tesztsor kitöltése",
+      "view_details": "Eredmények megtekintése",
+      "not_max_points": "Még nem érte el a maximális pontszámot ezen a tesztsoron.",
+      "not_send_questionnaire": "Még nem küldte be ezt a kérdőívet.",
+      "back_to_questionnaires": "Vissza a tesztsorokhoz",
+      "max_points": "Maximális pontszám",
+      "submit_questionnaire": "Véglegesítés",
+      "exit_without_saving": "Kilépés mentés nélkül",
+      "received_points": "Kapott pontszám",
+      "all_radio_button": "A véglegesítéshez az összes rádiógombos (pöttyözős) kérdésre válaszolni kell.",
+      "sure_delete_submission": "Valóban töröljük ezt a kitöltést?",
+      "exit_without_completing": "Valóban mentés nélkül kilépjünk a tesztsorból? Ekkor legközelebb előlről kell kezdenie.",
+      "no_continue": "Folytatom a kitöltést",
+      "submission_restored": "Questionnaire submission restored",
+      "failed_to_load_questionnaire_error": "A teszt betöltése során hiba történt",
+      "failed_to_load_questionnaires_error": "A tesztek betöltése során hiba történt",
+      "questionnaire_not_found": "A teszt nem található",
+      "no_questionnaires_found": "Nem található teszt ehhez a projekthez",
+      "no_submissions_found": "Nem található kitöltés ehhez a teszthez",
+      "failed_to_load_submissions_error": "A tesztbeküldések betöltése során hiba történt",
+      "failed_to_load_selected_submission_error": "A tesztbeküldés betöltése során hiba történt",
+      "failed_to_delete_submission_error": "A tesztbeküldés törlése során hiba történt",
+      "failed_to_submit_questionnaire_error": "A teszt beküldése során hiba történt"
+    },
+    "statistics": {
+      "questionnaire_statistics": "Tesztsor kitöltési statisztika",
+      "created_at": "Létrehozás dátuma",
+      "updated_at": "Utolsó módosítás dátuma",
+      "status": "Státusz",
+      "active": "Aktív",
+      "test": "Teszt",
+      "statistics": "Statisztika",
+      "back_to_project": "Vissza a projekt leírásához",
+      "cordinator_actions": "Kordinátor műveletei",
+      "view_statistics": "A tesztsor kitöltés statisztikája",
+      "created_by": "Létrehozva",
+      "updated_by": "Utolsó módosítás",
+      "export_to_excel": "Exportálás EXCEL-be",
+      "exporting": "Exportálás...",
+      "statistics_search_by": "Keresés felhasználónév, teljes név, vagy koordinátor" +
+        " név alapján",
+      "username": "Felhasználónév",
+      "name": "Teljes név",
+      "max_date": "Max. dátum",
+      "max_points": "Max. pont",
+      "total_submissions": "Kitöltések száma",
+      "coordinator": "Koordinátor",
+      "external_questionnaire": "Gyakorló kérdőív",
+      "external_failure": "Gyakorló meghiúsulás",
+      "completion_email": "Értesítő e-mail",
+      "no_found": "Nem található listaelem",
+      "failed_to_load_statistics_error": "A statisztikák betöltése során hiba történt",
+      "failed_to_download_statistics_error": "A statisztikák letöltése során hiba történt"
     },
     "inputs": {
       "fullName": "Teljes név",
@@ -328,8 +492,11 @@ export const texts = {
       "i_accept_the": "Elolvastam, és elfogadom a",
       "legalPolicy": "felhasználási feltételeket",
       "legalPolicy_hasNotRead_error": "Kérjük elfogadás előtt nyissa meg, és olvassa el a felhasználási feltételeket!",
-      "start_date": "Kezdés Dátuma",
-      "deadline": "Határidő"
+      "start_date": "Kezdés dátuma",
+      "deadline": "Határidő",
+      "back_to_projects": "Vissza a projektlistához",
+      "view_past_submission": "Korábbi kitöltések megtekintése",
+      "delete": "Törlés"
     },
     "common": {
       "accept": "Elfogadás",
@@ -338,6 +505,10 @@ export const texts = {
       "submit": "Submit",
       "confirm": "Megerősítés",
       "cancel": "Mégsem",
+      "copy_to_clipboard": "Másolás a vágólapra",
+      "points": "Pont",
+      "status": "Státusz",
+      "view_details": "Részletek",
       "errorTitle": "Hiba",
       "error": {
         "redirect": {
@@ -345,7 +516,8 @@ export const texts = {
           "unknown": "Térjen vissza a főoldalra, vagy próbálja újra később. Ha a probléma továbbra is fennáll, kérjük vegye fel a kapcsolatot adminisztrátorainkkal."
         },
         "fetch": {
-          "unknown": "A kért adat betöltése során hiba történt."
+          "unknown": "A kért adat betöltése során hiba történt.",
+          "ids_invalid": "Egy vagy több ID érvénytelen"
         },
         "auth": {
           "access_denied": "Hozzáférés megtagadva",

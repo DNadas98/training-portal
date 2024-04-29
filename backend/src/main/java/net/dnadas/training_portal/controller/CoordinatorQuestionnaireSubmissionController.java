@@ -19,6 +19,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 @RestController
@@ -52,7 +53,7 @@ public class CoordinatorQuestionnaireSubmissionController {
   public void getAllQuestionnaireSubmissionsExcel(
     @PathVariable Long groupId, @PathVariable Long projectId, @PathVariable Long questionnaireId,
     @RequestParam QuestionnaireStatus status, @RequestParam(required = false) String search,
-    @RequestParam String timeZone, HttpServletResponse response) {
+    @RequestParam String timeZone, HttpServletResponse response, Locale locale) {
     //TODO: sanitize search input
     try {
       ZoneId zoneId = ZoneId.of(timeZone);
@@ -62,7 +63,7 @@ public class CoordinatorQuestionnaireSubmissionController {
         "attachment; filename=\"questionnaire-statistics.xlsx\"");
       questionnaireStatisticsService.exportAllQuestionnaireSubmissionsToExcel(
         groupId, projectId, questionnaireId, status, search != null ? search : "", zoneId,
-        response);
+        response, locale);
       response.flushBuffer();
     } catch (IOException e) {
       log.error("Failed to export questionnaire submissions to Excel", e);
