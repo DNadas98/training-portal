@@ -17,10 +17,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +30,7 @@ public class CompletionMailService {
 
 
   public CompletionMailReportDto sendCompletionMails(
-    Long groupId, Long projectId) {
+    Long groupId, Long projectId, Locale locale) {
     Project project = projectDao.findByIdAndGroupId(projectId, groupId)
       .orElseThrow(() -> new ProjectNotFoundException(projectId));
     List<CompletionMailUserInternalDto> successful = new ArrayList<>();
@@ -41,7 +38,7 @@ public class CompletionMailService {
     List<ApplicationUser> usersWithMaxPointSubmissions =
       applicationUserDao.findUsersWithCompletedRequirementsForProject(groupId, projectId);
     for (ApplicationUser user : usersWithMaxPointSubmissions) {
-      tryToSendEmail(user, project, successful, failed);
+      tryToSendEmail(user, project, successful, failed, locale);
     }
     return new CompletionMailReportDto(usersWithMaxPointSubmissions.size(), successful, failed);
   }
@@ -49,9 +46,9 @@ public class CompletionMailService {
   @Async
   void tryToSendEmail(
     ApplicationUser user, Project project, List<CompletionMailUserInternalDto> successful,
-    Map<CompletionMailUserInternalDto, String> failed) {
+    Map<CompletionMailUserInternalDto, String> failed, Locale locale) {
     try {
-      sendCompletionMail(user, project);
+      sendCompletionMail(user, project, locale);
       successful.add(
         new CompletionMailUserInternalDto(
           user.getUsername(), user.getFullName(), user.getEmail(),
@@ -70,11 +67,11 @@ public class CompletionMailService {
     }
   }
 
-  private void sendCompletionMail(ApplicationUser user, Project project)
+  private void sendCompletionMail(ApplicationUser user, Project project, Locale locale)
     throws
     IOException, MessagingException {
     EmailRequestDto mailRequest = emailTemplateService.getCompletionEmailDto(
-      user, project);
+      user.getFullName(), user.getEmail(), project.getName(), locale);
     user.setReceivedSuccessfulCompletionEmail(true);
     applicationUserDao.save(user);
     emailService.sendMailToUserAddress(mailRequest);

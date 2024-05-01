@@ -27,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -41,12 +42,13 @@ public class AuthenticationService {
   private final EmailTemplateService emailTemplateService;
 
   @Transactional(rollbackFor = Exception.class)
-  public void sendRegistrationVerificationEmail(RegisterRequestDto registerRequest)
+  public void sendRegistrationVerificationEmail(RegisterRequestDto registerRequest, Locale locale)
     throws Exception {
     VerificationTokenDto verificationTokenDto = null;
     try {
       String email = registerRequest.email();
       String username = registerRequest.username();
+      String fullName = registerRequest.fullName();
       applicationUserDao.findByEmailOrUsername(email, username).ifPresent(user -> {
         throw new UserAlreadyExistsException();
       });
@@ -55,7 +57,7 @@ public class AuthenticationService {
       verificationTokenDto = verificationTokenService.saveRegistrationToken(
         registerRequest, hashedPassword);
       EmailRequestDto emailRequestDto = emailTemplateService.getRegistrationEmailDto(
-        verificationTokenDto, email, username);
+        verificationTokenDto, email, fullName, locale);
       emailService.sendMailToUserAddress(emailRequestDto);
     } catch (Exception e) {
       verificationTokenService.cleanupVerificationToken(verificationTokenDto);
@@ -64,7 +66,7 @@ public class AuthenticationService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  public void sendPasswordResetVerificationEmail(PasswordResetRequestDto requestDto)
+  public void sendPasswordResetVerificationEmail(PasswordResetRequestDto requestDto, Locale locale)
     throws Exception {
     VerificationTokenDto verificationTokenDto = null;
     try {
@@ -73,7 +75,7 @@ public class AuthenticationService {
       verificationTokenService.verifyNoPasswordResetTokenWithEmail(requestDto.email());
       verificationTokenDto = verificationTokenService.savePasswordResetToken(requestDto);
       EmailRequestDto emailRequestDto = emailTemplateService.getPasswordResetEmailDto(
-        verificationTokenDto, requestDto.email(), user.getActualUsername());
+        verificationTokenDto, requestDto.email(), user.getFullName(), locale);
       emailService.sendMailToUserAddress(emailRequestDto);
     } catch (Exception e) {
       verificationTokenService.cleanupVerificationToken(verificationTokenDto);

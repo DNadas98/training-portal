@@ -86,7 +86,8 @@ public class PreRegistrationService {
   @Transactional(rollbackFor = Error.class)
   @Secured("ADMIN")
   public PreRegisterUsersReportDto preRegisterUsers(
-    Long groupId, Long projectId, Long questionnaireId, MultipartFile usersCsv, String expiresAt) {
+    Long groupId, Long projectId, Long questionnaireId, MultipartFile usersCsv, String expiresAt,
+    Locale locale) {
     List<PreRegisterUserInternalDto> updatedUsers = new ArrayList<>();
     List<PreRegisterUserInternalDto> createdUsers = new ArrayList<>();
     Map<PreRegisterUserInternalDto, String> failedUsers = new HashMap<>();
@@ -114,7 +115,7 @@ public class PreRegistrationService {
           updatedUsers.add(userRequest);
         } else {
           handlePreRegistrationRequest(groupId, projectId, questionnaireId, userRequest,
-            expirationDate);
+            expirationDate, project.getName(), locale);
           createdUsers.add(userRequest);
         }
       } catch (Exception e) {
@@ -259,15 +260,16 @@ public class PreRegistrationService {
 
   private void handlePreRegistrationRequest(
     Long groupId, Long projectId, Long questionnaireId, PreRegisterUserInternalDto userRequest,
-    Instant expiresAt) {
+    Instant expiresAt, String projectName, Locale locale) {
     VerificationTokenDto verificationTokenDto = null;
     try {
       String email = userRequest.email();
       String username = userRequest.username();
+      String fullName = userRequest.fullName();
       verificationTokenService.verifyTokenDoesNotExistWith(email, username);
       verificationTokenDto = verificationTokenService.savePreRegistrationVerificationToken(
         userRequest, groupId, projectId, questionnaireId, expiresAt);
-      sendPreRegisterEmail(verificationTokenDto, username, email);
+      sendPreRegisterEmail(verificationTokenDto, fullName, email, projectName, locale);
     } catch (Exception e) {
       verificationTokenService.cleanupVerificationToken(verificationTokenDto);
       throw e;
@@ -314,10 +316,11 @@ public class PreRegistrationService {
   }
 
   private void sendPreRegisterEmail(
-    VerificationTokenDto tokenDto, String username, String email) {
+    VerificationTokenDto tokenDto, String fullName, String email, String projectName,
+    Locale locale) {
     try {
       EmailRequestDto emailRequestDto = emailTemplateService.getPreRegisterEmailDto(
-        tokenDto, username, email);
+        tokenDto, fullName, email, projectName, locale);
       emailService.sendMailToUserAddress(emailRequestDto);
     } catch (IOException e) {
       throw new RuntimeException("Failed to process e-mail template - " + e.getMessage());

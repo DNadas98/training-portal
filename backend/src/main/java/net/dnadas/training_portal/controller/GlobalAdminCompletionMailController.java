@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Locale;
 import java.util.Map;
 
 @RestController
@@ -25,7 +26,7 @@ public class GlobalAdminCompletionMailController {
     @PathVariable("groupId") Long groupId,
     @PathVariable("projectId") Long projectId) {
     CompletionMailReportDto reportDto = completionMailService.sendCompletionMails(
-      groupId, projectId);
+      groupId, projectId, Locale.of("hu", "HU"));
     return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("data", reportDto));
   }
 }

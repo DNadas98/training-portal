@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @Service
@@ -80,7 +81,8 @@ public class ApplicationUserService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  public void sendEmailChangeVerificationEmail(UserEmailUpdateDto updateDto) throws Exception {
+  public void sendEmailChangeVerificationEmail(UserEmailUpdateDto updateDto, Locale locale)
+    throws Exception {
     VerificationTokenDto verificationTokenDto = null;
     try {
       ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
@@ -94,7 +96,7 @@ public class ApplicationUserService {
         updateDto, applicationUser);
 
       EmailRequestDto emailRequestDto = emailTemplateService.getEmailChangeVerificationEmailDto(
-        verificationTokenDto, updateDto.email(), applicationUser.getActualUsername());
+        verificationTokenDto, updateDto.email(), applicationUser.getFullName(), locale);
 
       emailService.sendMailToUserAddress(emailRequestDto);
     } catch (Exception e) {
