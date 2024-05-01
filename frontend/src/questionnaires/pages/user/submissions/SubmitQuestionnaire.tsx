@@ -265,7 +265,7 @@ export default function SubmitQuestionnaire() {
                     <RichTextDisplay content={question.text}/>
                   </Stack>
                   <Typography variant={"body2"} gutterBottom>
-                    Max points: {question.points}
+                    {localized("questionnaire.achievable_points")} {question.points}
                   </Typography>
                   {question.answers.map(answer => {
                     return <Grid container key={answer.id} spacing={1}

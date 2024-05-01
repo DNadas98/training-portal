@@ -6,6 +6,7 @@ import UserQuestionnaireBrowser from "./UserQuestionnaireBrowser.tsx";
 import {QuestionnaireResponseDto} from "../../../../../questionnaires/dto/QuestionnaireResponseDto.ts";
 import {isValidId} from "../../../../../common/utils/isValidId.ts";
 import useAuthJsonFetch from "../../../../../common/api/hooks/useAuthJsonFetch.tsx";
+import useLocalized from "../../../../../common/localization/hooks/useLocalized.tsx";
 
 interface UserQuestionnairesProps {
   groupId: string | undefined,
@@ -20,8 +21,10 @@ export default function UserQuestionnaires({groupId, projectId}: UserQuestionnai
   const authJsonFetch = useAuthJsonFetch();
   const navigate = useNavigate();
   const notification = useNotification();
+  const localized = useLocalized();
 
   const loadQuestionnaires = async () => {
+    const defaultError = localized("questionnaire.failed_to_load_questionnaire_error");
     try {
       if (!isValidId(groupId) || !isValidId(projectId)) {
         setQuestionnaires([]);
@@ -33,8 +36,7 @@ export default function UserQuestionnaires({groupId, projectId}: UserQuestionnai
       });
       if (!response?.status || response.status > 399 || !response?.data) {
         notification.openNotification({
-          type: "error", vertical: "top", horizontal: "center",
-          message: `${response?.error ?? "Failed to load questionnaires"}`
+          type: "error", vertical: "top", horizontal: "center", message: `${response?.error ?? defaultError}`
         });
         setQuestionnaires([]);
         return;
@@ -42,6 +44,9 @@ export default function UserQuestionnaires({groupId, projectId}: UserQuestionnai
       setQuestionnaires(response.data as QuestionnaireResponseDto[]);
     } catch (e) {
       setQuestionnaires([]);
+      notification.openNotification({
+        type: "error", vertical: "top", horizontal: "center", message: defaultError
+      });
     } finally {
       setQuestionnairesLoading(false);
     }
@@ -58,10 +63,9 @@ export default function UserQuestionnaires({groupId, projectId}: UserQuestionnai
         path: `groups/${groupId}/projects/${projectId}/questionnaires?maxPoints=true`
       });
       if (!response?.status || response.status > 399 || !response?.data) {
-        notification.openNotification({
-          type: "error", vertical: "top", horizontal: "center",
-          message: `${response?.error ?? "Failed to load questionnaires"}`
-        });
+        if (response?.error) {
+          console.error(response.error);
+        }
         setMaxPointQuestionnaires([]);
         return;
       }
@@ -74,8 +78,8 @@ export default function UserQuestionnaires({groupId, projectId}: UserQuestionnai
   };
 
   useEffect(() => {
-    loadQuestionnaires();
-    loadMaxPointQuestionnaires();
+    loadQuestionnaires().then();
+    loadMaxPointQuestionnaires().then();
   }, [groupId, projectId]);
 
   const [questionnairesFilterValue, setQuestionnairesFilterValue] = useState<string>("");

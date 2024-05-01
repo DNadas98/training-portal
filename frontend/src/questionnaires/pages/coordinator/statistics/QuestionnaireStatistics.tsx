@@ -218,7 +218,7 @@ export default function QuestionnaireStatistics() {
 
   const handleContactClick = (data: QuestionnaireSubmissionStatisticsResponseDto) => {
     dialog.openDialog({
-      oneActionOnly: true, confirmText: "Close", onConfirm: () => {
+      oneActionOnly: true, confirmText: localized("common.close"), onConfirm: () => {
       },
       content: <Grid container spacing={2} alignItems={"center"} justifyContent={"space-between"}
                      maxWidth={"fit-content"}>
@@ -229,11 +229,11 @@ export default function QuestionnaireStatistics() {
           </Stack>
         </Grid>
         <Grid item xs={12}>
-          <Typography>Username:</Typography>
+          <Typography>{localized("inputs.username")}:</Typography>
           <Typography>{data.username}</Typography>
         </Grid>
         <Grid item xs={12}>
-          <Typography>E-mail Address:</Typography>
+          <Typography>{localized("inputs.email")}:</Typography>
           <CopyButton text={data.email}/>
         </Grid>
       </Grid>

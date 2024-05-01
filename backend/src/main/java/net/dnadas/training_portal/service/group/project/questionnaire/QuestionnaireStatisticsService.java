@@ -40,9 +40,9 @@ public class QuestionnaireStatisticsService {
   private static List<String> getQuestionnaireStatisticsColumns(Locale locale) {
     if (locale.getLanguage().equals("hu")) {
       return List.of("Felhasználónév", "Teljes név", "E-mail cím", "Teszt összpontszám",
-        "Legjobb kitöltés pontszáma", "Legjobb kitöltés dátuma", "Kitöltések száma",
-        "Jelenlegi koordinátor", "Van külső teszt kérdőíve", "Van külső teszt hibája",
-        "Kapott sikeres befejezési e-mailt");
+        "Max. pont", "Max. dátum", "Kitöltések száma",
+        "Koordinátor", "Gyakorló kérdőív", "Gyakorló meghiúsulás",
+        "Értesítő e-mail");
     }
     return List.of("Username", "Full Name", "E-mail Address", "Questionnaire Total Points",
       "Best Submission Received Points", "Best Submission Date", "Total Submissions",

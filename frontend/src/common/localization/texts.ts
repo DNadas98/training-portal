@@ -170,6 +170,7 @@ export const texts = {
       "not_send_questionnaire": "You haven't submitted this questionnaire yet.",
       "back_to_questionnaires": "Back to questionnaires",
       "max_points": "Max Points",
+      "achievable_points": "Total Achievable Points",
       "submit_questionnaire": "Submit questionnaire",
       "exit_without_saving": "Yes, exit without saving",
       "received_points": "Received Points",
@@ -250,6 +251,7 @@ export const texts = {
       "points": "Points",
       "status": "Status",
       "view_details": "View Details",
+      "size": "Size",
       "errorTitle": "Error",
       "error": {
         "redirect": {
@@ -429,6 +431,7 @@ export const texts = {
       "not_send_questionnaire": "Még nem küldte be ezt a kérdőívet.",
       "back_to_questionnaires": "Vissza a tesztsorokhoz",
       "max_points": "Maximális pontszám",
+      "achievable_points": "Elérhető pontszám",
       "submit_questionnaire": "Véglegesítés",
       "exit_without_saving": "Kilépés mentés nélkül",
       "received_points": "Kapott pontszám",
@@ -509,6 +512,7 @@ export const texts = {
       "points": "Pont",
       "status": "Státusz",
       "view_details": "Részletek",
+      "size": "Db.",
       "errorTitle": "Hiba",
       "error": {
         "redirect": {

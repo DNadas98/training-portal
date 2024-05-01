@@ -1,6 +1,7 @@
 import {useLocation, useNavigate} from "react-router-dom";
 import {Box, FormControl, InputLabel, MenuItem, Pagination, Select} from "@mui/material";
 import {useEffect} from "react";
+import useLocalized from "../localization/hooks/useLocalized.tsx";
 
 interface URLQueryPaginationProps {
   onSizeChange?: (page: number, newSize: number) => void;
@@ -15,6 +16,7 @@ export default function URLQueryPagination(props: URLQueryPaginationProps) {
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get('page') || '1', 10);
   const size = parseInt(searchParams.get('size') || '10', 10);
+  const localized=useLocalized();
 
   useEffect(() => {
     searchParams.set('page', !isNaN(page) ? page.toString() : "1");
@@ -46,8 +48,8 @@ export default function URLQueryPagination(props: URLQueryPaginationProps) {
                   count={props.totalPages ?? 1}
                   page={page} onChange={changePage}/>
       <FormControl size="small">
-        <InputLabel sx={{minWidth: "fit-content"}}>Size</InputLabel>
-        <Select disabled={!size} value={size} label="Size" onChange={e => {
+        <InputLabel sx={{minWidth: "fit-content"}}>{localized("common.size")}</InputLabel>
+        <Select disabled={!size} value={size} label={localized("common.size")} onChange={e => {
           changeSize(e.target.value);
         }}>
           <MenuItem value={1}>1</MenuItem>

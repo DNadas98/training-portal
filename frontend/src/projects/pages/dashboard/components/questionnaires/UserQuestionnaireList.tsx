@@ -60,7 +60,7 @@ export default function UserQuestionnaireList(props: UserQuestionnaireListProps)
                 wordBreak: "break-word",
                 paddingRight: 1
               }}>
-                {localized("questionnaire.max_points")}: {questionnaire.maxPoints}
+                {localized("questionnaire.achievable_points")}: {questionnaire.maxPoints}
               </Typography>
               {props.maxPoints ? <Typography>
                   {localized("questionnaire.max_achieved")}
