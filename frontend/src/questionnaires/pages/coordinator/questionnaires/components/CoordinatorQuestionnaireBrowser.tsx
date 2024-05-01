@@ -39,7 +39,7 @@ export default function CoordinatorQuestionnaireBrowser(props: CoordinatorQuesti
       <Grid item xs={10} sm={10} md={9} lg={8}>
         <Stack spacing={2}>
           <Card>
-            <CardHeader title={localized("statistics.questionnaire_statistics")} sx={{textAlign: "center"}}/>
+            <CardHeader title={localized("statistics.questionnaire_statistics")}/>
             <CardContent>
               <TextField variant={"standard"} type={"search"}
                          label={localized("inputs.search")}

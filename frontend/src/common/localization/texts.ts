@@ -507,7 +507,7 @@ export const texts = {
       "accept": "Elfogadás",
       "close": "Bezárás",
       "back": "Vissza",
-      "submit": "Submit",
+      "submit": "Beküldés",
       "confirm": "Megerősítés",
       "cancel": "Mégsem",
       "copy_to_clipboard": "Másolás a vágólapra",
