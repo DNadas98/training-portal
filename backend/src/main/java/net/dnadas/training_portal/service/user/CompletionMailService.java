@@ -14,6 +14,7 @@ import net.dnadas.training_portal.model.user.ApplicationUserDao;
 import net.dnadas.training_portal.service.utils.email.EmailService;
 import net.dnadas.training_portal.service.utils.email.EmailTemplateService;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class CompletionMailService {
   private final EmailTemplateService emailTemplateService;
   private final EmailService emailService;
 
-
+  @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_ADMIN')")
   public CompletionMailReportDto sendCompletionMails(
     Long groupId, Long projectId, Locale locale) {
     Project project = projectDao.findByIdAndGroupId(projectId, groupId)

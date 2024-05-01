@@ -31,6 +31,7 @@ import net.dnadas.training_portal.service.utils.email.EmailTemplateService;
 import net.dnadas.training_portal.service.utils.file.CsvUtilsService;
 import net.dnadas.training_portal.service.verification.VerificationTokenService;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,46 +85,19 @@ public class PreRegistrationService {
   }
 
   @Transactional(rollbackFor = Error.class)
-  @Secured("ADMIN")
+  @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_ADMIN')")
   public PreRegisterUsersReportDto preRegisterUsers(
     Long groupId, Long projectId, Long questionnaireId, MultipartFile usersCsv, String expiresAt,
     Locale locale) {
-    List<PreRegisterUserInternalDto> updatedUsers = new ArrayList<>();
-    List<PreRegisterUserInternalDto> createdUsers = new ArrayList<>();
-    Map<PreRegisterUserInternalDto, String> failedUsers = new HashMap<>();
-    Instant expirationDate = dateTimeService.toStoredDate(expiresAt);
-    if (expirationDate.isBefore(Instant.now())) {
-      throw new InvalidExpirationDateException("Expiration date must be in the future");
-    }
-    if (expirationDate.isAfter(Instant.now().plusSeconds(MAX_EXPIRATION_SECONDS))) {
-      throw new InvalidExpirationDateException("Expiration date must be within a year");
-    }
-
     Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndId(
       groupId, projectId, questionnaireId).orElseThrow(QuestionnaireNotFoundException::new);
     Project project = questionnaire.getProject();
     UserGroup group = project.getUserGroup();
 
-    List<PreRegisterUserInternalDto> userRequests = parsePreRegistrationCsv(usersCsv);
-
-    for (PreRegisterUserInternalDto userRequest : userRequests) {
-      try {
-        ApplicationUser existingUser = applicationUserDao.findByEmailOrUsername(
-          userRequest.email(), userRequest.username()).orElse(null);
-        if (existingUser != null) {
-          updateExistingUser(group, project, questionnaire, existingUser, userRequest);
-          updatedUsers.add(userRequest);
-        } else {
-          handlePreRegistrationRequest(groupId, projectId, questionnaireId, userRequest,
-            expirationDate, project.getName(), locale);
-          createdUsers.add(userRequest);
-        }
-      } catch (Exception e) {
-        failedUsers.put(userRequest, e.getMessage());
-      }
-    }
-    return new PreRegisterUsersReportDto(
-      userRequests.size(), updatedUsers, createdUsers, failedUsers);
+    PreRegisterUsersReportDto reportDto = processPreRegistrationRequest(
+      groupId, projectId, questionnaireId, usersCsv, expiresAt, locale, group, project,
+      questionnaire);
+    return reportDto;
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -190,6 +164,41 @@ public class PreRegistrationService {
       (PreRegistrationVerificationToken) verificationTokenService.findVerificationToken(
         verificationTokenDto);
     return new PreRegistrationDetailsResponseDto(token.getUsername(), token.getFullName());
+  }
+
+  private PreRegisterUsersReportDto processPreRegistrationRequest(
+    Long groupId, Long projectId, Long questionnaireId, MultipartFile usersCsv, String expiresAt,
+    Locale locale, UserGroup group, Project project, Questionnaire questionnaire) {
+    List<PreRegisterUserInternalDto> updatedUsers = new ArrayList<>();
+    List<PreRegisterUserInternalDto> createdUsers = new ArrayList<>();
+    Map<PreRegisterUserInternalDto, String> failedUsers = new HashMap<>();
+    Instant expirationDate = dateTimeService.toStoredDate(expiresAt);
+    if (expirationDate.isBefore(Instant.now())) {
+      throw new InvalidExpirationDateException("Expiration date must be in the future");
+    }
+    if (expirationDate.isAfter(Instant.now().plusSeconds(MAX_EXPIRATION_SECONDS))) {
+      throw new InvalidExpirationDateException("Expiration date must be within a year");
+    }
+    List<PreRegisterUserInternalDto> userRequests = parsePreRegistrationCsv(usersCsv);
+
+    for (PreRegisterUserInternalDto userRequest : userRequests) {
+      try {
+        ApplicationUser existingUser = applicationUserDao.findByEmailOrUsername(
+          userRequest.email(), userRequest.username()).orElse(null);
+        if (existingUser != null) {
+          updateExistingUser(group, project, questionnaire, existingUser, userRequest);
+          updatedUsers.add(userRequest);
+        } else {
+          handlePreRegistrationRequest(groupId, projectId, questionnaireId, userRequest,
+            expirationDate, project.getName(), locale);
+          createdUsers.add(userRequest);
+        }
+      } catch (Exception e) {
+        failedUsers.put(userRequest, e.getMessage());
+      }
+    }
+    return new PreRegisterUsersReportDto(
+      userRequests.size(), updatedUsers, createdUsers, failedUsers);
   }
 
   private String getFullName(

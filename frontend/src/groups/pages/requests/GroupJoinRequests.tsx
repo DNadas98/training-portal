@@ -24,6 +24,7 @@ import {
 import useAuthJsonFetch from "../../../common/api/hooks/useAuthJsonFetch.tsx";
 import {ApiResponsePageableDto} from "../../../common/api/dto/ApiResponsePageableDto.ts";
 import URLQueryPagination from "../../../common/pagination/URLQueryPagination.tsx";
+import {PermissionType} from "../../../authentication/dto/PermissionType.ts";
 
 export default function GroupJoinRequests() {
   const {loading, groupPermissions} = usePermissions();
@@ -144,7 +145,7 @@ export default function GroupJoinRequests() {
 
   if (loading) {
     return <LoadingSpinner/>;
-  } else if (!groupPermissions?.length || groupJoinRequestError) {
+  } else if (!groupPermissions?.length || !groupPermissions?.length || !groupPermissions.includes(PermissionType.GROUP_ADMIN) || groupJoinRequestError) {
     handleErrorNotification(groupJoinRequestError ?? "Access Denied: Insufficient permissions");
     navigate(`/groups`, {replace: true});
     return <></>;

@@ -105,6 +105,10 @@ export default function GroupDashboard() {
     });
   }
 
+  function handlePreRegisterClick() {
+    navigate(`/groups/${groupId}/pre-register`);
+  }
+
   if (loading || groupLoading) {
     return <LoadingSpinner/>;
   } else if (!authentication.getRoles()?.length || !groupPermissions?.length || !group) {
@@ -145,7 +149,8 @@ export default function GroupDashboard() {
               <CardHeader title={"Group Administrator Actions"} titleTypographyProps={{variant: "h6"}}/>
               <CardActions>
                 <Stack spacing={2}>
-                  <Button onClick={handleJoinRequestClick}>View group join requests</Button>
+                  <Button onClick={handleJoinRequestClick} sx={{width:"fit-content"}}>View group join requests</Button>
+                  <Button onClick={handlePreRegisterClick} sx={{width:"fit-content"}}>Manage members</Button>
                   {!authentication.getRoles()?.includes(GlobalRole.ADMIN) ? <></> :
                     <Button sx={{width: "fit-content"}} onClick={handleDeleteGroupClick}>Delete Group</Button>
                   }

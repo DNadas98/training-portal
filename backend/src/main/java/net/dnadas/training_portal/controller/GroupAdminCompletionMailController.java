@@ -15,13 +15,13 @@ import java.util.Locale;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/admin/completion-mail")
+@RequestMapping("/api/v1/groups/{groupId}/completion-mail")
 @Slf4j
 @RequiredArgsConstructor
-public class GlobalAdminCompletionMailController {
+public class GroupAdminCompletionMailController {
   private final CompletionMailService completionMailService;
 
-  @PostMapping("/groups/{groupId}/projects/{projectId}")
+  @PostMapping("/projects/{projectId}")
   public ResponseEntity<?> sendCompletionMails(
     @PathVariable("groupId") Long groupId,
     @PathVariable("projectId") Long projectId) {
