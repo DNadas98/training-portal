@@ -202,6 +202,9 @@ This enhanced security model improves the API's flexibility and security, enabli
 complex access control policies to meet the application's varied requirements, forming a strong
 basis for authentication and authorization management.
 
+
+Rate limits are also applied and database backup, log management and monitoring are also set up in the real deployment environment. The firewall, ssh-only login with fail2ban and other safety measures are also configured.
+
 ## Roadmap
 
 - See the [open issues](https://github.com/DNadas98/training-portal/issues) for a
