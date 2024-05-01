@@ -164,7 +164,7 @@ class AuthenticationServiceTest {
     when(passwordResetVerificationTokenDao.save(any(PasswordResetVerificationToken.class)))
       .thenReturn(new PasswordResetVerificationToken("to", "hashedCode"));
     when(emailTemplateService.getPasswordResetEmailDto(any(VerificationTokenDto.class),
-      eq(requestDto.email()), anyString(), Locale.of("hu", "HU"))).thenReturn(new EmailRequestDto(
+      eq(requestDto.email()), anyString(), eq(Locale.of("hu", "HU")))).thenReturn(new EmailRequestDto(
       requestDto.email(),
       "subject", "content"));
     doThrow(new MailSendException("")).when(emailService).sendMailToUserAddress(

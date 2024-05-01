@@ -63,7 +63,7 @@ export default function UserQuestionnaireSubmissionBrowser(props: UserQuestionna
                                              maxPoints={false}
                                              onDeleteClick={props.onDeleteClick}/>
             <Card><CardActions>
-              <BackButton text={localized("back_to_questionnaires")}/>
+              <BackButton text={localized("questionnaire.back_to_questionnaires")}/>
             </CardActions></Card>
           </Stack>
           : !props.maxPointQuestionnaireSubmission ? <Card>
