@@ -14,7 +14,8 @@ import net.dnadas.training_portal.exception.auth.UserAlreadyExistsException;
 import net.dnadas.training_portal.exception.group.GroupNotFoundException;
 import net.dnadas.training_portal.exception.group.project.ProjectNotFoundException;
 import net.dnadas.training_portal.exception.group.project.questionnaire.QuestionnaireNotFoundException;
-import net.dnadas.training_portal.exception.user.InvalidExpirationDateException;
+import net.dnadas.training_portal.exception.user.ExpirationDateNotWithinSpecifiedException;
+import net.dnadas.training_portal.exception.user.PastDateExpirationDateException;
 import net.dnadas.training_portal.model.auth.PermissionType;
 import net.dnadas.training_portal.model.group.UserGroup;
 import net.dnadas.training_portal.model.group.UserGroupDao;
@@ -177,10 +178,10 @@ public class PreRegistrationService {
     Map<PreRegisterUserInternalDto, String> failedUsers = new HashMap<>();
     Instant expirationDate = dateTimeService.toStoredDate(expiresAt);
     if (expirationDate.isBefore(Instant.now())) {
-      throw new InvalidExpirationDateException("Expiration date must be in the future");
+      throw new PastDateExpirationDateException();
     }
     if (expirationDate.isAfter(Instant.now().plusSeconds(MAX_EXPIRATION_SECONDS))) {
-      throw new InvalidExpirationDateException("Expiration date must be within a year");
+      throw new ExpirationDateNotWithinSpecifiedException();
     }
     List<PreRegisterUserInternalDto> userRequests = parsePreRegistrationCsv(usersCsv);
 
