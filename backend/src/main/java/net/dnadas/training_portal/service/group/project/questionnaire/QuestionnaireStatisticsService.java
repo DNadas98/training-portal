@@ -39,34 +39,31 @@ public class QuestionnaireStatisticsService {
 
   private static List<String> getQuestionnaireStatisticsColumns(Locale locale) {
     if (locale.getLanguage().equals("hu")) {
-      return List.of("Felhasználónév", "Teljes név", "E-mail cím", "Teszt összpontszám",
-        "Max. pont", "Max. dátum", "Kitöltések száma",
-        "Koordinátor", "Gyakorló kérdőív", "Gyakorló meghiúsulás",
-        "Értesítő e-mail");
+      return List.of("LAKOS azonosító", "Összeíró neve", "Összeíró e-mail címe",
+        "Teszt összpontszám", "Max. pont", "Max. dátum", "Kitöltések száma", "Szervező neve",
+        "Adatelőkészítő neve", "Gyakorló kérdőív", "Gyakorló meghiúsulás", "Értesítő e-mail");
     }
-    return List.of("Username", "Full Name", "E-mail Address", "Questionnaire Total Points",
-      "Best Submission Received Points", "Best Submission Date", "Total Submissions",
-      "Current Coordinator", "Has External Test Questionnaire", "Has External Test Failure",
-      "Received Successful Completion Email");
+    return List.of("Identifier", "Full Name", "E-mail Address", "Questionnaire Total Points",
+      "Best Submission Received Points", "Best Submission Date", "Total Submissions", "Coordinator",
+      "Coordinator", "Data Preparator", "External Test Questionnaire", "External Test Failure",
+      "Completion Email");
   }
 
   private static List<Function<QuestionnaireSubmissionStatsInternalDto, Object>> getQuestionnaireStatisticsValueExtractors(
     ZoneId timeZoneId) {
-    return List.of(
-      QuestionnaireSubmissionStatsInternalDto::username,
+    return List.of(QuestionnaireSubmissionStatsInternalDto::username,
       QuestionnaireSubmissionStatsInternalDto::fullName,
       QuestionnaireSubmissionStatsInternalDto::email,
       QuestionnaireSubmissionStatsInternalDto::questionnaireMaxPoints,
       QuestionnaireSubmissionStatsInternalDto::maxPointSubmissionReceivedPoints,
-      dto -> dto.maxPointSubmissionCreatedAt() == null
-        ? null
-        : dateTimeFormatter.format(dto.maxPointSubmissionCreatedAt().atZone(timeZoneId)),
+      dto -> dto.maxPointSubmissionCreatedAt() == null ? null :
+        dateTimeFormatter.format(dto.maxPointSubmissionCreatedAt().atZone(timeZoneId)),
       QuestionnaireSubmissionStatsInternalDto::submissionCount,
       QuestionnaireSubmissionStatsInternalDto::currentCoordinatorFullName,
+      QuestionnaireSubmissionStatsInternalDto::currentDataPreparatorFullName,
       QuestionnaireSubmissionStatsInternalDto::hasExternalTestQuestionnaire,
       QuestionnaireSubmissionStatsInternalDto::hasExternalTestFailure,
-      QuestionnaireSubmissionStatsInternalDto::receivedSuccessfulCompletionEmail
-    );
+      QuestionnaireSubmissionStatsInternalDto::receivedSuccessfulCompletionEmail);
   }
 
   @Transactional(readOnly = true)
@@ -75,11 +72,11 @@ public class QuestionnaireStatisticsService {
     Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status,
     Pageable pageable, String searchInput) {
     if (!status.equals(QuestionnaireStatus.ACTIVE)) {
-      return getStatisticsByStatus(groupId, projectId, questionnaireId, status, pageable,
-        searchInput);
+      return getStatisticsByStatus(
+        groupId, projectId, questionnaireId, status, pageable, searchInput);
     }
-    return getStatisticsWithNonSubmittersByStatus(groupId, projectId, questionnaireId, status,
-      pageable, searchInput);
+    return getStatisticsWithNonSubmittersByStatus(
+      groupId, projectId, questionnaireId, status, pageable, searchInput);
   }
 
   /**
@@ -96,17 +93,14 @@ public class QuestionnaireStatisticsService {
   public void exportAllQuestionnaireSubmissionsToExcel(
     Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status, String search,
     ZoneId timeZoneId, HttpServletResponse response, Locale locale) throws IOException {
-    try (SXSSFWorkbook workbook = excelUtilsService.createWorkbook();
-         OutputStream outputStream = response.getOutputStream();
-         Stream<QuestionnaireSubmissionStatsInternalDto> dtos = getQuestionnaireStatisticsOutputStream(
-           groupId, projectId, questionnaireId, status, search
-         )) {
+    try (SXSSFWorkbook workbook = excelUtilsService.createWorkbook(); OutputStream outputStream = response.getOutputStream(); Stream<QuestionnaireSubmissionStatsInternalDto> dtos = getQuestionnaireStatisticsOutputStream(
+      groupId, projectId, questionnaireId, status, search)) {
       Sheet sheet = excelUtilsService.createSheet(workbook, "Statistics");
       CellStyle dateCellStyle = excelUtilsService.createDateCellStyle(workbook);
       List<String> columns = getQuestionnaireStatisticsColumns(locale);
       excelUtilsService.createHeaderRow(sheet, columns);
-      List<Function<QuestionnaireSubmissionStatsInternalDto, Object>>
-        valueExtractors = getQuestionnaireStatisticsValueExtractors(timeZoneId);
+      List<Function<QuestionnaireSubmissionStatsInternalDto, Object>> valueExtractors =
+        getQuestionnaireStatisticsValueExtractors(timeZoneId);
 
       AtomicInteger rowIndex = new AtomicInteger(1);
       dtos.forEach(dto -> {
@@ -120,11 +114,11 @@ public class QuestionnaireStatisticsService {
 
   private Stream<QuestionnaireSubmissionStatsInternalDto> getQuestionnaireStatisticsOutputStream(
     Long groupId, Long projectId, Long questionnaireId, QuestionnaireStatus status, String search) {
-    return status.equals(QuestionnaireStatus.ACTIVE)
-      ? questionnaireSubmissionDao.streamQuestionnaireSubmissionStatisticsWithNonSubmittersByStatus(
-      groupId, projectId, questionnaireId, status, search)
-      : questionnaireSubmissionDao.streamQuestionnaireSubmissionStatisticsByStatus(
-      groupId, projectId, questionnaireId, status, search);
+    return status.equals(QuestionnaireStatus.ACTIVE) ?
+      questionnaireSubmissionDao.streamQuestionnaireSubmissionStatisticsWithNonSubmittersByStatus(
+        groupId, projectId, questionnaireId, status, search) :
+      questionnaireSubmissionDao.streamQuestionnaireSubmissionStatisticsByStatus(
+        groupId, projectId, questionnaireId, status, search);
   }
 
   private Page<QuestionnaireSubmissionStatsResponseDto> getStatisticsByStatus(

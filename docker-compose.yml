@@ -55,9 +55,83 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  postgres-exporter:
+    image: bitnami/postgres-exporter
+    environment:
+      DATA_SOURCE_NAME: ${PROMETHEUS_POSTGRES_EXPORTER_DB_CONNECTION_STRING}
+    ports:
+      - "127.0.0.1:9187:9187"
+    networks:
+      - backend_network
+    depends_on:
+      - psql
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 100M
+
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter
+    ports:
+      - "127.0.0.1:9113:9113"
+    command: ["--nginx.scrape-uri=http://nginx/stub_status"]
+    networks:
+      - backend_network
+    depends_on:
+      - nginx
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 100M
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    ports:
+      - "127.0.0.1:9090:9090"
+    networks:
+      - backend_network
+    depends_on:
+      - postgres-exporter
+      - nginx-exporter
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 100M
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+    depends_on:
+      - prometheus
+    ports:
+      - "127.0.0.1:3000:3000"
+    networks:
+      - backend_network
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 100M
+
 networks:
   backend_network:
     driver: bridge
 
 volumes:
   db:
+  prometheus_data:
+  grafana_data:

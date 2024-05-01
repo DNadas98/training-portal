@@ -28,7 +28,7 @@ public class AuthenticationController {
   public ResponseEntity<?> register(
     @RequestBody @Valid RegisterRequestDto request, Locale locale) throws Exception {
     authenticationService.sendRegistrationVerificationEmail(
-      request);
+      request, locale);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of(
       "message",
       messageSource.getMessage("auth.registration.started", null, locale)));
@@ -37,7 +37,7 @@ public class AuthenticationController {
   @PostMapping("/reset-password")
   public ResponseEntity<?> resetPassword(
     @RequestBody @Valid PasswordResetRequestDto requestDto, Locale locale) throws Exception {
-    authenticationService.sendPasswordResetVerificationEmail(requestDto);
+    authenticationService.sendPasswordResetVerificationEmail(requestDto, locale);
     return ResponseEntity.status(HttpStatus.OK).body(Map.of(
       "message",
       messageSource.getMessage("auth.password.reset.started", null, locale)));

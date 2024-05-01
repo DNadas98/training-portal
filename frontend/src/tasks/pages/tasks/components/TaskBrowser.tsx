@@ -23,7 +23,7 @@ export default function TaskBrowser(props: TaskBrowserProps) {
       <Grid item xs={10} sm={8} md={5} lg={4}>
         <Stack spacing={2}>
           <Card>
-            <CardHeader title={"Your tasks"} sx={{textAlign: "center"}}/>
+            <CardHeader title={"Your tasks"}/>
             <CardContent>
               <Stack direction={"row"} spacing={1} alignItems={"baseline"}>
                 <IconButton onClick={props.handleAddButtonClick}>
@@ -48,7 +48,7 @@ export default function TaskBrowser(props: TaskBrowserProps) {
       <Grid item xs={10} sm={8} md={5} lg={4}>
         <Stack spacing={2}>
           <Card>
-            <CardHeader title={"Tasks to join"} sx={{textAlign: "center"}}/>
+            <CardHeader title={"Tasks to join"}/>
             <CardContent>
               <TextField variant={"standard"} type={"search"} fullWidth
                          sx={{marginBottom: 1}}

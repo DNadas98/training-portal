@@ -103,8 +103,8 @@ const QuestionItem = memo((props: QuestionItemProps) => {
                                         onChange={handleTextChange}/>
             </Stack>
             : <Stack spacing={2} direction={"row"} alignItems={"center"}>
-              <Typography variant={"h5"}>
-                {props.question.order}.
+              <Typography whiteSpace={"nowrap"} sx={{wordBreak:"keep-all"}} variant={"body1"}>
+                {props.question.order}:
               </Typography>
               <RichTextEditorControlled id={props.question.tempId}
                                         key={`rteditor-${props.question.tempId}`}

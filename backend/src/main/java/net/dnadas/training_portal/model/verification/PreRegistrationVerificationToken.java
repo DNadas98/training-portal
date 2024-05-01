@@ -36,6 +36,8 @@ public class PreRegistrationVerificationToken extends VerificationToken {
   @Column(nullable = true)
   private String currentCoordinatorFullName;
   @Column(nullable = true)
+  private String dataPreparatorFullName;
+  @Column(nullable = true)
   private Boolean hasExternalTestQuestionnaire;
   @Column(nullable = true)
   private Boolean hasExternalTestFailure;

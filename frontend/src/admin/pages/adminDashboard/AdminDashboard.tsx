@@ -206,7 +206,7 @@ export default function AdminDashboard() {
         path: `admin/pre-register/users`,
         method: 'POST',
         body: formData
-      }).then(res => res.json());
+      }).then(res => !res.error?res.json():res);
       if (!response || response.status > 399 || !response.data) {
         openErrorNotification(response?.error ?? defaultError);
         return;

@@ -33,7 +33,7 @@ export default function UserQuestionnaireSubmissionBrowser(props: UserQuestionna
             <QuestionnaireSubmissionCard submission={props.maxPointQuestionnaireSubmission}/>
             <CardActions>
               <Button onClick={() => {
-                props.onQuestionnaireSubmissionSelectClick(props.maxPointQuestionnaireSubmission.id)
+                props.onQuestionnaireSubmissionSelectClick(props.maxPointQuestionnaireSubmission.id as unknown as number)
               }}
                       disabled={props.selectedQuestionnaireSubmissionLoading}>
                 {localized("common.view_details")}
@@ -63,21 +63,16 @@ export default function UserQuestionnaireSubmissionBrowser(props: UserQuestionna
                                              maxPoints={false}
                                              onDeleteClick={props.onDeleteClick}/>
             <Card><CardActions>
-              <Button sx={{width: "fit-content"}} onClick={props.handleBackClick}>
-                {localized("questionnaire.back_to_questionnaires")}
-              </Button>
+              <BackButton text={localized("questionnaire.back_to_questionnaires")}/>
             </CardActions></Card>
           </Stack>
           : !props.maxPointQuestionnaireSubmission ? <Card>
-            <CardHeader title={localized("questionnaire.no_submissions_found")}
-                        sx={{textAlign: "center"}}/>
+            <CardHeader title={localized("questionnaire.no_submissions_found")}/>
             <CardContent sx={{justifyContent: "center"}}>
-              <BackButton text={localized("back_to_questionnaires")}/>
+              <BackButton text={localized("questionnaire.back_to_questionnaires")}/>
             </CardContent>
           </Card> : <Card><CardActions>
-            <Button sx={{width: "fit-content"}} onClick={props.handleBackClick}>
-              {localized("questionnaire.back_to_questionnaires")}
-            </Button>
+              <BackButton text={localized("questionnaire.back_to_questionnaires")}/>
           </CardActions></Card>}
       </Grid>
     </Grid>

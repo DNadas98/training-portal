@@ -104,7 +104,9 @@ export default function PasswordResetVerificationRedirect() {
             spacing={2}>
             <PasswordInput/>
             <PasswordInput confirm={true}/>
-            <Button type={"submit"}>{localized("common.submit")}</Button>
+            <Button type={"submit"}>
+              {localized("common.submit")}
+            </Button>
           </Stack></Box></DialogContent>
         </Dialog>
   );

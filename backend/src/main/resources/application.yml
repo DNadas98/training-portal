@@ -4,6 +4,7 @@ management:
       exposure:
         include: "*"
 
+
 spring:
   profiles:
     default: dev

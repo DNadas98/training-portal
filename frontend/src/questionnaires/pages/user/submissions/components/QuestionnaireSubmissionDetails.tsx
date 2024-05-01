@@ -52,7 +52,7 @@ const QuestionnaireSubmissionDetails = (props: QuestionnaireSubmissionDetailsPro
                   </Grid>
                   <Grid item xs={true}>
                     <Stack spacing={0.5} direction={"row"}>
-                      <Typography variant={"body1"}>
+                      <Typography whiteSpace={"nowrap"} sx={{wordBreak:"keep-all"}} variant={"body1"}>
                         {String.fromCharCode(answer.order + 64)}:
                       </Typography>
                       <Typography variant={"body1"} gutterBottom>{answer.text}</Typography>

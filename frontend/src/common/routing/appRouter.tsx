@@ -44,7 +44,8 @@ import CoordinatorQuestionnaires
   from "../../questionnaires/pages/coordinator/questionnaires/CoordinatorQuestionnaires.tsx";
 import AdminLayout from "../../admin/layout/AdminLayout.tsx";
 import InvitationRedirect from "../../authentication/pages/redirect/InvitationRedirect.tsx";
-import AdminDashboard from "../../admin/pages/adminDashboard/adminDashboard.tsx";
+import AdminDashboard from "../../admin/pages/adminDashboard/AdminDashboard.tsx";
+import GroupAdminDashboard from "../../groups/pages/preregister/GroupAdminDashboard.tsx";
 
 const appRouter = createBrowserRouter([
   /* public */
@@ -123,6 +124,9 @@ const appRouter = createBrowserRouter([
               },
               {
                 path: ":groupId/requests", element: <GroupJoinRequests/>
+              },
+              {
+                path: ":groupId/pre-register", element: <GroupAdminDashboard/>
               },
               {
                 path: ":groupId/projects", element: <Projects/>

@@ -24,10 +24,20 @@ export default function RequireAuthentication({allowedRoles}: RequireAuthProps) 
   const navigate = useNavigate();
 
   async function handleUnauthorized() {
+    const message = localized("common.error.auth.unauthorized");
+    notification.openNotification({
+      type: "error", vertical: "top", horizontal: "center",
+      message: message
+    });
     await logout();
   }
 
   async function handleAccessDenied() {
+    const message = localized("common.error.auth.access_denied");
+    notification.openNotification({
+      type: "error", vertical: "top", horizontal: "center",
+      message: message
+    });
     navigate(-1);
   }
 
@@ -41,10 +51,6 @@ export default function RequireAuthentication({allowedRoles}: RequireAuthProps) 
           roles = refreshedRoles;
         } else {
           await handleUnauthorized();
-          notification.openNotification({
-            type: "error", vertical: "top", horizontal: "center",
-            message: localized("common.error.auth.unauthorized")
-          });
           return;
         }
       }
@@ -52,10 +58,6 @@ export default function RequireAuthentication({allowedRoles}: RequireAuthProps) 
         setAllowed(true);
       } else {
         await handleAccessDenied();
-        notification.openNotification({
-          type: "error", vertical: "top", horizontal: "center",
-          message: localized("common.error.auth.access_denied")
-        });
         return;
       }
     }

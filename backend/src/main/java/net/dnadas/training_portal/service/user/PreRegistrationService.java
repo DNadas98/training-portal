@@ -14,7 +14,8 @@ import net.dnadas.training_portal.exception.auth.UserAlreadyExistsException;
 import net.dnadas.training_portal.exception.group.GroupNotFoundException;
 import net.dnadas.training_portal.exception.group.project.ProjectNotFoundException;
 import net.dnadas.training_portal.exception.group.project.questionnaire.QuestionnaireNotFoundException;
-import net.dnadas.training_portal.exception.user.InvalidExpirationDateException;
+import net.dnadas.training_portal.exception.user.ExpirationDateNotWithinSpecifiedException;
+import net.dnadas.training_portal.exception.user.PastDateExpirationDateException;
 import net.dnadas.training_portal.model.auth.PermissionType;
 import net.dnadas.training_portal.model.group.UserGroup;
 import net.dnadas.training_portal.model.group.UserGroupDao;
@@ -30,7 +31,7 @@ import net.dnadas.training_portal.service.utils.email.EmailService;
 import net.dnadas.training_portal.service.utils.email.EmailTemplateService;
 import net.dnadas.training_portal.service.utils.file.CsvUtilsService;
 import net.dnadas.training_portal.service.verification.VerificationTokenService;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +57,7 @@ public class PreRegistrationService {
       PermissionType.PROJECT_COORDINATOR.name() + " " + PermissionType.PROJECT_EDITOR.name() +
       " and " + PermissionType.PROJECT_ASSIGNED_MEMBER.name() + " default: " +
       PermissionType.PROJECT_ASSIGNED_MEMBER.name(), "Current Coordinator Full Name or NULL",
+    "Current Data Preparator Full Name or NULL",
     "Has External Test Questionnaire: TRUE FALSE or NULL",
     "Has External Test Failure: TRUE FALSE or NULL");
   private static final long MAX_EXPIRATION_SECONDS = 60 * 60 * 24 * 365; // 1 year
@@ -73,54 +75,33 @@ public class PreRegistrationService {
   public void getPreRegisterUsersCsvTemplate(OutputStream outputStream) throws IOException {
     List<List<String>> exampleData = List.of(
       List.of("exampleUser1", "Example User 1", "example1@example.com", "GROUP_EDITOR",
-        "PROJECT_ASSIGNED_MEMBER&PROJECT_EDITOR&PROJECT_ADMIN", "NULL", "NULL", "NULL"),
+        "PROJECT_ASSIGNED_MEMBER&PROJECT_EDITOR&PROJECT_ADMIN", "NULL", "NULL", "NULL", "NULL"),
       List.of("exampleUser2", "Example User 2", "example2@example.com", "GROUP_MEMBER",
-        "PROJECT_ASSIGNED_MEMBER&PROJECT_COORDINATOR", "NULL", "NULL", "NULL"),
+        "PROJECT_ASSIGNED_MEMBER&PROJECT_COORDINATOR", "NULL", "NULL", "NULL", "NULL"),
       List.of("exampleUser3", "Example User 3", "example3@example.com", "GROUP_MEMBER",
-        "PROJECT_ASSIGNED_MEMBER", "Example Coordinator", "TRUE", "FALSE"));
+        "PROJECT_ASSIGNED_MEMBER", "Example Coordinator", "Example Data Preparator", "TRUE",
+        "FALSE"));
     csvUtilsService.writeCsvToStream(exampleData, CSV_DELIMITER, CSV_HEADERS, outputStream);
   }
 
   @Transactional(rollbackFor = Error.class)
-  @Secured("ADMIN")
+  @PreAuthorize("hasPermission(#groupId, 'UserGroup', 'GROUP_ADMIN')")
   public PreRegisterUsersReportDto preRegisterUsers(
-    Long groupId, Long projectId, Long questionnaireId, MultipartFile usersCsv, String expiresAt) {
-    List<PreRegisterUserInternalDto> updatedUsers = new ArrayList<>();
-    List<PreRegisterUserInternalDto> createdUsers = new ArrayList<>();
-    Map<PreRegisterUserInternalDto, String> failedUsers = new HashMap<>();
-    Instant expirationDate = dateTimeService.toStoredDate(expiresAt);
-    if (expirationDate.isBefore(Instant.now())) {
-      throw new InvalidExpirationDateException("Expiration date must be in the future");
-    }
-    if (expirationDate.isAfter(Instant.now().plusSeconds(MAX_EXPIRATION_SECONDS))) {
-      throw new InvalidExpirationDateException("Expiration date must be within a year");
-    }
-
+    Long groupId, Long projectId, Long questionnaireId, MultipartFile usersCsv, String expiresAt,
+    Locale locale) {
     Questionnaire questionnaire = questionnaireDao.findByGroupIdAndProjectIdAndId(
       groupId, projectId, questionnaireId).orElseThrow(QuestionnaireNotFoundException::new);
     Project project = questionnaire.getProject();
     UserGroup group = project.getUserGroup();
 
-    List<PreRegisterUserInternalDto> userRequests = parsePreRegistrationCsv(usersCsv);
-
-    for (PreRegisterUserInternalDto userRequest : userRequests) {
-      try {
-        ApplicationUser existingUser = applicationUserDao.findByEmailOrUsername(
-          userRequest.email(), userRequest.username()).orElse(null);
-        if (existingUser != null) {
-          updateExistingUser(group, project, questionnaire, existingUser, userRequest);
-          updatedUsers.add(userRequest);
-        } else {
-          handlePreRegistrationRequest(groupId, projectId, questionnaireId, userRequest,
-            expirationDate);
-          createdUsers.add(userRequest);
-        }
-      } catch (Exception e) {
-        failedUsers.put(userRequest, e.getMessage());
-      }
+    if (!group.getId().equals(groupId)) {
+      throw new GroupNotFoundException(groupId);
     }
-    return new PreRegisterUsersReportDto(
-      userRequests.size(), updatedUsers, createdUsers, failedUsers);
+
+    PreRegisterUsersReportDto reportDto = processPreRegistrationRequest(
+      groupId, projectId, questionnaireId, usersCsv, expiresAt, locale, group, project,
+      questionnaire);
+    return reportDto;
   }
 
   @Transactional(rollbackFor = Exception.class)
@@ -189,6 +170,41 @@ public class PreRegistrationService {
     return new PreRegistrationDetailsResponseDto(token.getUsername(), token.getFullName());
   }
 
+  private PreRegisterUsersReportDto processPreRegistrationRequest(
+    Long groupId, Long projectId, Long questionnaireId, MultipartFile usersCsv, String expiresAt,
+    Locale locale, UserGroup group, Project project, Questionnaire questionnaire) {
+    List<PreRegisterUserInternalDto> updatedUsers = new ArrayList<>();
+    List<PreRegisterUserInternalDto> createdUsers = new ArrayList<>();
+    Map<PreRegisterUserInternalDto, String> failedUsers = new HashMap<>();
+    Instant expirationDate = dateTimeService.toStoredDate(expiresAt);
+    if (expirationDate.isBefore(Instant.now())) {
+      throw new PastDateExpirationDateException();
+    }
+    if (expirationDate.isAfter(Instant.now().plusSeconds(MAX_EXPIRATION_SECONDS))) {
+      throw new ExpirationDateNotWithinSpecifiedException();
+    }
+    List<PreRegisterUserInternalDto> userRequests = parsePreRegistrationCsv(usersCsv);
+
+    for (PreRegisterUserInternalDto userRequest : userRequests) {
+      try {
+        ApplicationUser existingUser = applicationUserDao.findByEmailOrUsername(
+          userRequest.email(), userRequest.username()).orElse(null);
+        if (existingUser != null) {
+          updateExistingUser(group, project, questionnaire, existingUser, userRequest);
+          updatedUsers.add(userRequest);
+        } else {
+          handlePreRegistrationRequest(groupId, projectId, questionnaireId, userRequest,
+            expirationDate, project.getName(), locale);
+          createdUsers.add(userRequest);
+        }
+      } catch (Exception e) {
+        failedUsers.put(userRequest, e.getMessage());
+      }
+    }
+    return new PreRegisterUsersReportDto(
+      userRequests.size(), updatedUsers, createdUsers, failedUsers);
+  }
+
   private String getFullName(
     PreRegistrationCompleteRequestDto requestDto, PreRegistrationVerificationToken token) {
     if (requestDto.fullName() != null) {
@@ -207,7 +223,8 @@ public class PreRegistrationService {
       record -> new PreRegisterUserInternalDto(record.get(0).trim(), record.get(1).trim(),
         record.get(2).trim(), parseGroupPermissions(record.get(3).trim()),
         parseProjectPermissions(record.get(4).trim()), parseNullable(record.get(5)),
-        parseNullableBoolean(record.get(6)), parseNullableBoolean(record.get(7)))).toList();
+        parseNullable(record.get(6)), parseNullableBoolean(record.get(7)),
+        parseNullableBoolean(record.get(8)))).toList();
     return userRequests;
   }
 
@@ -256,15 +273,16 @@ public class PreRegistrationService {
 
   private void handlePreRegistrationRequest(
     Long groupId, Long projectId, Long questionnaireId, PreRegisterUserInternalDto userRequest,
-    Instant expiresAt) {
+    Instant expiresAt, String projectName, Locale locale) {
     VerificationTokenDto verificationTokenDto = null;
     try {
       String email = userRequest.email();
       String username = userRequest.username();
+      String fullName = userRequest.fullName();
       verificationTokenService.verifyTokenDoesNotExistWith(email, username);
       verificationTokenDto = verificationTokenService.savePreRegistrationVerificationToken(
         userRequest, groupId, projectId, questionnaireId, expiresAt);
-      sendPreRegisterEmail(verificationTokenDto, username, email);
+      sendPreRegisterEmail(verificationTokenDto, fullName, email, projectName, locale);
     } catch (Exception e) {
       verificationTokenService.cleanupVerificationToken(verificationTokenDto);
       throw e;
@@ -301,6 +319,9 @@ public class PreRegistrationService {
     if (userRequest.coordinatorName() != null) {
       user.setCurrentCoordinatorFullName(userRequest.coordinatorName());
     }
+    if (userRequest.dataPreparatorName() != null) {
+      user.setDataPreparatorFullName(userRequest.dataPreparatorName());
+    }
     if (userRequest.hasExternalTestQuestionnaire() != null) {
       user.setHasExternalTestQuestionnaire(userRequest.hasExternalTestQuestionnaire());
     }
@@ -311,10 +332,11 @@ public class PreRegistrationService {
   }
 
   private void sendPreRegisterEmail(
-    VerificationTokenDto tokenDto, String username, String email) {
+    VerificationTokenDto tokenDto, String fullName, String email, String projectName,
+    Locale locale) {
     try {
       EmailRequestDto emailRequestDto = emailTemplateService.getPreRegisterEmailDto(
-        tokenDto, username, email);
+        tokenDto, fullName, email, projectName, locale);
       emailService.sendMailToUserAddress(emailRequestDto);
     } catch (IOException e) {
       throw new RuntimeException("Failed to process e-mail template - " + e.getMessage());

@@ -55,6 +55,9 @@ const AnswerItem = memo((props: AnswerItemProps) => {
         <Stack spacing={2}>
           {isSmallScreen
             ? <Stack spacing={2}>
+              <Typography whiteSpace={"nowrap"} sx={{wordBreak:"keep-all"}} variant={"body1"}>
+                {String.fromCharCode(props.answer.order + 64)}:
+              </Typography>
               <TextField
                 type="text"
                 label={"Answer Text"}
@@ -79,7 +82,7 @@ const AnswerItem = memo((props: AnswerItemProps) => {
               </Button>
             </Stack>
             : <Stack spacing={2} direction={"row"} alignItems={"center"}>
-              <Typography variant={"h6"}>
+              <Typography whiteSpace={"nowrap"} sx={{wordBreak:"keep-all"}} variant={"body1"}>
                 {String.fromCharCode(props.answer.order + 64)}:
               </Typography>
               <TextField

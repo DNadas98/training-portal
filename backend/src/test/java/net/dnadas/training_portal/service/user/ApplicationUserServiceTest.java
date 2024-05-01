@@ -25,10 +25,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -283,7 +280,8 @@ class ApplicationUserServiceTest {
     VerificationTokenDto verificationTokenDto = new VerificationTokenDto(
       savedVerificationToken.getId(), verificationCode);
     EmailRequestDto emailRequestDto = emailTemplateService.getEmailChangeVerificationEmailDto(
-      verificationTokenDto, updateDto.email(), authenticatedUser.getActualUsername());
+      verificationTokenDto, updateDto.email(), authenticatedUser.getActualUsername(),
+      Locale.of("hu", "HU"));
 
     when(userProvider.getAuthenticatedUser()).thenReturn(authenticatedUser);
     when(passwordEncoder.matches(updateDto.password(), authenticatedUser.getPassword())).thenReturn(
@@ -299,7 +297,7 @@ class ApplicationUserServiceTest {
       savedVerificationToken);
     doNothing().when(emailService).sendMailToUserAddress(emailRequestDto);
 
-    applicationUserService.sendEmailChangeVerificationEmail(updateDto);
+    applicationUserService.sendEmailChangeVerificationEmail(updateDto, Locale.of("hu", "HU"));
 
     verify(emailService).sendMailToUserAddress(emailRequestDto);
   }
@@ -315,7 +313,8 @@ class ApplicationUserServiceTest {
 
     assertThrows(
       PasswordVerificationFailedException.class,
-      () -> applicationUserService.sendEmailChangeVerificationEmail(updateDto));
+      () -> applicationUserService.sendEmailChangeVerificationEmail(updateDto,
+        Locale.of("hu", "HU")));
   }
 
   @Test
@@ -331,6 +330,7 @@ class ApplicationUserServiceTest {
 
     assertThrows(
       UserAlreadyExistsException.class,
-      () -> applicationUserService.sendEmailChangeVerificationEmail(updateDto));
+      () -> applicationUserService.sendEmailChangeVerificationEmail(updateDto,
+        Locale.of("hu", "HU")));
   }
 }

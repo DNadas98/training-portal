@@ -25,10 +25,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -102,12 +99,13 @@ class AuthenticationServiceTest {
       new RegistrationToken(emailRequestDto.to(), registerRequest.email(), "Name", "hashedPassword",
         "hashedCode"));
     when(emailTemplateService.getRegistrationEmailDto(verificationTokenDto, registerRequest.email(),
-      registerRequest.username())).thenReturn(emailRequestDto);
+      registerRequest.username(), Locale.of("hu", "HU"))).thenReturn(emailRequestDto);
     when(emailChangeVerificationTokenDao.findByNewEmail(registerRequest.email())).thenReturn(
       Optional.empty());
 
     assertDoesNotThrow(
-      () -> authenticationService.sendRegistrationVerificationEmail(registerRequest));
+      () -> authenticationService.sendRegistrationVerificationEmail(registerRequest,
+        Locale.of("hu", "HU")));
   }
 
   @Test
@@ -121,7 +119,8 @@ class AuthenticationServiceTest {
 
     assertThrows(
       UserAlreadyExistsException.class,
-      () -> authenticationService.sendRegistrationVerificationEmail(registerRequest));
+      () -> authenticationService.sendRegistrationVerificationEmail(registerRequest,
+        Locale.of("hu", "HU")));
   }
 
   @Test
@@ -137,10 +136,11 @@ class AuthenticationServiceTest {
     when(passwordResetVerificationTokenDao.save(any(PasswordResetVerificationToken.class)))
       .thenReturn(new PasswordResetVerificationToken("to", "hashedCode"));
     when(emailTemplateService.getPasswordResetEmailDto(verificationTokenDto, requestDto.email(),
-      user.getActualUsername())).thenReturn(emailRequestDto);
+      user.getActualUsername(), Locale.of("hu", "HU"))).thenReturn(emailRequestDto);
     doNothing().when(emailService).sendMailToUserAddress(emailRequestDto);
 
-    assertDoesNotThrow(() -> authenticationService.sendPasswordResetVerificationEmail(requestDto));
+    assertDoesNotThrow(() -> authenticationService.sendPasswordResetVerificationEmail(requestDto,
+      Locale.of("hu", "HU")));
   }
 
   @Test
@@ -149,7 +149,8 @@ class AuthenticationServiceTest {
 
     when(applicationUserDao.findByEmail(requestDto.email())).thenReturn(Optional.empty());
 
-    assertDoesNotThrow(() -> authenticationService.sendPasswordResetVerificationEmail(requestDto));
+    assertDoesNotThrow(() -> authenticationService.sendPasswordResetVerificationEmail(requestDto,
+      Locale.of("hu", "HU")));
   }
 
   @Test
@@ -163,12 +164,14 @@ class AuthenticationServiceTest {
     when(passwordResetVerificationTokenDao.save(any(PasswordResetVerificationToken.class)))
       .thenReturn(new PasswordResetVerificationToken("to", "hashedCode"));
     when(emailTemplateService.getPasswordResetEmailDto(any(VerificationTokenDto.class),
-      eq(requestDto.email()), anyString())).thenReturn(new EmailRequestDto(requestDto.email(),
+      eq(requestDto.email()), anyString(), eq(Locale.of("hu", "HU")))).thenReturn(new EmailRequestDto(
+      requestDto.email(),
       "subject", "content"));
     doThrow(new MailSendException("")).when(emailService).sendMailToUserAddress(
       any(EmailRequestDto.class));
 
-    assertDoesNotThrow(() -> authenticationService.sendPasswordResetVerificationEmail(requestDto));
+    assertDoesNotThrow(() -> authenticationService.sendPasswordResetVerificationEmail(requestDto,
+      Locale.of("hu", "HU")));
   }
 
   @Test

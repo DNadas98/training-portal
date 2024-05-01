@@ -50,7 +50,7 @@ public class UserController {
   @PatchMapping("/email")
   public ResponseEntity<?> requestEmailUpdate(
     @RequestBody @Valid UserEmailUpdateDto updateDto, Locale locale) throws Exception {
-    applicationUserService.sendEmailChangeVerificationEmail(updateDto);
+    applicationUserService.sendEmailChangeVerificationEmail(updateDto, locale);
     return ResponseEntity.status(HttpStatus.OK).body(
       Map.of("message", messageSource.getMessage(
         "user.email.change.pending", null, locale)));

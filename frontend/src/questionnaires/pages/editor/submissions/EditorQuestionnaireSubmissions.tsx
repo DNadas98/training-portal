@@ -218,8 +218,7 @@ export default function EditorQuestionnaireSubmissions() {
            onSelectClick={handleQuestionnaireSubmissionSelect}
            selectedQuestionnaireSubmissionLoading={selectedQuestionnaireSubmissionLoading}/>
           : <Card>
-            <CardHeader title={"No submissions were found for this questionnaire."}
-                        sx={{textAlign: "center"}}/>
+            <CardHeader title={"No submissions were found for this questionnaire."}/>
           </Card>}
         <Card><CardActions>
           <Button sx={{width: "fit-content"}} onClick={handleBackClick}>

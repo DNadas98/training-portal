@@ -36,6 +36,8 @@ export default function GroupHeader(props: GroupHeaderProps) {
     if (props.groupPermissions.includes(PermissionType.GROUP_ADMIN)) {
       items.push({
         path: `/groups/${props?.group?.groupId}/requests`, title: "Join Requests"
+      },{
+        path: `/groups/${props?.group?.groupId}/pre-register`, title: "Manage Members"
       })
     }
     return items;

@@ -23,7 +23,7 @@ export default function QuestionnaireBrowser(props: QuestionnaireBrowserProps) {
       <Grid item xs={10} sm={10} md={9} lg={8}>
         <Stack spacing={2}>
           <Card>
-            <CardHeader title={"Questionnaires"} sx={{textAlign: "center"}}/>
+            <CardHeader title={"Questionnaires"}/>
             <CardContent>
               <Stack direction={"row"} spacing={1} alignItems={"baseline"}>
                 <IconButton onClick={props.onAddClick}>

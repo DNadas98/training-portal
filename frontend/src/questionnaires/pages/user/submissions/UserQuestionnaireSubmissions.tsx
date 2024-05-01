@@ -127,11 +127,11 @@ export default function UserQuestionnaireSubmissions() {
   }
 
   useEffect(() => {
-    loadMaxPointQuestionnaire();
+    loadMaxPointQuestionnaire().then();
   }, [groupId, projectId]);
 
   useEffect(() => {
-    loadQuestionnaireSubmissions();
+    loadQuestionnaireSubmissions().then();
   }, [groupId, projectId, page, size]);
 
 
@@ -155,7 +155,7 @@ export default function UserQuestionnaireSubmissions() {
       });
       searchParams.set("page", "1");
       navigate({search: searchParams.toString()});
-      loadQuestionnaireSubmissions();
+      loadQuestionnaireSubmissions().then();
     } catch (e) {
       notification.openNotification({
         type: "error", vertical: "top", horizontal: "center", message: defaultError

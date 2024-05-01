@@ -65,6 +65,7 @@ public class QuestionnaireSubmissionConverter {
       dto.maxPointSubmissionReceivedPoints(),
       dto.userId(), dto.username(), dto.fullName(), dto.email(),
       dto.currentCoordinatorFullName(),
+      dto.currentDataPreparatorFullName(),
       dto.hasExternalTestQuestionnaire(), dto.hasExternalTestFailure(),
       dto.receivedSuccessfulCompletionEmail(),
       dto.submissionCount());
