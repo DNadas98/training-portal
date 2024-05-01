@@ -30,7 +30,6 @@ import net.dnadas.training_portal.service.utils.email.EmailService;
 import net.dnadas.training_portal.service.utils.email.EmailTemplateService;
 import net.dnadas.training_portal.service.utils.file.CsvUtilsService;
 import net.dnadas.training_portal.service.verification.VerificationTokenService;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -314,6 +313,9 @@ public class PreRegistrationService {
     user.setUsername(userRequest.username());
     if (userRequest.coordinatorName() != null) {
       user.setCurrentCoordinatorFullName(userRequest.coordinatorName());
+    }
+    if (userRequest.dataPreparatorName() != null) {
+      user.setDataPreparatorFullName(userRequest.dataPreparatorName());
     }
     if (userRequest.hasExternalTestQuestionnaire() != null) {
       user.setHasExternalTestQuestionnaire(userRequest.hasExternalTestQuestionnaire());
