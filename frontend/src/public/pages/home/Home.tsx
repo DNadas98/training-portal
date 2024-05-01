@@ -1,10 +1,8 @@
-import {useEffect, useState} from "react";
 import {
   Button,
   Card,
   CardActions,
   CardContent,
-  Collapse,
   Grid
 } from "@mui/material";
 import {Link as RouterLink} from "react-router-dom";
@@ -14,15 +12,10 @@ import HomeList from "./components/HomeList.tsx";
 import HomeHeader from "./components/HomeHeader.tsx";
 
 const Home = () => {
-  const [checked, setChecked] = useState(false);
   const authentication = useAuthentication();
   const username = authentication.getUsername();
   const isLoggedIn = username && username.length > 0;
   const localized = useLocalized();
-
-  useEffect(() => {
-    setChecked(true);
-  }, []);
 
   return (
     <Grid container justifyContent={"center"}><Grid item xs={10} sm={8} md={7} lg={6}><Card
@@ -31,9 +24,7 @@ const Home = () => {
       <CardContent sx={{justifyContent: "center", textAlign: "center"}}>
         <Grid container justifyContent={"center"}>
           <Grid item sx={{maxWidth: "22rem"}}>
-            <Collapse in={checked} {...(checked ? {timeout: 1000} : {})}>
-              <HomeList/>
-            </Collapse>
+            <HomeList/>
           </Grid>
         </Grid>
         {!isLoggedIn
