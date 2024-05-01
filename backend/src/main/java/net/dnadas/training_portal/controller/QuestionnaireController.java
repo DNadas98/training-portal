@@ -3,6 +3,7 @@ package net.dnadas.training_portal.controller;
 import lombok.RequiredArgsConstructor;
 import net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireResponseDetailsDto;
 import net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireResponseDto;
+import net.dnadas.training_portal.dto.group.project.questionnaire.QuestionnaireResponseEditorDto;
 import net.dnadas.training_portal.service.group.project.questionnaire.QuestionnaireService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class QuestionnaireController {
   private final QuestionnaireService questionnaireService;
+
+  @GetMapping("/all")
+  public ResponseEntity<?> getAllQuestionnaires(
+    @PathVariable Long groupId, @PathVariable Long projectId) {
+    List<QuestionnaireResponseEditorDto> questionnaires = questionnaireService.getQuestionnairesOfProject(
+      groupId, projectId);
+    return ResponseEntity.status(HttpStatus.OK).body(Map.of("data", questionnaires));
+  }
 
   @GetMapping
   public ResponseEntity<?> getQuestionnaires(
