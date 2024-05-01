@@ -93,6 +93,10 @@ public class PreRegistrationService {
     Project project = questionnaire.getProject();
     UserGroup group = project.getUserGroup();
 
+    if (!group.getId().equals(groupId)) {
+      throw new GroupNotFoundException(groupId);
+    }
+
     PreRegisterUsersReportDto reportDto = processPreRegistrationRequest(
       groupId, projectId, questionnaireId, usersCsv, expiresAt, locale, group, project,
       questionnaire);

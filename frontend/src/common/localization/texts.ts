@@ -275,7 +275,7 @@ export const texts = {
       "administrator": "Adminisztrátor",
       "developer": "Fejlesztő",
       "sourceCode": "A projekt forráskódja",
-      "legalPolicyText": "A szolgáltatás használatával Ön elfogadja, hogy alkalmazásunk kezeli az Ön teljes nevét, és az email címét.\nAdatait a rendszer kizárólag kapcsolattartásra, és a tesztsor kitöltésekről készült belső statisztikához használja.\nAz email címe és a teljes neve kizárólag az Ön mentorainak lesz látható.\nAdatait marketing célra egyáltalán nem használjuk, harmadik félnek semmilyen formában nem adjuk tovább."
+      "legalPolicyText": "A szolgáltatás használatával Ön elfogadja, hogy alkalmazásunk kezeli az Ön teljes nevét, és az email címét.\nAdatait a rendszer kizárólag kapcsolattartásra, és a tesztsor kitöltésekről készült belső statisztikához használja.\nAz email címe és a teljes neve kizárólag az Ön szervezőinek lesz látható.\nAdatait marketing célra egyáltalán nem használjuk, harmadik félnek semmilyen formában nem adjuk tovább."
     },
     "menus": {
       "home": "Főoldal",
@@ -331,7 +331,7 @@ export const texts = {
       },
       "pre_registration": {
         "title": "Üdvözöljük a tesztsor.hu oldalán!",
-        "info": "Önt mentora meghívta a tesztsor.hu felhasználói közé.\nEzen a felületen oktatási anyagokat talál, valamint a felkészültségét mérő tesztsort tölthet ki.\nFelhasználóneve előre be lett állítva, a teljes nevét ha szükséges, módosíthatja.\nA belépéshez, illetve a későbbi használathoz, létre kell hoznia egy jelszót.\nA későbbiekben az email címével, illetve a most beállított jelszavával fog tudni belépni.",
+        "info": "Önt szervezője meghívta a tesztsor.hu felhasználói közé.\nEzen a felületen oktatási anyagokat talál, valamint a felkészültségét mérő tesztsort tölthet ki.\nFelhasználóneve előre be lett állítva, a teljes nevét ha szükséges, módosíthatja.\nA belépéshez, illetve a későbbi használathoz, létre kell hoznia egy jelszót.\nA későbbiekben az email címével, illetve a most beállított jelszavával fog tudni belépni.",
         "submit_button": "Beküldés",
         "error": {
           "default": "A regisztráció véglegesítése során hiba történt"
@@ -466,14 +466,14 @@ export const texts = {
       "updated_by": "Utolsó módosítás",
       "export_to_excel": "Exportálás EXCEL-be",
       "exporting": "Exportálás...",
-      "statistics_search_by": "Keresés felhasználónév, teljes név, vagy koordinátor" +
+      "statistics_search_by": "Keresés azonosító, összeíró neve, szervező vagy adatelőkészítő alapján" +
         " név alapján",
       "username": "LAKOS azonosító",
-      "name": "Teljes név",
+      "name": "Összeíró neve",
       "max_date": "Max. dátum",
       "max_points": "Max. pont",
       "total_submissions": "Kitöltések száma",
-      "coordinator": "Koordinátor",
+      "coordinator": "Szervező",
       "datapreparator":"Adatelőkészítő",
       "external_questionnaire": "Gyakorló kérdőív",
       "external_failure": "Gyakorló meghiúsulás",

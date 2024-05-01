@@ -24,6 +24,7 @@ public record QuestionnaireSubmissionStatsResponseDto(
   Integer maxPointSubmissionReceivedPoints,
   Long userId, String username, String fullName, String email,
   String currentCoordinatorFullName,
+  String currentDataPreparatorFullName,
   Boolean hasExternalTestQuestionnaire,
   Boolean hasExternalTestFailure,
   Boolean receivedSuccessfulCompletionEmail, Long submissionCount) {

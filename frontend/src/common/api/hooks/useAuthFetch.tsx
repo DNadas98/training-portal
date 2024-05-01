@@ -57,6 +57,8 @@ export default function useAuthFetch() {
         if (httpResponse.status === 401) {
           responseObject = await httpResponse?.json();
           return await notifyAndLogout(httpResponse, responseObject?.error);
+        }else {
+          return responseObject;
         }
       }
       return httpResponse;
