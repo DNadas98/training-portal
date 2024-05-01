@@ -56,6 +56,7 @@ public class PreRegistrationService {
       PermissionType.PROJECT_COORDINATOR.name() + " " + PermissionType.PROJECT_EDITOR.name() +
       " and " + PermissionType.PROJECT_ASSIGNED_MEMBER.name() + " default: " +
       PermissionType.PROJECT_ASSIGNED_MEMBER.name(), "Current Coordinator Full Name or NULL",
+    "Current Data Preparator Full Name or NULL",
     "Has External Test Questionnaire: TRUE FALSE or NULL",
     "Has External Test Failure: TRUE FALSE or NULL");
   private static final long MAX_EXPIRATION_SECONDS = 60 * 60 * 24 * 365; // 1 year
@@ -73,11 +74,12 @@ public class PreRegistrationService {
   public void getPreRegisterUsersCsvTemplate(OutputStream outputStream) throws IOException {
     List<List<String>> exampleData = List.of(
       List.of("exampleUser1", "Example User 1", "example1@example.com", "GROUP_EDITOR",
-        "PROJECT_ASSIGNED_MEMBER&PROJECT_EDITOR&PROJECT_ADMIN", "NULL", "NULL", "NULL"),
+        "PROJECT_ASSIGNED_MEMBER&PROJECT_EDITOR&PROJECT_ADMIN", "NULL", "NULL", "NULL", "NULL"),
       List.of("exampleUser2", "Example User 2", "example2@example.com", "GROUP_MEMBER",
-        "PROJECT_ASSIGNED_MEMBER&PROJECT_COORDINATOR", "NULL", "NULL", "NULL"),
+        "PROJECT_ASSIGNED_MEMBER&PROJECT_COORDINATOR", "NULL", "NULL", "NULL", "NULL"),
       List.of("exampleUser3", "Example User 3", "example3@example.com", "GROUP_MEMBER",
-        "PROJECT_ASSIGNED_MEMBER", "Example Coordinator", "TRUE", "FALSE"));
+        "PROJECT_ASSIGNED_MEMBER", "Example Coordinator", "Example Data Preparator", "TRUE",
+        "FALSE"));
     csvUtilsService.writeCsvToStream(exampleData, CSV_DELIMITER, CSV_HEADERS, outputStream);
   }
 
@@ -207,7 +209,8 @@ public class PreRegistrationService {
       record -> new PreRegisterUserInternalDto(record.get(0).trim(), record.get(1).trim(),
         record.get(2).trim(), parseGroupPermissions(record.get(3).trim()),
         parseProjectPermissions(record.get(4).trim()), parseNullable(record.get(5)),
-        parseNullableBoolean(record.get(6)), parseNullableBoolean(record.get(7)))).toList();
+        parseNullable(record.get(6)), parseNullableBoolean(record.get(7)),
+        parseNullableBoolean(record.get(8)))).toList();
     return userRequests;
   }
 

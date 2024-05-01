@@ -151,6 +151,7 @@ public class VerificationTokenService {
       new PreRegistrationVerificationToken(userRequest.email(), userRequest.username(), groupId,
         projectId, questionnaireId, hashedVerificationCode, expiresAt, userRequest.fullName());
     token.setCurrentCoordinatorFullName(userRequest.coordinatorName());
+    token.setDataPreparatorFullName(userRequest.dataPreparatorName());
     token.setHasExternalTestQuestionnaire(userRequest.hasExternalTestQuestionnaire());
     token.setHasExternalTestFailure(userRequest.hasExternalTestFailure());
     token.setGroupPermissions(userRequest.groupPermissions());

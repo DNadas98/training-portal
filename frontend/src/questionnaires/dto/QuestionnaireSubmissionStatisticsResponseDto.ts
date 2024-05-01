@@ -9,6 +9,7 @@ export interface QuestionnaireSubmissionStatisticsResponseDto {
   fullName: string;
   email: string;
   currentCoordinatorFullName: string;
+  currentDataPreparatorFullName: string;
   hasExternalTestQuestionnaire: boolean;
   hasExternalTestFailure: boolean;
   receivedSuccessfulCompletionEmail: boolean;

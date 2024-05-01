@@ -45,6 +45,9 @@ public class ApplicationUser implements UserDetails {
   private String currentCoordinatorFullName;
 
   @Column(nullable = true)
+  private String dataPreparatorFullName;
+
+  @Column(nullable = true)
   private Boolean hasExternalTestQuestionnaire;
 
   @Column(nullable = true)

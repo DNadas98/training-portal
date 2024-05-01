@@ -285,7 +285,7 @@ export default function SubmitQuestionnaire() {
                       </Grid>
                       <Grid item xs={true} textAlign={"left"}>
                         <Stack spacing={0.5} direction={"row"}>
-                          <Typography variant={"body1"}>
+                          <Typography whiteSpace={"nowrap"} sx={{wordBreak:"keep-all"}} variant={"body1"}>
                             {String.fromCharCode(answer.order + 64)}:
                           </Typography>
                           <Typography variant={"body1"} gutterBottom>{answer.text}</Typography>

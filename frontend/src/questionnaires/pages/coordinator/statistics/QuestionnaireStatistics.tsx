@@ -351,6 +351,7 @@ export default function QuestionnaireStatistics() {
                 <TableCell>{localized("statistics.max_points")}</TableCell>
                 <TableCell>{localized("statistics.total_submissions")}</TableCell>
                 <TableCell>{localized("statistics.coordinator")}</TableCell>
+                <TableCell>{localized("statistics.datapreparator")}</TableCell>
                 <TableCell>{localized("statistics.external_questionnaire")}</TableCell>
                 <TableCell>{localized("statistics.external_failure")}</TableCell>
                 <TableCell>{localized("statistics.completion_email")}</TableCell>
@@ -388,6 +389,8 @@ export default function QuestionnaireStatistics() {
                         </>}
                       <TableCell><Typography
                         whiteSpace={"nowrap"}>{stat.currentCoordinatorFullName}</Typography></TableCell>
+                      <TableCell><Typography
+                        whiteSpace={"nowrap"}>{stat.currentDataPreparatorFullName}</Typography></TableCell>
                       <TableCell>{stat.hasExternalTestQuestionnaire ? <Check/> : <Close/>}</TableCell>
                       <TableCell>{stat.hasExternalTestFailure ? <Check/> : <Close/>}</TableCell>
                       <TableCell>{stat.receivedSuccessfulCompletionEmail ? <Check/> : <Close/>}</TableCell>
