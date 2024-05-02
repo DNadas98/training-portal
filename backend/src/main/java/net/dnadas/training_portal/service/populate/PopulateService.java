@@ -41,7 +41,7 @@ public class PopulateService {
   private final static int QUESTIONNAIRE_QUESTIONS_COUNT = 10;
   private final static int QUESTIONNAIRE_ANSWERS_COUNT = 4;
   private final static int TEST_MEMBERS_COUNT = 500;
-  private final static int MEMBER_SUBMISSIONS_COUNT = 10;
+  private final static int MEMBER_SUBMISSIONS_COUNT = 1;
   private final static int TEST_EDITORS_COUNT = 10;
   private final static int EDITOR_SUBMISSIONS_COUNT = 20;
   // ------------------------------------------------------------------------------------------------
@@ -129,7 +129,7 @@ public class PopulateService {
           return sq;
         }).toList());
     qs.setMaxPoints(QUESTIONNAIRE_QUESTIONS_COUNT);
-    qs.setReceivedPoints(0);
+    qs.setReceivedPoints(QUESTIONNAIRE_QUESTIONS_COUNT);
     return qs;
   }
 
