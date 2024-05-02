@@ -1,6 +1,12 @@
 server:
   port: 8080
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:56321/trainingportaldb

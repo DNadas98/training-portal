@@ -109,7 +109,11 @@ administrators to see the overall progress of a project.
 
 [![Docker](https://img.shields.io/badge/-Docker-1d63ed?style=for-the-badge&logo=docker&logoColor=black)](https://www.docker.com/)
 [![GitHub Actions](https://img.shields.io/badge/-GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=black)](https://github.com/features/actions)
-[![Nginx](https://img.shields.io/badge/-Nginx-227722?style=for-the-badge&logo=nginx&logoColor=black)](https://www.nginx.com/)
+[![Nginx](https://img.shields.io/badge/-Nginx-227722?style=for-the-badge&logo=nginx&logoColor=black)](https://www.nginx.com/)  
+[![Prometheus](https://img.shields.io/badge/-Prometheus-CCCCCC?style=for-the-badge&logo=prometheus&logoColor=black)](https://prometheus.io/)
+[![Grafana](https://img.shields.io/badge/-Grafana-ED8B00?style=for-the-badge&logo=grafana&logoColor=black)](https://grafana.com/)
+[![Apache JMeter](https://img.shields.io/badge/-Apache_JMeter-CCCCCC?style=for-the-badge&logo=apache&logoColor=black)](https://grafana.com/)
+
 
 ## Getting Started
 
