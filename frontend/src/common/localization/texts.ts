@@ -411,6 +411,15 @@ export const texts = {
         "back_to_group_dashboard": "Vissza a témacsoport leírásához",
         "view_projects": "Tovább a projektlistához"
       },
+      "project_dashboard": {
+        "remove_confirm_message": "Biztosan kitörli a projektet?",
+        "remove_confirm_button": "Igen",
+        "remove_success": "Projekt törölve",
+        "error": {
+          "failed_to_load_project_error": "A projekt betöltése során hiba történt",
+          "failed_to_remove_error": "A projekt törlése során hiba történt"
+        }
+      },
       "error": {
         "not_found": {
           "text": "A keresett oldal nem található."
