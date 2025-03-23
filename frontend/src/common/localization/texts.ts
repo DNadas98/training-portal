@@ -206,12 +206,13 @@ export const texts = {
       "exporting": "Exporting...",
       "statistics_search_by": "Search by ID, name, coordinator or data preparator",
       "username": "Identifier",
+      "username_archived": "Archived Account",
       "name": "Name",
       "max_date": "Max Date",
       "max_points": "Max Points",
       "total_submissions": "Total Submissions",
       "coordinator": "Coordinator",
-      "datapreparator":"Data Preparator",
+      "datapreparator": "Data Preparator",
       "external_questionnaire": "External Questionnaire",
       "external_failure": "External Failure",
       "completion_email": "Completion Email",
@@ -478,12 +479,13 @@ export const texts = {
       "statistics_search_by": "Keresés azonosító, összeíró neve, szervező vagy adatelőkészítő alapján" +
         " név alapján",
       "username": "LAKOS azonosító",
+      "username_archived": "Archivált fiók",
       "name": "Összeíró neve",
       "max_date": "Max. dátum",
       "max_points": "Max. pont",
       "total_submissions": "Kitöltések száma",
       "coordinator": "Szervező",
-      "datapreparator":"Adatelőkészítő",
+      "datapreparator": "Adatelőkészítő",
       "external_questionnaire": "Gyakorló kérdőív",
       "external_failure": "Gyakorló meghiúsulás",
       "completion_email": "Értesítő email",
@@ -541,4 +543,4 @@ export const texts = {
       }
     }
   }
-}
+};
