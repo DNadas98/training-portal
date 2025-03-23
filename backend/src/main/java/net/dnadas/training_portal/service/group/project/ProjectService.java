@@ -115,7 +115,6 @@ public class ProjectService {
     Instant projectDeadline = dateTimeService.toStoredDate(createRequestDto.deadline());
     dateTimeService.validateProjectDates(projectStartDate, projectDeadline);
     String detailedDescription = createRequestDto.detailedDescription();
-    //TODO: sanitize detailedDescription HTML
     Project project = new Project(createRequestDto.name(), createRequestDto.description(),
       detailedDescription,
       projectStartDate, projectDeadline, applicationUser, userGroup);
@@ -146,10 +145,12 @@ public class ProjectService {
     project.setName(updateRequestDto.name());
     project.setDescription(updateRequestDto.description());
     String detailedDescription = updateRequestDto.detailedDescription();
-    //TODO: sanitize detailedDescription HTML
     project.setDetailedDescription(detailedDescription);
     project.setStartDate(projectStartDate);
     project.setDeadline(projectDeadline);
+    ApplicationUser user = userProvider.getAuthenticatedUser();
+    project.setUpdatedBy(user);
+    project.setUpdatedAt(Instant.now());
     Project savedProject = projectDao.save(project);
     return projectConverter.getProjectResponsePrivateDto(savedProject);
   }

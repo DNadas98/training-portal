@@ -12,6 +12,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 @Entity
 @NoArgsConstructor
 @Getter
@@ -104,6 +107,25 @@ public class Project {
   @OrderBy("username ASC")
   private List<ApplicationUser> inactiveMembers = new ArrayList<>();
 
+
+  @CreationTimestamp
+  Instant createdAt;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "created_by_user_id", nullable = true)
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
+  private ApplicationUser createdBy;
+
+  @UpdateTimestamp
+  private Instant updatedAt;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "updated_by_user_id", nullable = true)
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
+  private ApplicationUser updatedBy;
+
   public Project(
     String name, String description, String detailedDescription, Instant startDate,
     Instant deadline,
@@ -117,6 +139,8 @@ public class Project {
     editors.add(projectCreator);
     assignedMembers.add(projectCreator);
     this.userGroup = userGroup;
+    this.createdBy = projectCreator;
+    this.updatedBy = projectCreator;
   }
 
   public List<Task> getTasks() {

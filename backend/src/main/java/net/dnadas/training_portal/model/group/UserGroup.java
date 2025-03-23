@@ -6,8 +6,12 @@ import net.dnadas.training_portal.model.group.project.Project;
 import net.dnadas.training_portal.model.request.UserGroupJoinRequest;
 import net.dnadas.training_portal.model.user.ApplicationUser;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @NoArgsConstructor
@@ -77,6 +81,24 @@ public class UserGroup {
   @OrderBy("username ASC")
   private List<ApplicationUser> inactiveMembers = new ArrayList<>();
 
+  @CreationTimestamp
+  Instant createdAt;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "created_by_user_id", nullable = true)
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
+  private ApplicationUser createdBy;
+
+  @UpdateTimestamp
+  private Instant updatedAt;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "updated_by_user_id", nullable = true)
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
+  private ApplicationUser updatedBy;
+
   public UserGroup(
     String name, String description, String detailedDescription, ApplicationUser groupCreator) {
     this.name = name;
@@ -88,6 +110,8 @@ public class UserGroup {
     this.admins.add(groupCreator);
     this.editors.add(groupCreator);
     this.members.add(groupCreator);
+    this.createdBy = groupCreator;
+    this.updatedBy = groupCreator;
   }
 
   public List<Project> getProjects() {

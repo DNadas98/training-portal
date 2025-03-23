@@ -8,5 +8,6 @@ public record GroupResponsePrivateDTO(
   @NotNull String name,
   @NotNull String description,
   @NotNull String detailedDescription
+  
 ) {
 }

@@ -21,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,7 +87,6 @@ public class GroupService {
     GroupCreateRequestDto createRequestDto) throws ConstraintViolationException {
     ApplicationUser applicationUser = userProvider.getAuthenticatedUser();
     String detailedDescription = createRequestDto.detailedDescription();
-    //TODO: sanitize detailedDescription HTML
     UserGroup userGroup = new UserGroup(
       createRequestDto.name(), createRequestDto.description(), detailedDescription,
       applicationUser);
@@ -104,8 +104,11 @@ public class GroupService {
     userGroup.setName(updateRequestDto.name());
     userGroup.setDescription(updateRequestDto.description());
     String detailedDescription = updateRequestDto.detailedDescription();
-    //TODO: sanitize detailedDescription HTML
     userGroup.setDetailedDescription(detailedDescription);
+
+    ApplicationUser user = userProvider.getAuthenticatedUser();
+    userGroup.setUpdatedBy(user);
+    userGroup.setUpdatedAt(Instant.now());
     UserGroup updatedUserGroup = userGroupDao.save(userGroup);
     return groupConverter.getGroupResponsePrivateDto(updatedUserGroup);
   }
