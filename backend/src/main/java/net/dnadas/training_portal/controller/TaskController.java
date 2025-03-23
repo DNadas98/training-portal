@@ -1,4 +1,4 @@
-package net.dnadas.training_portal.controller;
+/* package net.dnadas.training_portal.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -88,3 +88,4 @@ public class TaskController {
         messageSource.getMessage("task.delete.success", null, locale)));
   }
 }
+ */

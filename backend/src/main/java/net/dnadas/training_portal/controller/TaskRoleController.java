@@ -1,4 +1,4 @@
-package net.dnadas.training_portal.controller;
+/* package net.dnadas.training_portal.controller;
 
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -51,4 +51,4 @@ public class TaskRoleController {
     return ResponseEntity.status(HttpStatus.OK).body(
       Map.of("message", messageSource.getMessage("task.members.remove.success", null, locale)));
   }
-}
+} */

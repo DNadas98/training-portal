@@ -8,10 +8,10 @@ import net.dnadas.training_portal.model.group.UserGroupDao;
 import net.dnadas.training_portal.model.group.project.Project;
 import net.dnadas.training_portal.model.group.project.ProjectDao;
 import net.dnadas.training_portal.model.group.project.questionnaire.*;
+/* import net.dnadas.training_portal.model.group.project.task.TaskDao;
 import net.dnadas.training_portal.model.group.project.task.Importance;
 import net.dnadas.training_portal.model.group.project.task.Task;
-import net.dnadas.training_portal.model.group.project.task.TaskDao;
-import net.dnadas.training_portal.model.group.project.task.TaskStatus;
+import net.dnadas.training_portal.model.group.project.task.TaskStatus; */
 import net.dnadas.training_portal.model.user.ApplicationUser;
 import net.dnadas.training_portal.model.user.ApplicationUserDao;
 import net.dnadas.training_portal.service.user.DefaultAdminInitializer;
@@ -49,7 +49,7 @@ public class PopulateService {
   private final PasswordEncoder passwordEncoder;
   private final UserGroupDao userGroupDao;
   private final ProjectDao projectDao;
-  private final TaskDao taskDao;
+  // private final TaskDao taskDao;
   private final QuestionnaireDao questionnaireDao;
   private final QuestionnaireSubmissionDao questionnaireSubmissionDao;
   private final DefaultAdminInitializer defaultAdminInitializer;
@@ -82,12 +82,12 @@ public class PopulateService {
     project.setEditors(testEditors);
     projectDao.save(project);
 
-    Task task = new Task("Test task 1", "Test task 1 description", Importance.NICE_TO_HAVE, 3,
+    /* Task task = new Task("Test task 1", "Test task 1 description", Importance.NICE_TO_HAVE, 3,
       Instant.now(), Instant.now().plusSeconds(60 * 60), TaskStatus.IN_PROGRESS, project,
       testUsers.get(0));
     task.assignMember(testUsers.get(1));
     task.assignMember(testUsers.get(2));
-    taskDao.save(task);
+    taskDao.save(task); */
 
     Questionnaire questionnaire =
       createQuestionnaire(
