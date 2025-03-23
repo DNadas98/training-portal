@@ -244,7 +244,7 @@ export default function QuestionnaireStatistics() {
     if (!username?.length) {
       return " - ";
     }
-    if (username?.endsWith("archived")) {
+    if (username?.includes("archived")) {
       return localized("statistics.username_archived");
     }
     return username;
