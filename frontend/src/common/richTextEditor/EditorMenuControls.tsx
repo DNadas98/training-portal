@@ -1,4 +1,4 @@
-import {useTheme} from "@mui/material";
+import { useTheme } from "@mui/material";
 import {
   isTouchDevice,
   MenuButtonAddTable,
@@ -42,93 +42,88 @@ export default function EditorMenuControls() {
     <MenuControlsContainer>
       <MenuSelectFontFamily
         options={[
-          {label: "Arial", value: "Arial, sans-serif"},
-          {label: "Calibri", value: "Calibri, sans-serif"},
-          {label: "Garamond", value: "'Garamond', serif"},
-          {label: "Helvetica", value: "'Helvetica Neue', Helvetica, Arial, sans-serif"},
-          {label: "Times New Roman", value: "'Times New Roman', serif"},
-          {label: "Verdana", value: "Verdana, sans-serif"}
+          { label: "Arial", value: "Arial, sans-serif" },
+          { label: "Calibri", value: "Calibri, sans-serif" },
+          { label: "Garamond", value: "'Garamond', serif" },
+          { label: "Helvetica", value: "'Helvetica Neue', Helvetica, Arial, sans-serif" },
+          { label: "Times New Roman", value: "'Times New Roman', serif" },
+          { label: "Verdana", value: "Verdana, sans-serif" }
         ]}
       />
-      <MenuDivider/>
+      <MenuDivider />
 
-      <MenuSelectHeading/>
-      <MenuDivider/>
+      <MenuSelectHeading />
+      <MenuDivider />
 
-      <MenuSelectFontSize/>
-      <MenuDivider/>
+      <MenuSelectFontSize />
+      <MenuDivider />
 
-      <MenuButtonBold/>
-      <MenuButtonItalic/>
-      <MenuButtonUnderline/>
-      <MenuButtonStrikethrough/>
-      <MenuButtonSubscript/>
-      <MenuButtonSuperscript/>
-      <MenuDivider/>
+      <MenuButtonBold />
+      <MenuButtonItalic />
+      <MenuButtonUnderline />
+      <MenuButtonStrikethrough />
+      <MenuButtonSubscript />
+      <MenuButtonSuperscript />
+      <MenuDivider />
 
       <MenuButtonTextColor
         defaultTextColor={theme.palette.text.primary}
         swatchColors={[
-          {value: "#000000", label: "Black"},
-          {value: "#ffffff", label: "White"},
-          {value: "#888888", label: "Grey"},
-          {value: "#ff0000", label: "Red"},
-          {value: "#ff9900", label: "Orange"},
-          {value: "#ffff00", label: "Yellow"},
-          {value: "#00d000", label: "Green"},
-          {value: "#0000ff", label: "Blue"},
+          { value: "#000000", label: "Black" },
+          { value: "#ffffff", label: "White" },
+          { value: "#888888", label: "Grey" },
+          { value: "#ff0000", label: "Red" },
+          { value: "#ff9900", label: "Orange" },
+          { value: "#ffff00", label: "Yellow" },
+          { value: "#00d000", label: "Green" },
+          { value: "#0000ff", label: "Blue" },
         ]}
       />
       <MenuButtonHighlightColor
         swatchColors={[
-          {value: "#595959", label: "Dark grey"},
-          {value: "#dddddd", label: "Light grey"},
-          {value: "#ffa6a6", label: "Light red"},
-          {value: "#ffd699", label: "Light orange"},
+          { value: "#595959", label: "Dark grey" },
+          { value: "#dddddd", label: "Light grey" },
+          { value: "#ffa6a6", label: "Light red" },
+          { value: "#ffd699", label: "Light orange" },
           // Plain yellow matches the browser default `mark` like when using Cmd+Shift+H
-          {value: "#ffff00", label: "Yellow"},
-          {value: "#99cc99", label: "Light green"},
-          {value: "#90c6ff", label: "Light blue"},
-          {value: "#8085e9", label: "Light purple"},
+          { value: "#ffff00", label: "Yellow" },
+          { value: "#99cc99", label: "Light green" },
+          { value: "#90c6ff", label: "Light blue" },
+          { value: "#8085e9", label: "Light purple" },
         ]}
       />
-      <MenuDivider/>
+      <MenuDivider />
 
-      <MenuButtonEditLink/>
-      <MenuDivider/>
+      <MenuButtonEditLink />
+      <MenuDivider />
 
-      <MenuSelectTextAlign/>
-      <MenuDivider/>
+      <MenuSelectTextAlign />
+      <MenuDivider />
 
-      <MenuButtonOrderedList/>
-      <MenuButtonBulletedList/>
-      <MenuButtonTaskList/>
+      <MenuButtonOrderedList />
+      <MenuButtonBulletedList />
+      <MenuButtonTaskList />
       {isTouchDevice() && (
         <>
-          <MenuButtonIndent/>
+          <MenuButtonIndent />
 
-          <MenuButtonUnindent/>
+          <MenuButtonUnindent />
         </>
       )}
-      <MenuDivider/>
+      <MenuDivider />
 
-      <MenuButtonBlockquote/>
-      <MenuDivider/>
+      <MenuButtonBlockquote />
+      <MenuDivider />
 
-      <MenuButtonCode/>
-      <MenuButtonCodeBlock/>
-      <MenuDivider/>
-      <MenuDivider/>
+      <MenuButtonHorizontalRule />
+      <MenuButtonAddTable />
+      <MenuDivider />
 
-      <MenuButtonHorizontalRule/>
-      <MenuButtonAddTable/>
-      <MenuDivider/>
+      <MenuButtonRemoveFormatting />
+      <MenuDivider />
 
-      <MenuButtonRemoveFormatting/>
-      <MenuDivider/>
-
-      <MenuButtonUndo/>
-      <MenuButtonRedo/>
+      <MenuButtonUndo />
+      <MenuButtonRedo />
     </MenuControlsContainer>
   );
 }

@@ -29,15 +29,7 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class PopulateService {
   // ------------------------------------------------------------------------------------------------
-  private final static String EXAMPLE_DATA_POPULATED_MESSAGE = "" +
-    "<pre><code>" +
-    " _____ _____ _____ _____ <br/>" +
-    "|_   _|  ___/  ___|_   _|<br/>" +
-    "  | | | |__ \\ `--.  | |  <br/>" +
-    "  | | |  __| `--. \\ | |  <br/>" +
-    "  | | | |___/\\__/ / | |  <br/>" +
-    "  \\_/ \\____/\\____/  \\_/  " +
-    "</code></pre>";
+  private final static String EXAMPLE_DATA_POPULATED_MESSAGE = "Teszt";
   private final static int QUESTIONNAIRE_QUESTIONS_COUNT = 10;
   private final static int QUESTIONNAIRE_ANSWERS_COUNT = 4;
   private final static int TEST_MEMBERS_COUNT = 500;
