@@ -20,7 +20,9 @@ import net.dnadas.training_portal.service.utils.email.EmailService;
 import net.dnadas.training_portal.service.utils.email.EmailTemplateService;
 import net.dnadas.training_portal.service.utils.security.JwtService;
 import net.dnadas.training_portal.service.verification.VerificationTokenService;
-import org.springframework.mail.MailSendException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,6 +42,7 @@ public class AuthenticationService {
   private final AuthenticationManager authenticationManager;
   private final EmailService emailService;
   private final EmailTemplateService emailTemplateService;
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   @Transactional(rollbackFor = Exception.class)
   public void sendRegistrationVerificationEmail(RegisterRequestDto registerRequest, Locale locale)
@@ -80,9 +83,7 @@ public class AuthenticationService {
     } catch (Exception e) {
       verificationTokenService.cleanupVerificationToken(verificationTokenDto);
       // User has to receive identical message whether the email exists or not
-      if (!(e instanceof UserNotFoundException) && !(e instanceof MailSendException)) {
-        throw e;
-      }
+      logger.error("Password reset email not sent to " + requestDto.email(), e);
     }
   }
 
