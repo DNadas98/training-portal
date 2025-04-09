@@ -12,7 +12,8 @@ export default function UsernameInput() {
                required
                inputProps={{
                  minLength: 1,
-                 maxLength: 50
+                 maxLength: 50,
+                 autoComplete: "off"
                }}/>
   )
 }

@@ -9,7 +9,9 @@ export default function EmailInput() {
                label={getLocalized("inputs.email")}
                name={"email"}
                type={"email"}
-               autoComplete={"email"}
+               inputProps={{
+                 autoComplete: "off"
+               }}
                required/>
   )
 }

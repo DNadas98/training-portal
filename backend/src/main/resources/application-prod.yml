@@ -1,5 +1,6 @@
 server:
   port: ${BACKEND_APP_PORT}
+  server-header: ""
 
 management:
   endpoints:

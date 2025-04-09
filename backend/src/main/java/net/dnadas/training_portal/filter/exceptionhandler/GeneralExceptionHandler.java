@@ -216,4 +216,12 @@ public class GeneralExceptionHandler {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(
       Map.of("error", messageSource.getMessage("error.user.duplicate", null, locale)));
   }
+
+  // Avoid Spring Boot default error pages, send empty 500 error
+  @ExceptionHandler(Throwable.class)
+  public ResponseEntity<?> handleUnexpectedException(
+    Throwable e,Locale locale) {
+    logger.error("Unhandled exception: ", e);
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+  }
 }

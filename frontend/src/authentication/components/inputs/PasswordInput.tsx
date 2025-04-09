@@ -14,8 +14,10 @@ export default function PasswordInput(props: PasswordInputProps) {
                  label={getLocalized("inputs.confirm_password")}
                  name={"confirmPassword"}
                  type={"password"}
+                 
                  required
                  inputProps={{
+                   autoComplete: "off",
                    minLength: 8,
                    maxLength: 50
                  }}/>
@@ -27,6 +29,7 @@ export default function PasswordInput(props: PasswordInputProps) {
                  required
                  autoComplete={props.autoComplete ?? "new-password"}
                  inputProps={{
+                   autoComplete: "off",
                    minLength: 8,
                    maxLength: 50
                  }}/>
