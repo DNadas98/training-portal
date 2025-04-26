@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Locale;
 import java.util.Map;
 
-@Controller
+@RestController
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
 public class UserController {

@@ -24,3 +24,7 @@ spring:
       enabled: true
       max-file-size: 3MB
       max-request-size: 3MB
+
+springdoc:
+  paths-to-match:
+  - /api/v1/**

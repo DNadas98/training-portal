@@ -63,6 +63,7 @@ public class AuthenticationService {
         verificationTokenDto, email, fullName, locale);
       emailService.sendMailToUserAddress(emailRequestDto);
     } catch (Exception e) {
+      logger.error("Registration request error: ",e);
       verificationTokenService.cleanupVerificationToken(verificationTokenDto);
       throw e;
     }

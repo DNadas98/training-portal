@@ -12,17 +12,17 @@ import net.dnadas.training_portal.service.auth.AuthenticationService;
 import net.dnadas.training_portal.service.user.ApplicationUserService;
 import net.dnadas.training_portal.service.user.PreRegistrationService;
 import net.dnadas.training_portal.service.utils.security.CookieService;
+
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-@Controller
+@RestController
 @RequestMapping("/api/v1/verification")
 @RequiredArgsConstructor
 public class VerificationController {
@@ -36,7 +36,7 @@ public class VerificationController {
   public ResponseEntity<?> verifyRegistration(
     @RequestParam(name = "code") UUID verificationCode,
     @RequestParam(name = "id") @Min(1) Long verificationTokenId,
-    Locale locale) {
+      Locale locale) {
     authenticationService.register(
       new @Valid VerificationTokenDto(verificationTokenId, verificationCode));
     return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(

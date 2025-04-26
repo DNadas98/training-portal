@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-@Controller
+@RestController
 @RequestMapping("/api/v1/admin/groups")
 @RequiredArgsConstructor
 public class GlobalAdminGroupController {

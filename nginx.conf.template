@@ -1,0 +1,184 @@
+cat nginx/nginx.conf 
+resolver 127.0.0.11 ipv6=off;
+
+upstream backend {
+    server backend:8080;
+}
+
+access_log severity=error;
+error_log /var/log/nginx/error.log error;
+
+limit_req_zone $binary_remote_addr zone=backend_limit:10m rate=10r/s;
+limit_req_zone $binary_remote_addr zone=api_auth_limit:10m rate=10r/m;
+limit_req_zone $binary_remote_addr zone=api_export_import_limit:10m rate=10r/m;
+
+server_tokens off;
+
+# Redirect HTTP to HTTPS
+server {
+    listen 80;
+    server_name $DOMAIN www.$DOMAIN 127.0.0.1;
+
+    # Disable nginx version info
+    server_tokens off;
+
+    location ~ /.well-known/acme-challenge {
+        allow all;
+        root /var/www/certbot;
+    }
+
+    location /nginx_status {
+      stub_status;
+      allow 172.28.1.3;
+      deny all;
+    }
+
+
+    location /metrics {
+      allow 172.28.1.3;
+      allow 127.0.0.1;
+      deny all;
+    }
+
+
+    location / {
+      return 301 https://$host$request_uri;
+    }
+}
+
+# CORS origin map
+map $http_origin $cors_allow_origin {
+    default "";
+    "~^(https?://(?:www\.)?$DOMAIN)$" $http_origin;
+}
+
+# HTTPS
+server {
+    listen 443 ssl;
+    server_name $DOMAIN www.$DOMAIN 127.0.0.1;
+
+    # SSL Certificate Paths
+    ssl_certificate /etc/nginx/ssl/training-portal.crt;
+    ssl_certificate_key /etc/nginx/ssl/training-portal.key;
+    # Remove weak ciphers
+    ssl_ciphers 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:TLS_AES_256_GCM_SHA384:TLS_AES_128_GCM_SHA256';
+    # Set new SSL protocols
+    ssl_protocols TLSv1.2 TLSv1.3;
+    # Disable legacy protocols
+    ssl_prefer_server_ciphers on;
+    # Set session params
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 1h;
+
+    # Set CORS headers
+    add_header 'Access-Control-Allow-Origin' $cors_allow_origin always;
+#     add_header 'Access-Control-Allow-Origin' '*' always;
+    add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, DELETE, PUT, PATCH' always;
+    add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range' always;
+    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range' always;
+
+    # Set security headers
+    add_header Content-Security-Policy "default-src 'self';
+     img-src 'self';
+     style-src 'self' 'unsafe-inline';
+     script-src 'self';
+     connect-src 'self';
+     frame-ancestors 'self';
+     form-action 'self'" always;
+
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-DNS-Prefetch-Control "off" always;
+    add_header Expect-CT "max-age=30, enforce" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "geolocation=(), microphone=(), camera=(), fullscreen=*, payment=()" always;
+
+    # Disable nginx version info
+    server_tokens off;
+
+    location / {
+        root /usr/share/nginx/html/frontend;
+        try_files $uri /index.html;
+    }
+
+    location /api/ {
+        limit_req zone=backend_limit burst=20 nodelay;
+        proxy_pass http://backend;
+        proxy_connect_timeout 10s;
+        proxy_read_timeout 120s;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /api/v1/auth/ {
+        limit_req zone=backend_limit burst=20 nodelay;
+        proxy_pass http://backend;
+        proxy_connect_timeout 10s;
+        proxy_read_timeout 120s;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location ~* ^/api/v1/auth/(register|login) {
+        limit_req zone=api_auth_limit burst=5 nodelay;
+        proxy_pass http://backend;
+        proxy_connect_timeout 10s;
+        proxy_read_timeout 120s;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location ~* ^/api/v1/verification/ {
+        limit_req zone=api_auth_limit burst=5 nodelay;
+        proxy_pass http://backend;
+        proxy_connect_timeout 10s;
+        proxy_read_timeout 120s;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location ~* ^/api/v1/groups/\d+/projects/\d+/coordinator/questionnaires/\d+/submissions/stats/excel {
+        limit_req zone=api_export_import_limit burst=5 nodelay;
+        proxy_pass http://backend;
+        proxy_connect_timeout 10s;
+        proxy_read_timeout 120s;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location ~* ^/api/v1/admin/pre-register/ {
+        limit_req zone=api_export_import_limit burst=5 nodelay;
+        proxy_pass http://backend;
+        proxy_connect_timeout 10s;
+        proxy_read_timeout 120s;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location ~* ^/api/v1/groups/\d+/pre-register/ {
+        limit_req zone=api_export_import_limit burst=5 nodelay;
+        proxy_pass http://backend;
+        proxy_connect_timeout 10s;
+        proxy_read_timeout 120s;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+}
