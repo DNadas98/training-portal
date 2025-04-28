@@ -13,17 +13,17 @@ export default function PasswordUpdateForm(props: PasswordUpdateFormProps) {
                  type={"password"}
                  label={localized("inputs.current_password")}
                  required
-                 inputProps={{minLength: 8, maxLength: 50, autoComplete: "off"}}/>
+                 inputProps={{minLength: 8, maxLength: 50, autoComplete: "current-password"}}/>
       <TextField name={"newPassword"}
                  type={"password"}
                  label={localized("inputs.new_password")}
                  required
-                 inputProps={{minLength: 8, maxLength: 50, autoComplete: "off"}}/>
+        inputProps={{ minLength: 8, maxLength: 50, autoComplete: "new-password"}}/>
       <TextField name={"confirmNewPassword"}
                  type={"password"}
                  label={localized("inputs.confirm_new_password")}
                  required
-                 inputProps={{minLength: 8, maxLength: 50, autoComplete: "off"}}/>
+        inputProps={{ minLength: 8, maxLength: 50, autoComplete: "new-password"}}/>
       <Stack direction={"row"} spacing={2}>
         <Button type={"submit"} sx={{maxWidth: "fit-content"}} variant={"outlined"}>
           {localized("pages.user.profile.change_password")}

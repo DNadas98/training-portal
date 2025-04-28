@@ -10,7 +10,7 @@ export default function EmailInput() {
                name={"email"}
                type={"email"}
                inputProps={{
-                 autoComplete: "off"
+                 autoComplete: "email"
                }}
                required/>
   )

@@ -17,7 +17,7 @@ export default function PasswordInput(props: PasswordInputProps) {
                  
                  required
                  inputProps={{
-                   autoComplete: "off",
+                   autoComplete: "new-password",
                    minLength: 8,
                    maxLength: 50
                  }}/>
@@ -27,9 +27,8 @@ export default function PasswordInput(props: PasswordInputProps) {
                  name={"password"}
                  type={"password"}
                  required
-                 autoComplete={props.autoComplete ?? "new-password"}
                  inputProps={{
-                   autoComplete: "off",
+                   autoComplete: props.autoComplete ?? "new-password",
                    minLength: 8,
                    maxLength: 50
                  }}/>
