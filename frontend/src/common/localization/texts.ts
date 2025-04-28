@@ -520,6 +520,7 @@ export const texts = {
       "back": "Vissza",
       "submit": "Beküldés",
       "confirm": "Megerősítés",
+      "remove": "Törlés",
       "cancel": "Mégsem",
       "copy_to_clipboard": "Másolás a vágólapra",
       "points": "Pont",
