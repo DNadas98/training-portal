@@ -40,9 +40,9 @@ export default function RegisterCard({onSubmit}: RegisterCardProps) {
               <form onSubmit={onSubmit}>
                 <Stack spacing={2}>
                   <LegalPolicyCheckbox/>
-                  <FullNameInput/>
+                  <FullNameInput />
+                  <UsernameInput />
                   <EmailInput/>
-                  <UsernameInput/>
                   <PasswordInput autoComplete={"new-password"}/>
                   <PasswordInput confirm={true}/>
                   <Button type={"submit"}

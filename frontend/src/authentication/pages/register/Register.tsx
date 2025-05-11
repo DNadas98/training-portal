@@ -56,7 +56,7 @@ export default function Register() {
     try {
       event.preventDefault();
       const formData = new FormData(event.currentTarget);
-      const username = formData.get("username") as string;
+      const username = formData.get("identifier") as string;
       const email = formData.get("email") as string;
       const fullName = formData.get("fullName") as string;
       const password = formData.get("password") as string;

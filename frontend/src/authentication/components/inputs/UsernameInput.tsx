@@ -7,7 +7,7 @@ export default function UsernameInput() {
     <TextField variant={"outlined"}
                color={"secondary"}
                label={localized("inputs.username")}
-               name={"username"}
+               name={"identifier"}
                type={"text"}
                required
                inputProps={{
