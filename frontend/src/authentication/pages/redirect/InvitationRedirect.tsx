@@ -11,7 +11,7 @@ import {AuthenticationDto} from "../../dto/AuthenticationDto.ts";
 import {useAuthentication} from "../../hooks/useAuthentication.ts";
 import SuccessfulLoginRedirect from "../../components/SuccessfulLoginRedirect.tsx";
 import {PreRegistrationDetailsResponseDto} from "../../dto/PreRegistrationDetailsResponseDto.ts";
-import LegalPolicyCheckbox from "../../../common/utils/components/LegalPolicyCheckbox.tsx";
+import LegalPolicyComponent from "../../../common/utils/components/LegalPolicyComponent.tsx";
 import SiteInformation from "../../../common/utils/components/SiteInformation.tsx";
 import useLocalized from "../../../common/localization/hooks/useLocalized.tsx";
 import {passwordRegex} from "../../../common/utils/regex.ts";
@@ -165,7 +165,7 @@ export default function InvitationRedirect() {
               <Box sx={{pl: 2, pr: 2}} component={"form"} onSubmit={handleVerification}><Stack
                 spacing={2}>
                 <Typography>{localized("inputs.password_invalid")}</Typography>
-                <LegalPolicyCheckbox/>
+                <LegalPolicyComponent />
                 <Typography>{localized("inputs.username")}: {username}</Typography>
                 <FullNameInput defaultValue={fullNameDefaultValue}/>
                 <PasswordInput/>

@@ -4,7 +4,9 @@ export const texts = {
       "administrator": "Administrator",
       "developer": "Developer",
       "sourceCode": "Project Source Code",
-      "legalPolicyText": "By using our service, you consent to your full name and email address being used by this service.\nThe name and email address will only be used for contacting you and providing statistics for your mentors and administrators.\nYour email address will only be visible to mentors and administrators of your projects within your groups.\nYour data will never be used for marketing purposes, it will never be shared with third parties."
+      "legalPolicyText": "By using our service, you consent to your full name and email address being used by this service.\nThe name and email address will only be used for contacting you and providing statistics for your mentors and administrators.\nYour email address will only be visible to mentors and administrators of your projects within your groups.\nYour data will never be used for marketing purposes, it will never be shared with third parties.",
+      "privacyPolicyLink": "Privacy Policy (HU)",
+      "technicalDescriptionLink": "Technical Description (HU)"
     },
     "menus": {
       "home": "Home",
@@ -276,7 +278,9 @@ export const texts = {
       "administrator": "Adminisztrátor",
       "developer": "Fejlesztő",
       "sourceCode": "A projekt forráskódja",
-      "legalPolicyText": "A szolgáltatás használatával Ön elfogadja, hogy alkalmazásunk kezeli az Ön teljes nevét, és az email címét.\nAdatait a rendszer kizárólag kapcsolattartásra, és a tesztsor kitöltésekről készült belső statisztikához használja.\nAz email címe és a teljes neve kizárólag az Ön szervezőinek lesz látható.\nAdatait marketing célra egyáltalán nem használjuk, harmadik félnek semmilyen formában nem adjuk tovább."
+      "legalPolicyText": "A szolgáltatás használatával Ön elfogadja, hogy alkalmazásunk kezeli az Ön teljes nevét, és az email címét.\nAdatait a rendszer kizárólag kapcsolattartásra, és a tesztsor kitöltésekről készült belső statisztikához használja.\nAz email címe és a teljes neve kizárólag az Ön szervezőinek lesz látható.\nAdatait marketing célra egyáltalán nem használjuk, harmadik félnek semmilyen formában nem adjuk tovább.",
+      "privacyPolicyLink": "Adatkezelési Tájékoztató",
+      "technicalDescriptionLink": "Műszaki Leírás"
     },
     "menus": {
       "home": "Főoldal",

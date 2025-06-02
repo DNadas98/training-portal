@@ -5,7 +5,7 @@ import EmailInput from "../../../components/inputs/EmailInput.tsx";
 import PasswordInput from "../../../components/inputs/PasswordInput.tsx";
 import {FormEvent} from "react";
 import FullNameInput from "../../../components/inputs/FullNameInput.tsx";
-import LegalPolicyCheckbox from "../../../../common/utils/components/LegalPolicyCheckbox.tsx";
+import LegalPolicyComponent from "../../../../common/utils/components/LegalPolicyComponent.tsx";
 import useLocalized from "../../../../common/localization/hooks/useLocalized.tsx";
 
 interface RegisterCardProps {
@@ -39,7 +39,7 @@ export default function RegisterCard({onSubmit}: RegisterCardProps) {
               <Typography variant={"body2"} textAlign={"left"}>{localized("pages.sign_up.info")}</Typography>
               <form onSubmit={onSubmit}>
                 <Stack spacing={2}>
-                  <LegalPolicyCheckbox/>
+                  <LegalPolicyComponent />
                   <FullNameInput />
                   <UsernameInput />
                   <EmailInput/>

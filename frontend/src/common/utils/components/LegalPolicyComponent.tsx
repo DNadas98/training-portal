@@ -1,10 +1,10 @@
 import {Button, Checkbox, Stack, Typography} from "@mui/material";
 import {useDialog} from "../../dialog/context/DialogProvider.tsx";
 import useLocalized from "../../localization/hooks/useLocalized.tsx";
-import LegalPolicy from "./LegalPolicy.tsx";
+import LegalPolicyText from "./LegalPolicyText.tsx";
 import {useState} from "react";
 
-export default function LegalPolicyCheckbox() {
+export default function LegalPolicyComponent() {
   const dialog = useDialog();
   const [hasRead, setHasRead] = useState<boolean>(false);
   const [accepted, setAccepted] = useState<boolean>(false);
@@ -14,7 +14,7 @@ export default function LegalPolicyCheckbox() {
     dialog.openDialog({
       confirmText: localized("common.accept"), cancelText: localized("common.close"), onConfirm: () => {
         setAccepted(true);
-      }, content: <LegalPolicy/>
+      }, content: <LegalPolicyText/>
     });
   }
 

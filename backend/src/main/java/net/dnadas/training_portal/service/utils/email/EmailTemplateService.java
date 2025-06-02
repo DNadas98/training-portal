@@ -3,24 +3,36 @@ package net.dnadas.training_portal.service.utils.email;
 import net.dnadas.training_portal.dto.email.EmailRequestDto;
 import net.dnadas.training_portal.dto.verification.VerificationTokenDto;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class EmailTemplateService {
   @Value("${FRONTEND_BASE_URL}")
   private String FRONTEND_BASE_URL;
+  @Value("${EMAIL_TEMPLATE_DIR}")
+  private String templateBasePath;
+  private final Map<String, String> templateCache = new ConcurrentHashMap<>();
 
-  private static String getTemplate(String path) throws IOException {
-    String template = Files.readString(Paths.get(new ClassPathResource(path).getURI()));
-    return template;
+  private String getTemplate(String path) throws IOException {
+    return templateCache.computeIfAbsent(path, p -> {
+      try {
+        Path fullPath = Paths.get(templateBasePath, p);
+        return Files.readString(fullPath);
+      } catch (IOException e) {
+        throw new UncheckedIOException("Failed to load email template: " + path, e);
+      }
+    });
   }
 
   public EmailRequestDto getRegistrationEmailDto(
@@ -29,10 +41,10 @@ public class EmailTemplateService {
     final String path;
     final String subject;
     if (locale.equals(Locale.of("hu", "HU"))) {
-      path = "templates/registration_verification_email_hu.html";
+      path = "registration_verification_email_hu.html";
       subject = "E-mail megerősítés a tesztsor.hu használatához";
     } else {
-      path = "templates/registration_verification_email_en.html";
+      path = "registration_verification_email_en.html";
       subject = "Registration verification to Training Portal";
     }
     String template = getTemplate(path);
@@ -49,10 +61,10 @@ public class EmailTemplateService {
     final String path;
     final String subject;
     if (locale.equals(Locale.of("hu", "HU"))) {
-      path = "templates/email_change_email_hu.html";
+      path = "email_change_email_hu.html";
       subject = "Email változtatás megerősítése";
     } else {
-      path = "templates/email_change_email_en.html";
+      path = "email_change_email_en.html";
       subject = "Email change verification";
     }
     String template = getTemplate(path);
@@ -68,10 +80,10 @@ public class EmailTemplateService {
     final String path;
     final String subject;
     if (locale.equals(Locale.of("hu", "HU"))) {
-      path = "templates/password_reset_email_hu.html";
+      path = "password_reset_email_hu.html";
       subject = "Jelszó változtatás megerősítése";
     } else {
-      path = "templates/password_reset_email_en.html";
+      path = "password_reset_email_en.html";
       subject = "Password reset verification";
     }
     String template = getTemplate(path);
@@ -88,10 +100,10 @@ public class EmailTemplateService {
     final String path;
     final String subject;
     if (locale.equals(Locale.of("hu", "HU"))) {
-      path = "templates/preregister_user_email_hu.html";
+      path = "preregister_user_email_hu.html";
       subject = "E-mail megerősítés a tesztsor.hu használatához";
     } else {
-      path = "templates/preregister_user_email_en.html";
+      path = "preregister_user_email_en.html";
       subject = "Invitation to join tesztsor.hu";
     }
     String template = getTemplate(path);
@@ -107,10 +119,10 @@ public class EmailTemplateService {
     final String path;
     final String subject;
     if (locale.equals(Locale.of("hu", "HU"))) {
-      path = "templates/project_successful_completion_email_hu.html";
+      path = "project_successful_completion_email_hu.html";
       subject = "Email megerősítés a project előfeltételeinek teljesítéséről";
     } else {
-      path = "templates/password_reset_email_en.html";
+      path = "password_reset_email_en.html";
       subject = "Email verification of successful completion of project prerequisites";
     }
     String template = getTemplate(path);
